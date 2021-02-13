@@ -1,4 +1,4 @@
-package edu.cornell.gdiac;
+package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
