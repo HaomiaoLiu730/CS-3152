@@ -10,6 +10,8 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.util.Controllers;
 import edu.cornell.gdiac.util.XBoxController;
 
+import java.awt.*;
+
 public class OnBoardingMode implements ModeController, InputProcessor, ControllerListener {
 
     /** Internal assets for this loading screen */
@@ -39,7 +41,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         internal.loadAssets();
         internal.finishLoading();
 
-        background = internal.getEntry( "bg", Texture.class );
+        background = internal.getEntry( "onBoardingBackground", Texture.class );
         background.setFilter( Texture.TextureFilter.Linear, Texture.TextureFilter.Linear );
         Gdx.input.setInputProcessor( this );
 
@@ -60,8 +62,10 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
 
     @Override
     public void draw(GameCanvas canvas) {
+
         // If this is the first time drawing, get info from the canvas.
-        canvas.drawOverlay(background, true);
+//        canvas.drawOverlay(background, true);
+        canvas.draw(background, 0, 0);
     }
 
     @Override
@@ -72,7 +76,11 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
 
     @Override
     public void resize(int width, int height) {
-
+        // Compute the drawing scale
+        float sx = ((float)width)/STANDARD_WIDTH;
+        float sy = ((float)height)/STANDARD_HEIGHT;
+        scale = (sx < sy ? sx : sy);
+        heightY = height;
     }
 
     /**
@@ -81,7 +89,8 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
      * @return true if the player is ready to go
      */
     public boolean isReady() {
-        return true;
+        // hard-coded for now but will indicate whether the game is allowed to load in the future
+        return false;
     }
 
     /**
