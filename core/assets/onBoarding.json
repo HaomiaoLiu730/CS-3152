@@ -1,0 +1,14 @@
+{
+  "textures": {
+    "onBoardingBackground": {
+      "file":     "images/badlogic.jpg",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "bg": {
+      "file":     "images/ice.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    }
+  }
+}
