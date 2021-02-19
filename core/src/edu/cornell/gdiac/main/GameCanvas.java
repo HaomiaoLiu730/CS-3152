@@ -3,6 +3,7 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
@@ -608,6 +609,15 @@ public class GameCanvas {
         }
         spriteBatch.setColor(tint);
         spriteBatch.draw(image, 0, 0, w, h);
+    }
+
+    public void drawText(BitmapFont font, String text, float x, float y) {
+        if (!active) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+        // Call the master drawing method
+        font.draw(spriteBatch, text, x, y);
     }
 
 }

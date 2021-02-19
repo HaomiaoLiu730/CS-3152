@@ -6,6 +6,9 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.util.Controllers;
 import edu.cornell.gdiac.util.XBoxController;
@@ -20,12 +23,18 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
     private AssetDirectory assets;
 
     /** Background texture for start-up */
-    private Texture background;
+    private Texture postcard;
 
     /** Standard width that the assets were designed for */
     private static int STANDARD_WIDTH  = 1280;
     /** Standard height that the assets were designed for */
     private static int STANDARD_HEIGHT = 720;
+    /** font generator */
+    FreeTypeFontGenerator generator;
+    /** pause time*/
+    long endPauseTime = 0;
+
+    private int FONT_SIZE = 40;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
@@ -41,9 +50,9 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         internal.loadAssets();
         internal.finishLoading();
 
-        background = internal.getEntry( "onBoardingBackground", Texture.class );
-        background.setFilter( Texture.TextureFilter.Linear, Texture.TextureFilter.Linear );
+        postcard = internal.getEntry( "postcard", Texture.class );
         Gdx.input.setInputProcessor( this );
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
 
         // Let ANY connected controller start the game.
         for (XBoxController controller : Controllers.get().getXBoxControllers()) {
@@ -64,14 +73,21 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
     public void draw(GameCanvas canvas) {
 
         // If this is the first time drawing, get info from the canvas.
-//        canvas.drawOverlay(background, true);
-        canvas.draw(background, 0, 0);
+        canvas.drawOverlay (postcard, true);
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        fontParam.size = FONT_SIZE;
+        BitmapFont font = generator.generateFont(fontParam);
+        canvas.drawText(font, "Hi my polar bear,", 730, 450);
+        canvas.drawText(font, "I'm very sick right now", 730, 370);
+        canvas.drawText(font, "and I really want to see you", 730, 290);
+        canvas.drawText(font, "Pengiun", 730, 210);
     }
 
     @Override
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
+        generator.dispose();
     }
 
     @Override
