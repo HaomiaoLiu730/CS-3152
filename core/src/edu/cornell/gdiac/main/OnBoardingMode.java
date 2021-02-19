@@ -15,6 +15,9 @@ import edu.cornell.gdiac.util.XBoxController;
 public class OnBoardingMode implements ModeController, InputProcessor, ControllerListener {
 
     private final long FADING_TIME = 100;
+    private final long FIRST_TEXT_TIME = 170;
+    private final long SECOND_TEXT_TIME = 240;
+    private final long THIRD_TEXT_TIME = 300;
 
     /** Internal assets for this loading screen */
     private AssetDirectory internal;
@@ -35,7 +38,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
     /** font generator */
     FreeTypeFontGenerator generator;
     /** pause time*/
-    long pauseTime = 0;
+    long time = 0;
 
     private int FONT_SIZE = 40;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
@@ -47,7 +50,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         // Waiting on these values until we see the canvas
         heightY = -1;
         scale = -1.0f;
-        pauseTime = 0;
+        time = 0;
 
         // We need these files loaded immediately
         internal = new AssetDirectory( "onBoarding.json" );
@@ -77,20 +80,28 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
 
     @Override
     public void draw(GameCanvas canvas) {
+        time += 1;
         // If this is the first time drawing, get info from the canvas.
         canvas.drawOverlay(postcard, true);
         FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         fontParam.size = FONT_SIZE;
         BitmapFont font = generator.generateFont(fontParam);
-        canvas.drawText(font, "Hi my polar bear,", 730, 450);
-        canvas.drawText(font, "I'm very sick right now", 730, 370);
-        canvas.drawText(font, "and I really want to see you", 730, 290);
-        canvas.drawText(font, "Pengiun", 730, 210);
+        if(time > FADING_TIME){
+            canvas.drawText(font, "Hi my polar bear,", 730, 450);
+        }
+        if(time > FIRST_TEXT_TIME){
+            canvas.drawText(font, "I'm very sick right now", 730, 370);
+        }
+        if(time > SECOND_TEXT_TIME){
+            canvas.drawText(font, "and I really want to see you", 730, 290);
+        }
+        if(time > THIRD_TEXT_TIME){
+            canvas.drawText(font, "Pengiun", 730, 210);
+        }
 
-        fadingColor.a = 1 - (float)pauseTime / FADING_TIME;
+        fadingColor.a = 1 - (float) time / FADING_TIME;
         if(fadingColor.a < 0){
             fadingColor.a = 0;}
-        pauseTime += 1;
         canvas.draw(whiteTexture, fadingColor, 0,0);
     }
 
