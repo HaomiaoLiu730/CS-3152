@@ -8,14 +8,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.util.Controllers;
 import edu.cornell.gdiac.util.XBoxController;
 
-import java.awt.*;
-
 public class OnBoardingMode implements ModeController, InputProcessor, ControllerListener {
+
+    private final long FADING_TIME = 100;
 
     /** Internal assets for this loading screen */
     private AssetDirectory internal;
@@ -24,6 +23,10 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
 
     /** Background texture for start-up */
     private Texture postcard;
+    /** Black image */
+    private Texture whiteTexture;
+    /** Cached Color attribute */
+    private Color fadingColor;
 
     /** Standard width that the assets were designed for */
     private static int STANDARD_WIDTH  = 1280;
@@ -32,7 +35,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
     /** font generator */
     FreeTypeFontGenerator generator;
     /** pause time*/
-    long endPauseTime = 0;
+    long pauseTime = 0;
 
     private int FONT_SIZE = 40;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
@@ -44,6 +47,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         // Waiting on these values until we see the canvas
         heightY = -1;
         scale = -1.0f;
+        pauseTime = 0;
 
         // We need these files loaded immediately
         internal = new AssetDirectory( "onBoarding.json" );
@@ -51,6 +55,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         internal.finishLoading();
 
         postcard = internal.getEntry( "postcard", Texture.class );
+        whiteTexture = internal.getEntry("white", Texture.class);
         Gdx.input.setInputProcessor( this );
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
 
@@ -62,6 +67,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         // Start loading the real assets
         assets = new AssetDirectory( file );
         assets.loadAssets();
+        fadingColor = new Color(0,0,0,1);
     }
 
     @Override
@@ -71,9 +77,8 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
 
     @Override
     public void draw(GameCanvas canvas) {
-
         // If this is the first time drawing, get info from the canvas.
-        canvas.drawOverlay (postcard, true);
+        canvas.drawOverlay(postcard, true);
         FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         fontParam.size = FONT_SIZE;
         BitmapFont font = generator.generateFont(fontParam);
@@ -81,6 +86,12 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         canvas.drawText(font, "I'm very sick right now", 730, 370);
         canvas.drawText(font, "and I really want to see you", 730, 290);
         canvas.drawText(font, "Pengiun", 730, 210);
+
+        fadingColor.a = 1 - (float)pauseTime / FADING_TIME;
+        if(fadingColor.a < 0){
+            fadingColor.a = 0;}
+        pauseTime += 1;
+        canvas.draw(whiteTexture, fadingColor, 0,0);
     }
 
     @Override
