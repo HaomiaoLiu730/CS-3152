@@ -45,7 +45,7 @@ public class GDXRoot extends ApplicationAdapter {
 			directory = loading.getAssets();
 			loading.dispose(); // This will NOT dispose the assets.
 			loading = null;
-//			controller = new GameMode(canvas.getWidth(),canvas.getHeight(),directory);
+			controller = new GameMode(canvas.getWidth(),canvas.getHeight(),directory);
 		}
 		// Update the game state
 		controller.update();
@@ -54,6 +54,7 @@ public class GDXRoot extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		canvas.begin();
 		controller.draw(canvas);
+		controller.update();
 		canvas.end();
 	}
 	

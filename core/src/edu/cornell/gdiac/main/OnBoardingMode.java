@@ -9,15 +9,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import edu.cornell.gdiac.assets.AssetDirectory;
-import edu.cornell.gdiac.util.Controllers;
-import edu.cornell.gdiac.util.XBoxController;
 
 public class OnBoardingMode implements ModeController, InputProcessor, ControllerListener {
 
     private final long FADING_TIME = 100;
-    private final long FIRST_TEXT_TIME = 170;
-    private final long SECOND_TEXT_TIME = 240;
-    private final long THIRD_TEXT_TIME = 300;
+    private final long FIRST_TEXT_TIME = 140;
+    private final long SECOND_TEXT_TIME = 180;
+    private final long THIRD_TEXT_TIME = 220;
+
+    /** is ready for game mode*/
+    private boolean isReady = false;
 
     /** Internal assets for this loading screen */
     private AssetDirectory internal;
@@ -46,6 +47,8 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
 
+    private InputController inputController;
+
     public OnBoardingMode(String file){
         // Waiting on these values until we see the canvas
         heightY = -1;
@@ -62,26 +65,25 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         Gdx.input.setInputProcessor( this );
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
 
-        // Let ANY connected controller start the game.
-        for (XBoxController controller : Controllers.get().getXBoxControllers()) {
-            controller.addListener( this );
-        }
-
         // Start loading the real assets
         assets = new AssetDirectory( file );
         assets.loadAssets();
         fadingColor = new Color(0,0,0,1);
+
+        inputController = new InputController();
     }
 
     @Override
     public void update() {
-
+        inputController.readInput();
+        if(inputController.didThrowPengiun()){
+            isReady = true;
+        }
     }
 
     @Override
     public void draw(GameCanvas canvas) {
         time += 1;
-        // If this is the first time drawing, get info from the canvas.
         canvas.drawOverlay(postcard, true);
         FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         fontParam.size = FONT_SIZE;
@@ -128,7 +130,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
      */
     public boolean isReady() {
         // hard-coded for now but will indicate whether the game is allowed to load in the future
-        return false;
+        return isReady;
     }
 
     /**
