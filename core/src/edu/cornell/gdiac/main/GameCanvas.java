@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 
-import java.awt.*;
-
 public class GameCanvas {
     /** Drawing context to handle textures as sprites */
     private SpriteBatch spriteBatch;
@@ -513,6 +511,7 @@ public class GameCanvas {
         local.scale(sx,sy);
         local.translate(-ox,-oy);
     }
+
     /**
      * Draw an unscaled overlay image.
      *

@@ -10,12 +10,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import edu.cornell.gdiac.assets.AssetDirectory;
 
-public class OnBoardingMode implements ModeController, InputProcessor, ControllerListener {
+public class LetterLoadingMode implements ModeController, InputProcessor, ControllerListener, Loading {
 
     private final long FADING_TIME = 100;
     private final long FIRST_TEXT_TIME = 140;
     private final long SECOND_TEXT_TIME = 180;
     private final long THIRD_TEXT_TIME = 220;
+    private final long FOURTH_TEXT_TIME = 250;
 
     /** is ready for game mode*/
     private boolean isReady = false;
@@ -40,7 +41,8 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
     FreeTypeFontGenerator generator;
     /** pause time*/
     long time = 0;
-
+    /** font generator*/
+    FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
     private int FONT_SIZE = 40;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
@@ -49,7 +51,7 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
 
     private InputController inputController;
 
-    public OnBoardingMode(String file){
+    public LetterLoadingMode(String file){
         // Waiting on these values until we see the canvas
         heightY = -1;
         scale = -1.0f;
@@ -85,7 +87,6 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
     public void draw(GameCanvas canvas) {
         time += 1;
         canvas.drawOverlay(postcard, true);
-        FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         fontParam.size = FONT_SIZE;
         BitmapFont font = generator.generateFont(fontParam);
         if(time > FADING_TIME){
@@ -100,12 +101,17 @@ public class OnBoardingMode implements ModeController, InputProcessor, Controlle
         if(time > THIRD_TEXT_TIME){
             canvas.drawText(font, "Pengiun", 730, 210);
         }
+        if(time > FOURTH_TEXT_TIME){
+            canvas.drawText(font, "Press space to continue", 200, 350);
+        }
 
         fadingColor.a = 1 - (float) time / FADING_TIME;
         if(fadingColor.a < 0){
             fadingColor.a = 0;}
         canvas.draw(whiteTexture, fadingColor, 0,0);
     }
+
+
 
     @Override
     public void dispose() {
