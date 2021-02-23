@@ -26,7 +26,8 @@ public class GameSpecMode implements ModeController, InputProcessor, ControllerL
     private static final float Y_INCREMENT = 1;
     private static final int FONT_SIZE = 30;
     private static final int PROMPT_FONT_SIZE = 20;
-    private static final String info = "When the polar bear was a child, he found a drifting bottle on the beach\n" +
+    private static final String info =
+            "When the polar bear was a child, he found a drifting bottle on the beach\n" +
             "with a penguin, Lay\'s letter in it.\n"+
             "Since then, they have become pen pals sending letters to each other.\n"+
             "Lay is a little older than him. He is the leader of an Akabella choir\n"+

@@ -31,14 +31,14 @@ public class GDXRoot extends ApplicationAdapter {
 	public void create () {
 		// Create the drawing context
 		canvas  = new GameCanvas();
-		loading = new LetterLoadingMode("gameSpecs.json");
+		loading = new OnboardingMode("gameSpecs.json");
 		controller = loading;
 	}
 
 	@Override
 	public void render () {
 		if (loading != null && loading.isReady()) {
-			if(loading instanceof LetterLoadingMode){
+			if(loading instanceof OnboardingMode){
 				loading = new GameSpecMode(canvas.getWidth(),canvas.getHeight());
 				controller = loading;
 			}else if(loading instanceof GameSpecMode && loading.isReady()){

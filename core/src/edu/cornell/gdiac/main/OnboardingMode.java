@@ -8,15 +8,19 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.assets.AssetDirectory;
 
-public class LetterLoadingMode implements ModeController, InputProcessor, ControllerListener, Loading {
+public class OnboardingMode implements ModeController, InputProcessor, ControllerListener, Loading {
 
     private final long FADING_TIME = 100;
     private final long FIRST_TEXT_TIME = 140;
     private final long SECOND_TEXT_TIME = 180;
     private final long THIRD_TEXT_TIME = 220;
     private final long FOURTH_TEXT_TIME = 250;
+    private final float penguinY = 200;
+    private final float PENGUIN_SCALE = 0.1f;
 
     /** is ready for game mode*/
     private boolean isReady = false;
@@ -30,6 +34,10 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
     private Texture postcard;
     /** Black image */
     private Texture whiteTexture;
+    /** penguin image*/
+    private Texture roundPenguin;
+    /** white line*/
+    private Texture whiteLine;
     /** Cached Color attribute */
     private Color fadingColor;
 
@@ -37,23 +45,29 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
     private static int STANDARD_WIDTH  = 1280;
     /** Standard height that the assets were designed for */
     private static int STANDARD_HEIGHT = 720;
-    /** font generator */
-    private BitmapFont font;
+    /** font */
+    private BitmapFont letterFont;
+    private BitmapFont gameFont;
     /** pause time*/
-    long time = 0;
+    long time = -160;
     private int FONT_SIZE = 40;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
+    private float penguinX;
+    private float pengiunAngle;
+    private Vector2 lineStart;
+    private Vector2 lineEnd;
 
     private InputController inputController;
 
-    public LetterLoadingMode(String file){
+    public OnboardingMode(String file){
         // Waiting on these values until we see the canvas
         heightY = -1;
         scale = -1.0f;
-        time = 0;
+        time = -200;
+        penguinX = 100;
 
         // We need these files loaded immediately
         internal = new AssetDirectory( "onBoarding.json" );
@@ -62,11 +76,20 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
 
         postcard = internal.getEntry( "postcard", Texture.class );
         whiteTexture = internal.getEntry("white", Texture.class);
+        roundPenguin = internal.getEntry("roundPenguin", Texture.class);
+        whiteLine = internal.getEntry("whiteLine", Texture.class);
         Gdx.input.setInputProcessor( this );
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         fontParam.size = FONT_SIZE;
-        font = generator.generateFont(fontParam);
+        letterFont = generator.generateFont(fontParam);
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParam2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        fontParam2.size = FONT_SIZE;
+        fontParam2.color = Color.BLACK;
+        gameFont = generator.generateFont(fontParam2);
+
+        lineStart = new Vector2(penguinX,penguinY);
+        lineEnd = new Vector2(penguinX, penguinY);
 
         // Start loading the real assets
         assets = new AssetDirectory( file );
@@ -87,27 +110,40 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
     @Override
     public void draw(GameCanvas canvas) {
         time += 1;
-        canvas.drawOverlay(postcard, true);
-        if(time > FADING_TIME){
-            canvas.drawText(font, "Hi my polar bear,", 730, 450);
-        }
-        if(time > FIRST_TEXT_TIME){
-            canvas.drawText(font, "I'm very sick right now", 730, 370);
-        }
-        if(time > SECOND_TEXT_TIME){
-            canvas.drawText(font, "and I really want to see you", 730, 290);
-        }
-        if(time > THIRD_TEXT_TIME){
-            canvas.drawText(font, "Pengiun", 730, 210);
-        }
-        if(time > FOURTH_TEXT_TIME){
-            canvas.drawText(font, "Press space to continue", 200, 350);
-        }
+        pengiunAngle += 5f;
+        pengiunAngle %= 360;
+        penguinX += 2f;
+        if(time < 0){
+            canvas.drawOverlay(whiteTexture, true);
+            canvas.drawText(gameFont,"Bear With Me", 400, 600);
+            canvas.drawText(gameFont,"Team Octave", 500, 400);
+            lineEnd.x = penguinX;
+            float progress = (penguinX - 100);
+            canvas.draw(whiteLine,Color.BLACK, 100, 100, progress, penguinY);
+            canvas.draw(roundPenguin,Color.WHITE,roundPenguin.getWidth()/2f,roundPenguin.getHeight()/2f, penguinX, penguinY, pengiunAngle,PENGUIN_SCALE,PENGUIN_SCALE);
+        }else{
+            canvas.drawOverlay(postcard, true);
+            if(time > FADING_TIME){
+                canvas.drawText(letterFont, "Hi my polar bear,", 730, 450);
+            }
+            if(time > FIRST_TEXT_TIME){
+                canvas.drawText(letterFont, "I'm very sick right now", 730, 370);
+            }
+            if(time > SECOND_TEXT_TIME){
+                canvas.drawText(letterFont, "and I really want to see you", 730, 290);
+            }
+            if(time > THIRD_TEXT_TIME){
+                canvas.drawText(letterFont, "Pengiun", 730, 210);
+            }
+            if(time > FOURTH_TEXT_TIME){
+                canvas.drawText(letterFont, "Press space to continue", 200, 350);
+            }
 
-        fadingColor.a = 1 - (float) time / FADING_TIME;
-        if(fadingColor.a < 0){
-            fadingColor.a = 0;}
-        canvas.draw(whiteTexture, fadingColor, 0,0);
+            fadingColor.a = 1 - (float) time / FADING_TIME;
+            if(fadingColor.a < 0){
+                fadingColor.a = 0;}
+            canvas.draw(whiteTexture, fadingColor, 0,0);
+        }
     }
 
 
@@ -116,7 +152,7 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
-        font.dispose();
+        letterFont.dispose();
     }
 
     @Override

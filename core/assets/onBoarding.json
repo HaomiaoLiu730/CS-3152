@@ -9,6 +9,16 @@
       "file":     "images/white.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "roundPenguin": {
+      "file":     "images/round-penguin.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "whiteLine": {
+      "file":     "images/whit-line.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   }
 }
