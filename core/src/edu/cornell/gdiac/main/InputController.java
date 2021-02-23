@@ -2,7 +2,6 @@ package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import edu.cornell.gdiac.util.*;
 
 /**
  * Device-independent input manager.
@@ -18,6 +17,8 @@ public class InputController {
     private boolean moveLeft;
     private boolean moveRight;
     private boolean jump;
+
+    private boolean pressed;
 
     /** throw pengiun */
     private boolean throwPengiun;
@@ -76,12 +77,12 @@ public class InputController {
      * are more appropriate for menus and buttons (like the loading screen).
      */
     public void readInput() {
-        int up, left, right, down, throwP;
+        int up, left, right, down, spacePressed;
         up = Input.Keys.UP;
         down = Input.Keys.DOWN;
         left = Input.Keys.LEFT;
         right = Input.Keys.RIGHT;
-        throwP = Input.Keys.SPACE;
+        spacePressed = Input.Keys.SPACE;
 
             // Convert keyboard state into game commands
             moveLeft = moveRight = jump = false;
@@ -100,8 +101,12 @@ public class InputController {
             }
 
             // Shooting
-            if (Gdx.input.isKeyPressed(throwP)) {
+            if (!Gdx.input.isKeyPressed(spacePressed) && pressed) {
                 throwPengiun = true;
+                pressed = false;
+            }
+            if(Gdx.input.isKeyPressed(spacePressed)){
+                pressed = true;
             }
     }
 }

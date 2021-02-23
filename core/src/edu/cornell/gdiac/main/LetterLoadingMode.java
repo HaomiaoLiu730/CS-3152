@@ -38,11 +38,9 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
     /** Standard height that the assets were designed for */
     private static int STANDARD_HEIGHT = 720;
     /** font generator */
-    FreeTypeFontGenerator generator;
+    private BitmapFont font;
     /** pause time*/
     long time = 0;
-    /** font generator*/
-    FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
     private int FONT_SIZE = 40;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
@@ -65,7 +63,10 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
         postcard = internal.getEntry( "postcard", Texture.class );
         whiteTexture = internal.getEntry("white", Texture.class);
         Gdx.input.setInputProcessor( this );
-        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        fontParam.size = FONT_SIZE;
+        font = generator.generateFont(fontParam);
 
         // Start loading the real assets
         assets = new AssetDirectory( file );
@@ -87,8 +88,6 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
     public void draw(GameCanvas canvas) {
         time += 1;
         canvas.drawOverlay(postcard, true);
-        fontParam.size = FONT_SIZE;
-        BitmapFont font = generator.generateFont(fontParam);
         if(time > FADING_TIME){
             canvas.drawText(font, "Hi my polar bear,", 730, 450);
         }
@@ -117,7 +116,7 @@ public class LetterLoadingMode implements ModeController, InputProcessor, Contro
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
-        generator.dispose();
+        font.dispose();
     }
 
     @Override

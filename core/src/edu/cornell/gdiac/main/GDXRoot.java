@@ -41,9 +41,10 @@ public class GDXRoot extends ApplicationAdapter {
 			if(loading instanceof LetterLoadingMode){
 				loading = new GameSpecMode(canvas.getWidth(),canvas.getHeight());
 				controller = loading;
-			}else if(loading instanceof GameSpecMode){
-				loading = null;
+			}else if(loading instanceof GameSpecMode && loading.isReady()){
 				directory = loading.getAssets();
+				loading.dispose();
+				loading = null;
 				controller = new GameMode(canvas.getWidth(),canvas.getHeight(),directory);
 			}
 		}
