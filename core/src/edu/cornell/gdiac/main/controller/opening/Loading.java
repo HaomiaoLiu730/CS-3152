@@ -1,6 +1,7 @@
-package edu.cornell.gdiac.main;
+package edu.cornell.gdiac.main.controller.opening;
 
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.ModeController;
 
 public interface Loading extends ModeController {
     /**

@@ -1,6 +1,8 @@
-package edu.cornell.gdiac.main;
+package edu.cornell.gdiac.main.controller.gaming;
 
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.ModeController;
+import edu.cornell.gdiac.main.view.GameCanvas;
 
 public class GameMode implements ModeController {
     /**

@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.main;
+package edu.cornell.gdiac.main.controller.opening;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -8,9 +8,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.InputController;
+import edu.cornell.gdiac.main.controller.ModeController;
+import edu.cornell.gdiac.main.controller.opening.Loading;
+import edu.cornell.gdiac.main.view.GameCanvas;
 
 public class OnboardingMode implements ModeController, InputProcessor, ControllerListener, Loading {
 

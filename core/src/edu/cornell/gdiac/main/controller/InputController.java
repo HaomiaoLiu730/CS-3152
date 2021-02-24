@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.main;
+package edu.cornell.gdiac.main.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

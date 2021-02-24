@@ -4,6 +4,13 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.gaming.GameMode;
+import edu.cornell.gdiac.main.controller.gaming.LevelLoadingMode;
+import edu.cornell.gdiac.main.controller.opening.GameSpecMode;
+import edu.cornell.gdiac.main.controller.opening.Loading;
+import edu.cornell.gdiac.main.controller.ModeController;
+import edu.cornell.gdiac.main.controller.opening.OnboardingMode;
+import edu.cornell.gdiac.main.view.GameCanvas;
 
 public class GDXRoot extends ApplicationAdapter {
 
@@ -11,7 +18,7 @@ public class GDXRoot extends ApplicationAdapter {
 	AssetDirectory directory;
 
 	/** Drawing context to display graphics (VIEW CLASS) */
-	GameCanvas  canvas;
+	GameCanvas canvas;
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	Loading loading;
 	/** Polymorphic reference to the active player mode */
@@ -33,6 +40,7 @@ public class GDXRoot extends ApplicationAdapter {
 		canvas  = new GameCanvas();
 		loading = new OnboardingMode("gameSpecs.json");
 		controller = loading;
+//		controller = new LevelLoadingMode(false);
 	}
 
 	@Override
