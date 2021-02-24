@@ -1,17 +1,14 @@
-package edu.cornell.gdiac.main.view;
+package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 
-import javax.swing.*;
-import javax.xml.soap.Text;
+import java.awt.*;
 
 public class GameCanvas {
     /** Drawing context to handle textures as sprites */
@@ -20,8 +17,6 @@ public class GameCanvas {
     private int width;
     /** Value to cache window height (if we are currently full screen) */
     private int height;
-    /** line drawer */
-    private ShapeRenderer lineDrawer;
 
     /** Track whether or not we are active (for error checking) */
     private boolean active;
@@ -43,7 +38,6 @@ public class GameCanvas {
     public GameCanvas() {
         this.width  = Gdx.graphics.getWidth();
         this.height = Gdx.graphics.getHeight();
-        lineDrawer = new ShapeRenderer();
 
         active = false;
         spriteBatch = new SpriteBatch();
@@ -496,15 +490,6 @@ public class GameCanvas {
         spriteBatch.setColor(tint);
         spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
     }
-
-    public void draw(Texture region, Color tint, float x, float y, float width, float height){
-        if (!active) {
-            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
-            return;
-        }
-        spriteBatch.setColor(tint);
-        spriteBatch.draw(region,x,y,width,height);
-    }
     /**
      * Compute the affine transform (and store it in local) for this image.
      *
@@ -527,7 +512,6 @@ public class GameCanvas {
         local.scale(sx,sy);
         local.translate(-ox,-oy);
     }
-
     /**
      * Draw an unscaled overlay image.
      *
@@ -624,14 +608,6 @@ public class GameCanvas {
         }
         spriteBatch.setColor(tint);
         spriteBatch.draw(image, 0, 0, w, h);
-    }
-
-    public void drawText(BitmapFont font, String text, float x, float y) {
-        if (!active) {
-            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
-            return;
-        }
-        font.draw(spriteBatch, text, x, y);
     }
 
 }

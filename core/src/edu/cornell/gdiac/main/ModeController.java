@@ -1,7 +1,5 @@
-package edu.cornell.gdiac.main.controller;
+package edu.cornell.gdiac.main;
 
-
-import edu.cornell.gdiac.main.view.GameCanvas;
 
 /**
  * Interface for the root class of a player mode.
