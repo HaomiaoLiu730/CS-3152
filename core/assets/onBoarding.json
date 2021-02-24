@@ -1,22 +1,12 @@
 {
   "textures": {
-    "postcard": {
-      "file":     "images/postcard.jpg",
+    "onBoardingBackground": {
+      "file":     "images/badlogic.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "white": {
-      "file":     "images/white.jpg",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "roundPenguin": {
-      "file":     "images/round-penguin.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "whiteLine": {
-      "file":     "images/whit-line.png",
+    "bg": {
+      "file":     "images/ice.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }

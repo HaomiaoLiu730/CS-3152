@@ -3,24 +3,21 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import edu.cornell.gdiac.assets.AssetDirectory;
-import edu.cornell.gdiac.main.controller.gaming.GameMode;
-import edu.cornell.gdiac.main.controller.gaming.LevelLoadingMode;
-import edu.cornell.gdiac.main.controller.opening.GameSpecMode;
-import edu.cornell.gdiac.main.controller.opening.Loading;
-import edu.cornell.gdiac.main.controller.ModeController;
-import edu.cornell.gdiac.main.controller.opening.OnboardingMode;
-import edu.cornell.gdiac.main.view.GameCanvas;
 
 public class GDXRoot extends ApplicationAdapter {
+//	SpriteBatch batch;
+//	Texture img;
 
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
 
 	/** Drawing context to display graphics (VIEW CLASS) */
-	GameCanvas canvas;
+	GameCanvas  canvas;
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
-	Loading loading;
+	OnBoardingMode loading;
 	/** Polymorphic reference to the active player mode */
 	ModeController controller;
 
@@ -38,23 +35,17 @@ public class GDXRoot extends ApplicationAdapter {
 	public void create () {
 		// Create the drawing context
 		canvas  = new GameCanvas();
-		loading = new OnboardingMode("gameSpecs.json");
+		loading = new OnBoardingMode("asset.json");
 		controller = loading;
-//		controller = new LevelLoadingMode(false);
 	}
 
 	@Override
 	public void render () {
 		if (loading != null && loading.isReady()) {
-			if(loading instanceof OnboardingMode){
-				loading = new GameSpecMode(canvas.getWidth(),canvas.getHeight());
-				controller = loading;
-			}else if(loading instanceof GameSpecMode && loading.isReady()){
-				directory = loading.getAssets();
-				loading.dispose();
-				loading = null;
-				controller = new GameMode(canvas.getWidth(),canvas.getHeight(),directory);
-			}
+			directory = loading.getAssets();
+			loading.dispose(); // This will NOT dispose the assets.
+			loading = null;
+//			controller = new GameMode(canvas.getWidth(),canvas.getHeight(),directory);
 		}
 		// Update the game state
 		controller.update();
@@ -63,7 +54,6 @@ public class GDXRoot extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		canvas.begin();
 		controller.draw(canvas);
-		controller.update();
 		canvas.end();
 	}
 	

@@ -126,19 +126,6 @@ public class FilmStrip extends TextureRegion {
 	}
 
 	/**
-	 * Sets the active frame to the next frame
-	 *
-	 * If the frame index is invalid, an error is raised.
-	 */
-	public void nextFrame() {
-		frame +=1;
-		frame %= size;
-		int x = (frame % cols)*rwidth;
-		int y = (frame / cols)*rheight;
-		setRegion(x,y,rwidth,rheight);
-	}
-
-	/**
 	 * Returns a copy of this filmstrip.
 	 *
 	 * Sometimes we want a filmstrip with the same texture, but set
