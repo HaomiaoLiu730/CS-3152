@@ -121,8 +121,7 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
             canvas.drawText(gameFont,"Bear With Me", 400, 600);
             canvas.drawText(gameFont,"Team Octave", 500, 400);
             lineEnd.x = penguinX;
-            float progress = (penguinX - 100);
-            canvas.draw(whiteLine,Color.BLACK, 100, 100, progress, penguinY);
+            canvas.drawLine(Color.BLACK, lineStart, lineEnd, 1);
             canvas.draw(roundPenguin,Color.WHITE,roundPenguin.getWidth()/2f,roundPenguin.getHeight()/2f, penguinX, penguinY, pengiunAngle,PENGUIN_SCALE,PENGUIN_SCALE);
         }else{
             canvas.drawOverlay(postcard, true);

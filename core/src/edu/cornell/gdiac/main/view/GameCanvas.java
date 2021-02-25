@@ -16,6 +16,8 @@ import javax.xml.soap.Text;
 public class GameCanvas {
     /** Drawing context to handle textures as sprites */
     private SpriteBatch spriteBatch;
+    /** Drawing context to handle textures as sprites */
+    private ShapeRenderer shapeRenderer;
     /** Value to cache window width (if we are currently full screen) */
     private int width;
     /** Value to cache window height (if we are currently full screen) */
@@ -47,9 +49,11 @@ public class GameCanvas {
 
         active = false;
         spriteBatch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
 
         // Set the projection matrix (for proper scaling)
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
+        shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
 
         // Initialize the cache objects
         holder = new TextureRegion();
@@ -80,9 +84,11 @@ public class GameCanvas {
         // Continue as normal
         active = false;
         spriteBatch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
 
         // Set the projection matrix (for proper scaling)
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
+        shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
 
         // Initialize the cache objects
         holder = new TextureRegion();
@@ -256,6 +262,7 @@ public class GameCanvas {
     public void resize() {
         // Resizing screws up the spriteBatch projection matrix
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
+        shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
     }
     /**
      * Start and active drawing sequence with the identity transform.
@@ -569,6 +576,7 @@ public class GameCanvas {
         }
         spriteBatch.setColor(tint);
         spriteBatch.draw(image, x, y);
+
     }
 
     /**
@@ -632,6 +640,17 @@ public class GameCanvas {
             return;
         }
         font.draw(spriteBatch, text, x, y);
+    }
+
+    public void drawLine(Color color, Vector2 start, Vector2 end, int lineWidth){
+        spriteBatch.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        Gdx.gl.glLineWidth(lineWidth);
+        shapeRenderer.setColor(color);
+        shapeRenderer.line(start, end);
+        Gdx.gl.glLineWidth(1);
+        shapeRenderer.end();
+        spriteBatch.begin();
     }
 
 }
