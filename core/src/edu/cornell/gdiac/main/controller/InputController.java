@@ -23,6 +23,21 @@ public class InputController {
     /** throw pengiun */
     private boolean throwPengiun;
 
+    /** The singleton instance of the input controller */
+    private static InputController theController = null;
+
+    /**
+     * Return the singleton instance of the input controller
+     *
+     * @return the singleton instance of the input controller
+     */
+    public static InputController getInstance() {
+        if (theController == null) {
+            theController = new InputController();
+        }
+        return theController;
+    }
+
     /**
      * Returns the true if left
      *

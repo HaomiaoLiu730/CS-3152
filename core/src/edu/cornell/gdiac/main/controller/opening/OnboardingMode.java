@@ -99,7 +99,7 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
         assets.loadAssets();
         fadingColor = new Color(0,0,0,1);
 
-        inputController = new InputController();
+        inputController = InputController.getInstance();
     }
 
     @Override

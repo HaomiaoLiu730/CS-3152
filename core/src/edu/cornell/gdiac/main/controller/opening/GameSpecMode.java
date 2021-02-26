@@ -65,7 +65,7 @@ public class GameSpecMode implements ModeController, InputProcessor, ControllerL
         promptFont = generator.generateFont(promptFontParam);
 
         isReady = false;
-        inputController = new InputController();
+        inputController = InputController.getInstance();
 
         asset = new AssetDirectory("assets.json");
         asset.loadAssets();
