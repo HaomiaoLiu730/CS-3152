@@ -113,7 +113,7 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
     @Override
     public void draw(GameCanvas canvas) {
         time += 1;
-        pengiunAngle += 5f;
+        pengiunAngle += 0.1f;
         pengiunAngle %= 360;
         penguinX += 2f;
         if(time < 0){
@@ -144,7 +144,7 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
             fadingColor.a = 1 - (float) time / FADING_TIME;
             if(fadingColor.a < 0){
                 fadingColor.a = 0;}
-            canvas.draw(whiteTexture, fadingColor, 0,0);
+            canvas.drawOverlay(whiteTexture, fadingColor, 0,0);
         }
     }
 

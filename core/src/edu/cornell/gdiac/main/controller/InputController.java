@@ -2,6 +2,8 @@ package edu.cornell.gdiac.main.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * Device-independent input manager.
@@ -14,11 +16,32 @@ import com.badlogic.gdx.Input;
 public class InputController {
 
     /** polar bear moving left / right */
-    private boolean moveLeft;
-    private boolean moveRight;
     private boolean jump;
 
+    /** How much did we move horizontally? */
+    private float horizontal;
+    /** How much did we move vertically? */
+    private float vertical;
+
+    // Fields to manage buttons
+    /** Whether the reset button was pressed. */
+    private boolean resetPressed;
+    private boolean resetPrevious;
     private boolean pressed;
+    /** Whether the debug toggle was pressed. */
+    private boolean debugPressed;
+    private boolean debugPrevious;
+    /** Whether the exit button was pressed. */
+    private boolean exitPressed;
+    private boolean exitPrevious;
+    /** Whether the primary action button was pressed. */
+    private boolean primePressed;
+    private boolean primePrevious;
+    /** Whether the secondary action button was pressed. */
+    private boolean secondPressed;
+    private boolean secondPrevious;
+    /** Whether the teritiary action button was pressed. */
+    private boolean tertiaryPressed;
 
     /** throw pengiun */
     private boolean throwPengiun;
@@ -39,21 +62,25 @@ public class InputController {
     }
 
     /**
-     * Returns the true if left
+     * Returns the amount of sideways movement.
      *
-     * @return whether move left
+     * -1 = left, 1 = right, 0 = still
+     *
+     * @return the amount of sideways movement.
      */
-    public boolean getMoveLeft() {
-        return moveLeft;
+    public float getHorizontal() {
+        return horizontal;
     }
 
     /**
-     * Returns true if right
+     * Returns the amount of vertical movement.
      *
-     * @return whether to move right
+     * -1 = down, 1 = up, 0 = still
+     *
+     * @return the amount of vertical movement.
      */
-    public boolean getMoveRight() {
-        return moveRight;
+    public float getVertical() {
+        return vertical;
     }
 
 
@@ -99,29 +126,86 @@ public class InputController {
         right = Input.Keys.RIGHT;
         spacePressed = Input.Keys.SPACE;
 
-            // Convert keyboard state into game commands
-            moveLeft = moveRight = jump = false;
-            throwPengiun = false;
+        // Convert keyboard state into game commands
+        jump = false;
+        throwPengiun = false;
 
-            // Movement forward/backward
-            if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
-                moveLeft = true;
-            } else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
-                moveRight = true;
-            }
+        // Directional controls
+        horizontal = 0.0f;
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            horizontal += 1.0f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            horizontal -= 1.0f;
+        }
 
-            // Movement left/right
-            if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
-                jump = true;
-            }
+        vertical = 0.0f;
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            vertical += 1.0f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            vertical -= 1.0f;
+        }
 
-            // Shooting
-            if (!Gdx.input.isKeyPressed(spacePressed) && pressed) {
-                throwPengiun = true;
-                pressed = false;
-            }
-            if(Gdx.input.isKeyPressed(spacePressed)){
-                pressed = true;
-            }
+        if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
+            jump = true;
+        }
+
+        // Shooting
+        if (!Gdx.input.isKeyPressed(spacePressed) && pressed) {
+            throwPengiun = true;
+            pressed = false;
+        }
+        if(Gdx.input.isKeyPressed(spacePressed)){
+            pressed = true;
+        }
     }
+
+    /**
+     * Reads the input for the player and converts the result into game logic.
+     *
+     * The method provides both the input bounds and the drawing scale.  It needs
+     * the drawing scale to convert screen coordinates to world coordinates.  The
+     * bounds are for the crosshair.  They cannot go outside of this zone.
+     *
+     * @param bounds The input bounds for the crosshair.
+     * @param scale  The drawing scale
+     */
+    public void readInput(Rectangle bounds, Vector2 scale) {
+        // Copy state from last animation frame
+        // Helps us ignore buttons that are held down
+        primePrevious  = primePressed;
+        secondPrevious = secondPressed;
+        resetPrevious  = resetPressed;
+        debugPrevious  = debugPressed;
+        exitPrevious = exitPressed;
+    }
+
+    /**
+     * Returns true if the player wants to go toggle the debug mode.
+     *
+     * @return true if the player wants to go toggle the debug mode.
+     */
+    public boolean didDebug() {
+        return debugPressed && !debugPrevious;
+    }
+
+    /**
+     * Returns true if the reset button was pressed.
+     *
+     * @return true if the reset button was pressed.
+     */
+    public boolean didReset() {
+        return resetPressed && !resetPrevious;
+    }
+
+    /**
+     * Returns true if the exit button was pressed.
+     *
+     * @return true if the exit button was pressed.
+     */
+    public boolean didExit() {
+        return exitPressed && !exitPrevious;
+    }
+
 }
