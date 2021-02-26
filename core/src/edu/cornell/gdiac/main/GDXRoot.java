@@ -2,8 +2,11 @@ package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.main.controller.gaming.GameMode;
 import edu.cornell.gdiac.main.controller.gaming.LevelLoadingMode;
 import edu.cornell.gdiac.main.controller.opening.GameSpecMode;
@@ -11,11 +14,15 @@ import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.controller.ModeController;
 import edu.cornell.gdiac.main.controller.opening.OnboardingMode;
 import edu.cornell.gdiac.main.view.GameCanvas;
+import edu.cornell.gdiac.util.ScreenListener;
 
-public class GDXRoot extends ApplicationAdapter {
+public class GDXRoot extends Game implements ScreenListener {
 
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
+
+	private static final int NUMBER_OF_LEVELS = 1;
+	private int current = 0;
 
 	/** Drawing context to display graphics (VIEW CLASS) */
 	GameCanvas canvas;
@@ -23,6 +30,8 @@ public class GDXRoot extends ApplicationAdapter {
 	Loading loading;
 	/** Polymorphic reference to the active player mode */
 	ModeController controller;
+	/** List of all WorldControllers */
+	private WorldController[] controllers;
 
 	/**
 	 * Creates a new game application root
@@ -41,6 +50,11 @@ public class GDXRoot extends ApplicationAdapter {
 		loading = new OnboardingMode("gameSpecs.json");
 		controller = loading;
 //		controller = new LevelLoadingMode(false);
+		directory = new AssetDirectory("assets.json");
+		controllers = new WorldController[NUMBER_OF_LEVELS];
+		controllers[0] = new GameMode();
+		controllers[0].setScreenListener(this);
+		controllers[current].loadContent(directory);
 	}
 
 	@Override
@@ -49,10 +63,14 @@ public class GDXRoot extends ApplicationAdapter {
 			if(loading instanceof OnboardingMode){
 				loading = new GameSpecMode(canvas.getWidth(),canvas.getHeight());
 				controller = loading;
-			}else if(loading instanceof GameSpecMode && loading.isReady()){
+			}else if(loading instanceof GameSpecMode){
 				loading.dispose();
 				loading = null;
-				controller = new GameMode(canvas.getWidth(),canvas.getHeight());
+//				controller = new GameMode(canvas.getWidth(),canvas.getHeight());
+				controllers[current].setScreenListener(this);
+				controllers[current].setCanvas(canvas);
+				controllers[current].reset();
+				setScreen(controllers[current]);
 			}
 		}
 		// Update the game state
@@ -68,6 +86,7 @@ public class GDXRoot extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
+		setScreen(null);
 		controller.dispose();
 		if (directory != null) {
 			directory.unloadAssets();
@@ -91,5 +110,40 @@ public class GDXRoot extends ApplicationAdapter {
 		}
 		// Canvas knows the size, but not that it changed
 		canvas.resize();
+	}
+
+	@Override
+	/**
+	 * The given screen has made a request to exit its player mode.
+	 *
+	 * The value exitCode can be used to implement menu options.
+	 *
+	 * @param screen   The screen requesting to exit
+	 * @param exitCode The state of the screen upon exit
+	 */
+	public void exitScreen(Screen screen, int exitCode) {
+		if (screen == loading) {
+			for(int ii = 0; ii < controllers.length; ii++) {
+				controllers[ii].loadContent(directory);
+				controllers[ii].setScreenListener(this);
+				controllers[ii].setCanvas(canvas);
+			}
+			controllers[current].reset();
+			setScreen(controllers[current]);
+
+			loading.dispose();
+			loading = null;
+		} else if (exitCode == WorldController.EXIT_NEXT) {
+			current = (current+1) % controllers.length;
+			controllers[current].reset();
+			setScreen(controllers[current]);
+		} else if (exitCode == WorldController.EXIT_PREV) {
+			current = (current+controllers.length-1) % controllers.length;
+			controllers[current].reset();
+			setScreen(controllers[current]);
+		} else if (exitCode == WorldController.EXIT_QUIT) {
+			// We quit the main application
+			Gdx.app.exit();
+		}
 	}
 }

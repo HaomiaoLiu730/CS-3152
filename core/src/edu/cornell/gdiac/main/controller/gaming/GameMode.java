@@ -1,5 +1,7 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -40,6 +42,8 @@ public class GameMode extends WorldController implements ModeController, Contact
     /** The initial position of the dude */
     private static Vector2 PLAYER_POS = new Vector2(2.5f, 5.0f);
 
+    /** Track asset loading from all instances and subclasses */
+    private AssetState platformAssetState = AssetState.EMPTY;
 
     /** The world scale */
     protected Vector2 scale;
@@ -78,7 +82,9 @@ public class GameMode extends WorldController implements ModeController, Contact
      * @param height The height of the game window
      */
     public GameMode(float width, float height) {
-        super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
+        super(width,height,DEFAULT_GRAVITY);
+
+        scale = super.scale;
         setDebug(false);
         setComplete(false);
         setFailure(false);
@@ -87,9 +93,34 @@ public class GameMode extends WorldController implements ModeController, Contact
         asset = new AssetDirectory("assets.json");
         asset.loadAssets();
         asset.finishLoading();
-        goalTile = asset.getEntry("tile", TextureRegion.class);
-        avatarTexture = asset.getEntry("avatar", TextureRegion.class);
+        earthTile = new TextureRegion(asset.getEntry("tile", Texture.class));
+        goalTile = new TextureRegion(asset.getEntry("tile", Texture.class));
+        avatarTexture = new TextureRegion(asset.getEntry("avatar", Texture.class));
     }
+
+    public GameMode(){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+
+    /**
+     * Load the assets for this controller.
+     *
+     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+     * this time.  However, we still want the assets themselves to be static.  So
+     * we have an AssetState that determines the current loading state.  If the
+     * assets are already loaded, this method will do nothing.
+     *
+     * @param directory Reference to global asset manager.
+     */
+    public void loadContent(AssetDirectory directory) {
+        if (platformAssetState != AssetState.LOADING) {
+            return;
+        }
+        avatarTexture = directory.getEntry("avatar", TextureRegion.class);
+        super.loadContent(directory);
+        platformAssetState = AssetState.COMPLETE;
+    }
+
 
     /**
      * Resets the status of the game so that we can play again.
@@ -123,8 +154,7 @@ public class GameMode extends WorldController implements ModeController, Contact
      */
     private void populateLevel() {
         // Add level goal
-        float dwidth = goalTile.getRegionWidth() / scale.x;
-        float dheight = goalTile.getRegionHeight() / scale.y;
+        float dwidth, dheight;
 
         String wname = "wall";
         for (int ii = 0; ii < WALLS.length; ii++) {

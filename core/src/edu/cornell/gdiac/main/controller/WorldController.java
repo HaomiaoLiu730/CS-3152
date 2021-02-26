@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
+import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.main.obstacle.*;
@@ -63,15 +64,6 @@ public abstract class WorldController implements Screen {
     /** Track all loaded assets (for unloading purposes) */
     protected Array<String> assets;
 
-    // Pathnames to shared assets
-    /** File to texture for walls and platforms */
-    private static String EARTH_FILE = "shared/earthtile.png";
-    /** File to texture for the win door */
-    private static String GOAL_FILE = "shared/goaldoor.png";
-    /** Retro font for displaying messages */
-    private static String FONT_FILE = "shared/RetroGame.ttf";
-    private static int FONT_SIZE = 64;
-
     /** The texture for walls and platforms */
     protected TextureRegion earthTile;
     /** The texture for the exit condition */
@@ -87,26 +79,15 @@ public abstract class WorldController implements Screen {
      * we have an AssetState that determines the current loading state.  If the
      * assets are already loaded, this method will do nothing.
      *
-     * @param manager Reference to global asset manager.
+     * @param directory Reference to global asset directory.
      */
-    public void preLoadContent(AssetManager manager) {
+    public void preLoadContent(AssetDirectory directory) {
         if (worldAssetState != AssetState.EMPTY) {
             return;
         }
 
         worldAssetState = AssetState.LOADING;
         // Load the shared tiles.
-        manager.load(EARTH_FILE,Texture.class);
-        assets.add(EARTH_FILE);
-        manager.load(GOAL_FILE,Texture.class);
-        assets.add(GOAL_FILE);
-
-        // Load the font
-        FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        size2Params.fontFileName = FONT_FILE;
-        size2Params.fontParameters.size = FONT_SIZE;
-        manager.load(FONT_FILE, BitmapFont.class, size2Params);
-        assets.add(FONT_FILE);
     }
 
     /**
@@ -117,23 +98,17 @@ public abstract class WorldController implements Screen {
      * we have an AssetState that determines the current loading state.  If the
      * assets are already loaded, this method will do nothing.
      *
-     * @param manager Reference to global asset manager.
+     * @param directory Reference to global asset manager.
      */
-    public void loadContent(AssetManager manager) {
+    public void loadContent(AssetDirectory directory) {
         if (worldAssetState != AssetState.LOADING) {
             return;
         }
 
         // Allocate the tiles
-        earthTile = createTexture(manager,EARTH_FILE,true);
-        goalTile  = createTexture(manager,GOAL_FILE,true);
+        earthTile = new TextureRegion(directory.getEntry("tile", Texture.class));
 
         // Allocate the font
-        if (manager.isLoaded(FONT_FILE)) {
-            displayFont = manager.get(FONT_FILE,BitmapFont.class);
-        } else {
-            displayFont = null;
-        }
 
         worldAssetState = AssetState.COMPLETE;
     }
@@ -626,6 +601,7 @@ public abstract class WorldController implements Screen {
      * @param delta Number of seconds since last animation frame
      */
     public void render(float delta) {
+        System.out.println("rendering");
         if (active) {
             if (preUpdate(delta)) {
                 update(delta); // This is the one that must be defined.
