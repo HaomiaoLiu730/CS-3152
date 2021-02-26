@@ -2,6 +2,7 @@ package edu.cornell.gdiac.main.controller.opening;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
@@ -11,11 +12,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
-import edu.cornell.gdiac.main.controller.ModeController;
-import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
+import edu.cornell.gdiac.util.ScreenListener;
 
-public class OnboardingMode implements ModeController, InputProcessor, ControllerListener, Loading {
+public class OnboardingMode implements Screen, InputProcessor, ControllerListener, Loading {
 
     private final long FADING_TIME = 100;
     private final long FIRST_TEXT_TIME = 140;
@@ -27,6 +27,8 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
 
     /** is ready for game mode*/
     private boolean isReady = false;
+    /** Whether or not this player mode is still active */
+    private boolean active;
 
     /** Internal assets for this loading screen */
     private AssetDirectory internal;
@@ -65,12 +67,23 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
 
     private InputController inputController;
 
-    public OnboardingMode(String file){
+    /** Listener that will update the player mode when we are done */
+    private ScreenListener listener;
+
+    /** Reference to GameCanvas created by the root */
+    private GameCanvas canvas;
+
+    public OnboardingMode(GameCanvas canvas, String file){
         // Waiting on these values until we see the canvas
         heightY = -1;
         scale = -1.0f;
         time = -200;
         penguinX = 100;
+        active = false;
+        this.canvas  = canvas;
+
+        // Compute the dimensions from the canvas
+        resize(canvas.getWidth(),canvas.getHeight());
 
         // We need these files loaded immediately
         internal = new AssetDirectory( "onBoarding.json" );
@@ -100,18 +113,27 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
         fadingColor = new Color(0,0,0,1);
 
         inputController = InputController.getInstance();
+        active = true;
     }
 
-    @Override
-    public void update() {
+    public void update(float delta) {
         inputController.readInput();
         if(inputController.didThrowPengiun()){
             isReady = true;
         }
     }
 
-    @Override
-    public void draw(GameCanvas canvas) {
+    /**
+     * Sets the ScreenListener for this mode
+     *
+     * The ScreenListener will respond to requests to quit.
+     */
+    public void setScreenListener(ScreenListener listener) {
+        this.listener = listener;
+    }
+
+    public void draw() {
+        canvas.begin();
         time += 1;
         pengiunAngle += 0.1f;
         pengiunAngle %= 360;
@@ -146,6 +168,7 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
                 fadingColor.a = 0;}
             canvas.drawOverlay(whiteTexture, fadingColor, 0,0);
         }
+        canvas.end();
     }
 
     @Override
@@ -156,12 +179,45 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
     }
 
     @Override
+    public void show() {
+        active = true;
+    }
+
+    @Override
+    public void render(float delta) {
+        if (active) {
+            update(delta);
+            draw();
+
+            // We are are ready, notify our listener
+            if (isReady() && listener != null) {
+                listener.updateScreen(this, 0);
+            }
+        }
+    }
+
+    @Override
     public void resize(int width, int height) {
         // Compute the drawing scale
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
         heightY = height;
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
     }
 
     /**

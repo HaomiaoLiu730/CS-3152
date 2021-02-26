@@ -25,7 +25,6 @@ import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.graphics.g2d.freetype.*;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.*;
@@ -476,7 +475,7 @@ public abstract class WorldController implements Screen {
 
         // Now it is time to maybe switch screens.
         if (input.didExit()) {
-            listener.exitScreen(this, EXIT_QUIT);
+            listener.updateScreen(this, EXIT_QUIT);
             return false;
         } else if (countdown > 0) {
             countdown--;
@@ -484,7 +483,7 @@ public abstract class WorldController implements Screen {
             if (failed) {
                 reset();
             } else if (complete) {
-                listener.exitScreen(this, EXIT_NEXT);
+                listener.updateScreen(this, EXIT_NEXT);
                 return false;
             }
         }
@@ -566,17 +565,17 @@ public abstract class WorldController implements Screen {
         }
 
         // Final message
-        if (complete && !failed) {
-            displayFont.setColor(Color.YELLOW);
-            canvas.begin(); // DO NOT SCALE
-            canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
-            canvas.end();
-        } else if (failed) {
-            displayFont.setColor(Color.RED);
-            canvas.begin(); // DO NOT SCALE
-            canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
-            canvas.end();
-        }
+//        if (complete && !failed) {
+//            displayFont.setColor(Color.YELLOW);
+//            canvas.begin(); // DO NOT SCALE
+//            canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
+//            canvas.end();
+//        } else if (failed) {
+//            displayFont.setColor(Color.RED);
+//            canvas.begin(); // DO NOT SCALE
+//            canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
+//            canvas.end();
+//        }
     }
 
     /**
@@ -601,7 +600,6 @@ public abstract class WorldController implements Screen {
      * @param delta Number of seconds since last animation frame
      */
     public void render(float delta) {
-        System.out.println("rendering");
         if (active) {
             if (preUpdate(delta)) {
                 update(delta); // This is the one that must be defined.

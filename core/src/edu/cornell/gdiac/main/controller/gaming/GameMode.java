@@ -48,6 +48,8 @@ public class GameMode extends WorldController implements ModeController, Contact
     /** The world scale */
     protected Vector2 scale;
 
+    private Vector2 PENGUIN_SCALE;
+
 
     // Wall vertices
     private static final float[][] WALLS = {
@@ -96,6 +98,8 @@ public class GameMode extends WorldController implements ModeController, Contact
         earthTile = new TextureRegion(asset.getEntry("tile", Texture.class));
         goalTile = new TextureRegion(asset.getEntry("tile", Texture.class));
         avatarTexture = new TextureRegion(asset.getEntry("avatar", Texture.class));
+
+        PENGUIN_SCALE = new Vector2(10,10);
     }
 
     public GameMode(){
@@ -113,6 +117,7 @@ public class GameMode extends WorldController implements ModeController, Contact
      * @param directory Reference to global asset manager.
      */
     public void loadContent(AssetDirectory directory) {
+        // TODO: load assets
         if (platformAssetState != AssetState.LOADING) {
             return;
         }
@@ -185,10 +190,13 @@ public class GameMode extends WorldController implements ModeController, Contact
         }
 
         // Create dude
-        dwidth  = avatarTexture.getRegionWidth()/scale.x;
-        dheight = avatarTexture.getRegionHeight()/scale.y;
+        dwidth  = avatarTexture.getRegionWidth()/scale.x/PENGUIN_SCALE.x;
+        dheight = avatarTexture.getRegionHeight()/scale.y/PENGUIN_SCALE.y;
+
+        System.out.println(dwidth);
+        System.out.println(dheight);
         avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
-        avatar.setDrawScale(scale);
+        avatar.setDrawScale(PENGUIN_SCALE);
         avatar.setTexture(avatarTexture);
         addObject(avatar);
     }
