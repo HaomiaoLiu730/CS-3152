@@ -148,8 +148,6 @@ public class OnboardingMode implements ModeController, InputProcessor, Controlle
         }
     }
 
-
-
     @Override
     public void dispose() {
         internal.unloadAssets();

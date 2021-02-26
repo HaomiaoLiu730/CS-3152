@@ -50,10 +50,9 @@ public class GDXRoot extends ApplicationAdapter {
 				loading = new GameSpecMode(canvas.getWidth(),canvas.getHeight());
 				controller = loading;
 			}else if(loading instanceof GameSpecMode && loading.isReady()){
-				directory = loading.getAssets();
 				loading.dispose();
 				loading = null;
-				controller = new GameMode(canvas.getWidth(),canvas.getHeight(),directory);
+				controller = new GameMode(canvas.getWidth(),canvas.getHeight());
 			}
 		}
 		// Update the game state

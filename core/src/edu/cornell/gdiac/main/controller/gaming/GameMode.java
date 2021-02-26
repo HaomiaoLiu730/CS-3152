@@ -2,18 +2,26 @@ package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.ModeController;
+import edu.cornell.gdiac.main.model.Player;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 
-public class GameMode extends WorldController implements ModeController {
+public class GameMode extends WorldController implements ModeController, ContactListener {
 
+
+    private AssetDirectory asset;
+    // Physics objects for the game
+    /** Reference to the character avatar */
+    private Player avatar;
     /** The texture for the exit condition */
     protected TextureRegion goalTile;
+    /** Texture asset for character avatar */
+    private TextureRegion avatarTexture;
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -28,6 +36,10 @@ public class GameMode extends WorldController implements ModeController {
     private static final float BASIC_RESTITUTION = 0.1f;
     /** Threshold for generating sound on collision */
     private static final float SOUND_THRESHOLD = 1.0f;
+
+    /** The initial position of the dude */
+    private static Vector2 PLAYER_POS = new Vector2(2.5f, 5.0f);
+
 
     /** The world scale */
     protected Vector2 scale;
@@ -64,11 +76,41 @@ public class GameMode extends WorldController implements ModeController {
      *
      * @param width  The width of the game window
      * @param height The height of the game window
-     * @param assets The asset directory containing all the loaded assets
      */
-    public GameMode(float width, float height, AssetDirectory assets) {
-        goalTile = assets.getEntry("goalTile", TextureRegion.class);
+    public GameMode(float width, float height) {
+        super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
+        setDebug(false);
+        setComplete(false);
+        setFailure(false);
+        world.setContactListener(this);
 
+        asset = new AssetDirectory("assets.json");
+        asset.loadAssets();
+        asset.finishLoading();
+        goalTile = asset.getEntry("tile", TextureRegion.class);
+        avatarTexture = asset.getEntry("avatar", TextureRegion.class);
+    }
+
+    /**
+     * Resets the status of the game so that we can play again.
+     *
+     * This method disposes of the world and creates a new one.
+     */
+    public void reset() {
+        Vector2 gravity = new Vector2(world.getGravity() );
+
+        for(Obstacle obj : objects) {
+            obj.deactivatePhysics(world);
+        }
+        objects.clear();
+        addQueue.clear();
+        world.dispose();
+
+        world = new World(gravity,false);
+        world.setContactListener(this);
+        setComplete(false);
+        setFailure(false);
+        populateLevel();
     }
 
     @Override
@@ -112,9 +154,41 @@ public class GameMode extends WorldController implements ModeController {
             addObject(obj);
         }
 
+        // Create dude
+        dwidth  = avatarTexture.getRegionWidth()/scale.x;
+        dheight = avatarTexture.getRegionHeight()/scale.y;
+        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
+        avatar.setDrawScale(scale);
+        avatar.setTexture(avatarTexture);
+        addObject(avatar);
     }
 
-        @Override
+    /**
+     * Returns whether to process the update loop
+     *
+     * At the start of the update loop, we check if it is time
+     * to switch to a new game mode.  If not, the update proceeds
+     * normally.
+     *
+     * @param dt Number of seconds since last animation frame
+     *
+     * @return whether to process the update loop
+     */
+    public boolean preUpdate(float dt) {
+        if (!super.preUpdate(dt)) {
+            return false;
+        }
+
+        if (!isFailure() && avatar.getY() < -1) {
+            setFailure(true);
+            return false;
+        }
+
+        return true;
+    }
+
+
+    @Override
     public void draw(GameCanvas canvas) {
 
     }
@@ -125,17 +199,32 @@ public class GameMode extends WorldController implements ModeController {
     }
 
     @Override
-    public void reset() {
-
-    }
-
-    @Override
     public void update(float dt) {
 
     }
 
     @Override
     public void resize(int width, int height) {
+
+    }
+
+    @Override
+    public void beginContact(Contact contact) {
+
+    }
+
+    @Override
+    public void endContact(Contact contact) {
+
+    }
+
+    @Override
+    public void preSolve(Contact contact, Manifold oldManifold) {
+
+    }
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {
 
     }
 }

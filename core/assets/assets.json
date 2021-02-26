@@ -1,0 +1,14 @@
+{
+  "textures": {
+    "avatar": {
+      "file":     "images/round-penguin.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "tile": {
+      "file":     "images/tile.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    }
+  }
+}

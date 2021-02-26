@@ -535,7 +535,7 @@ public abstract class WorldController implements Screen {
      * physics.  The primary method is the step() method in world.  This implementation
      * works for all applications and should not need to be overwritten.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      */
     public void postUpdate(float dt) {
         // Add any objects created by actions
