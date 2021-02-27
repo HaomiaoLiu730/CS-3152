@@ -2,6 +2,7 @@ package edu.cornell.gdiac.main.controller.opening;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
@@ -15,7 +16,7 @@ import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
-public class GameSpecMode implements InputProcessor, ControllerListener, Loading {
+public class GameSpecMode implements Screen, InputProcessor, ControllerListener, Loading {
     /** Internal assets for this loading screen */
     private AssetDirectory internal;
 
@@ -169,7 +170,11 @@ public class GameSpecMode implements InputProcessor, ControllerListener, Loading
         return asset;
     }
 
-    @Override
+    /**
+     * Sets the ScreenListener for this mode
+     *
+     * The ScreenListener will respond to requests to quit.
+     */
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
     }

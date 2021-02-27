@@ -7,13 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.controller.ModeController;
 import edu.cornell.gdiac.main.model.Player;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 
-public class GameMode extends WorldController implements ModeController, ContactListener {
+public class GameMode extends WorldController implements ContactListener {
 
 
     private AssetDirectory asset;
@@ -48,8 +49,8 @@ public class GameMode extends WorldController implements ModeController, Contact
     /** The world scale */
     protected Vector2 scale;
 
-    private Vector2 PENGUIN_SCALE;
-
+    /** Mark set to handle more sophisticated collision callbacks */
+    protected ObjectSet<Fixture> sensorFixtures;
 
     // Wall vertices
     private static final float[][] WALLS = {
@@ -62,15 +63,15 @@ public class GameMode extends WorldController implements ModeController, Contact
     /** The outlines of all of the platforms */
     private static final float[][] PLATFORMS = {
             { 1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
+//            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
+//            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
+//            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
+//            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
+//            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
+//            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
+//            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
+//            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
+//            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
     };
 
 
@@ -99,7 +100,8 @@ public class GameMode extends WorldController implements ModeController, Contact
         goalTile = new TextureRegion(asset.getEntry("tile", Texture.class));
         avatarTexture = new TextureRegion(asset.getEntry("avatar", Texture.class));
 
-        PENGUIN_SCALE = new Vector2(10,10);
+        sensorFixtures = new ObjectSet<Fixture>();
+
     }
 
     public GameMode(){
@@ -149,11 +151,6 @@ public class GameMode extends WorldController implements ModeController, Contact
         populateLevel();
     }
 
-    @Override
-    public void update() {
-
-    }
-
     /**
      * Lays out the game geography.
      */
@@ -189,14 +186,12 @@ public class GameMode extends WorldController implements ModeController, Contact
             addObject(obj);
         }
 
-        // Create dude
-        dwidth  = avatarTexture.getRegionWidth()/scale.x/PENGUIN_SCALE.x;
-        dheight = avatarTexture.getRegionHeight()/scale.y/PENGUIN_SCALE.y;
+        // Create player
+        dwidth  = avatarTexture.getRegionWidth()/scale.x;
+        dheight = avatarTexture.getRegionHeight()/scale.y;
 
-        System.out.println(dwidth);
-        System.out.println(dheight);
         avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
-        avatar.setDrawScale(PENGUIN_SCALE);
+        avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
         addObject(avatar);
     }
@@ -225,12 +220,6 @@ public class GameMode extends WorldController implements ModeController, Contact
         return true;
     }
 
-
-    @Override
-    public void draw(GameCanvas canvas) {
-
-    }
-
     @Override
     public void dispose() {
 
@@ -238,7 +227,11 @@ public class GameMode extends WorldController implements ModeController, Contact
 
     @Override
     public void update(float dt) {
+        avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
+        avatar.setJumping(InputController.getInstance().didPrimary());
+        avatar.setShooting(InputController.getInstance().didSecondary());
 
+        avatar.applyForce();
     }
 
     @Override
@@ -248,12 +241,53 @@ public class GameMode extends WorldController implements ModeController, Contact
 
     @Override
     public void beginContact(Contact contact) {
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
+
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+        try {
+            Obstacle bd1 = (Obstacle)body1.getUserData();
+            Obstacle bd2 = (Obstacle)body2.getUserData();
+
+            // See if we have landed on the ground.
+            if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+                    (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+                avatar.setGrounded(true);
+                sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
     public void endContact(Contact contact) {
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
 
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+        Object bd1 = body1.getUserData();
+        Object bd2 = body2.getUserData();
+
+        if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+                (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+            sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
+            if (sensorFixtures.size == 0) {
+                avatar.setGrounded(false);
+            }
+        }
     }
 
     @Override

@@ -30,6 +30,8 @@ import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.main.obstacle.*;
 
+import javax.xml.soap.Text;
+
 /**
  * Base class for a world-specific controller.
  *
@@ -69,6 +71,7 @@ public abstract class WorldController implements Screen {
     protected TextureRegion goalTile;
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    protected Texture background;
 
     /**
      * Preloads the assets for this controller.
@@ -106,6 +109,8 @@ public abstract class WorldController implements Screen {
 
         // Allocate the tiles
         earthTile = new TextureRegion(directory.getEntry("tile", Texture.class));
+        background = directory.getEntry("white", Texture.class);
+        System.out.println("bg: "+background.getTextureData());
 
         // Allocate the font
 
