@@ -1,0 +1,15 @@
+{
+  "textures": {
+    "background": {
+      "file":     "images/lightBlue.jpg",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    }
+  },
+  "fonts": {
+    "gameFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 16
+    }
+  }
+}

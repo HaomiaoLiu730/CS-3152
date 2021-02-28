@@ -375,6 +375,7 @@ public class GameCanvas {
      * Ends a drawing sequence, flushing textures to the graphics card.
      */
     public void end() {
+
         spriteBatch.end();
         active = DrawPass.INACTIVE;
     }

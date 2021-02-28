@@ -11,7 +11,6 @@ import edu.cornell.gdiac.main.controller.gaming.GameMode;
 import edu.cornell.gdiac.main.controller.gaming.LevelLoadingMode;
 import edu.cornell.gdiac.main.controller.opening.GameSpecMode;
 import edu.cornell.gdiac.main.controller.opening.Loading;
-import edu.cornell.gdiac.main.controller.ModeController;
 import edu.cornell.gdiac.main.controller.opening.OnboardingMode;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
@@ -49,9 +48,11 @@ public class GDXRoot extends Game implements ScreenListener {
 
 //		controller = new LevelLoadingMode(false);
 		directory = new AssetDirectory("assets.json");
+		directory.loadAssets();
+		directory.finishLoading();
 		controllers = new WorldController[NUMBER_OF_LEVELS];
 		controllers[0] = new GameMode();
-		controllers[current].loadContent(directory);
+//		controllers[current].loadContent(directory);
 		current = 0;
 		loading.setScreenListener(this);
 		setScreen(loading);

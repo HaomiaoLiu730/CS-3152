@@ -67,11 +67,11 @@ public abstract class WorldController implements Screen {
 
     /** The texture for walls and platforms */
     protected TextureRegion earthTile;
-    /** The texture for the exit condition */
-    protected TextureRegion goalTile;
+    /** The texture for the player */
+    protected TextureRegion avatarTexture;
+
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
-    protected Texture background;
 
     /**
      * Preloads the assets for this controller.
@@ -103,15 +103,14 @@ public abstract class WorldController implements Screen {
      * @param directory Reference to global asset manager.
      */
     public void loadContent(AssetDirectory directory) {
-        if (worldAssetState != AssetState.LOADING) {
-            return;
-        }
+
+//        if (worldAssetState != AssetState.LOADING) {
+//            return;
+//        }
 
         // Allocate the tiles
         earthTile = new TextureRegion(directory.getEntry("tile", Texture.class));
-        background = directory.getEntry("white", Texture.class);
-
-        // Allocate the font
+        avatarTexture = new TextureRegion(directory.getEntry("avatar", Texture.class));
 
         worldAssetState = AssetState.COMPLETE;
     }

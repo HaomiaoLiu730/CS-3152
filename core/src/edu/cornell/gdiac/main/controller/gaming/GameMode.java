@@ -18,14 +18,11 @@ import edu.cornell.gdiac.main.controller.WorldController;
 public class GameMode extends WorldController implements ContactListener {
 
 
-    private AssetDirectory asset;
-    // Physics objects for the game
+    private AssetDirectory internal;
     /** Reference to the character avatar */
     private Player avatar;
-    /** The texture for the exit condition */
-    protected TextureRegion goalTile;
-    /** Texture asset for character avatar */
-    private TextureRegion avatarTexture;
+
+    private Texture background;
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -94,12 +91,10 @@ public class GameMode extends WorldController implements ContactListener {
         setFailure(false);
         world.setContactListener(this);
 
-        asset = new AssetDirectory("assets.json");
-        asset.loadAssets();
-        asset.finishLoading();
-        earthTile = new TextureRegion(asset.getEntry("tile", Texture.class));
-        goalTile = new TextureRegion(asset.getEntry("tile", Texture.class));
-        avatarTexture = new TextureRegion(asset.getEntry("avatar", Texture.class));
+        internal = new AssetDirectory("level1.json");
+        internal.loadAssets();
+        internal.finishLoading();
+        background = internal.getEntry("background", Texture.class);
 
         sensorFixtures = new ObjectSet<Fixture>();
 
@@ -121,11 +116,10 @@ public class GameMode extends WorldController implements ContactListener {
      */
     public void loadContent(AssetDirectory directory) {
         // TODO: load assets
+        super.loadContent(directory);
         if (platformAssetState != AssetState.LOADING) {
             return;
         }
-        avatarTexture = directory.getEntry("avatar", TextureRegion.class);
-        super.loadContent(directory);
         platformAssetState = AssetState.COMPLETE;
     }
 
@@ -223,7 +217,8 @@ public class GameMode extends WorldController implements ContactListener {
 
     @Override
     public void dispose() {
-
+        internal.unloadAssets();
+        internal.dispose();
     }
 
     @Override
@@ -246,11 +241,20 @@ public class GameMode extends WorldController implements ContactListener {
         canvas.clear();
 
         canvas.begin();
-//        canvas.drawOverlay(background,Color.BLACK, true);
-//        canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
 
+        for(Obstacle obj : objects) {
+            obj.draw(canvas);
+        }
         canvas.end();
-        super.draw(dt);
+
+//        if (debug) {
+//            canvas.beginDebug();
+//            for(Obstacle obj : objects) {
+//                obj.drawDebug(canvas);
+//            }
+//            canvas.endDebug();
+//        }
     }
 
         @Override
