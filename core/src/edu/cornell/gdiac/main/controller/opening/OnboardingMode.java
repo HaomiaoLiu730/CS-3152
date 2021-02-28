@@ -41,8 +41,6 @@ public class OnboardingMode implements Screen, InputProcessor, ControllerListene
     private Texture whiteTexture;
     /** penguin image*/
     private Texture roundPenguin;
-    /** white line*/
-    private Texture whiteLine;
     /** Cached Color attribute */
     private Color fadingColor;
 
@@ -55,7 +53,6 @@ public class OnboardingMode implements Screen, InputProcessor, ControllerListene
     private BitmapFont gameFont;
     /** pause time*/
     long time = -160;
-    private int FONT_SIZE = 40;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
@@ -93,16 +90,10 @@ public class OnboardingMode implements Screen, InputProcessor, ControllerListene
         postcard = internal.getEntry( "postcard", Texture.class );
         whiteTexture = internal.getEntry("white", Texture.class);
         roundPenguin = internal.getEntry("roundPenguin", Texture.class);
-        whiteLine = internal.getEntry("whiteLine", Texture.class);
         Gdx.input.setInputProcessor( this );
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        fontParam.size = FONT_SIZE;
-        letterFont = generator.generateFont(fontParam);
-        FreeTypeFontGenerator.FreeTypeFontParameter fontParam2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        fontParam2.size = FONT_SIZE;
-        fontParam2.color = Color.BLACK;
-        gameFont = generator.generateFont(fontParam2);
+
+        gameFont = internal.getEntry("gameFont", BitmapFont.class);
+        letterFont = internal.getEntry("letterFont", BitmapFont.class);
 
         lineStart = new Vector2(penguinX,penguinY);
         lineEnd = new Vector2(penguinX, penguinY);
@@ -175,7 +166,6 @@ public class OnboardingMode implements Screen, InputProcessor, ControllerListene
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
-        letterFont.dispose();
     }
 
     @Override

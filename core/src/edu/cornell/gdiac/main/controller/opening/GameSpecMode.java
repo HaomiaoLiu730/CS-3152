@@ -11,8 +11,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
-import edu.cornell.gdiac.main.controller.ModeController;
-import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -40,8 +38,6 @@ public class GameSpecMode implements Screen, InputProcessor, ControllerListener,
     /** Standard height that the assets were designed for */
     private static int STANDARD_HEIGHT = 720;
     private static final float Y_INCREMENT = 1;
-    private static final int FONT_SIZE = 30;
-    private static final int PROMPT_FONT_SIZE = 20;
     private static final String info =
             "When the polar bear was a child, he found a drifting bottle on the beach\n" +
             "with a penguin, Lay\'s letter in it.\n"+
@@ -79,13 +75,8 @@ public class GameSpecMode implements Screen, InputProcessor, ControllerListener,
         background = internal.getEntry("white", Texture.class );
         Gdx.input.setInputProcessor( this );
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        fontParam.size = FONT_SIZE;
-        mainFont = generator.generateFont(fontParam);
-        FreeTypeFontGenerator.FreeTypeFontParameter promptFontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        promptFontParam.size = PROMPT_FONT_SIZE;
-        promptFont = generator.generateFont(promptFontParam);
+        mainFont = internal.getEntry("mainFont", BitmapFont.class);
+        promptFont = internal.getEntry("promptFont", BitmapFont.class);
 
         isReady = false;
         inputController = new InputController();
@@ -115,8 +106,6 @@ public class GameSpecMode implements Screen, InputProcessor, ControllerListener,
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
-        mainFont.dispose();
-        promptFont.dispose();
     }
 
     @Override

@@ -15,5 +15,17 @@
       "minFilter": "linear",
       "magFilter": "linear"
     }
+  },
+  "fonts": {
+    "gameFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 40,
+      "color": "black"
+    },
+    "letterFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 40,
+      "color": "white"
+    }
   }
 }

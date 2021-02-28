@@ -10,5 +10,15 @@
       "minFilter": "linear",
       "magFilter": "linear"
     }
+  },
+  "fonts": {
+    "mainFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 30
+    },
+    "promptFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 20
+    }
   }
 }
