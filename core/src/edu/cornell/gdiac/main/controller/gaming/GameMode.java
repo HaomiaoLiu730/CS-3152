@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -234,7 +235,25 @@ public class GameMode extends WorldController implements ContactListener {
         avatar.applyForce();
     }
 
-    @Override
+    /**
+     * Draw the physics objects together with foreground and background
+     *
+     * This is completely overridden to support custom background and foreground art.
+     *
+     * @param dt Timing values from parent loop
+     */
+    public void draw(float dt) {
+        canvas.clear();
+
+        canvas.begin();
+//        canvas.drawOverlay(background,Color.BLACK, true);
+//        canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
+
+        canvas.end();
+        super.draw(dt);
+    }
+
+        @Override
     public void resize(int width, int height) {
 
     }

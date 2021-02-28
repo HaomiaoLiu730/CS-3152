@@ -110,7 +110,6 @@ public abstract class WorldController implements Screen {
         // Allocate the tiles
         earthTile = new TextureRegion(directory.getEntry("tile", Texture.class));
         background = directory.getEntry("white", Texture.class);
-        System.out.println("bg: "+background.getTextureData());
 
         // Allocate the font
 
