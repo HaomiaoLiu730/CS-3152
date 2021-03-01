@@ -37,7 +37,7 @@ public class Player extends CapsuleObstacle {
     /** The maximum character speed */
     private static final float PLAYER_MAXSPEED = 5.0f;
     /** The impulse for the character jump */
-    private static final float PLAYER_JUMP = 5.5f;
+    private static final float PLAYER_JUMP = 12f;
     /** Cooldown (in animation frames) for jumping */
     private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for shooting */
@@ -56,7 +56,7 @@ public class Player extends CapsuleObstacle {
     private static final float PLAYER_SSHRINK = 0.6f;
 
     /** The current horizontal movement of the character */
-    private float   movement;
+    private float movement;
     /** Which direction is the character facing */
     private boolean faceRight;
     /** How long until we can jump again */
@@ -97,9 +97,9 @@ public class Player extends CapsuleObstacle {
     public void setMovement(float value) {
         movement = value;
         // Change facing if appropriate
-        if (movement < 0) {
+        if (value < 0) {
             faceRight = false;
-        } else if (movement > 0) {
+        } else if (value > 0) {
             faceRight = true;
         }
     }

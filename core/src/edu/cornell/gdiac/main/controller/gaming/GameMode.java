@@ -24,6 +24,11 @@ public class GameMode extends WorldController implements ContactListener {
 
     private Texture background;
 
+    private float moveY;
+    private float moveX;
+    private Vector2 move = new Vector2();
+    private Vector2 shiftVector = new Vector2();
+
     // Physics constants for initialization
     /** Density of non-crate objects */
     private static final float BASIC_DENSITY   = 0.0f;
@@ -37,9 +42,12 @@ public class GameMode extends WorldController implements ContactListener {
     private static final float BASIC_RESTITUTION = 0.1f;
     /** Threshold for generating sound on collision */
     private static final float SOUND_THRESHOLD = 1.0f;
+    private static final float START_X = -30f;
+    private static final float START_Y = 0f;
 
     /** The initial position of the dude */
-    private static Vector2 PLAYER_POS = new Vector2(2.5f, 5.0f);
+    private static Vector2 PLAYER_POS = new Vector2(16f, 5.0f);
+    private Vector2 prevPos = new Vector2();
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -52,24 +60,19 @@ public class GameMode extends WorldController implements ContactListener {
 
     // Wall vertices
     private static final float[][] WALLS = {
-            {16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-                    1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
-            {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
-                    31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f}
+            {
+                16f, 1f, 16f, 0f, 0f, 0f, 0f, 1f
+            },
+            {
+                200f, 1f, 200, 0f, 16f, 0f, 16f, 1f
+            }
     };
 
     /** The outlines of all of the platforms */
     private static final float[][] PLATFORMS = {
-            { 1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-//            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-//            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-//            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-//            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-//            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-//            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-//            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-//            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-//            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
+            {
+                0f, 20f, 7.5f, 17f, 15f, 15f, 16f, 13f, 21f, 11.5f, 24f, 9f, 27f, 8f, 30f,6f, 33f, 4f, 36f, 0f, 0f, 0f, 0f, 20f
+            }
     };
 
 
@@ -156,7 +159,7 @@ public class GameMode extends WorldController implements ContactListener {
         String wname = "wall";
         for (int ii = 0; ii < WALLS.length; ii++) {
             PolygonObstacle obj;
-            obj = new PolygonObstacle(WALLS[ii], 0, 0);
+            obj = new PolygonObstacle(WALLS[ii], START_X, START_Y);
             obj.setBodyType(BodyDef.BodyType.StaticBody);
             obj.setDensity(BASIC_DENSITY);
             obj.setFriction(BASIC_FRICTION);
@@ -170,7 +173,7 @@ public class GameMode extends WorldController implements ContactListener {
         String pname = "platform";
         for (int ii = 0; ii < PLATFORMS.length; ii++) {
             PolygonObstacle obj;
-            obj = new PolygonObstacle(PLATFORMS[ii], 0, 0);
+            obj = new PolygonObstacle(PLATFORMS[ii], START_X, START_Y);
             obj.setBodyType(BodyDef.BodyType.StaticBody);
             obj.setDensity(BASIC_DENSITY);
             obj.setFriction(BASIC_FRICTION);
@@ -223,10 +226,15 @@ public class GameMode extends WorldController implements ContactListener {
 
     @Override
     public void update(float dt) {
+
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
         avatar.setJumping(InputController.getInstance().didPrimary());
-        avatar.setShooting(InputController.getInstance().didSecondary());
-
+        for(Obstacle obj: objects){
+            if(obj instanceof Player){
+                continue;
+            }
+            obj.getBody().setTransform(START_X - avatar.getX() + 16, 0, 0);
+        }
         avatar.applyForce();
     }
 
