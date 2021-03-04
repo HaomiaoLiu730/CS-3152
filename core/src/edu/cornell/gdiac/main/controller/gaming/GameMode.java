@@ -181,12 +181,12 @@ public class GameMode extends WorldController implements ContactListener {
         }
 
         // Create player
-        dwidth  = avatarTexture.getRegionWidth()/scale.x;
-        dheight = avatarTexture.getRegionHeight()/scale.y;
+        dwidth  = avatarStrip.getRegionWidth()/scale.x;
+        dheight = avatarStrip.getRegionHeight()/scale.y;
 
         avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
-        avatar.setTexture(avatarTexture);
+        avatar.setFilmStrip(avatarStrip);
         addObject(avatar);
     }
 
@@ -229,7 +229,8 @@ public class GameMode extends WorldController implements ContactListener {
             if(obj instanceof Player){
                 continue;
             }
-            obj.getBody().setTransform(obj.getBody().getTransform().getPosition().x - InputController.getInstance().getHorizontal() * 0.1f, 0, 0);
+            obj.getBody().setTransform(START_X + 16 - avatar.getX(), 0, 0);
+//            obj.getBody().setTransform(obj.getBody().getTransform().getPosition().x - InputController.getInstance().getHorizontal() * 0.1f, 0, 0);
         }
         avatar.applyForce();
     }

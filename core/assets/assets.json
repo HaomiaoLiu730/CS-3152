@@ -1,7 +1,7 @@
 {
   "textures": {
-    "avatar": {
-      "file":     "images/polarBear.png",
+    "avatarWalking": {
+      "file":     "images/avatarWalking.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

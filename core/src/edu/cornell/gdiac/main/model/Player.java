@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
+import edu.cornell.gdiac.util.FilmStrip;
 
 /**
  * Player avatar for the plaform game.
@@ -72,6 +73,8 @@ public class Player extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
+    private FilmStrip filmStrip;
+    private float timeCounter = 0;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -95,7 +98,7 @@ public class Player extends CapsuleObstacle {
      * @param value left/right movement of this character.
      */
     public void setMovement(float value) {
-//        movement = value;
+        movement = value;
         // Change facing if appropriate
         if (value < 0) {
             faceRight = false;
@@ -321,6 +324,12 @@ public class Player extends CapsuleObstacle {
         }
     }
 
+    public void setFilmStrip(FilmStrip strip){
+        this.filmStrip = strip;
+        origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
+    }
+
+
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
@@ -330,6 +339,11 @@ public class Player extends CapsuleObstacle {
      */
     public void update(float dt) {
         // Apply cooldowns
+        timeCounter += dt;
+        if(timeCounter >= 0.1) {
+            timeCounter = 0;
+            filmStrip.nextFrame();
+        }
         if (isJumping()) {
             jumpCooldown = JUMP_COOLDOWN;
         } else {
@@ -341,7 +355,6 @@ public class Player extends CapsuleObstacle {
         } else {
             shootCooldown = Math.max(0, shootCooldown - 1);
         }
-
         super.update(dt);
     }
 
@@ -352,7 +365,7 @@ public class Player extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
     /**
