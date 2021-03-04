@@ -67,7 +67,7 @@ public class GameMode extends WorldController implements ContactListener {
     /** The outlines of all of the platforms */
     private static final float[][] PLATFORMS = {
             {
-                0f, 20f, 7.5f, 17f, 15f, 15f, 16f, 13f, 21f, 11.5f, 24f, 9f, 27f, 8f, 30f,6f, 33f, 4f, 36f, 0f, 0f, 0f, 0f, 20f
+                0f, 20f, 3f, 16f, 10f, 14f, 13f, 11f, 19f, 10f, 23f, 7f, 29f, 6.5f, 30f, 4f, 39f, 3f, 40f, 0f, 0f, 0f, 0f, 20f
             }
     };
 
@@ -229,7 +229,7 @@ public class GameMode extends WorldController implements ContactListener {
             if(obj instanceof Player){
                 continue;
             }
-            obj.getBody().setTransform(START_X - avatar.getX() + 16, 0, 0);
+            obj.getBody().setTransform(obj.getBody().getTransform().getPosition().x - InputController.getInstance().getHorizontal() * 0.1f, 0, 0);
         }
         avatar.applyForce();
     }

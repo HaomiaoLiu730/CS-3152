@@ -95,7 +95,7 @@ public class Player extends CapsuleObstacle {
      * @param value left/right movement of this character.
      */
     public void setMovement(float value) {
-        movement = value;
+//        movement = value;
         // Change facing if appropriate
         if (value < 0) {
             faceRight = false;
