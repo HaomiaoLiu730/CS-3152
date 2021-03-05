@@ -58,64 +58,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		setScreen(loading);
 	}
 
-//	@Override
-//	public void render () {
-////		if (loading != null && loading.isReady()) {
-////			if(loading instanceof OnboardingMode){
-////				loading = new GameSpecMode(canvas.getWidth(),canvas.getHeight());
-////				controller = loading;
-////			}else if(loading instanceof GameSpecMode){
-////				loading.dispose();
-////				loading = null;
-////				controller = new GameMode(canvas.getWidth(),canvas.getHeight());
-//////				controllers[current].setScreenListener(this);
-//////				controllers[current].setCanvas(canvas);
-//////				controllers[current].reset();
-//////				setScreen(controllers[current]);
-////			}
-////		}
-////		// Update the game state
-////		controller.update();
-////
-////		Gdx.gl.glClearColor(1, 0, 0, 1);
-////		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-////		canvas.begin();
-////		controller.draw(canvas);
-////		controller.update();
-////		canvas.end();
-//		if(loading != null){
-//			loading.update();
-//			Gdx.gl.glClearColor(1, 0, 0, 1);
-//			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//			canvas.begin();
-//			controller.draw(canvas);
-//			controller.update();
-//			canvas.end();
-//		}
-//		if (loading != null && loading.isReady() && loading instanceof OnboardingMode) {
-//			loading = new GameSpecMode(canvas.getWidth(), canvas.getHeight());
-//			controller = loading;
-//			// Update the game state
-//			controller.update();
-//
-//			Gdx.gl.glClearColor(1, 0, 0, 1);
-//			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//			canvas.begin();
-//			controller.draw(canvas);
-//			controller.update();
-//			canvas.end();
-//		}
-//		else if(loading != null && loading.isReady() && loading instanceof GameSpecMode){
-//			loading.dispose();
-//			loading = null;
-//			controller = new GameMode(canvas.getWidth(),canvas.getHeight());
-//			controllers[current].setScreenListener(this);
-//			controllers[current].setCanvas(canvas);
-//			controllers[current].reset();
-//			setScreen(controllers[current]);
-//		}
-//	}
-	
 	@Override
 	public void dispose () {
 		setScreen(null);
@@ -167,6 +109,15 @@ public class GDXRoot extends Game implements ScreenListener {
 			controllers[current].reset();
 			controllers[current].setScreenListener(this);
 			setScreen(controllers[current]);
+		} else if(screen instanceof GameMode){
+			// NASA mode
+			if(exitCode == 1){
+
+			}
+			// silicon valley maze mode
+			else if(exitCode == 2){
+
+			}
 		}
 	}
 }

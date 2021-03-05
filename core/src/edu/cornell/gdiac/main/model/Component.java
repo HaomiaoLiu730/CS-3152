@@ -25,7 +25,7 @@ import edu.cornell.gdiac.util.FilmStrip;
  * Note that this class returns to static loading.  That is because there are
  * no other subclasses that we might loop through.
  */
-public class Player extends CapsuleObstacle {
+public class Component extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
     private static final float PLAYER_DENSITY = 1.0f;
@@ -56,20 +56,8 @@ public class Player extends CapsuleObstacle {
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float PLAYER_SSHRINK = 0.6f;
 
-    /** The current horizontal movement of the character */
-    private float movement;
-    /** Which direction is the character facing */
-    private boolean faceRight;
-    /** How long until we can jump again */
-    private int jumpCooldown;
-    /** Whether we are actively jumping */
-    private boolean isJumping;
-    /** How long until we can shoot again */
-    private int shootCooldown;
     /** Whether our feet are on the ground */
     private boolean isGrounded;
-    /** Whether we are actively shooting */
-    private boolean isShooting;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
@@ -78,70 +66,6 @@ public class Player extends CapsuleObstacle {
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
-
-    /**
-     * Returns left/right movement of this character.
-     *
-     * This is the result of input times dude force.
-     *
-     * @return left/right movement of this character.
-     */
-    public float getMovement() {
-        return movement;
-    }
-
-    /**
-     * Sets left/right movement of this character.
-     *
-     * This is the result of input times dude force.
-     *
-     * @param value left/right movement of this character.
-     */
-    public void setMovement(float value) {
-        movement = value;
-        // Change facing if appropriate
-        if (value < 0) {
-            faceRight = false;
-        } else if (value > 0) {
-            faceRight = true;
-        }
-    }
-
-    /**
-     * Returns true if the dude is actively firing.
-     *
-     * @return true if the dude is actively firing.
-     */
-    public boolean isShooting() {
-        return isShooting && shootCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    public void setShooting(boolean value) {
-        isShooting = value;
-    }
-
-    /**
-     * Returns true if the dude is actively jumping.
-     *
-     * @return true if the dude is actively jumping.
-     */
-    public boolean isJumping() {
-        return isJumping && isGrounded && jumpCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively jumping.
-     *
-     * @param value whether the dude is actively jumping.
-     */
-    public void setJumping(boolean value) {
-        isJumping = value;
-    }
 
     /**
      * Returns true if the dude is on the ground.
@@ -204,15 +128,6 @@ public class Player extends CapsuleObstacle {
     }
 
     /**
-     * Returns true if this character is facing right
-     *
-     * @return true if this character is facing right
-     */
-    public boolean isFacingRight() {
-        return faceRight;
-    }
-
-    /**
      * Creates a new dude at the origin.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -222,8 +137,8 @@ public class Player extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Player(float width, float height) {
-        this(0,0,width,height);
+    public Component(float width, float height, String name) {
+        this(0,0,width,height, name);
     }
 
     /**
@@ -238,7 +153,7 @@ public class Player extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Player(float x, float y, float width, float height) {
+    public Component(float x, float y, float width, float height, String name) {
         super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
@@ -246,13 +161,8 @@ public class Player extends CapsuleObstacle {
 
         // Gameplay attributes
         isGrounded = false;
-        isShooting = false;
-        isJumping = false;
-        faceRight = true;
 
-        shootCooldown = 0;
-        jumpCooldown = 0;
-        setName("dude");
+        setName(name);
     }
 
     /**
@@ -292,38 +202,6 @@ public class Player extends CapsuleObstacle {
         return true;
     }
 
-
-    /**
-     * Applies the force to the body of this dude
-     *
-     * This method should be called after the force attribute is set.
-     */
-    public void applyForce() {
-        if (!isActive()) {
-            return;
-        }
-
-        // Don't want to be moving. Damp out player motion
-        if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
-
-        // Jump!
-        if (isJumping()) {
-            forceCache.set(0, PLAYER_JUMP);
-            body.applyLinearImpulse(forceCache,getPosition(),true);
-        }
-    }
-
     public void setFilmStrip(FilmStrip strip){
         this.filmStrip = strip;
         origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
@@ -344,17 +222,6 @@ public class Player extends CapsuleObstacle {
             timeCounter = 0;
             filmStrip.nextFrame();
         }
-        if (isJumping()) {
-            jumpCooldown = JUMP_COOLDOWN;
-        } else {
-            jumpCooldown = Math.max(0, jumpCooldown - 1);
-        }
-
-        if (isShooting()) {
-            shootCooldown = SHOOT_COOLDOWN;
-        } else {
-            shootCooldown = Math.max(0, shootCooldown - 1);
-        }
         super.update(dt);
     }
 
@@ -364,8 +231,7 @@ public class Player extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1f,1.0f);
     }
 
     /**

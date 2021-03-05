@@ -1,5 +1,7 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -7,23 +9,24 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
+import edu.cornell.gdiac.main.model.Component;
 import edu.cornell.gdiac.main.model.Player;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
+import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.ScreenListener;
 
-public class GameMode extends WorldController implements ContactListener {
+public class GameMode extends WorldController implements ContactListener, ControllerListener {
 
+    /** Listener that will update the player mode when we are done */
+    private ScreenListener listener;
 
     private AssetDirectory internal;
     /** Reference to the character avatar */
     private Player avatar;
 
     private Texture background;
-
-    private float moveY;
-    private float moveX;
-    private Vector2 move = new Vector2();
-    private Vector2 shiftVector = new Vector2();
+    private Texture rocketTexture;
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -40,16 +43,23 @@ public class GameMode extends WorldController implements ContactListener {
     private static final float SOUND_THRESHOLD = 1.0f;
     private static final float START_X = -30f;
     private static final float START_Y = 0f;
+    private static final float ROCKET_X = 35f;
+    private static final float ROCKET_Y = 3f;
+
+    private boolean hitRocket=false;
 
     /** The initial position of the dude */
     private static Vector2 PLAYER_POS = new Vector2(16f, 5.0f);
-    private Vector2 prevPos = new Vector2();
+
+    private Component rocket;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
     /** The world scale */
     protected Vector2 scale;
+
+    private float prevavatarX = 16;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
@@ -94,6 +104,7 @@ public class GameMode extends WorldController implements ContactListener {
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
+        rocketTexture = internal.getEntry("rocket", Texture.class);
 
         sensorFixtures = new ObjectSet<Fixture>();
 
@@ -101,6 +112,15 @@ public class GameMode extends WorldController implements ContactListener {
 
     public GameMode(){
         this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+
+    /**
+     * Sets the ScreenListener for this mode
+     *
+     * The ScreenListener will respond to requests to quit.
+     */
+    public void setScreenListener(ScreenListener listener) {
+        this.listener = listener;
     }
 
     /**
@@ -180,6 +200,19 @@ public class GameMode extends WorldController implements ContactListener {
             addObject(obj);
         }
 
+        rocket = new Component(ROCKET_X, ROCKET_Y, rocketTexture.getWidth()/scale.x, rocketTexture.getHeight()/scale.y, "rocket");
+        FilmStrip rocketFilmStrip = new FilmStrip(rocketTexture, 1,1);
+        rocket.setFilmStrip(rocketFilmStrip);
+        rocket.setDrawScale(scale);
+        rocket.setBodyType(BodyDef.BodyType.StaticBody);
+        rocket.setDensity(BASIC_DENSITY);
+        rocket.setFriction(BASIC_FRICTION);
+        rocket.setRestitution(BASIC_RESTITUTION);
+        rocket.setSensor(true);
+        rocket.setDrawScale(scale);
+        rocket.setName("rocket");
+        addObject(rocket);
+
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
@@ -218,20 +251,35 @@ public class GameMode extends WorldController implements ContactListener {
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
+
     }
 
     @Override
     public void update(float dt) {
-
+        if(rocket.getY() > 16){
+            listener.updateScreen(this, 1);
+        }
+        float moveX = -avatar.getX() + prevavatarX;
+        if(Math.abs(moveX) < 1e-2) moveX = 0;
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
         avatar.setJumping(InputController.getInstance().didPrimary());
         for(Obstacle obj: objects){
             if(obj instanceof Player){
                 continue;
             }
-            obj.getBody().setTransform(START_X + 16 - avatar.getX(), 0, 0);
-//            obj.getBody().setTransform(obj.getBody().getTransform().getPosition().x - InputController.getInstance().getHorizontal() * 0.1f, 0, 0);
+            if(obj instanceof Component){
+                obj.setX(obj.getX()+moveX);
+                if(hitRocket && obj.getName() == "rocket"){
+                    obj.setY(obj.getY()+0.1f);
+                    avatar.setY(rocket.getY()+2);
+                    avatar.setX(rocket.getX());
+                }
+                continue;
+            }
+//            obj.getBody().setTransform(START_X + 16 - avatar.getX(), 0, 0);
+            obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
         }
+        prevavatarX = avatar.getX();
         avatar.applyForce();
     }
 
@@ -267,6 +315,10 @@ public class GameMode extends WorldController implements ContactListener {
 
     }
 
+    public void hitRocket(boolean value){
+        hitRocket = value;
+    }
+
     @Override
     public void beginContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
@@ -287,6 +339,11 @@ public class GameMode extends WorldController implements ContactListener {
                     (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
                 avatar.setGrounded(true);
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
+            }
+            // Check for win condition
+            if ((bd1 == avatar   && bd2 == rocket) ||
+                    (bd1 == rocket && bd2 == avatar)) {
+                hitRocket(true);
             }
 
         } catch (Exception e) {
@@ -316,6 +373,7 @@ public class GameMode extends WorldController implements ContactListener {
                 avatar.setGrounded(false);
             }
         }
+
     }
 
     @Override
@@ -326,5 +384,30 @@ public class GameMode extends WorldController implements ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
 
+    }
+
+    @Override
+    public void connected(Controller controller) {
+
+    }
+
+    @Override
+    public void disconnected(Controller controller) {
+
+    }
+
+    @Override
+    public boolean buttonDown(Controller controller, int buttonCode) {
+        return false;
+    }
+
+    @Override
+    public boolean buttonUp(Controller controller, int buttonCode) {
+        return false;
+    }
+
+    @Override
+    public boolean axisMoved(Controller controller, int axisCode, float value) {
+        return false;
     }
 }

@@ -4,6 +4,11 @@
       "file":     "images/lightBlue.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "rocket":  {
+      "file":     "images/rocket.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
