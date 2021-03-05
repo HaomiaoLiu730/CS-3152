@@ -15,7 +15,7 @@ import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
-public class OnboardingMode implements Screen, InputProcessor, ControllerListener, Loading {
+public class OnboardingController implements Screen, InputProcessor, ControllerListener, Loading {
 
     private final long FADING_TIME = 100;
     private final long FIRST_TEXT_TIME = 140;
@@ -70,7 +70,7 @@ public class OnboardingMode implements Screen, InputProcessor, ControllerListene
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
 
-    public OnboardingMode(GameCanvas canvas, String file){
+    public OnboardingController(GameCanvas canvas, String file){
         // Waiting on these values until we see the canvas
         heightY = -1;
         scale = -1.0f;

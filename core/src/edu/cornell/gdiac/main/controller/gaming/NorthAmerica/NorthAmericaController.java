@@ -1,9 +1,10 @@
-package edu.cornell.gdiac.main.controller.gaming;
+package edu.cornell.gdiac.main.controller.gaming.NorthAmerica;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -16,7 +17,7 @@ import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
-public class GameMode extends WorldController implements ContactListener, ControllerListener {
+public class NorthAmericaController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
@@ -27,6 +28,8 @@ public class GameMode extends WorldController implements ContactListener, Contro
 
     private Texture background;
     private Texture rocketTexture;
+    /** The texture for walls and platforms */
+    private TextureRegion earthTile;
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -91,7 +94,7 @@ public class GameMode extends WorldController implements ContactListener, Contro
      * @param width  The width of the game window
      * @param height The height of the game window
      */
-    public GameMode(float width, float height) {
+    public NorthAmericaController(float width, float height) {
         super(width,height,DEFAULT_GRAVITY);
 
         scale = super.scale;
@@ -100,17 +103,18 @@ public class GameMode extends WorldController implements ContactListener, Contro
         setFailure(false);
         world.setContactListener(this);
 
-        internal = new AssetDirectory("level1.json");
+        internal = new AssetDirectory("NorthAmericaMain.json");
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
         rocketTexture = internal.getEntry("rocket", Texture.class);
+        earthTile = new TextureRegion(internal.getEntry("tile", Texture.class));
 
         sensorFixtures = new ObjectSet<Fixture>();
 
     }
 
-    public GameMode(){
+    public NorthAmericaController(){
         this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
@@ -276,7 +280,6 @@ public class GameMode extends WorldController implements ContactListener, Contro
                 }
                 continue;
             }
-//            obj.getBody().setTransform(START_X + 16 - avatar.getX(), 0, 0);
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
         }
         prevavatarX = avatar.getX();

@@ -1,12 +1,7 @@
 {
   "textures": {
     "avatarWalking": {
-      "file":     "images/avatarWalking.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "tile": {
-      "file":     "images/tile.jpg",
+      "file":     "images/shared/avatarWalking.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

@@ -63,8 +63,6 @@ public abstract class WorldController implements Screen {
     /** Track all loaded assets (for unloading purposes) */
     protected Array<String> assets;
 
-    /** The texture for walls and platforms */
-    protected TextureRegion earthTile;
     /** The texture for the player */
     protected FilmStrip avatarStrip;
 
@@ -107,8 +105,6 @@ public abstract class WorldController implements Screen {
 //        }
 
         // Allocate the tiles
-        earthTile = new TextureRegion(directory.getEntry("tile", Texture.class));
-//        avatarStrip = new TextureRegion(directory.getEntry("avatarWalking", Texture.class));
         Texture texture = directory.getEntry("avatarWalking", Texture.class);
         avatarStrip = new FilmStrip(texture, 3, 6);
         worldAssetState = AssetState.COMPLETE;

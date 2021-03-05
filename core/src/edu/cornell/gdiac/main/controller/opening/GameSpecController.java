@@ -14,7 +14,7 @@ import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
-public class GameSpecMode implements Screen, InputProcessor, ControllerListener, Loading {
+public class GameSpecController implements Screen, InputProcessor, ControllerListener, Loading {
     /** Internal assets for this loading screen */
     private AssetDirectory internal;
 
@@ -61,7 +61,7 @@ public class GameSpecMode implements Screen, InputProcessor, ControllerListener,
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
 
-    public GameSpecMode(GameCanvas canvas,  String file) {
+    public GameSpecController(GameCanvas canvas, String file) {
         // Extract the assets from the asset directory.  All images are textures.
 
         internal = new AssetDirectory(file);

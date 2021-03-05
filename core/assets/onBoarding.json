@@ -1,7 +1,7 @@
 {
   "textures": {
     "postcard": {
-      "file":     "images/postcard.jpg",
+      "file":     "images/onboarding/postcard.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
     },
@@ -11,7 +11,7 @@
       "magFilter": "linear"
     },
     "roundPenguin": {
-      "file":     "images/round-penguin.png",
+      "file":     "images/onboarding/round-penguin.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }

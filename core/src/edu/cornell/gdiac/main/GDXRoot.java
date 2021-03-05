@@ -1,17 +1,13 @@
 package edu.cornell.gdiac.main;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.WorldController;
-import edu.cornell.gdiac.main.controller.gaming.GameMode;
-import edu.cornell.gdiac.main.controller.gaming.LevelLoadingMode;
-import edu.cornell.gdiac.main.controller.opening.GameSpecMode;
+import edu.cornell.gdiac.main.controller.gaming.NorthAmerica.NorthAmericaController;
+import edu.cornell.gdiac.main.controller.opening.GameSpecController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
-import edu.cornell.gdiac.main.controller.opening.OnboardingMode;
+import edu.cornell.gdiac.main.controller.opening.OnboardingController;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -44,14 +40,14 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create () {
 		// Create the drawing context
 		canvas  = new GameCanvas();
-		loading = new OnboardingMode(canvas, "gameSpecs.json");
+		loading = new OnboardingController(canvas, "gameSpecs.json");
 
 //		controller = new LevelLoadingMode(false);
 		directory = new AssetDirectory("assets.json");
 		directory.loadAssets();
 		directory.finishLoading();
 		controllers = new WorldController[NUMBER_OF_LEVELS];
-		controllers[0] = new GameMode();
+		controllers[0] = new NorthAmericaController();
 //		controllers[current].loadContent(directory);
 		current = 0;
 		loading.setScreenListener(this);
@@ -92,13 +88,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void updateScreen(Screen screen, int exitCode) {
-		if (screen instanceof OnboardingMode) {
+		if (screen instanceof OnboardingController) {
 			loading.dispose();
 			loading = null;
-			loading = new GameSpecMode(canvas, "gameSpecs.json");
+			loading = new GameSpecController(canvas, "gameSpecs.json");
 			loading.setScreenListener(this);
 			setScreen(loading);
-		} else if(screen instanceof GameSpecMode){
+		} else if(screen instanceof GameSpecController){
 			for(int ii = 0; ii < controllers.length; ii++) {
 				controllers[ii].loadContent(directory);
 				controllers[ii].setScreenListener(this);
@@ -109,7 +105,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			controllers[current].reset();
 			controllers[current].setScreenListener(this);
 			setScreen(controllers[current]);
-		} else if(screen instanceof GameMode){
+		} else if(screen instanceof NorthAmericaController){
 			// NASA mode
 			if(exitCode == 1){
 
