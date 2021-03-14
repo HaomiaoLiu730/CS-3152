@@ -1,7 +1,7 @@
 {
   "textures": {
     "postcard": {
-      "file":     "images/postcard.jpg",
+      "file":     "images/onboarding/postcard.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
     },
@@ -11,14 +11,21 @@
       "magFilter": "linear"
     },
     "roundPenguin": {
-      "file":     "images/round-penguin.png",
+      "file":     "images/onboarding/round-penguin.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    }
+  },
+  "fonts": {
+    "gameFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 40,
+      "color": "black"
     },
-    "whiteLine": {
-      "file":     "images/whit-line.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
+    "letterFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 40,
+      "color": "white"
     }
   }
 }

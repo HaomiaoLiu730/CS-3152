@@ -2,6 +2,7 @@ package edu.cornell.gdiac.main.controller.opening;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
@@ -10,13 +11,15 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
-import edu.cornell.gdiac.main.controller.ModeController;
-import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
+import edu.cornell.gdiac.util.ScreenListener;
 
-public class GameSpecMode implements ModeController, InputProcessor, ControllerListener, Loading {
+public class GameSpecController implements Screen, InputProcessor, ControllerListener, Loading {
     /** Internal assets for this loading screen */
     private AssetDirectory internal;
+
+    /** Whether or not this player mode is still active */
+    private boolean active;
 
     /** The background image for the spec */
     private Texture background;
@@ -27,9 +30,14 @@ public class GameSpecMode implements ModeController, InputProcessor, ControllerL
     private boolean isReady;
     private AssetDirectory asset;
 
+    /** Scaling factor for when the student changes the resolution. */
+    private float scale;
+
+    /** Standard width that the assets were designed for */
+    private static int STANDARD_WIDTH  = 1280;
+    /** Standard height that the assets were designed for */
+    private static int STANDARD_HEIGHT = 720;
     private static final float Y_INCREMENT = 1;
-    private static final int FONT_SIZE = 30;
-    private static final int PROMPT_FONT_SIZE = 20;
     private static final String info =
             "When the polar bear was a child, he found a drifting bottle on the beach\n" +
             "with a penguin, Lay\'s letter in it.\n"+
@@ -47,56 +55,97 @@ public class GameSpecMode implements ModeController, InputProcessor, ControllerL
             "A few years later, he finally became an adult, and Lay\'s illness became more serious\n"+
             "The brave polar bear is about to start on a journey to find the penguins alone.\n";
 
-    public GameSpecMode(float width, float height) {
+    /** Listener that will update the player mode when we are done */
+    private ScreenListener listener;
+
+    /** Reference to GameCanvas created by the root */
+    private GameCanvas canvas;
+
+    public GameSpecController(GameCanvas canvas, String file) {
         // Extract the assets from the asset directory.  All images are textures.
-        internal = new AssetDirectory( "gameSpecs.json" );
+
+        internal = new AssetDirectory(file);
         internal.loadAssets();
         internal.finishLoading();
+        this.canvas = canvas;
+
+        // Compute the dimensions from the canvas
+        resize(canvas.getWidth(),canvas.getHeight());
 
         background = internal.getEntry("white", Texture.class );
         Gdx.input.setInputProcessor( this );
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/MarkerFelt.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter fontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        fontParam.size = FONT_SIZE;
-        mainFont = generator.generateFont(fontParam);
-        FreeTypeFontGenerator.FreeTypeFontParameter promptFontParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        promptFontParam.size = PROMPT_FONT_SIZE;
-        promptFont = generator.generateFont(promptFontParam);
+        mainFont = internal.getEntry("mainFont", BitmapFont.class);
+        promptFont = internal.getEntry("promptFont", BitmapFont.class);
 
         isReady = false;
         inputController = new InputController();
 
         asset = new AssetDirectory("assets.json");
         asset.loadAssets();
+        active = true;
     }
 
-    @Override
-    public void update() {
+    public void update(float delta) {
         inputController.readInput();
         if(inputController.didThrowPengiun()){
             isReady = true;
         }
     }
 
-    @Override
-    public void draw(GameCanvas canvas) {
+    public void draw() {
+        canvas.begin();
         canvas.drawOverlay(background, Color.BLACK, true);
         textHeight += Y_INCREMENT;
         canvas.drawText(mainFont, info, 120, textHeight);
         canvas.drawText(promptFont, "Press space to skip", 1100, 700);
+        canvas.end();
     }
 
     @Override
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
-        mainFont.dispose();
-        promptFont.dispose();
+    }
+
+    @Override
+    public void show() {
+        active = true;
+    }
+
+    @Override
+    public void render(float delta) {
+        if (active) {
+            update(delta);
+            draw();
+
+            // We are are ready, notify our listener
+            if (isReady && listener != null) {
+                listener.updateScreen(this, 0);
+            }
+        }
     }
 
     @Override
     public void resize(int width, int height) {
+        // Compute the drawing scale
+        float sx = ((float)width)/STANDARD_WIDTH;
+        float sy = ((float)height)/STANDARD_HEIGHT;
+        scale = (sx < sy ? sx : sy);
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
 
     }
 
@@ -108,6 +157,15 @@ public class GameSpecMode implements ModeController, InputProcessor, ControllerL
     @Override
     public AssetDirectory getAssets() {
         return asset;
+    }
+
+    /**
+     * Sets the ScreenListener for this mode
+     *
+     * The ScreenListener will respond to requests to quit.
+     */
+    public void setScreenListener(ScreenListener listener) {
+        this.listener = listener;
     }
 
     @Override

@@ -1,28 +1,33 @@
 package edu.cornell.gdiac.main;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import edu.cornell.gdiac.assets.AssetDirectory;
-import edu.cornell.gdiac.main.controller.gaming.GameMode;
-import edu.cornell.gdiac.main.controller.gaming.LevelLoadingMode;
-import edu.cornell.gdiac.main.controller.opening.GameSpecMode;
+import edu.cornell.gdiac.main.controller.WorldController;
+import edu.cornell.gdiac.main.controller.gaming.NorthAmerica.HurricaneController;
+import edu.cornell.gdiac.main.controller.gaming.NorthAmerica.NorthAmericaController;
+import edu.cornell.gdiac.main.controller.opening.GameSpecController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
-import edu.cornell.gdiac.main.controller.ModeController;
-import edu.cornell.gdiac.main.controller.opening.OnboardingMode;
+import edu.cornell.gdiac.main.controller.opening.OnboardingController;
 import edu.cornell.gdiac.main.view.GameCanvas;
+import edu.cornell.gdiac.util.ScreenListener;
 
-public class GDXRoot extends ApplicationAdapter {
+public class GDXRoot extends Game implements ScreenListener {
 
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
+
+	private static final int NUMBER_OF_LEVELS = 1;
+	private int current = 0;
 
 	/** Drawing context to display graphics (VIEW CLASS) */
 	GameCanvas canvas;
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	Loading loading;
-	/** Polymorphic reference to the active player mode */
-	ModeController controller;
+	/** List of all WorldControllers */
+	private WorldController[] controllers;
+
+	private WorldController currentController;
 
 	/**
 	 * Creates a new game application root
@@ -38,59 +43,88 @@ public class GDXRoot extends ApplicationAdapter {
 	public void create () {
 		// Create the drawing context
 		canvas  = new GameCanvas();
-		loading = new OnboardingMode("gameSpecs.json");
-		controller = loading;
-//		controller = new LevelLoadingMode(false);
+		loading = new OnboardingController(canvas, "gameSpecs.json");
+
+		directory = new AssetDirectory("assets.json");
+		directory.loadAssets();
+		directory.finishLoading();
+		controllers = new WorldController[NUMBER_OF_LEVELS];
+		controllers[0] = new NorthAmericaController();
+//		controllers[current].loadContent(directory);
+		current = 0;
+		loading.setScreenListener(this);
+		setScreen(loading);
 	}
 
-	@Override
-	public void render () {
-		if (loading != null && loading.isReady()) {
-			if(loading instanceof OnboardingMode){
-				loading = new GameSpecMode(canvas.getWidth(),canvas.getHeight());
-				controller = loading;
-			}else if(loading instanceof GameSpecMode && loading.isReady()){
-				directory = loading.getAssets();
-				loading.dispose();
-				loading = null;
-				controller = new GameMode(canvas.getWidth(),canvas.getHeight(),directory);
-			}
-		}
-		// Update the game state
-		controller.update();
-
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		canvas.begin();
-		controller.draw(canvas);
-		controller.update();
-		canvas.end();
-	}
-	
 	@Override
 	public void dispose () {
-		controller.dispose();
+		setScreen(null);
 		if (directory != null) {
 			directory.unloadAssets();
 			directory.dispose();
 			directory = null;
 		}
 	}
+
 	/**
 	 * Called when the Application is resized.
 	 *
 	 * This can happen at any point during a non-paused state but will never happen
-	 * before a call to create()
+	 * before a call to create().
 	 *
-	 * @param width The window width
-	 * @param height The window height
+	 * @param width  The new width in pixels
+	 * @param height The new height in pixels
 	 */
-	@Override
 	public void resize(int width, int height) {
-		if (controller != null) {
-			controller.resize(width,height);
-		}
-		// Canvas knows the size, but not that it changed
 		canvas.resize();
+		super.resize(width,height);
+	}
+
+	@Override
+	/**
+	 * The given screen has made a request to exit its player mode.
+	 *
+	 * The value exitCode can be used to implement menu options.
+	 *
+	 * @param screen   The screen requesting to exit
+	 * @param exitCode The state of the screen upon exit
+	 */
+	public void updateScreen(Screen screen, int exitCode) {
+		if (screen instanceof OnboardingController) {
+			loading.dispose();
+			loading = null;
+			loading = new GameSpecController(canvas, "gameSpecs.json");
+			loading.setScreenListener(this);
+			setScreen(loading);
+		} else if(screen instanceof GameSpecController){
+			for(int ii = 0; ii < controllers.length; ii++) {
+				controllers[ii].loadContent(directory);
+				controllers[ii].setScreenListener(this);
+				controllers[ii].setCanvas(canvas);
+			}
+			loading.dispose();
+			loading = null;
+			controllers[current].reset();
+			controllers[current].setScreenListener(this);
+			setScreen(controllers[current]);
+		} else if(screen instanceof NorthAmericaController){
+			// NASA mode
+			if(exitCode == 1){
+
+			}
+			// silicon valley maze mode
+			else if(exitCode == 2){
+
+			}
+
+			// hurricane mode
+			else if(exitCode == 3){
+				currentController = new HurricaneController();
+				currentController.reset();
+				currentController.setScreenListener(this);
+				controllers[current].dispose();
+				setScreen(currentController);
+			}
+		}
 	}
 }

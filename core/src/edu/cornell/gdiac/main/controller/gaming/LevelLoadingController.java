@@ -8,7 +8,7 @@ import edu.cornell.gdiac.main.controller.ModeController;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 
-public class LevelLoadingMode implements ModeController {
+public class LevelLoadingController implements ModeController {
 
     private Texture whiteBackground;
     private static final float SECOND_PER_FRAME = 1f/6f;
@@ -18,7 +18,7 @@ public class LevelLoadingMode implements ModeController {
     // A variable for tracking elapsed time for the animation
     float stateTime;
 
-    public LevelLoadingMode(boolean win){
+    public LevelLoadingController(boolean win){
         internal = new AssetDirectory( "levelLoading.json" );
         internal.loadAssets();
         internal.finishLoading();

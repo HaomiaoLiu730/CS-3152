@@ -1,7 +1,7 @@
 {
   "textures": {
     "background": {
-      "file":     "images/postcard.jpg",
+      "file":     "images/onboarding/postcard.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
     },
@@ -9,6 +9,16 @@
       "file":     "images/white.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
+    }
+  },
+  "fonts": {
+    "mainFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 30
+    },
+    "promptFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 20
     }
   }
 }

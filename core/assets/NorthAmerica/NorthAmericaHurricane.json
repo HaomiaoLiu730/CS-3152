@@ -1,0 +1,25 @@
+{
+  "textures": {
+    "background": {
+      "file":     "images/northAmerica/lightBlue.jpg",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "tile": {
+      "file":     "images/northAmerica/tile.jpg",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "hurricane":  {
+      "file":     "images/northAmerica/hurricane.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    }
+  },
+  "fonts": {
+    "gameFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 16
+    }
+  }
+}
