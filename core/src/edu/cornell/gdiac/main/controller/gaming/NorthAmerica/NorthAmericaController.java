@@ -30,6 +30,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Texture rocketTexture;
     /** The texture for walls and platforms */
     private TextureRegion earthTile;
+    private Texture hurricaneTexture;
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -37,7 +38,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     /** Density of the crate objects */
     private static final float CRATE_DENSITY   = 1.0f;
     /** Friction of non-crate objects */
-    private static final float BASIC_FRICTION  = 0.1f;
+    private static final float BASIC_FRICTION  = 0.3f;
     /** Friction of the crate objects */
     private static final float CRATE_FRICTION  = 0.3f;
     /** Collision restitution for all objects */
@@ -46,15 +47,19 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private static final float SOUND_THRESHOLD = 1.0f;
     private static final float START_X = -30f;
     private static final float START_Y = 0f;
-    private static final float ROCKET_X = 35f;
+    private static final float ROCKET_X = 45f;
     private static final float ROCKET_Y = 3f;
+    private static final float HURRICANE_X = 30f;
+    private static final float HURRICANE_Y = 7f;
 
-    private boolean hitRocket=false;
+    private boolean hitRocket = false;
+    private boolean hitHurricane = false;
 
-    /** The initial position of the dude */
+    /** The initial position of the player */
     private static Vector2 PLAYER_POS = new Vector2(16f, 5.0f);
 
     private Component rocket;
+    private Component huricane;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -103,15 +108,15 @@ public class NorthAmericaController extends WorldController implements ContactLi
         setFailure(false);
         world.setContactListener(this);
 
-        internal = new AssetDirectory("NorthAmericaMain.json");
+        internal = new AssetDirectory("NorthAmerica/NorthAmericaMain.json");
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
         rocketTexture = internal.getEntry("rocket", Texture.class);
         earthTile = new TextureRegion(internal.getEntry("tile", Texture.class));
+        hurricaneTexture = internal.getEntry("hurricane", Texture.class);
 
         sensorFixtures = new ObjectSet<Fixture>();
-
     }
 
     public NorthAmericaController(){
@@ -217,6 +222,19 @@ public class NorthAmericaController extends WorldController implements ContactLi
         rocket.setName("rocket");
         addObject(rocket);
 
+        huricane = new Component(HURRICANE_X, HURRICANE_Y, hurricaneTexture.getWidth()/scale.x, hurricaneTexture.getHeight()/scale.y, "hurricane");
+        FilmStrip huricaneFilmStrip = new FilmStrip(hurricaneTexture, 1,1);
+        huricane.setFilmStrip(huricaneFilmStrip);
+        huricane.setDrawScale(scale);
+        huricane.setBodyType(BodyDef.BodyType.StaticBody);
+        huricane.setDensity(BASIC_DENSITY);
+        huricane.setFriction(BASIC_FRICTION);
+        huricane.setRestitution(BASIC_RESTITUTION);
+        huricane.setSensor(true);
+        huricane.setDrawScale(scale);
+        huricane.setName("huricane");
+        addObject(huricane);
+
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
@@ -255,13 +273,15 @@ public class NorthAmericaController extends WorldController implements ContactLi
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
-
     }
 
     @Override
     public void update(float dt) {
-        if(rocket.getY() > 16){
+        if(rocket.getY() > 22){
             listener.updateScreen(this, 1);
+        }
+        if(hitHurricane){
+            listener.updateScreen(this, 3);
         }
         float moveX = -avatar.getX() + prevavatarX;
         if(Math.abs(moveX) < 1e-2) moveX = 0;
@@ -322,6 +342,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
         hitRocket = value;
     }
 
+    public void hitHurricane(boolean value){
+        hitHurricane = value;
+    }
+
     @Override
     public void beginContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
@@ -347,6 +371,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((bd1 == avatar   && bd2 == rocket) ||
                     (bd1 == rocket && bd2 == avatar)) {
                 hitRocket(true);
+            }
+            if ((bd1 == avatar   && bd2 == huricane) ||
+                    (bd1 == huricane && bd2 == avatar)) {
+                hitHurricane(true);
             }
 
         } catch (Exception e) {
