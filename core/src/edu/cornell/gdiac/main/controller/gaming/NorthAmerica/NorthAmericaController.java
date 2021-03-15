@@ -52,7 +52,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private static final float ROCKET_Y = 3f;
     private static final float HURRICANE_X = 30f;
     private static final float HURRICANE_Y = 7f;
-    private static final int NUM_PENGUIN = 1;
+    private static final int NUM_PENGUIN = 2;
 
     private boolean hitRocket = false;
     private boolean hitHurricane = false;

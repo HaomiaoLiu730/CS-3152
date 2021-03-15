@@ -97,7 +97,8 @@ public class Player extends CapsuleObstacle {
     private FilmStrip filmStrip;
     private Texture arrowTexture;
     private float timeCounter = 0;
-    private int numOfPenguins = 0;
+    private int totalPenguins;
+    private int numPenguins;
 
     private ArrayList<Penguin> penguins = new ArrayList<>();
 
@@ -131,10 +132,10 @@ public class Player extends CapsuleObstacle {
             faceRight = true;
         }
 
-        for(Penguin p: penguins){
-            if(!p.isThrowOut()){
-                p.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
-                p.setFaceRight(faceRight);
+        for(int i = 0; i<penguins.size(); i++){
+            if(!penguins.get(i).isThrowOut()){
+                penguins.get(i).setX(getX() + PENGUIN_WIDTH * (i+1) * (faceRight? -1 : 1));
+                penguins.get(i).setFaceRight(faceRight);
             }
 //            if(!p.isThrowOut() || !p.isGrounded()){
 //                p.setY(getY());
@@ -201,8 +202,10 @@ public class Player extends CapsuleObstacle {
      * @param value whether the dude is actively throwing.
      */
     public void setThrowing(boolean value) {
+//        if(!isGrounded || throwCooldown > 0 ){
+//            return;
+//        }
         isThrowing = value;
-
         if(throwingCount == 0){
             if(isThrowing && prevIsThrowing){
                 throwingForce += 1f;
@@ -225,9 +228,10 @@ public class Player extends CapsuleObstacle {
                 }
             }
             if(!value && prevIsThrowing){
-                if(penguins.size() > 0){
-                    penguins.get(0).setThrownOut(true);
-                    penguins.get(0).setMovement(throwingForce, throwingAngle);
+                if(numPenguins > 0){
+                    penguins.get(numPenguins-1).setThrownOut(true);
+                    penguins.get(numPenguins-1).setMovement(throwingForce, throwingAngle);
+                    numPenguins -= 1;
                 }
                 throwingCount = 0;
                 throwingForce = 0f;
@@ -329,9 +333,10 @@ public class Player extends CapsuleObstacle {
         isShooting = false;
         isJumping = false;
         faceRight = true;
-        this.numOfPenguins = numOfPenguins;
+        this.totalPenguins = numOfPenguins;
+        this.numPenguins = totalPenguins;
         for(int i = 0; i < numOfPenguins; i++){
-            penguins.add(new Penguin(x, y,PENGUIN_WIDTH, PENGUIN_HEIGHT, i));
+            penguins.add(new Penguin(x - (i+1)*PENGUIN_WIDTH, y,PENGUIN_WIDTH, PENGUIN_HEIGHT, i));
         }
 
         shootCooldown = 0;
