@@ -132,10 +132,11 @@ public class Player extends CapsuleObstacle {
         }
 
         for(Penguin p: penguins){
-            p.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
-            p.setFaceRight(faceRight);
+            if(!p.isThrowOut()){
+                p.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
+                p.setFaceRight(faceRight);
+            }
 //            if(!p.isThrowOut() || !p.isGrounded()){
-//                System.out.println("set y");
 //                p.setY(getY());
 //            }
         }

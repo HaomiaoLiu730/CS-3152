@@ -21,7 +21,7 @@ public class Penguin extends CapsuleObstacle {
     /** The factor to multiply by the input */
     private static final float PENGUIN_FORCE = 20.0f;
     /** The amount to slow the character down */
-    private static final float PENGUIN_DAMPING = 1.0f;
+    private static final float PENGUIN_DAMPING = 2.0f;
     /** The dude is a slippery one */
     private static final float PENGUIN_FRICTION = 0.0f;
     /** The maximum character speed */
@@ -85,9 +85,8 @@ public class Penguin extends CapsuleObstacle {
 
         // Don't want to be moving. Damp out player motion
         if (force == 0f) {
-//            forceCache.set(-getDamping()*getVX(),0);
-//            body.applyForce(forceCache, getPosition(),true);
-//            System.out.println(getVX() + ", "+getVY());
+            forceCache.set(-getDamping()*getVX(),0);
+            body.applyForce(forceCache, getPosition(),true);
             return;
         }
 
@@ -95,8 +94,7 @@ public class Penguin extends CapsuleObstacle {
         if (Math.abs(getVX()) >= getMaxSpeed()) {
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
-            System.out.println(("x: "+force*Math.sin(angle)));
-            forceCache.set((float) (force*Math.sin(angle)),0f);
+            forceCache.set((float) (-force*Math.sin(angle)*5),0f);
             body.applyForce(forceCache,getPosition(),true);
             forceCache.set(0, (float) (force*Math.cos(angle)*0.2f));
             body.applyLinearImpulse(forceCache,getPosition(),true);
