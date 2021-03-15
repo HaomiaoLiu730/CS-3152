@@ -30,6 +30,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Texture rocketTexture;
     /** The texture for walls and platforms */
     private TextureRegion earthTile;
+    private TextureRegion snow;
+    private TextureRegion ice;
+    private TextureRegion water;
+
     private Texture hurricaneTexture;
 
     // Physics constants for initialization
@@ -121,6 +125,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
         rocketTexture = internal.getEntry("rocket", Texture.class);
         earthTile = new TextureRegion(internal.getEntry("tile", Texture.class));
         hurricaneTexture = internal.getEntry("hurricane", Texture.class);
+        snow = new TextureRegion(internal.getEntry("snow", Texture.class));
+        ice = new TextureRegion(internal.getEntry("ice", Texture.class));
+        water = new TextureRegion(internal.getEntry("water", Texture.class));
 
         sensorFixtures = new ObjectSet<Fixture>();
     }
