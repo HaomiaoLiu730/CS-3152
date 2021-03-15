@@ -1267,4 +1267,15 @@ public class GameCanvas {
         shapeRenderer.end();
         spriteBatch.begin();
     }
+
+    public void drawLine(Color color, float startX, float startY, float endX, float endY, int lineWidth){
+        spriteBatch.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        Gdx.gl.glLineWidth(lineWidth);
+        shapeRenderer.setColor(color);
+        shapeRenderer.line(startX, startY, endX, endY);
+        Gdx.gl.glLineWidth(1);
+        shapeRenderer.end();
+        spriteBatch.begin();
+    }
 }

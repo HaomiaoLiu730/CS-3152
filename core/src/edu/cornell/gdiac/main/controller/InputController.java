@@ -129,7 +129,8 @@ public class InputController {
      * @return true if the secondary action button was pressed.
      */
     public boolean didSecondary() {
-        return secondPressed && !secondPrevious;
+        return secondPressed;
+//        return secondPressed && !secondPrevious;
     }
 
     /**

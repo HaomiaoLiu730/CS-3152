@@ -5,6 +5,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "arrow": {
+      "file":     "images/shared/arrow.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "white": {
       "file":     "images/white.jpg",
       "minFilter": "linear",

@@ -11,6 +11,7 @@ package edu.cornell.gdiac.main.model;
  * LibGDX version, 2/6/2015
  */
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
@@ -41,6 +42,8 @@ public class Player extends CapsuleObstacle {
     private static final float PLAYER_JUMP = 12f;
     /** Cooldown (in animation frames) for jumping */
     private static final int JUMP_COOLDOWN = 30;
+    /** Cooldown (in animation frames) for jumping */
+    private static final int THROW_COOLDOWN = 30;
     /** Cooldown (in animation frames) for shooting */
     private static final int SHOOT_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
@@ -62,8 +65,22 @@ public class Player extends CapsuleObstacle {
     private boolean faceRight;
     /** How long until we can jump again */
     private int jumpCooldown;
+    /** How long until we can throw penguin again*/
+    private int throwCooldown;
     /** Whether we are actively jumping */
     private boolean isJumping;
+    /** Whether we are actively jumping */
+    private boolean prevIsThrowing;
+    /** Whether we are actively jumping */
+    private boolean isThrowing;
+    /** count for number of press */
+    private int throwingCount;
+    /** force for throwing */
+    private float throwingForce;
+    /** angle for throwing */
+    private float throwingAngle;
+    /** whether going clockwise */
+    private boolean isClockwise;
     /** How long until we can shoot again */
     private int shootCooldown;
     /** Whether our feet are on the ground */
@@ -74,6 +91,7 @@ public class Player extends CapsuleObstacle {
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     private FilmStrip filmStrip;
+    private Texture arrowTexture;
     private float timeCounter = 0;
 
     /** Cache for internal force calculations */
@@ -135,6 +153,15 @@ public class Player extends CapsuleObstacle {
     }
 
     /**
+     * Returns true if the dude is actively throwing penguin.
+     *
+     * @return true if the dude is actively throwing penguin.
+     */
+    public boolean isThrowing() {
+        return isThrowing && isGrounded && throwCooldown <= 0;
+    }
+
+    /**
      * Sets whether the dude is actively jumping.
      *
      * @param value whether the dude is actively jumping.
@@ -143,6 +170,44 @@ public class Player extends CapsuleObstacle {
         isJumping = value;
     }
 
+    /**
+     * Sets whether the dude is actively throwing.
+     *
+     * @param value whether the dude is actively throwing.
+     */
+    public void setThrowing(boolean value) {
+        isThrowing = value;
+
+        if(throwingCount == 0){
+            if(isThrowing && prevIsThrowing){
+                throwingForce += 1f;
+            }
+            if(!value && prevIsThrowing){
+                throwingCount = 1;
+            }
+        }else{
+            if(isThrowing && prevIsThrowing){
+                if(isClockwise){
+                    throwingAngle -= 0.01f;
+                }else{
+                    throwingAngle += 0.01f;
+                }
+                if(throwingAngle < -((float)Math.PI)/2f){
+                    isClockwise = false;
+                }
+                if(throwingAngle > ((float)Math.PI)/2f){
+                    isClockwise = true;
+                }
+            }
+            if(!value && prevIsThrowing){
+                throwingCount = 0;
+                throwingForce = 0f;
+                throwingAngle = ((float)Math.PI)/2f;
+                isClockwise = true;
+            }
+        }
+        prevIsThrowing = isThrowing;
+    }
     /**
      * Returns true if the dude is on the ground.
      *
@@ -322,11 +387,19 @@ public class Player extends CapsuleObstacle {
             forceCache.set(0, PLAYER_JUMP);
             body.applyLinearImpulse(forceCache,getPosition(),true);
         }
+
+        if(isThrowing()){
+        }
     }
 
     public void setFilmStrip(FilmStrip strip){
         this.filmStrip = strip;
         origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
+    }
+
+    public void setArrowTexture(Texture arrow){
+        this.arrowTexture = arrow;
+        origin.set(arrow.getWidth()/2.0f, arrow.getHeight()/2.0f);
     }
 
 
@@ -349,6 +422,12 @@ public class Player extends CapsuleObstacle {
         } else {
             jumpCooldown = Math.max(0, jumpCooldown - 1);
         }
+        if (isThrowing()) {
+            throwCooldown = THROW_COOLDOWN;
+        } else {
+            throwCooldown = Math.max(0, throwCooldown - 1);
+        }
+
 
         if (isShooting()) {
             shootCooldown = SHOOT_COOLDOWN;
@@ -365,6 +444,13 @@ public class Player extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
+
+        if(throwingCount == 0 && isThrowing){
+            canvas.drawLine(Color.BLACK, getX()*drawScale.x-20, getY()*drawScale.y, getX()*drawScale.x-20, getY()*drawScale.y+throwingForce, 1);
+        }
+        if(throwingCount == 1 && isThrowing){
+            canvas.draw(arrowTexture, Color.BLACK, origin.x, 0, getX()*drawScale.x, getY()*drawScale.y, throwingAngle, 1f, 1f);
+        }
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 

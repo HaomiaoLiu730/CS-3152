@@ -242,6 +242,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
+        avatar.setArrowTexture(arrowTexture);
         addObject(avatar);
     }
 
@@ -287,6 +288,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         if(Math.abs(moveX) < 1e-2) moveX = 0;
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
         avatar.setJumping(InputController.getInstance().didPrimary());
+        avatar.setThrowing(InputController.getInstance().didSecondary());
         for(Obstacle obj: objects){
             if(obj instanceof Player){
                 continue;
