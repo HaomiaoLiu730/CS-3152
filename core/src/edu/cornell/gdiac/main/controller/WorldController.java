@@ -66,6 +66,9 @@ public abstract class WorldController implements Screen {
     /** The texture for the player */
     protected FilmStrip avatarStrip;
 
+    /** The texture for the player punching */
+    protected FilmStrip punchStrip;
+
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
 
@@ -107,6 +110,8 @@ public abstract class WorldController implements Screen {
         // Allocate the tiles
         Texture texture = directory.getEntry("avatarWalking", Texture.class);
         avatarStrip = new FilmStrip(texture, 3, 6);
+        Texture texture2 = directory.getEntry("avatarPunching", Texture.class);
+        punchStrip = new FilmStrip(texture2, 3, 3);
         worldAssetState = AssetState.COMPLETE;
     }
 

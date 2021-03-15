@@ -70,6 +70,7 @@ public class InputController {
     private boolean throwPengiun = false;
     private boolean pressed = false;
     private boolean jump = false;
+    private boolean punch = false;
 
     /**
      * Returns the amount of sideways movement.
@@ -199,6 +200,15 @@ public class InputController {
     }
 
     /**
+     * Returns whether the polar bear punches
+     *
+     * @return whether the polar bear punches
+     */
+    public boolean didPunch() {
+        return punch;
+    }
+
+    /**
      * Creates a new input controller
      *
      * The input controller attempts to connect to the X-Box controller at device 0,
@@ -301,6 +311,13 @@ public class InputController {
         }
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             pressed = true;
+        }
+
+        // Punching
+        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+            punch = true;
+        } else {
+            punch = false;
         }
 
         // Mouse results
