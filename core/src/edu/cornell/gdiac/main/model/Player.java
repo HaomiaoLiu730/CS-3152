@@ -73,6 +73,8 @@ public class Player extends CapsuleObstacle {
     private int throwCooldown;
     /** Whether we are actively jumping */
     private boolean isJumping;
+    /** Whether we are actively interacting */
+    private boolean isInteracting;
     /** Whether we are actively jumping */
     private boolean prevIsThrowing;
     /** Whether we are actively jumping */
@@ -104,6 +106,8 @@ public class Player extends CapsuleObstacle {
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
+    /** Cache for internal position calculations */
+    private Vector2 position = new Vector2();
 
     /**
      * Returns left/right movement of this character.
@@ -134,7 +138,7 @@ public class Player extends CapsuleObstacle {
 
         for(int i = 0; i<penguins.size(); i++){
             if(!penguins.get(i).isThrowOut()){
-                penguins.get(i).setX(getX() + PENGUIN_WIDTH * (i+1) * (faceRight? -1 : 1));
+                penguins.get(i).setX(getX() + PENGUIN_WIDTH * (penguins.get(i).getIndex() +1) * (faceRight? -1 : 1));
                 penguins.get(i).setFaceRight(faceRight);
             }
 //            if(!p.isThrowOut() || !p.isGrounded()){
@@ -197,6 +201,24 @@ public class Player extends CapsuleObstacle {
     }
 
     /**
+     * Sets whether the dude is actively jumping.
+     *
+     * @param value whether the dude is actively jumping.
+     */
+    public void setInteract(boolean value) {
+        isInteracting = value;
+        if(isInteracting){
+            for(Penguin p: penguins){
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 2){
+                    p.setThrownOut(false);
+                    p.setIndex(numPenguins);
+                    numPenguins += 1;
+                }
+            }
+        }
+    }
+
+    /**
      * Sets whether the dude is actively throwing.
      *
      * @param value whether the dude is actively throwing.
@@ -229,9 +251,14 @@ public class Player extends CapsuleObstacle {
             }
             if(!value && prevIsThrowing){
                 if(numPenguins > 0){
-                    penguins.get(numPenguins-1).setThrownOut(true);
-                    penguins.get(numPenguins-1).setMovement(throwingForce, throwingAngle);
-                    numPenguins -= 1;
+                    for(Penguin p: penguins){
+                        if(p.getIndex() == numPenguins-1){
+                            p.setThrownOut(true);
+                            p.setMovement(throwingForce, throwingAngle);
+                            numPenguins -=1;
+                            break;
+                        }
+                    }
                 }
                 throwingCount = 0;
                 throwingForce = 0f;

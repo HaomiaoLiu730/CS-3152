@@ -39,6 +39,8 @@ public class Penguin extends CapsuleObstacle {
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float PLAYER_SSHRINK = 0.6f;
 
+    private int index;
+
 
     /** Which direction is the character facing */
     private boolean faceRight;
@@ -205,7 +207,7 @@ public class Penguin extends CapsuleObstacle {
         // Gameplay attributes
         isGrounded = false;
         faceRight = true;
-
+        this.index = index;
         setName("penguin"+index);
     }
 
@@ -243,6 +245,13 @@ public class Penguin extends CapsuleObstacle {
         origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
     }
 
+    public void setIndex(int value){
+        this.index = value;
+    }
+
+    public int getIndex(){
+        return index;
+    }
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *

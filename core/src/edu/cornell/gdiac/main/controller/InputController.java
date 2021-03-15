@@ -43,6 +43,9 @@ public class InputController {
     /** Whether the button to step back worlds was pressed. */
     private boolean prevPressed;
     private boolean prevPrevious;
+    /** Whether the button to interact with the world was pressed. */
+    private boolean xPressed;
+    private boolean xPrevious;
     /** Whether the primary action button was pressed. */
     private boolean primePressed;
     private boolean primePrevious;
@@ -130,6 +133,18 @@ public class InputController {
      */
     public boolean didSecondary() {
         return secondPressed;
+    }
+
+    /**
+     * Returns true if the secondary action button was pressed.
+     *
+     * This is a one-press button. It only returns true at the moment it was
+     * pressed, and returns false at any frame afterwards.
+     *
+     * @return true if the secondary action button was pressed.
+     */
+    public boolean didXPressed() {
+        return xPressed && !xPrevious;
 //        return secondPressed && !secondPrevious;
     }
 
@@ -231,6 +246,7 @@ public class InputController {
         exitPrevious = exitPressed;
         nextPrevious = nextPressed;
         prevPrevious = prevPressed;
+        xPrevious = xPressed;
 
         // Check to see if a GamePad is connected
         readKeyboard(bounds, scale, false);
@@ -272,6 +288,7 @@ public class InputController {
         secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
         prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
+        xPressed = (secondary && xPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 
         // Directional controls
@@ -292,6 +309,10 @@ public class InputController {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            jump = true;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.X) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             jump = true;
         }
 

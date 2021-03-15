@@ -299,6 +299,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
         avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setThrowing(InputController.getInstance().didSecondary());
+        avatar.setInteract(InputController.getInstance().didXPressed());
         for(Obstacle obj: objects){
             if(obj instanceof Player || obj instanceof Penguin){
                 continue;
