@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.Component;
+import edu.cornell.gdiac.main.model.Penguin;
 import edu.cornell.gdiac.main.model.Player;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
@@ -299,7 +300,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setThrowing(InputController.getInstance().didSecondary());
         for(Obstacle obj: objects){
-            if(obj instanceof Player){
+            if(obj instanceof Player || obj instanceof Penguin){
                 continue;
             }
             if(obj instanceof Component){

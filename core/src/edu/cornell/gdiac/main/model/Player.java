@@ -53,8 +53,8 @@ public class Player extends CapsuleObstacle {
     /** Identifier to allow us to track the sensor in ContactListener */
     private static final String SENSOR_NAME = "DudeGroundSensor";
 
-    private float PENGUIN_WIDTH = 3;
-    private float PENGUIN_HEIGHT = 3;
+    private float PENGUIN_WIDTH = 2f;
+    private float PENGUIN_HEIGHT = 2f;
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
@@ -133,13 +133,15 @@ public class Player extends CapsuleObstacle {
         }
         if(faceRight){
             for(int i = 0; i < numOfPenguins; i++){
-                penguins.get(i).setX(getX());
+                penguins.get(i).setX(getX() - PENGUIN_WIDTH);
                 penguins.get(i).setY(getY());
+                penguins.get(i).setFaceRight(true);
             }
         }else{
             for(int i = 0; i < numOfPenguins; i++){
-                penguins.get(i).setX(getX());
+                penguins.get(i).setX(getX() + PENGUIN_WIDTH);
                 penguins.get(i).setY(getY());
+                penguins.get(i).setFaceRight(false);
             }
         }
     }
@@ -475,7 +477,7 @@ public class Player extends CapsuleObstacle {
         if(throwingCount == 1 && isThrowing){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
-        System.out.println("avatar: "+getX()+", "+getY());
+//        System.out.println("avatar: "+getX()*drawScale.x+", "+getY()*drawScale.y);
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 

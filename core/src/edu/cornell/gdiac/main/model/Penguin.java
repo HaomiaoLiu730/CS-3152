@@ -82,6 +82,10 @@ public class Penguin extends CapsuleObstacle {
         }
     }
 
+    public void setFaceRight(boolean faceRight) {
+        this.faceRight = faceRight;
+    }
+
     /**
      * Returns true if the dude is on the ground.
      *
@@ -249,7 +253,6 @@ public class Penguin extends CapsuleObstacle {
             timeCounter = 0;
             filmStrip.nextFrame();
         }
-
         super.update(dt);
     }
 
@@ -260,9 +263,7 @@ public class Penguin extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        System.out.println("penguin: "+getX()+", "+(-getY()));
-        canvas.draw(filmStrip, getX()*drawScale.x, -getY()*drawScale.y);
-//        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
     /**
