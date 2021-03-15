@@ -399,7 +399,6 @@ public class Player extends CapsuleObstacle {
 
     public void setArrowTexture(Texture arrow){
         this.arrowTexture = arrow;
-        origin.set(arrow.getWidth()/2.0f, arrow.getHeight()/2.0f);
     }
 
 
@@ -446,10 +445,10 @@ public class Player extends CapsuleObstacle {
         float effect = faceRight ? 1.0f : -1.0f;
 
         if(throwingCount == 0 && isThrowing){
-            canvas.drawLine(Color.BLACK, getX()*drawScale.x-20, getY()*drawScale.y, getX()*drawScale.x-20, getY()*drawScale.y+throwingForce, 1);
+            canvas.drawLine(Color.BLACK, getX()*drawScale.x-30, getY()*drawScale.y-20, getX()*drawScale.x-30, getY()*drawScale.y-20+throwingForce, 4);
         }
         if(throwingCount == 1 && isThrowing){
-            canvas.draw(arrowTexture, Color.BLACK, origin.x, 0, getX()*drawScale.x, getY()*drawScale.y, throwingAngle, 1f, 1f);
+            canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
