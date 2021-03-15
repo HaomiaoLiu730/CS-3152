@@ -51,6 +51,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private static final float ROCKET_Y = 3f;
     private static final float HURRICANE_X = 30f;
     private static final float HURRICANE_Y = 7f;
+    private static final int NUM_PENGUIN = 0;
 
     private boolean hitRocket = false;
     private boolean hitHurricane = false;
@@ -239,11 +240,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
 
-        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
+        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight, NUM_PENGUIN);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
-        addObject(avatar);
+
+        for(int i = 0; i<NUM_PENGUIN; i++){
+            addObject(avatar.getPenguins().get(i));
+        }
     }
 
     /**
