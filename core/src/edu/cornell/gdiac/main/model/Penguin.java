@@ -49,6 +49,7 @@ public class Penguin extends CapsuleObstacle {
     private PolygonShape sensorShape;
     private FilmStrip filmStrip;
     private float timeCounter = 0;
+    private boolean isThrownOut;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -84,9 +85,9 @@ public class Penguin extends CapsuleObstacle {
 
         // Don't want to be moving. Damp out player motion
         if (force == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache,getPosition(),true);
-            System.out.println(getVX() + ", "+getVY());
+//            forceCache.set(-getDamping()*getVX(),0);
+//            body.applyForce(forceCache, getPosition(),true);
+//            System.out.println(getVX() + ", "+getVY());
             return;
         }
 
@@ -95,16 +96,22 @@ public class Penguin extends CapsuleObstacle {
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
             System.out.println(("x: "+force*Math.sin(angle)));
-            System.out.println("y: "+(force*Math.cos(angle)));
             forceCache.set((float) (force*Math.sin(angle)),0f);
             body.applyForce(forceCache,getPosition(),true);
-            forceCache.set(0, (float) (force*Math.cos(angle)));
+            forceCache.set(0, (float) (force*Math.cos(angle)*0.2f));
             body.applyLinearImpulse(forceCache,getPosition(),true);
 
         }
 
     }
 
+    public void setThrownOut(boolean value){
+        isThrownOut = value;
+    }
+
+    public boolean isThrowOut(){
+        return isThrownOut;
+    }
 
     public void setFaceRight(boolean faceRight) {
         this.faceRight = faceRight;

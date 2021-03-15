@@ -11,7 +11,6 @@ package edu.cornell.gdiac.main.model;
  * LibGDX version, 2/6/2015
  */
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
@@ -41,7 +40,7 @@ public class Player extends CapsuleObstacle {
     /** The maximum character speed */
     private static final float PLAYER_MAXSPEED = 2.0f;
     /** The impulse for the character jump */
-    private static final float PLAYER_JUMP = 12f;
+    private static final float PLAYER_JUMP = 20f;
     /** Cooldown (in animation frames) for jumping */
     private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for jumping */
@@ -135,9 +134,10 @@ public class Player extends CapsuleObstacle {
         for(Penguin p: penguins){
             p.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
             p.setFaceRight(faceRight);
-            if(!p.isGrounded()){
-                p.setY(getY());
-            }
+//            if(!p.isThrowOut() || !p.isGrounded()){
+//                System.out.println("set y");
+//                p.setY(getY());
+//            }
         }
     }
 
@@ -225,6 +225,7 @@ public class Player extends CapsuleObstacle {
             }
             if(!value && prevIsThrowing){
                 if(penguins.size() > 0){
+                    penguins.get(0).setThrownOut(true);
                     penguins.get(0).setMovement(throwingForce, throwingAngle);
                 }
                 throwingCount = 0;
@@ -408,6 +409,7 @@ public class Player extends CapsuleObstacle {
         }
 
         // Jump!
+
         if (isJumping()) {
             forceCache.set(0, PLAYER_JUMP);
             body.applyLinearImpulse(forceCache,getPosition(),true);
