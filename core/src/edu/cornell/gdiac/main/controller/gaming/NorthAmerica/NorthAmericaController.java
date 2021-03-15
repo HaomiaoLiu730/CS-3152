@@ -379,6 +379,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 avatar.setGrounded(true);
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
+            for(Penguin p: avatar.getPenguins()){
+                // See if we have landed on the ground.
+                if ((p.getSensorName().equals(fd2) && p != bd1) ||
+                        (p.getSensorName().equals(fd1) && p != bd2)) {
+                    p.setGrounded(true);
+                    sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
+                }
+            }
             // Check for win condition
             if ((bd1 == avatar   && bd2 == rocket) ||
                     (bd1 == rocket && bd2 == avatar)) {
@@ -414,6 +422,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
             if (sensorFixtures.size == 0) {
                 avatar.setGrounded(false);
+            }
+        }
+
+        for(Penguin p: avatar.getPenguins()){
+            if ((p.getSensorName().equals(fd2) && p != bd1) ||
+                    (p.getSensorName().equals(fd1) && p != bd2)) {
+                sensorFixtures.remove(p == bd1 ? fix2 : fix1);
+                if (sensorFixtures.size == 0) {
+                    p.setGrounded(false);
+                }
             }
         }
 

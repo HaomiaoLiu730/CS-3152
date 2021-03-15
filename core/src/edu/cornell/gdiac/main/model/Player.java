@@ -39,7 +39,7 @@ public class Player extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float PLAYER_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float PLAYER_MAXSPEED = 5.0f;
+    private static final float PLAYER_MAXSPEED = 2.0f;
     /** The impulse for the character jump */
     private static final float PLAYER_JUMP = 12f;
     /** Cooldown (in animation frames) for jumping */
@@ -131,17 +131,12 @@ public class Player extends CapsuleObstacle {
         } else if (value > 0) {
             faceRight = true;
         }
-        if(faceRight){
-            for(int i = 0; i < numOfPenguins; i++){
-                penguins.get(i).setX(getX() - PENGUIN_WIDTH);
-                penguins.get(i).setY(getY());
-                penguins.get(i).setFaceRight(true);
-            }
-        }else{
-            for(int i = 0; i < numOfPenguins; i++){
-                penguins.get(i).setX(getX() + PENGUIN_WIDTH);
-                penguins.get(i).setY(getY());
-                penguins.get(i).setFaceRight(false);
+
+        for(Penguin p: penguins){
+            p.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
+            p.setFaceRight(faceRight);
+            if(!p.isGrounded()){
+                p.setY(getY());
             }
         }
     }
@@ -229,6 +224,9 @@ public class Player extends CapsuleObstacle {
                 }
             }
             if(!value && prevIsThrowing){
+                if(penguins.size() > 0){
+                    penguins.get(0).setMovement(throwingForce, throwingAngle);
+                }
                 throwingCount = 0;
                 throwingForce = 0f;
                 throwingAngle = ((float)Math.PI)/2f;
@@ -453,12 +451,13 @@ public class Player extends CapsuleObstacle {
         } else {
             throwCooldown = Math.max(0, throwCooldown - 1);
         }
-
-
         if (isShooting()) {
             shootCooldown = SHOOT_COOLDOWN;
         } else {
             shootCooldown = Math.max(0, shootCooldown - 1);
+        }
+        for(Penguin p: penguins){
+            p.applyForce(0,0);
         }
         super.update(dt);
     }
@@ -477,7 +476,6 @@ public class Player extends CapsuleObstacle {
         if(throwingCount == 1 && isThrowing){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
-//        System.out.println("avatar: "+getX()*drawScale.x+", "+getY()*drawScale.y);
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 

@@ -21,11 +21,11 @@ public class Penguin extends CapsuleObstacle {
     /** The factor to multiply by the input */
     private static final float PENGUIN_FORCE = 20.0f;
     /** The amount to slow the character down */
-    private static final float PENGUIN_DAMPING = 10.0f;
+    private static final float PENGUIN_DAMPING = 1.0f;
     /** The dude is a slippery one */
     private static final float PENGUIN_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float PENGUIN_MAXSPEED = 5.0f;
+    private static final float PENGUIN_MAXSPEED = 3.0f;
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
@@ -39,8 +39,7 @@ public class Penguin extends CapsuleObstacle {
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float PLAYER_SSHRINK = 0.6f;
 
-    /** The current horizontal movement of the character */
-    private float movement;
+
     /** Which direction is the character facing */
     private boolean faceRight;
     /** Whether our feet are on the ground */
@@ -55,32 +54,57 @@ public class Penguin extends CapsuleObstacle {
     private Vector2 forceCache = new Vector2();
 
     /**
-     * Returns left/right movement of this character.
-     *
-     * This is the result of input times dude force.
-     *
-     * @return left/right movement of this character.
-     */
-    public float getMovement() {
-        return movement;
-    }
-
-    /**
      * Sets left/right movement of this character.
      *
      * This is the result of input times dude force.
      *
-     * @param value left/right movement of this character.
+     * @param force force movement of this character.
+     * @param angle anggle movement of this character.
      */
-    public void setMovement(float value) {
-        movement = value;
+    public void setMovement(float force, float angle) {
         // Change facing if appropriate
-        if (value < 0) {
+
+        if (angle < 0) {
             faceRight = false;
-        } else if (value > 0) {
+        } else if (angle > 0) {
             faceRight = true;
         }
+        applyForce(force, angle);
     }
+
+    /**
+     * Applies the force to the body of this dude
+     *
+     * This method should be called after the force attribute is set.
+     */
+    public void applyForce(float force, float angle) {
+        if (!isActive()) {
+            return;
+        }
+
+        // Don't want to be moving. Damp out player motion
+        if (force == 0f) {
+            forceCache.set(-getDamping()*getVX(),0);
+            body.applyForce(forceCache,getPosition(),true);
+            System.out.println(getVX() + ", "+getVY());
+            return;
+        }
+
+        // Velocity too high, clamp it
+        if (Math.abs(getVX()) >= getMaxSpeed()) {
+            setVX(Math.signum(getVX())*getMaxSpeed());
+        } else {
+            System.out.println(("x: "+force*Math.sin(angle)));
+            System.out.println("y: "+(force*Math.cos(angle)));
+            forceCache.set((float) (force*Math.sin(angle)),0f);
+            body.applyForce(forceCache,getPosition(),true);
+            forceCache.set(0, (float) (force*Math.cos(angle)));
+            body.applyLinearImpulse(forceCache,getPosition(),true);
+
+        }
+
+    }
+
 
     public void setFaceRight(boolean faceRight) {
         this.faceRight = faceRight;
@@ -208,31 +232,6 @@ public class Penguin extends CapsuleObstacle {
         return true;
     }
 
-
-    /**
-     * Applies the force to the body of this dude
-     *
-     * This method should be called after the force attribute is set.
-     */
-    public void applyForce() {
-        if (!isActive()) {
-            return;
-        }
-
-        // Don't want to be moving. Damp out player motion
-        if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
-    }
 
     public void setFilmStrip(FilmStrip strip){
         this.filmStrip = strip;

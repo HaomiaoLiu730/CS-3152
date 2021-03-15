@@ -32,11 +32,11 @@ public class HurricaneController extends WorldController implements ContactListe
     /** Density of the crate objects */
     private static final float CRATE_DENSITY   = 1.0f;
     /** Friction of non-crate objects */
-    private static final float BASIC_FRICTION  = 0.1f;
+    private static final float BASIC_FRICTION  = 0.8f;
     /** Friction of the crate objects */
     private static final float CRATE_FRICTION  = 0.3f;
     /** Collision restitution for all objects */
-    private static final float BASIC_RESTITUTION = 0.1f;
+    private static final float BASIC_RESTITUTION = 0.7f;
     /** Threshold for generating sound on collision */
     private static final float SOUND_THRESHOLD = 1.0f;
     private static final float START_X = 0f;
