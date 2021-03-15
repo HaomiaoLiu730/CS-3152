@@ -53,8 +53,8 @@ public class Player extends CapsuleObstacle {
     /** Identifier to allow us to track the sensor in ContactListener */
     private static final String SENSOR_NAME = "DudeGroundSensor";
 
-    private static final float PENGUIN_WIDTH = 30;
-    private static final float PENGUIN_HEIGHT = 30;
+    private float PENGUIN_WIDTH = 3;
+    private float PENGUIN_HEIGHT = 3;
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
@@ -133,13 +133,13 @@ public class Player extends CapsuleObstacle {
         }
         if(faceRight){
             for(int i = 0; i < numOfPenguins; i++){
-                penguins.get(i).setX(getX() - filmStrip.getRegionWidth()* PLAYER_HSHRINK/2f-PENGUIN_WIDTH/2f*i);
-                penguins.get(i).setY(getY() - filmStrip.getRegionHeight()* PLAYER_VSHRINK/2f-PENGUIN_WIDTH/2f*i);
+                penguins.get(i).setX(getX());
+                penguins.get(i).setY(getY());
             }
         }else{
             for(int i = 0; i < numOfPenguins; i++){
-                penguins.get(i).setX(getX() + filmStrip.getRegionWidth()* PLAYER_HSHRINK/2f + PENGUIN_WIDTH/2f*i);
-                penguins.get(i).setY(getY() + filmStrip.getRegionHeight()* PLAYER_VSHRINK/2f + PENGUIN_WIDTH/2f*i);
+                penguins.get(i).setX(getX());
+                penguins.get(i).setY(getY());
             }
         }
     }
@@ -329,13 +329,20 @@ public class Player extends CapsuleObstacle {
         faceRight = true;
         this.numOfPenguins = numOfPenguins;
         for(int i = 0; i < numOfPenguins; i++){
-            penguins.add(new Penguin(x-width* PLAYER_HSHRINK/2f-PENGUIN_WIDTH/2f*i,
-                    y-height* PLAYER_VSHRINK/2f-PENGUIN_WIDTH/2f*i,PENGUIN_WIDTH, PENGUIN_HEIGHT, i));
+            penguins.add(new Penguin(x, y,PENGUIN_WIDTH, PENGUIN_HEIGHT, i));
         }
 
         shootCooldown = 0;
         jumpCooldown = 0;
         setName("dude");
+    }
+
+    public void setPenguinWidth(float width){
+        this.PENGUIN_WIDTH = width;
+    }
+
+    public void setPenguinHeight(float height){
+        this.PENGUIN_HEIGHT = height;
     }
 
     /**
@@ -468,6 +475,7 @@ public class Player extends CapsuleObstacle {
         if(throwingCount == 1 && isThrowing){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
+        System.out.println("avatar: "+getX()+", "+getY());
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
