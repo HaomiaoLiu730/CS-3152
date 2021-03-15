@@ -191,18 +191,18 @@ public class InputController {
     }
 
     /**
-     * Returns whether the polar bear punches
+     * Returns whether the pengiun is thrown
      *
-     * @return whether the polar bear punches
+     * @return whether the pengiun is thrown
      */
     public boolean didThrowPengiun() {
         return throwPengiun;
     }
 
     /**
-     * Returns whether the pengiun is thrown
+     * Returns whether the polar bear punches
      *
-     * @return whether the pengiun is thrown
+     * @return whether the polar bear punches
      */
     public boolean didPunch() {
         return punch;
