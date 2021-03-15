@@ -70,6 +70,7 @@ public class InputController {
     private boolean throwPengiun = false;
     private boolean pressed = false;
     private boolean jump = false;
+    private boolean punch = false;
 
     /**
      * Returns the amount of sideways movement.
@@ -190,12 +191,21 @@ public class InputController {
     }
 
     /**
+     * Returns whether the polar bear punches
+     *
+     * @return whether the polar bear punches
+     */
+    public boolean didThrowPengiun() {
+        return throwPengiun;
+    }
+
+    /**
      * Returns whether the pengiun is thrown
      *
      * @return whether the pengiun is thrown
      */
-    public boolean didThrowPengiun() {
-        return throwPengiun;
+    public boolean didPunch() {
+        return punch;
     }
 
     /**
@@ -301,6 +311,13 @@ public class InputController {
         }
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             pressed = true;
+        }
+
+        // Punching
+        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+            punch = true;
+        } else {
+            punch = false;
         }
 
         // Mouse results
