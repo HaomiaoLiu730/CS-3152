@@ -5,21 +5,6 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "tile": {
-      "file":     "images/northAmerica/tile.jpg",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "rocket":  {
-      "file":     "images/northAmerica/rocket.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "hurricane":  {
-      "file":     "images/northAmerica/hurricane.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
     "water":  {
       "file":     "images/northAmerica/water.png",
       "minFilter": "linear",
