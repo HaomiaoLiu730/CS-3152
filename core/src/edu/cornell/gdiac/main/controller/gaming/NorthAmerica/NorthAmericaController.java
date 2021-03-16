@@ -57,6 +57,12 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private boolean hitRocket = false;
     private boolean hitHurricane = false;
 
+    /** Cooldown (in animation frames) for punching */
+    private static final int PUNCH_COOLDOWN = 100;
+    /** Length (in animation frames) for punching */
+    private static final int PUNCH_TIME = 30;
+    private int punchCooldown = 0;
+
     /** The initial position of the player */
     private static Vector2 PLAYER_POS = new Vector2(16f, 5.0f);
 
@@ -290,6 +296,17 @@ public class NorthAmericaController extends WorldController implements ContactLi
     public void update(float dt) {
         if(rocket.getY() > 22){
             listener.updateScreen(this, 1);
+        }
+        if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
+            avatar.setFilmStrip(punchStrip);
+            avatar.setPunching(true);
+            punchCooldown = PUNCH_COOLDOWN;
+        } else {
+            punchCooldown -= 1;
+        }
+        if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
+            avatar.setFilmStrip(avatarStrip);
+            avatar.setPunching(false);
         }
         if(hitHurricane){
             listener.updateScreen(this, 3);

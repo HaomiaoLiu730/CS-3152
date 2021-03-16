@@ -93,6 +93,8 @@ public class Player extends CapsuleObstacle {
     private boolean isGrounded;
     /** Whether we are actively shooting */
     private boolean isShooting;
+    /** Whether we are actively shooting */
+    private boolean isPunching;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
@@ -287,6 +289,15 @@ public class Player extends CapsuleObstacle {
     }
 
     /**
+     * Sets whether the polar bear is punching.
+     *
+     * @param value whether the polar bear is punching.
+     */
+    public void setPunching(boolean value) {
+        isPunching = value;
+    }
+
+    /**
      * Returns how much force to apply to get the dude moving
      *
      * Multiply this by the input to get the movement value.
@@ -359,6 +370,7 @@ public class Player extends CapsuleObstacle {
         isGrounded = false;
         isShooting = false;
         isJumping = false;
+        isPunching = false;
         faceRight = true;
         this.totalPenguins = numOfPenguins;
         this.numPenguins = totalPenguins;
@@ -511,7 +523,10 @@ public class Player extends CapsuleObstacle {
         if(throwingCount == 1 && isThrowing){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        // canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        float scale = isPunching ? 0.4f : 1.0f;
+        float offset = isPunching ? 18.0f : 0.0f;
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y-offset,getAngle(),effect*scale,scale);
     }
 
     /**

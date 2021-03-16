@@ -1,22 +1,27 @@
 {
   "textures": {
     "avatarWalking": {
-      "file":     "images/shared/avatarWalking.png",
+      "file": "images/shared/avatarWalking.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
     "arrow": {
-      "file":     "images/shared/arrow.png",
+      "file": "images/shared/arrow.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
     "penguin": {
-      "file":     "images/shared/penguin.png",
+      "file": "images/shared/penguin.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarPunching": {
+      "file": "images/shared/normalLoading.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
     "white": {
-      "file":     "images/white.jpg",
+      "file": "images/white.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
     }

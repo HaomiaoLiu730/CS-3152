@@ -73,6 +73,7 @@ public class InputController {
     private boolean throwPengiun = false;
     private boolean pressed = false;
     private boolean jump = false;
+    private boolean punch = false;
 
     /**
      * Returns the amount of sideways movement.
@@ -215,6 +216,15 @@ public class InputController {
     }
 
     /**
+     * Returns whether the polar bear punches
+     *
+     * @return whether the polar bear punches
+     */
+    public boolean didPunch() {
+        return punch;
+    }
+
+    /**
      * Creates a new input controller
      *
      * The input controller attempts to connect to the X-Box controller at device 0,
@@ -288,7 +298,7 @@ public class InputController {
         secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
         prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
-        xPressed = (secondary && xPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
+        xPressed = (secondary && xPressed) || (Gdx.input.isKeyPressed(Input.Keys.Z));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 
         // Directional controls
@@ -323,6 +333,13 @@ public class InputController {
         }
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             pressed = true;
+        }
+
+        // Punching
+        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+            punch = true;
+        } else {
+            punch = false;
         }
 
         // Mouse results
