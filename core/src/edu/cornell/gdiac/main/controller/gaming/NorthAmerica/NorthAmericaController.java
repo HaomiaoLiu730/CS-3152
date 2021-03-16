@@ -65,7 +65,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private int punchCooldown = 0;
 
     /** The initial position of the player */
-    private static Vector2 PLAYER_POS = new Vector2(16f, 5.0f);
+    private static Vector2 PLAYER_POS = new Vector2(3f, 5.0f);
 
     private Component waterComponent;
     private Component huricane;
@@ -106,6 +106,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 21f, 5f, 21f, 0f, 17f,0f,17f,5f
             },
             {27f,3f,27f,0f,21f,0f,21f,3f},
+            {40f,5f,40f,0f,37.7f,0f,37.7f,5f},
+            {100f,30f,100f,8f,30f,8f,30f,30f},
 
 
     };
