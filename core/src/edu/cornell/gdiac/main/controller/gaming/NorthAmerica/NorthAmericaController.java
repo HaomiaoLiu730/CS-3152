@@ -29,11 +29,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Texture background;
     private Texture waterTexture;
     /** The texture for walls and platforms */
-    private TextureRegion earthTile;
     private TextureRegion snow;
     private TextureRegion ice;
 
-    private Texture hurricaneTexture;
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -52,8 +50,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private static final float START_Y = 0f;
     private static final float WATER1_X = 2.4f;
     private static final float WATER1_Y = 0f;
-    private static final float HURRICANE_X = 30f;
-    private static final float HURRICANE_Y = 7f;
+
 
     private boolean hitWater = false;
     private boolean hitIce = false;
@@ -68,7 +65,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private static Vector2 PLAYER_POS = new Vector2(3f, 5.0f);
 
     private Component waterComponent;
-    private Component huricane;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -218,19 +214,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
         // Add level goal
         float dwidth, dheight;
 
-//        String wname = "wall";
-//        for (int ii = 0; ii < WALLS.length; ii++) {
-//            PolygonObstacle obj;
-//            obj = new PolygonObstacle(WALLS[ii], START_X, START_Y);
-//            obj.setBodyType(BodyDef.BodyType.StaticBody);
-//            obj.setDensity(BASIC_DENSITY);
-//            obj.setFriction(BASIC_FRICTION);
-//            obj.setRestitution(BASIC_RESTITUTION);
-//            obj.setDrawScale(scale);
-//            obj.setTexture(water);
-//            obj.setName(wname+ii);
-//            addObject(obj);
-//        }
         String iname="ice";
         for (int ii=0; ii< ICE.length;ii++){
             PolygonObstacle obj;
@@ -260,47 +243,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(obj);
         }
 
-//        String wname = "water";
-//        for (int ii = 0; ii < WATER.length; ii++) {
-//            PolygonObstacle obj;
-//            obj = new PolygonObstacle(WATER[ii], START_X, START_Y);
-//            obj.setBodyType(BodyDef.BodyType.StaticBody);
-//            obj.setDensity(BASIC_DENSITY);
-//            obj.setFriction(BASIC_FRICTION);
-//            obj.setRestitution(BASIC_RESTITUTION);
-//            obj.setDrawScale(scale);
-//            obj.setTexture(water);
-//            obj.setName(wname+ii);
-//            addObject(obj);
-//        }
-
-//        String pname = "platform";
-//        for (int ii = 0; ii < PLATFORMS.length; ii++) {
-//            PolygonObstacle obj;
-//            obj = new PolygonObstacle(PLATFORMS[ii], START_X, START_Y);
-//            obj.setBodyType(BodyDef.BodyType.StaticBody);
-//            obj.setDensity(BASIC_DENSITY);
-//            obj.setFriction(BASIC_FRICTION);
-//            obj.setRestitution(BASIC_RESTITUTION);
-//            obj.setDrawScale(scale);
-//            obj.setTexture(water);
-//            obj.setName(pname+ii);
-//            addObject(obj);
-//        }
-//
-//        rocket = new Component(ROCKET_X, ROCKET_Y, rocketTexture.getWidth()/scale.x, rocketTexture.getHeight()/scale.y, "rocket");
-//        FilmStrip rocketFilmStrip = new FilmStrip(rocketTexture, 1,1);
-//        rocket.setFilmStrip(rocketFilmStrip);
-//        rocket.setDrawScale(scale);
-//        rocket.setBodyType(BodyDef.BodyType.StaticBody);
-//        rocket.setDensity(BASIC_DENSITY);
-//        rocket.setFriction(BASIC_FRICTION);
-//        rocket.setRestitution(BASIC_RESTITUTION);
-//        rocket.setSensor(true);
-//        rocket.setDrawScale(scale);
-//        rocket.setName("rocket");
-//        addObject(rocket);
-
         waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
         FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
         waterComponent.setFilmStrip(waterFilmStrip);
@@ -313,21 +255,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
         waterComponent.setDrawScale(scale);
         waterComponent.setName("water");
         addObject(waterComponent);
-
-
-//
-//        huricane = new Component(HURRICANE_X, HURRICANE_Y, hurricaneTexture.getWidth()/scale.x, hurricaneTexture.getHeight()/scale.y, "hurricane");
-//        FilmStrip huricaneFilmStrip = new FilmStrip(hurricaneTexture, 1,1);
-//        huricane.setFilmStrip(huricaneFilmStrip);
-//        huricane.setDrawScale(scale);
-//        huricane.setBodyType(BodyDef.BodyType.StaticBody);
-//        huricane.setDensity(BASIC_DENSITY);
-//        huricane.setFriction(BASIC_FRICTION);
-//        huricane.setRestitution(BASIC_RESTITUTION);
-//        huricane.setSensor(true);
-//        huricane.setDrawScale(scale);
-//        huricane.setName("huricane");
-//        addObject(huricane);
 
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
@@ -371,9 +298,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     @Override
     public void update(float dt) {
-//        if(rocket.getY() > 22){
-//            listener.updateScreen(this, 1);
-//        }
+
         //TODO: waterComponent.setFilmStrip(waterFilmStrip);
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             avatar.setFilmStrip(punchStrip);
@@ -397,15 +322,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if(obj instanceof Player){
                 continue;
             }
-//            if(obj instanceof Component){
-//                obj.setX(obj.getX()+moveX);
-//                if(hitRocket && obj.getName() == "rocket"){
-//                    obj.setY(obj.getY()+0.1f);
-//                    avatar.setY(rocket.getY()+2);
-//                    avatar.setX(rocket.getX());
-//                }
-//                continue;
-//            }
+
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
         }
         prevavatarX = avatar.getX();
@@ -448,9 +365,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
         hitWater = value;
     }
 
-//    public void hitHurricane(boolean value){
-//        hitHurricane = value;
-//    }
 
     @Override
     public void beginContact(Contact contact) {
@@ -478,10 +392,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
                     (bd1 == waterComponent && bd2 == avatar)) {
                 hitWater(true);
             }
-//            if ((bd1 == avatar   && bd2 == huricane) ||
-//                    (bd1 == huricane && bd2 == avatar)) {
-//                hitHurricane(true);
-//            }
 
         } catch (Exception e) {
             e.printStackTrace();
