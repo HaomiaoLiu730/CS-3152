@@ -60,6 +60,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     private boolean hitRocket = false;
     private boolean hitHurricane = false;
+    private List<Boolean> hitIcicle = new ArrayList<>();
 
     /** Cooldown (in animation frames) for punching */
     private static final int PUNCH_COOLDOWN = 100;
@@ -253,17 +254,23 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
         icicle.add(new Component(15f, 7f, icicleTextures.get(0).getWidth()/scale.x,
                 icicleTextures.get(0).getHeight()/scale.y, "icicle1"));
-        FilmStrip icileFilmStrip = new FilmStrip(icicleTextures.get(0), 1,1);
-        icicle.get(0).setFilmStrip(icileFilmStrip);
-        icicle.get(0).setDrawScale(scale);
-        icicle.get(0).setBodyType(BodyDef.BodyType.StaticBody);
-        icicle.get(0).setDensity(BASIC_DENSITY);
-        icicle.get(0).setFriction(BASIC_FRICTION);
-        icicle.get(0).setRestitution(BASIC_RESTITUTION);
-        icicle.get(0).setSensor(true);
-        icicle.get(0).setDrawScale(scale);
-        icicle.get(0).setName("icicle1");
-        addObject(icicle.get(0));
+        icicle.add(new Component(18f, 7f, icicleTextures.get(0).getWidth()/scale.x,
+                icicleTextures.get(1).getHeight()/scale.y, "icicle1"));
+        for (int i = 0; i < 2; i++){
+            FilmStrip icileFilmStrip = new FilmStrip(icicleTextures.get(i), 1,1);
+            icicle.get(i).setFilmStrip(icileFilmStrip);
+            icicle.get(i).setDrawScale(scale);
+            icicle.get(i).setBodyType(BodyDef.BodyType.StaticBody);
+            icicle.get(i).setDensity(BASIC_DENSITY);
+            icicle.get(i).setFriction(BASIC_FRICTION);
+            icicle.get(i).setRestitution(BASIC_RESTITUTION);
+            icicle.get(i).setSensor(true);
+            icicle.get(i).setDrawScale(scale);
+            icicle.get(i).setName("icicle" + i);
+            addObject(icicle.get(i));
+            hitIcicle.add(false);
+        }
+
 
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
@@ -350,6 +357,15 @@ public class NorthAmericaController extends WorldController implements ContactLi
                     avatar.setY(rocket.getY()+2);
                     avatar.setX(rocket.getX());
                 }
+                for (int i = 0; i < icicle.size(); i++){
+                    //System.out.println(""+hitIcicle.get(i) + (obj.getName()) + ("icicle" + i));
+                    if (hitIcicle.get(i) && (obj.getName().equals("icicle" + i))){
+                        while (obj.getY() > 3){
+                            //obj.setLinearVelocity(new Vector2(0f, -0.1f));
+                            obj.setY(obj.getY() - 0.1f);
+                        }
+                    }
+                }
                 continue;
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
@@ -398,6 +414,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
         hitHurricane = value;
     }
 
+    public void hitIcicle(int i, boolean value){
+        hitIcicle.set(i, value);
+    }
+
     @Override
     public void beginContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
@@ -426,6 +446,15 @@ public class NorthAmericaController extends WorldController implements ContactLi
                     p.setGrounded(true);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
+                // Check if penguin hit icicle
+                if (p.getSensorName().equals(fd1) && icicle.contains(bd2)){
+                    hitIcicle(bd2.getName().charAt(bd2.getName().length() - 1)-48, true);
+                    System.out.println(hitIcicle);
+                } else if (icicle.contains(bd1) && p.getSensorName().equals(fd2)){
+                    hitIcicle(bd1.getName().charAt(bd1.getName().length() - 1)-48, true);
+                    System.out.println(hitIcicle);
+                }
+
             }
             // Check for win condition
             if ((bd1 == avatar   && bd2 == rocket) ||
@@ -436,6 +465,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
                     (bd1 == huricane && bd2 == avatar)) {
                 hitHurricane(true);
             }
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
