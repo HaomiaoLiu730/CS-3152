@@ -50,7 +50,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private static final float SOUND_THRESHOLD = 1.0f;
     private static final float START_X = -30f;
     private static final float START_Y = 0f;
-    private static final float WATER1_X = 27f;
+    private static final float WATER1_X = 2.4f;
     private static final float WATER1_Y = 0f;
     private static final float HURRICANE_X = 30f;
     private static final float HURRICANE_Y = 7f;
@@ -106,6 +106,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 21f, 5f, 21f, 0f, 17f,0f,17f,5f
             },
             {27f,3f,27f,0f,21f,0f,21f,3f},
+
+
+    };
+    private static final float[][] ICE = {
+            {
+                    35f, 3f, 35f, 0f, 30f,0f,30f,3f
+            },
+
 
 
     };
@@ -219,6 +227,20 @@ public class NorthAmericaController extends WorldController implements ContactLi
 //            obj.setName(wname+ii);
 //            addObject(obj);
 //        }
+        String iname="ice";
+        for (int ii=0; ii< ICE.length;ii++){
+            PolygonObstacle obj;
+            obj = new PolygonObstacle(ICE[ii], START_X, START_Y);
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+            obj.setDensity(BASIC_DENSITY);
+            obj.setFriction(BASIC_FRICTION);
+            obj.setRestitution(BASIC_RESTITUTION);
+            obj.setDrawScale(scale);
+            obj.setTexture(ice);
+            obj.setName(iname+ii);
+            addObject(obj);
+        }
+
 
         String sname = "snow";
         for (int ii = 0; ii < SNOW.length; ii++) {
@@ -275,9 +297,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
 //        rocket.setName("rocket");
 //        addObject(rocket);
 
-        waterComponent = new Component(WATER1_X,WATER1_Y, 30, 6, "rocket");
-        FilmStrip rocketFilmStrip = new FilmStrip(waterTexture, 1,1);
-        waterComponent.setFilmStrip(rocketFilmStrip);
+        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
+        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
+        waterComponent.setFilmStrip(waterFilmStrip);
         waterComponent.setDrawScale(scale);
         waterComponent.setBodyType(BodyDef.BodyType.StaticBody);
         waterComponent.setDensity(BASIC_DENSITY);
@@ -285,8 +307,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
         waterComponent.setRestitution(BASIC_RESTITUTION);
         waterComponent.setSensor(true);
         waterComponent.setDrawScale(scale);
-        waterComponent.setName("rocket");
+        waterComponent.setName("water");
         addObject(waterComponent);
+
+
 //
 //        huricane = new Component(HURRICANE_X, HURRICANE_Y, hurricaneTexture.getWidth()/scale.x, hurricaneTexture.getHeight()/scale.y, "hurricane");
 //        FilmStrip huricaneFilmStrip = new FilmStrip(hurricaneTexture, 1,1);
