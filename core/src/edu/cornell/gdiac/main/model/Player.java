@@ -32,7 +32,7 @@ public class Player extends CapsuleObstacle {
     /** The density of the character */
     private static final float PLAYER_DENSITY = 1.0f;
     /** The factor to multiply by the input */
-    private static final float PLAYER_FORCE = 20.0f;
+    private static final float PLAYER_FORCE = 12.0f;
     /** The amount to slow the character down */
     private static final float PLAYER_DAMPING = 10.0f;
     /** The dude is a slippery one */
@@ -52,7 +52,7 @@ public class Player extends CapsuleObstacle {
     /** Identifier to allow us to track the sensor in ContactListener */
     private static final String SENSOR_NAME = "DudeGroundSensor";
 
-    private float PENGUIN_WIDTH = 2f;
+    private float PENGUIN_WIDTH = 1.6f;
     private float PENGUIN_HEIGHT = 2f;
 
     // This is to fit the image to a tigher hitbox
@@ -256,6 +256,7 @@ public class Player extends CapsuleObstacle {
                     for(Penguin p: penguins){
                         if(p.getIndex() == numPenguins-1){
                             p.setThrownOut(true);
+                            p.setPosition(getX(), getY()+2);
                             p.setMovement(throwingForce, throwingAngle);
                             numPenguins -=1;
                             break;
@@ -484,9 +485,16 @@ public class Player extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
         timeCounter += dt;
-        if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
-            timeCounter = 0;
-            filmStrip.nextFrame();
+        if(isGrounded){
+            if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
+                timeCounter = 0;
+                filmStrip.nextFrame();
+            }
+        }else{
+            if(timeCounter >= 0.2 && Math.abs(getVX()) > 1e-1) {
+                timeCounter = 0;
+                filmStrip.nextFrame();
+            }
         }
         if (isJumping()) {
             jumpCooldown = JUMP_COOLDOWN;

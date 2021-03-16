@@ -5,6 +5,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "avatarJumping": {
+      "file": "images/shared/avatarJumping.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "arrow": {
       "file": "images/shared/arrow.png",
       "minFilter": "linear",
