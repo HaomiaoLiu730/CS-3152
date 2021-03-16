@@ -19,7 +19,6 @@ import edu.cornell.gdiac.util.ScreenListener;
 public class HurricaneController extends WorldController implements ContactListener {
 
     private ScreenListener listener;
-    private GameCanvas canvas;
     private AssetDirectory internal;
     private Texture background;
     private TextureRegion earthTile;
@@ -33,17 +32,18 @@ public class HurricaneController extends WorldController implements ContactListe
     /** Density of the crate objects */
     private static final float CRATE_DENSITY   = 1.0f;
     /** Friction of non-crate objects */
-    private static final float BASIC_FRICTION  = 0.1f;
+    private static final float BASIC_FRICTION  = 0.8f;
     /** Friction of the crate objects */
     private static final float CRATE_FRICTION  = 0.3f;
     /** Collision restitution for all objects */
-    private static final float BASIC_RESTITUTION = 0.1f;
+    private static final float BASIC_RESTITUTION = 0.7f;
     /** Threshold for generating sound on collision */
     private static final float SOUND_THRESHOLD = 1.0f;
     private static final float START_X = 0f;
     private static final float START_Y = 0f;
     private static final float HURRICANE_X = 4f;
     private static final float HURRICANE_Y = 7f;
+    private static final int NUM_PENGUIN = 1;
     /** The initial position of the player */
     private static Vector2 PLAYER_POS = new Vector2(4f, 5.0f);
 
@@ -142,7 +142,7 @@ public class HurricaneController extends WorldController implements ContactListe
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
 
-        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
+        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight, NUM_PENGUIN);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         addObject(avatar);
