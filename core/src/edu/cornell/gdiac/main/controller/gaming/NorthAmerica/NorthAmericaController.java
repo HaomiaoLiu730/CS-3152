@@ -321,11 +321,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.setPunching(false);
         }
         if (avatar.isPunching()) {
-            for(Obstacle obj : objects) {
-                if (obj instanceof Monster) {
-                    objects.remove(obj);
-                }
-            }
+            float dist = avatar.getPosition().dst(monster.getPosition());
+                    if (dist < 2) {
+                        objects.remove(monster);
+                    }
         }
         if(hitHurricane){
             listener.updateScreen(this, 3);
