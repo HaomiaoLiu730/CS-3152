@@ -263,13 +263,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(avatar.getPenguins().get(i));
         }
 
-        monster = new Monster(30, 1.5f, monsterStrip.getRegionWidth(), monsterStrip.getRegionHeight(), "monster");
+
+        monster = new Monster(20, 2f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster");
         monster.setFilmStrip(monsterStrip);
-        monster.setBodyType(BodyDef.BodyType.StaticBody);
-        monster.setDensity(BASIC_DENSITY);
-        monster.setFriction(BASIC_FRICTION);
-        monster.setRestitution(BASIC_RESTITUTION);
-        monster.setSensor(true);
         monster.setDrawScale(scale);
         addObject(monster);
     }
@@ -324,6 +320,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
             float dist = avatar.getPosition().dst(monster.getPosition());
                     if (dist < 2) {
                         objects.remove(monster);
+                        monster.setActive(false);
+                        monster.setAwake(false);
                     }
         }
         if(hitHurricane){
@@ -426,6 +424,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
                     p.setGrounded(true);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
+            }
+            if ((monster.getSensorName().equals(fd2) && monster != bd1) ||
+                    (monster.getSensorName().equals(fd1) && monster != bd2)) {
+                monster.setGrounded(true);
+                sensorFixtures.add(monster == bd1 ? fix2 : fix1); // Could have more than one ground
             }
             // Check for win condition
             if ((bd1 == avatar   && bd2 == rocket) ||
