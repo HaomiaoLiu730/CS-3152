@@ -314,6 +314,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
         float moveX = -avatar.getX() + prevavatarX;
         if(Math.abs(moveX) < 1e-2) moveX = 0;
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
+        if(InputController.getInstance().didPrimary()){
+            avatar.setFilmStrip(jumpStrip);
+        }
         avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setThrowing(InputController.getInstance().didSecondary());
         avatar.setInteract(InputController.getInstance().didXPressed());
@@ -395,6 +398,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                     (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
                 avatar.setGrounded(true);
+                avatar.setFilmStrip(avatarStrip);
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
             for(Penguin p: avatar.getPenguins()){
