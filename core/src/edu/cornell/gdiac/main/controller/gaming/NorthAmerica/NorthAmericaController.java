@@ -193,7 +193,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
-        Vector2 gravity = new Vector2(world.getGravity() );
+        hitWater(false);
+        prevavatarX=16;
+        Vector2 gravity = new Vector2(world.getGravity());
 
         for(Obstacle obj : objects) {
             obj.deactivatePhysics(world);
@@ -331,7 +333,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
 
-        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
+        avatar = new Player(3, 5, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         addObject(avatar);
