@@ -18,6 +18,9 @@ import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NorthAmericaController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
@@ -32,6 +35,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     /** The texture for walls and platforms */
     private TextureRegion earthTile;
     private Texture hurricaneTexture;
+    private List<Texture> icicleTextures = new ArrayList<>();
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -68,6 +72,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     private Component rocket;
     private Component huricane;
+    private List<Component> icicle = new ArrayList<>();
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -123,6 +128,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
         rocketTexture = internal.getEntry("rocket", Texture.class);
         earthTile = new TextureRegion(internal.getEntry("tile", Texture.class));
         hurricaneTexture = internal.getEntry("hurricane", Texture.class);
+        Texture icicleTemp = internal.getEntry("hurricane", Texture.class);
+        icicleTextures.add(icicleTemp);
+        icicleTextures.add(icicleTemp);
 
         sensorFixtures = new ObjectSet<Fixture>();
     }
@@ -242,6 +250,20 @@ public class NorthAmericaController extends WorldController implements ContactLi
         huricane.setDrawScale(scale);
         huricane.setName("huricane");
         addObject(huricane);
+
+        icicle.add(new Component(15f, 7f, icicleTextures.get(0).getWidth()/scale.x,
+                icicleTextures.get(0).getHeight()/scale.y, "icicle1"));
+        FilmStrip icileFilmStrip = new FilmStrip(icicleTextures.get(0), 1,1);
+        icicle.get(0).setFilmStrip(icileFilmStrip);
+        icicle.get(0).setDrawScale(scale);
+        icicle.get(0).setBodyType(BodyDef.BodyType.StaticBody);
+        icicle.get(0).setDensity(BASIC_DENSITY);
+        icicle.get(0).setFriction(BASIC_FRICTION);
+        icicle.get(0).setRestitution(BASIC_RESTITUTION);
+        icicle.get(0).setSensor(true);
+        icicle.get(0).setDrawScale(scale);
+        icicle.get(0).setName("icicle1");
+        addObject(icicle.get(0));
 
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
