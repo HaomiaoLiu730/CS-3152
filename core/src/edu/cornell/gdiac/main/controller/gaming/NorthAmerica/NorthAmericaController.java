@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.Component;
+import edu.cornell.gdiac.main.model.Monster;
 import edu.cornell.gdiac.main.model.Penguin;
 import edu.cornell.gdiac.main.model.Player;
 import edu.cornell.gdiac.main.obstacle.*;
@@ -26,6 +27,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private AssetDirectory internal;
     /** Reference to the character avatar */
     private Player avatar;
+    private Monster monster;
 
     private Texture background;
     private Texture rocketTexture;
@@ -260,6 +262,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.getPenguins().get(i).setFilmStrip(penguinStrip);
             addObject(avatar.getPenguins().get(i));
         }
+
+        monster = new Monster(30, 1.5f, monsterStrip.getRegionWidth(), monsterStrip.getRegionHeight(), "monster");
+        monster.setFilmStrip(monsterStrip);
+        monster.setBodyType(BodyDef.BodyType.StaticBody);
+        monster.setDensity(BASIC_DENSITY);
+        monster.setFriction(BASIC_FRICTION);
+        monster.setRestitution(BASIC_RESTITUTION);
+        monster.setSensor(true);
+        monster.setDrawScale(scale);
+        addObject(monster);
     }
 
     /**
@@ -308,6 +320,13 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.setFilmStrip(avatarStrip);
             avatar.setPunching(false);
         }
+        if (avatar.isPunching()) {
+            for(Obstacle obj : objects) {
+                if (obj instanceof Monster) {
+                    objects.remove(obj);
+                }
+            }
+        }
         if(hitHurricane){
             listener.updateScreen(this, 3);
         }
@@ -324,7 +343,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if(obj instanceof Player || obj instanceof Penguin){
                 continue;
             }
-            if(obj instanceof Component){
+            if(obj instanceof Component || obj instanceof Monster){
                 obj.setX(obj.getX()+moveX);
                 if(hitRocket && obj.getName() == "rocket"){
                     obj.setY(obj.getY()+0.1f);

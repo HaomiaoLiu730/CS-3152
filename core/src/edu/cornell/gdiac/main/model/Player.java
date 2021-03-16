@@ -290,6 +290,15 @@ public class Player extends CapsuleObstacle {
     }
 
     /**
+     * Returns true if the dude is on the ground.
+     *
+     * @return true if the dude is on the ground.
+     */
+    public boolean isPunching() {
+        return isPunching;
+    }
+
+    /**
      * Sets whether the polar bear is punching.
      *
      * @param value whether the polar bear is punching.
@@ -532,9 +541,8 @@ public class Player extends CapsuleObstacle {
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
         // canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        float scale = isPunching ? 0.4f : 1.0f;
-        float offset = isPunching ? 18.0f : 0.0f;
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y-offset,getAngle(),effect*scale,scale);
+        float scale = isPunching ? 0.24f : 1.0f;
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*scale,scale);
     }
 
     /**
