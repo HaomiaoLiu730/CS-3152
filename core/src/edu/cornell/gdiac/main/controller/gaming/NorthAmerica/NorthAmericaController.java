@@ -128,7 +128,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         rocketTexture = internal.getEntry("rocket", Texture.class);
         earthTile = new TextureRegion(internal.getEntry("tile", Texture.class));
         hurricaneTexture = internal.getEntry("hurricane", Texture.class);
-        Texture icicleTemp = internal.getEntry("hurricane", Texture.class);
+        Texture icicleTemp = internal.getEntry("icicle", Texture.class);
         icicleTextures.add(icicleTemp);
         icicleTextures.add(icicleTemp);
 
