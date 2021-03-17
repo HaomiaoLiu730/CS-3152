@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.WorldController;
-import edu.cornell.gdiac.main.controller.gaming.NorthAmerica.HurricaneController;
 import edu.cornell.gdiac.main.controller.gaming.NorthAmerica.NorthAmericaController;
 import edu.cornell.gdiac.main.controller.opening.GameSpecController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
@@ -112,19 +111,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			if(exitCode == 1){
 
 			}
-			// silicon valley maze mode
-			else if(exitCode == 2){
 
-			}
-
-			// hurricane mode
-			else if(exitCode == 3){
-				currentController = new HurricaneController();
-				currentController.reset();
-				currentController.setScreenListener(this);
-				controllers[current].dispose();
-				setScreen(currentController);
-			}
 		}
 	}
 }

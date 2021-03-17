@@ -1,22 +1,22 @@
 {
   "textures": {
     "background": {
-      "file":     "images/northAmerica/lightBlue.jpg",
+      "file":     "images/northAmerica/lightBlue.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "tile": {
-      "file":     "images/northAmerica/tile.jpg",
+    "water":  {
+      "file":     "images/northAmerica/water.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "rocket":  {
-      "file":     "images/northAmerica/rocket.png",
+    "snow":  {
+      "file":     "images/northAmerica/snow.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "hurricane":  {
-      "file":     "images/northAmerica/hurricane.png",
+    "ice":  {
+      "file":     "images/northAmerica/ice.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }
