@@ -369,10 +369,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 obj.setActive(false);
-                System.out.println("done");
+
                 for (Penguin p: avatar.getPenguins()){
                     float dist = p.getPosition().dst(obj.getPosition());
-                    System.out.println(dist);
+
                     if (dist < 0.8){
                         hitIcicle = true;
                     }
