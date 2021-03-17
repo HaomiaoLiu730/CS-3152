@@ -449,10 +449,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 // Check if penguin hit icicle
                 if (p.getSensorName().equals(fd1) && icicle.contains(bd2)){
                     hitIcicle(bd2.getName().charAt(bd2.getName().length() - 1)-48, true);
-                    System.out.println(hitIcicle);
+                    //System.out.println(hitIcicle);
                 } else if (icicle.contains(bd1) && p.getSensorName().equals(fd2)){
                     hitIcicle(bd1.getName().charAt(bd1.getName().length() - 1)-48, true);
-                    System.out.println(hitIcicle);
+                    //System.out.println(hitIcicle);
                 }
 
             }
