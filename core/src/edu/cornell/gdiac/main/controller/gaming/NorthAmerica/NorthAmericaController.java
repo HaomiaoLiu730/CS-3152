@@ -29,12 +29,15 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Player avatar;
     private Monster monster;
     private Icicle icicle;
+    private Water water;
+    private Ice ice;
+
 
     private Texture background;
     private Texture waterTexture;
     /** The texture for walls and platforms */
     private TextureRegion snow;
-    private TextureRegion ice;
+//    private TextureRegion ice;
 
 
     // Physics constants for initialization
@@ -149,7 +152,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
         snow = new TextureRegion(internal.getEntry("snow", Texture.class));
-        ice = new TextureRegion(internal.getEntry("ice", Texture.class));
+//        ice = new TextureRegion(internal.getEntry("ice", Texture.class));
         waterTexture = internal.getEntry("water", Texture.class);
 
         sensorFixtures = new ObjectSet<Fixture>();
@@ -219,19 +222,19 @@ public class NorthAmericaController extends WorldController implements ContactLi
         // Add level goal
         float dwidth, dheight;
 
-        String iname="ice";
-        for (int ii=0; ii< ICE.length;ii++){
-            PolygonObstacle obj;
-            obj = new PolygonObstacle(ICE[ii], START_X, START_Y);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            obj.setTexture(ice);
-            obj.setName(iname+ii);
-            addObject(obj);
-        }
+//        String iname="ice";
+//        for (int ii=0; ii< ICE.length;ii++){
+//            PolygonObstacle obj;
+//            obj = new PolygonObstacle(ICE[ii], START_X, START_Y);
+//            obj.setBodyType(BodyDef.BodyType.StaticBody);
+//            obj.setDensity(BASIC_DENSITY);
+//            obj.setFriction(BASIC_FRICTION);
+//            obj.setRestitution(BASIC_RESTITUTION);
+//            obj.setDrawScale(scale);
+//            obj.setTexture(ice);
+//            obj.setName(iname+ii);
+//            addObject(obj);
+//        }
 
 
         String sname = "snow";
@@ -248,18 +251,18 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(obj);
         }
 
-        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
-        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
-        waterComponent.setFilmStrip(waterFilmStrip);
-        waterComponent.setDrawScale(scale);
-        waterComponent.setBodyType(BodyDef.BodyType.StaticBody);
-        waterComponent.setDensity(BASIC_DENSITY);
-        waterComponent.setFriction(BASIC_FRICTION);
-        waterComponent.setRestitution(BASIC_RESTITUTION);
-        waterComponent.setSensor(true);
-        waterComponent.setDrawScale(scale);
-        waterComponent.setName("water");
-        addObject(waterComponent);
+//        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
+//        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
+//        waterComponent.setFilmStrip(waterFilmStrip);
+//        waterComponent.setDrawScale(scale);
+//        waterComponent.setBodyType(BodyDef.BodyType.StaticBody);
+//        waterComponent.setDensity(BASIC_DENSITY);
+//        waterComponent.setFriction(BASIC_FRICTION);
+//        waterComponent.setRestitution(BASIC_RESTITUTION);
+//        waterComponent.setSensor(true);
+//        waterComponent.setDrawScale(scale);
+//        waterComponent.setName("water");
+//        addObject(waterComponent);
 
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
@@ -288,6 +291,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
         icicle.setFilmStrip(icicleStrip);
         icicle.setDrawScale(scale);
         addObject(icicle);
+
+        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+        water.setFilmStrip(waterStrip);
+        water.setDrawScale(scale);
+        addObject(water);
+
+        ice = new Ice(2.4f, 500f, iceStrip.getRegionWidth()/scale.x, iceStrip.getRegionHeight()/scale.y, "ice");
+        ice.setFilmStrip(iceStrip);
+        ice.setDrawScale(scale);
+        addObject(ice);
     }
 
     /**
