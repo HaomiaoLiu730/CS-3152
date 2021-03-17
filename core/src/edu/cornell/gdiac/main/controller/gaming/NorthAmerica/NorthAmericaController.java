@@ -10,14 +10,14 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
-import edu.cornell.gdiac.main.model.Component;
-import edu.cornell.gdiac.main.model.Monster;
-import edu.cornell.gdiac.main.model.Penguin;
-import edu.cornell.gdiac.main.model.Player;
+import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NorthAmericaController extends WorldController implements ContactListener, ControllerListener {
 
@@ -28,6 +28,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     /** Reference to the character avatar */
     private Player avatar;
     private Monster monster;
+    private Icicle icicle;
 
     private Texture background;
     private Texture waterTexture;
@@ -57,6 +58,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     private boolean hitWater = false;
     private boolean hitIce = false;
+    private boolean hitIcicle = false;
 
     /** Cooldown (in animation frames) for punching */
     private static final int PUNCH_COOLDOWN = 100;
@@ -281,6 +283,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
         monster.setFilmStrip(monsterStrip);
         monster.setDrawScale(scale);
         addObject(monster);
+
+        icicle = new Icicle(6f, 6.75f, icicleStrip.getRegionWidth()/scale.x, icicleStrip.getRegionHeight()/scale.y, "icicle");
+        icicle.setFilmStrip(icicleStrip);
+        icicle.setDrawScale(scale);
+        addObject(icicle);
     }
 
     /**
@@ -336,6 +343,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
                         monster.setAwake(false);
                     }
         }
+
+
+
         if(hitWater){
             reset();
         }
@@ -356,7 +366,23 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
+            if(obj instanceof  Icicle){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                obj.setActive(false);
+
+                for (Penguin p: avatar.getPenguins()){
+                    float dist = p.getPosition().dst(obj.getPosition());
+
+                    if (dist < 0.8){
+                        hitIcicle = true;
+                    }
+                }
+                continue;
+            }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
+        }
+        if(hitIcicle){
+            icicle.setActive(true);
         }
         prevavatarX = avatar.getX();
         avatar.applyForce();
@@ -434,6 +460,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 monster.setGrounded(true);
                 sensorFixtures.add(monster == bd1 ? fix2 : fix1); // Could have more than one ground
             }
+
+
             // Check for win condition
             if ((bd1 == avatar   && bd2 == waterComponent) ||
                     (bd1 == waterComponent && bd2 == avatar)) {
