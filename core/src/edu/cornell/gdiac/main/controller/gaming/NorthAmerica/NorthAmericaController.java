@@ -263,7 +263,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
 
-        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
+        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight, 2);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
@@ -277,10 +277,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(avatar.getPenguins().get(i));
         }
 
-
-        monster = new Monster(20, 2f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster");
-        monster.setFilmStrip(monsterStrip);
+        monster = new Monster(5f, 5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster");
+        monster.setFilmStrip(penguinStrip);
         monster.setDrawScale(scale);
+        monster.setBodyType(BodyDef.BodyType.StaticBody);
+        monster.setSensor(true);
         addObject(monster);
     }
 
@@ -337,8 +338,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
                         monster.setAwake(false);
                     }
         }
-        if(hitHurricane){
-            listener.updateScreen(this, 3);
         if(hitWater){
             reset();
         }
@@ -353,15 +352,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setInteract(InputController.getInstance().didXPressed());
         for(Obstacle obj: objects){
             if(obj instanceof Player || obj instanceof Penguin){
-                continue;
-            }
-            if(obj instanceof Component || obj instanceof Monster){
-                obj.setX(obj.getX()+moveX);
-                if(hitRocket && obj.getName() == "rocket"){
-                    obj.setY(obj.getY()+0.1f);
-                    avatar.setY(rocket.getY()+2);
-                    avatar.setX(rocket.getX());
-                }
                 continue;
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
