@@ -20,8 +20,13 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "monster": {
+      "file": "images/shared/monster.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "avatarPunching": {
-      "file": "images/shared/normalLoading.png",
+      "file": "images/shared/avatarPunching.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

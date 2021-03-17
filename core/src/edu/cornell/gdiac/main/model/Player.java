@@ -84,7 +84,7 @@ public class Player extends CapsuleObstacle {
     /** force for throwing */
     private float throwingForce;
     /** angle for throwing */
-    private float throwingAngle;
+    private float throwingAngle = ((float)Math.PI)/2f;;
     /** whether going clockwise */
     private boolean isClockwise;
     /** How long until we can shoot again */
@@ -141,6 +141,7 @@ public class Player extends CapsuleObstacle {
         for(int i = 0; i<penguins.size(); i++){
             if(!penguins.get(i).isThrowOut()){
                 penguins.get(i).setX(getX() + PENGUIN_WIDTH * (penguins.get(i).getIndex() +1) * (faceRight? -1 : 1));
+                penguins.get(i).setY(getY()-1);
                 penguins.get(i).setFaceRight(faceRight);
             }
 //            if(!p.isThrowOut() || !p.isGrounded()){
@@ -287,6 +288,15 @@ public class Player extends CapsuleObstacle {
      */
     public void setGrounded(boolean value) {
         isGrounded = value;
+    }
+
+    /**
+     * Returns true if the dude is on the ground.
+     *
+     * @return true if the dude is on the ground.
+     */
+    public boolean isPunching() {
+        return isPunching;
     }
 
     /**
@@ -532,9 +542,8 @@ public class Player extends CapsuleObstacle {
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
         // canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        float scale = isPunching ? 0.4f : 1.0f;
-        float offset = isPunching ? 18.0f : 0.0f;
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y-offset,getAngle(),effect*scale,scale);
+        float scale = isPunching ? 0.24f : 1.0f;
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*scale,scale);
     }
 
     /**

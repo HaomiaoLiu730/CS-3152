@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.Component;
+import edu.cornell.gdiac.main.model.Monster;
 import edu.cornell.gdiac.main.model.Penguin;
 import edu.cornell.gdiac.main.model.Player;
 import edu.cornell.gdiac.main.obstacle.*;
@@ -26,6 +27,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private AssetDirectory internal;
     /** Reference to the character avatar */
     private Player avatar;
+    private Monster monster;
 
     private Texture background;
     private Texture waterTexture;
@@ -261,7 +263,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
 
-        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
+        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight, 2);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
@@ -274,6 +276,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.getPenguins().get(i).setFilmStrip(penguinStrip);
             addObject(avatar.getPenguins().get(i));
         }
+
+        monster = new Monster(2.5f, 5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster");
+        monster.setFilmStrip(monsterStrip);
+        monster.setDrawScale(scale);
+        addObject(monster);
     }
 
     /**
@@ -321,6 +328,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.setFilmStrip(avatarStrip);
             avatar.setPunching(false);
         }
+        if (avatar.isPunching()) {
+            float dist = avatar.getPosition().dst(monster.getPosition());
+                    if (dist < 2) {
+                        objects.remove(monster);
+                        monster.setActive(false);
+                        monster.setAwake(false);
+                    }
+        }
         if(hitWater){
             reset();
         }
@@ -337,7 +352,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if(obj instanceof Player || obj instanceof Penguin){
                 continue;
             }
-
+            if(obj instanceof  Monster){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                continue;
+            }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
         }
         prevavatarX = avatar.getX();
@@ -410,6 +428,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
                     p.setGrounded(true);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
+            }
+            if ((monster.getSensorName().equals(fd2) && monster != bd1) ||
+                    (monster.getSensorName().equals(fd1) && monster != bd2)) {
+                monster.setGrounded(true);
+                sensorFixtures.add(monster == bd1 ? fix2 : fix1); // Could have more than one ground
             }
             // Check for win condition
             if ((bd1 == avatar   && bd2 == waterComponent) ||

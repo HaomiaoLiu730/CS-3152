@@ -65,9 +65,11 @@ public abstract class WorldController implements Screen {
 
     /** The texture for the player */
     protected FilmStrip avatarStrip;
-    /** The texture for the player */
+    /** The texture for the penguin */
     protected FilmStrip penguinStrip;
-    /** The texture for the player */
+    /** The texture for the monster */
+    protected FilmStrip monsterStrip;
+    /** The texture for the arrow */
     protected Texture arrowTexture;
 
     /** The texture for the player punching */
@@ -118,9 +120,10 @@ public abstract class WorldController implements Screen {
         Texture texture = directory.getEntry("avatarWalking", Texture.class);
         avatarStrip = new FilmStrip(texture, 3, 6);
         penguinStrip = new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
+        monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
         Texture texture2 = directory.getEntry("avatarPunching", Texture.class);
-        punchStrip = new FilmStrip(texture2, 3, 3);
+        punchStrip = new FilmStrip(texture2, 1, 1);
         Texture texture3 = directory.getEntry("avatarJumping", Texture.class);
         jumpStrip = new FilmStrip(texture3, 2, 4);
         worldAssetState = AssetState.COMPLETE;
