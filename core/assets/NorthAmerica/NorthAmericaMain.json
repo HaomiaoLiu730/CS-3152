@@ -19,6 +19,11 @@
       "file":     "images/northAmerica/ice.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "icicle": {
+      "file": "images/northAmerica/icicle.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {

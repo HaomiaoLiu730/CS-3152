@@ -34,6 +34,11 @@
       "file": "images/white.jpg",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "icicle": {
+      "file": "images/shared/icicle.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
