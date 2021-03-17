@@ -261,7 +261,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
 
-        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight, NUM_PENGUIN);
+        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
