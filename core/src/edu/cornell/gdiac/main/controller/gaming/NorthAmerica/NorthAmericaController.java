@@ -277,11 +277,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(avatar.getPenguins().get(i));
         }
 
-        monster = new Monster(5f, 5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster");
-        monster.setFilmStrip(penguinStrip);
+        monster = new Monster(2f, 5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster");
+        monster.setFilmStrip(monsterStrip);
         monster.setDrawScale(scale);
-        monster.setBodyType(BodyDef.BodyType.StaticBody);
-        monster.setSensor(true);
         addObject(monster);
     }
 
@@ -352,6 +350,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setInteract(InputController.getInstance().didXPressed());
         for(Obstacle obj: objects){
             if(obj instanceof Player || obj instanceof Penguin){
+                continue;
+            }
+            if(obj instanceof  Monster){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);

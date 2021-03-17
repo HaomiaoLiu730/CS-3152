@@ -84,7 +84,7 @@ public class Player extends CapsuleObstacle {
     /** force for throwing */
     private float throwingForce;
     /** angle for throwing */
-    private float throwingAngle;
+    private float throwingAngle = ((float)Math.PI)/2f;;
     /** whether going clockwise */
     private boolean isClockwise;
     /** How long until we can shoot again */
@@ -141,6 +141,7 @@ public class Player extends CapsuleObstacle {
         for(int i = 0; i<penguins.size(); i++){
             if(!penguins.get(i).isThrowOut()){
                 penguins.get(i).setX(getX() + PENGUIN_WIDTH * (penguins.get(i).getIndex() +1) * (faceRight? -1 : 1));
+                penguins.get(i).setY(getY()-1);
                 penguins.get(i).setFaceRight(faceRight);
             }
 //            if(!p.isThrowOut() || !p.isGrounded()){

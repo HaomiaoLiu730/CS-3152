@@ -19,7 +19,7 @@ public class Monster extends CapsuleObstacle {
     /** The amount to slow the character down */
     private static final float PLAYER_DAMPING = 10.0f;
     /** The dude is a slippery one */
-    private static final float PLAYER_FRICTION = 0.0f;
+    private static final float PLAYER_FRICTION = 5.0f;
     /** The maximum character speed */
     private static final float PLAYER_MAXSPEED = 5.0f;
     /** The impulse for the character jump */
@@ -142,6 +142,7 @@ public class Monster extends CapsuleObstacle {
         super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
+        setRestitution(0f);
         setFixedRotation(true);
 
         // Gameplay attributes
