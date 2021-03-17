@@ -65,9 +65,16 @@ public abstract class WorldController implements Screen {
 
     /** The texture for the player */
     protected FilmStrip avatarStrip;
+    /** The texture for the player */
+    protected FilmStrip penguinStrip;
+    /** The texture for the player */
+    protected Texture arrowTexture;
 
     /** The texture for the player punching */
     protected FilmStrip punchStrip;
+    /** The texture for the player jumping */
+    protected FilmStrip jumpStrip;
+
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -110,8 +117,12 @@ public abstract class WorldController implements Screen {
         // Allocate the tiles
         Texture texture = directory.getEntry("avatarWalking", Texture.class);
         avatarStrip = new FilmStrip(texture, 3, 6);
+        penguinStrip = new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
+        arrowTexture = directory.getEntry("arrow", Texture.class);
         Texture texture2 = directory.getEntry("avatarPunching", Texture.class);
         punchStrip = new FilmStrip(texture2, 3, 3);
+        Texture texture3 = directory.getEntry("avatarJumping", Texture.class);
+        jumpStrip = new FilmStrip(texture3, 2, 4);
         worldAssetState = AssetState.COMPLETE;
     }
 
@@ -199,7 +210,7 @@ public abstract class WorldController implements Screen {
     /** Height of the game world in Box2d units */
     protected static final float DEFAULT_HEIGHT = 18.0f;
     /** The default value of gravity (going down) */
-    protected static final float DEFAULT_GRAVITY = -2f;
+    protected static final float DEFAULT_GRAVITY = -5f;
 
     // TODO: see this
     /** Reference to the game canvas */

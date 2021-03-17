@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.Component;
+import edu.cornell.gdiac.main.model.Penguin;
 import edu.cornell.gdiac.main.model.Player;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
@@ -50,7 +51,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private static final float START_Y = 0f;
     private static final float WATER1_X = 2.4f;
     private static final float WATER1_Y = 0f;
-
+    private static final int NUM_PENGUIN = 2;
 
     private boolean hitWater = false;
     private boolean hitIce = false;
@@ -260,10 +261,19 @@ public class NorthAmericaController extends WorldController implements ContactLi
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
 
-        avatar = new Player(3, 5, dwidth, dheight);
+        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight, NUM_PENGUIN);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
+        avatar.setArrowTexture(arrowTexture);
+//        avatar.setPenguinWidth(penguinStrip.getRegionWidth());
+//        avatar.setPenguinHeight(penguinStrip.getRegionHeight());
         addObject(avatar);
+
+        for(int i = 0; i<NUM_PENGUIN; i++){
+            avatar.getPenguins().get(i).setDrawScale(scale);
+            avatar.getPenguins().get(i).setFilmStrip(penguinStrip);
+            addObject(avatar.getPenguins().get(i));
+        }
     }
 
     /**
@@ -317,9 +327,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
         float moveX = -avatar.getX() + prevavatarX;
         if(Math.abs(moveX) < 1e-2) moveX = 0;
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
+        if(InputController.getInstance().didPrimary()){
+            avatar.setFilmStrip(jumpStrip);
+        }
         avatar.setJumping(InputController.getInstance().didPrimary());
+        avatar.setThrowing(InputController.getInstance().didSecondary());
+        avatar.setInteract(InputController.getInstance().didXPressed());
         for(Obstacle obj: objects){
-            if(obj instanceof Player){
+            if(obj instanceof Player || obj instanceof Penguin){
                 continue;
             }
 
@@ -385,7 +400,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                     (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
                 avatar.setGrounded(true);
+                avatar.setFilmStrip(avatarStrip);
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
+            }
+            for(Penguin p: avatar.getPenguins()){
+                // See if we have landed on the ground.
+                if ((p.getSensorName().equals(fd2) && p != bd1) ||
+                        (p.getSensorName().equals(fd1) && p != bd2)) {
+                    p.setGrounded(true);
+                    sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
+                }
             }
             // Check for win condition
             if ((bd1 == avatar   && bd2 == waterComponent) ||
@@ -418,6 +442,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
             if (sensorFixtures.size == 0) {
                 avatar.setGrounded(false);
+            }
+        }
+
+        for(Penguin p: avatar.getPenguins()){
+            if ((p.getSensorName().equals(fd2) && p != bd1) ||
+                    (p.getSensorName().equals(fd1) && p != bd2)) {
+                sensorFixtures.remove(p == bd1 ? fix2 : fix1);
+                if (sensorFixtures.size == 0) {
+                    p.setGrounded(false);
+                }
             }
         }
 
