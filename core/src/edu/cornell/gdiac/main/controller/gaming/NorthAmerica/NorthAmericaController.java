@@ -294,9 +294,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
         addObject(icicle);
 
 //        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
-//        water.setFilmStrip(waterStrip);
-//        water.setDrawScale(scale);
-//        addObject(water);
+        water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+
+        water.setFilmStrip(waterStrip);
+        water.setDrawScale(scale);
+        addObject(water);
 
         ice = new Ice(ICE[0],START_X, START_Y, "ice");
         //ice.setFilmStrip(iceStrip);
@@ -401,11 +403,13 @@ public class NorthAmericaController extends WorldController implements ContactLi
             }
             if(obj instanceof  Water){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
-                obj.setActive(false);
+                // obj.setActive(false);
                 continue;
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
+
         }
+
         if(hitIcicle){
             icicle.setActive(true);
         }
@@ -485,6 +489,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 monster.setGrounded(true);
                 sensorFixtures.add(monster == bd1 ? fix2 : fix1); // Could have more than one ground
             }
+            if ((water.getSensorName().equals(fd2) && water != bd1) ||
+                    (water.getSensorName().equals(fd1) && water != bd2)) {
+                water.setGrounded(true);
+                sensorFixtures.add(water == bd1 ? fix2 : fix1); // Could have more than one ground
+            }
 
             if ((ice.getSensorName().equals(fd2) && ice != bd1) ||
                     (ice.getSensorName().equals(fd1) && ice != bd2)) {
@@ -494,8 +503,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
 
             // Check for win condition
-            if ((bd1 == avatar   && bd2 == waterComponent) ||
-                    (bd1 == waterComponent && bd2 == avatar)) {
+            if ((bd1 == avatar   && bd2 == water) ||
+                    (bd1 == water && bd2 == avatar)) {
                 hitWater(true);
             }
 
@@ -508,6 +517,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     @Override
     public void endContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
+
         Fixture fix2 = contact.getFixtureB();
 
         Body body1 = fix1.getBody();

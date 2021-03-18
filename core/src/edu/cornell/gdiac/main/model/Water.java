@@ -1,5 +1,4 @@
 package edu.cornell.gdiac.main.model;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -10,8 +9,7 @@ import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 
-public class Water extends CapsuleObstacle {
-    // Physics constants
+public class Water extends CapsuleObstacle{
     /** The density of the character */
     private static final float PLAYER_DENSITY = 1.0f;
     /** The factor to multiply by the input */
@@ -232,3 +230,4 @@ public class Water extends CapsuleObstacle {
         canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 }
+
