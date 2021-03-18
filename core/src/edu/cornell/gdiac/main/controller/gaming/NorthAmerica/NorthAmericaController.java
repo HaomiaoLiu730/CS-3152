@@ -37,12 +37,13 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Texture waterTexture;
     /** The texture for walls and platforms */
     private TextureRegion snow;
+    private TextureRegion iceTextureRegion;
 //    private TextureRegion ice;
 
 
     // Physics constants for initialization
     /** Density of non-crate objects */
-    private static final float BASIC_DENSITY   = 0.0f;
+    private static final float BASIC_DENSITY   = 2.65f;
     /** Density of the crate objects */
     private static final float CRATE_DENSITY   = 1.0f;
     /** Friction of non-crate objects */
@@ -117,7 +118,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     };
     private static final float[][] ICE = {
             {
-                    35f, 3f, 35f, 0f, 30f,0f,30f,3f
+                    35f, 3f, 35f, 2f, 30f,2f,30f,3f
             },
 
 
@@ -152,7 +153,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
         snow = new TextureRegion(internal.getEntry("snow", Texture.class));
-//        ice = new TextureRegion(internal.getEntry("ice", Texture.class));
+        iceTextureRegion = new TextureRegion(internal.getEntry("ice", Texture.class));
         waterTexture = internal.getEntry("water", Texture.class);
 
         sensorFixtures = new ObjectSet<Fixture>();
@@ -292,13 +293,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
         icicle.setDrawScale(scale);
         addObject(icicle);
 
-        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
-        water.setFilmStrip(waterStrip);
-        water.setDrawScale(scale);
-        addObject(water);
+//        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+//        water.setFilmStrip(waterStrip);
+//        water.setDrawScale(scale);
+//        addObject(water);
 
-        ice = new Ice(2.4f, 500f, iceStrip.getRegionWidth()/scale.x, iceStrip.getRegionHeight()/scale.y, "ice");
-        ice.setFilmStrip(iceStrip);
+        ice = new Ice(ICE[0],START_X, START_Y, "ice");
+        //ice.setFilmStrip(iceStrip);
+        ice.setTexture(iceTextureRegion);
         ice.setDrawScale(scale);
         addObject(ice);
     }
@@ -392,6 +394,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 }
                 continue;
             }
+            if(obj instanceof Ice){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                //obj.setActive(false);
+                continue;
+            }
+            if(obj instanceof  Water){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                obj.setActive(false);
+                continue;
+            }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
         }
         if(hitIcicle){
@@ -472,6 +484,12 @@ public class NorthAmericaController extends WorldController implements ContactLi
                     (monster.getSensorName().equals(fd1) && monster != bd2)) {
                 monster.setGrounded(true);
                 sensorFixtures.add(monster == bd1 ? fix2 : fix1); // Could have more than one ground
+            }
+
+            if ((ice.getSensorName().equals(fd2) && ice != bd1) ||
+                    (ice.getSensorName().equals(fd1) && ice != bd2)) {
+                ice.setGrounded(true);
+                sensorFixtures.add(ice == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
 
