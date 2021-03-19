@@ -344,8 +344,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
                     }
         }
 
-
-
         if(hitWater){
             reset();
         }
@@ -368,7 +366,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             }
             if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
-                if (! hitIcicle) obj.setActive(false);
+                if (!hitIcicle) obj.setActive(false);
                 for (Penguin p: avatar.getPenguins()){
                     float dist = p.getPosition().dst(obj.getPosition());
 
@@ -384,8 +382,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
             icicle.setActive(true);
             icicle.setAwake(true);
         }
-
-
 
         prevavatarX = avatar.getX();
         avatar.applyForce();
@@ -418,7 +414,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 //        }
     }
 
-        @Override
+    @Override
     public void resize(int width, int height) {
 
     }
@@ -464,16 +460,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 sensorFixtures.add(monster == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
-
             // Check for win condition
             if ((bd1 == avatar   && bd2 == waterComponent) ||
                     (bd1 == waterComponent && bd2 == avatar)) {
                 hitWater(true);
-            }
-
-            if ((bd1 == icicle   && bd2 == waterComponent) ||
-                    (bd1 == waterComponent && bd2 == icicle)) {
-                icicle.setActive(false);
             }
 
         } catch (Exception e) {
