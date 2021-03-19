@@ -368,8 +368,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             }
             if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
-                obj.setActive(false);
-
+                if (! hitIcicle) obj.setActive(false);
                 for (Penguin p: avatar.getPenguins()){
                     float dist = p.getPosition().dst(obj.getPosition());
 
@@ -383,7 +382,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
         }
         if(hitIcicle){
             icicle.setActive(true);
+            icicle.setAwake(true);
         }
+
+
+
         prevavatarX = avatar.getX();
         avatar.applyForce();
     }
@@ -466,6 +469,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((bd1 == avatar   && bd2 == waterComponent) ||
                     (bd1 == waterComponent && bd2 == avatar)) {
                 hitWater(true);
+            }
+
+            if ((bd1 == icicle   && bd2 == waterComponent) ||
+                    (bd1 == waterComponent && bd2 == icicle)) {
+                icicle.setActive(false);
             }
 
         } catch (Exception e) {

@@ -123,13 +123,14 @@ public abstract class WorldController implements Screen {
         avatarStrip = new FilmStrip(texture, 3, 6);
         penguinStrip = new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
+        icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
         Texture texture2 = directory.getEntry("avatarPunching", Texture.class);
         punchStrip = new FilmStrip(texture2, 1, 1);
         Texture texture3 = directory.getEntry("avatarJumping", Texture.class);
         jumpStrip = new FilmStrip(texture3, 2, 4);
         worldAssetState = AssetState.COMPLETE;
-        icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
+
 
     }
 
