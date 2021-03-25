@@ -309,7 +309,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
        dheight = iceTextureRegion.getRegionHeight()/scale.y;
-        Ice spinPlatform = new Ice(2.5f,2f,dwidth,dheight);
+        Ice spinPlatform = new Ice(2.5f,1.8f,dwidth,dheight);
         spinPlatform.setDrawScale(scale);
         spinPlatform.setTexture(iceTextureRegion);
         addObject(spinPlatform);
@@ -393,7 +393,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             }
             if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
-                System.out.println(obj.getX()+" icicle ");
+//                System.out.println(obj.getX()+" icicle ");
                 obj.setActive(false);
 
                 for (Penguin p: avatar.getPenguins()){
@@ -408,7 +408,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if(obj instanceof Ice){
                 //obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 ((Ice) obj).setTranform(obj.getX()+moveX, obj.getY(), 0);
-                System.out.println(obj.getX()+" ice ");
+//                System.out.println(obj.getX()+" ice ");
                 //obj.setActive(false);
                 continue;
             }
