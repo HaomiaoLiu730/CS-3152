@@ -48,7 +48,7 @@ public class Ice extends ComplexObstacle {
 
         // Create the barrier
         iceBar = new BoxObstacle(x,y,width,height);
-        iceBar.setName("barrier");
+        iceBar.setName("iceBar");
         iceBar.setDensity(1);
         bodies.add(iceBar);
 

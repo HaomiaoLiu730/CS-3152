@@ -309,7 +309,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
        dheight = iceTextureRegion.getRegionHeight()/scale.y;
-        Ice spinPlatform = new Ice(10f,3f,dwidth,dheight);
+        Ice spinPlatform = new Ice(5f,3f,dwidth,dheight);
         spinPlatform.setDrawScale(scale);
         spinPlatform.setTexture(iceTextureRegion);
         addObject(spinPlatform);
