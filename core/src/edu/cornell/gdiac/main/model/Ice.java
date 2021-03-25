@@ -15,7 +15,6 @@
 package edu.cornell.gdiac.main.model;
 
 import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
@@ -61,10 +60,22 @@ public class Ice extends ComplexObstacle {
         pin.setName("pin");
         pin.setDensity(0);
         pin.setBodyType(BodyDef.BodyType.StaticBody);
+        //pin.setActive(false);
         bodies.add(pin);
         //pin.activatePhysics(world);
 
         //#endregion
+    }
+
+    public void setTranform(float x, float y,float angle){
+        super.getBody().setTransform(x,y,angle);
+        for(Obstacle obj : bodies) {
+            obj.getBody().setTransform(x,y,angle);
+        }
+    }
+
+    public float getX(){
+        return iceBar.getPosition().x;
     }
 
     /**
