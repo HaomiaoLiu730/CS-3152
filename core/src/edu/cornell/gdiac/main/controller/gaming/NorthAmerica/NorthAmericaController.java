@@ -5,6 +5,7 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -308,7 +309,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
        dheight = iceTextureRegion.getRegionHeight()/scale.y;
-        Ice spinPlatform = new Ice(ICE[0],32.5f,2.5f,dwidth,dheight);
+        Ice spinPlatform = new Ice(10f,3f,dwidth,dheight);
         spinPlatform.setDrawScale(scale);
         spinPlatform.setTexture(iceTextureRegion);
         addObject(spinPlatform);
@@ -502,11 +503,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 sensorFixtures.add(water == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
-            if ((ice.getSensorName().equals(fd2) && ice != bd1) ||
-                    (ice.getSensorName().equals(fd1) && ice != bd2)) {
-                ice.setGrounded(true);
-                sensorFixtures.add(ice == bd1 ? fix2 : fix1); // Could have more than one ground
-            }
+//            if ((ice.getSensorName().equals(fd2) && ice != bd1) ||
+//                    (ice.getSensorName().equals(fd1) && ice != bd2)) {
+//                ice.setGrounded(true);
+//                sensorFixtures.add(ice == bd1 ? fix2 : fix1); // Could have more than one ground
+//            }
 
 
             // Check for win condition

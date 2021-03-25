@@ -1,169 +1,108 @@
+/*
+ * Spinner.java
+ *
+ * This class provides a spinning rectangle on a fixed pin.  We did not really need
+ * a separate class for this, as it has no update.  However, ComplexObstacles always
+ * make joint management easier.
+ *
+ * This is one of the files that you are expected to modify. Please limit changes to
+ * the regions that say INSERT CODE HERE.
+ *
+ * Author: Walker M. White
+ * Based on original PhysicsDemo Lab by Don Holden, 2007
+ * Updated asset version, 2/6/2021
+ */
 package edu.cornell.gdiac.main.model;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
-import edu.cornell.gdiac.main.obstacle.ComplexObstacle;
-import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
-import edu.cornell.gdiac.main.obstacle.WheelObstacle;
+import com.badlogic.gdx.physics.box2d.joints.*;
 
+import edu.cornell.gdiac.main.obstacle.*;
 
 public class Ice extends ComplexObstacle {
-    // Physics constants
-    /**
-     * The density of the character
-     */
-    private static final float DENSITY = 0.9f;
-    /**
-     * The dude is a slippery one
-     */
-    private static final float FRICTION = 5.0f;
+    /** The initializing data (to avoid magic numbers) */
+    //private final JsonValue data;
+
+    /** The primary spinner obstacle */
+    private BoxObstacle iceBar;
+    private WheelObstacle pin;
 
     /**
-     * Identifier to allow us to track the sensor in ContactListener
-     */
-    private static final String SENSOR_NAME = "WaterSensor";
-
-
-    /**
-     * Whether our feet are on the ground
-     */
-    private boolean isGrounded;
-    /**
-     * Ground sensor to represent our feet
-     */
-    private Fixture sensorFixture;
-    private PolygonShape sensorShape;
-
-    private float[] vertices;
-    private PolygonObstacle barrier;
-    /**
-     * Returns true if the dude is on the ground.
+     * Creates a new spinner with the given physics data.
      *
-     * @return true if the dude is on the ground.
-     */
-    public boolean isGrounded() {
-        return isGrounded;
-    }
-
-    /**
-     * Sets whether the dude is on the ground.
-     *
-     * @param value whether the dude is on the ground.
-     */
-    public void setGrounded(boolean value) {
-        isGrounded = value;
-    }
-
-    /**
-     * Returns the name of the ground sensor
-     * <p>
-     * This is used by ContactListener
-     *
-     * @return the name of the ground sensor
-     */
-    public String getSensorName() {
-        return SENSOR_NAME;
-    }
-
-
-    /**
-     * Creates a new dude avatar at the given position.
-     * <p>
      * The size is expressed in physics units NOT pixels.  In order for
      * drawing to work properly, you MUST set the drawScale. The drawScale
      * converts the physics units to pixels.
      *
-     * @param x Initial x position of the avatar center
-     * @param y Initial y position of the avatar center
+     * @param x  	    The x coordinate of the center
+     * @param y         The y coordinate of the center
+     * @param width		The object width in physics units
+     * @param height	The object width in physics units
      */
-    public Ice(float[] points, float x, float y, float width, float height) {
-        super(x, y);
-        setName("ice");
-//        this.data=data;
+    public Ice(float x,float y, float width, float height) {
+        super(x,y);
+        setName("Ice");
 
-        barrier=new PolygonObstacle(points, x,y);
-        barrier.setName(("barrier"));
-        barrier.setDensity(10.0f);
-        barrier.setFriction(0.2f);
-        barrier.setRestitution(0.1f);
-        bodies.add(barrier);
-//        setFixedRotation(true);
+        // Create the barrier
+        iceBar = new BoxObstacle(x,y,width,height);
+        iceBar.setName("barrier");
+        iceBar.setDensity(1);
+        bodies.add(iceBar);
 
-        // Gameplay attributes
-        isGrounded = false;
-
-//        setName(name);
-        vertices = points;
-
-        WheelObstacle pin = new WheelObstacle(x,y,0.1f);
-        pin.setDensity(0);
+        //#region INSERT CODE HERE
+        // Create a pin to anchor the barrier 
+        // Radius:  data.getFloat("radius")
+        // Density: data.getFloat("low_density")
+        // Name: "pin"
+        pin = new WheelObstacle(x,y,0.1f);
         pin.setName("pin");
-        //make it static body
+        pin.setDensity(0);
         pin.setBodyType(BodyDef.BodyType.StaticBody);
         bodies.add(pin);
+        //pin.activatePhysics(world);
+
+        //#endregion
     }
 
     /**
-     * Creates the physics Body(s) for this object, adding them to the world.
-     * <p>
-     * This method overrides the base method to keep your ship from spinning.
+     * Creates the joints for this object.
      *
-     * @param world Box2D world to store body
+     * We implement our custom logic here.
+     *
+     * @param world Box2D world to store joints
+     *
      * @return true if object allocation succeeded
      */
-    public boolean activatePhysics(World world) {
-        // create the box from our superclass
-        if (!super.activatePhysics(world)) {
-            return false;
-        }
-
-        // Ground Sensor
-        // -------------
-        // We only allow the dude to jump when he's on the ground.
-        // Double jumping is not allowed.
-        //
-        // To determine whether or not the dude is on the ground,
-        // we create a thin sensor under his feet, which reports
-        // collisions with the world but has no collision response.
-//        Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
-        FixtureDef sensorDef = new FixtureDef();
-        sensorDef.density = DENSITY;
-        sensorDef.isSensor = true;
-        sensorShape = new PolygonShape();
-        sensorShape.set(vertices);
-        sensorDef.shape = sensorShape;
-
-        sensorFixture = body.createFixture(sensorDef);
-        sensorFixture.setUserData(getSensorName());
-
-        return true;
-    }
-
-    @Override
     protected boolean createJoints(World world) {
         assert bodies.size > 0;
 
         //#region INSERT CODE HERE
         // Attach the barrier to the pin here
+        Vector2 anchor = new Vector2();
+        // Definition for a revolute joint
         RevoluteJointDef jointDef = new RevoluteJointDef();
-        //get barrier
-        jointDef.bodyA = bodies.get(0).getBody();
-        //get pin
-        jointDef.bodyB = bodies.get(1).getBody();
-        //set anchors
-        jointDef.localAnchorA.set(0,0);
-        jointDef.localAnchorB.set(0,0);
+
+        // Initial joint
+        jointDef.bodyB = iceBar.getBody();
+        jointDef.bodyA = pin.getBody();
+        jointDef.localAnchorB.set(anchor);
+        jointDef.localAnchorA.set(anchor);
+        jointDef.collideConnected = false;
         Joint joint = world.createJoint(jointDef);
-        //add joint
         joints.add(joint);
         //#endregion
 
         return true;
     }
+
     public void setTexture(TextureRegion texture) {
-        barrier.setTexture(texture);
+        iceBar.setTexture(texture);
     }
 
+    public TextureRegion getTexture() {
+        return iceBar.getTexture();
+    }
 }
