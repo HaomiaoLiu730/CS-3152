@@ -300,11 +300,18 @@ public class NorthAmericaController extends WorldController implements ContactLi
         water.setDrawScale(scale);
         addObject(water);
 
-        ice = new Ice(ICE[0],START_X, START_Y, "ice");
+//        ice = new Ice(ICE[0],START_X, START_Y, "ice");
         //ice.setFilmStrip(iceStrip);
-        ice.setTexture(iceTextureRegion);
-        ice.setDrawScale(scale);
-        addObject(ice);
+//        ice.setTexture(iceTextureRegion);
+//        ice.setDrawScale(scale);
+//        addObject(ice);
+
+        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
+       dheight = iceTextureRegion.getRegionHeight()/scale.y;
+        Ice spinPlatform = new Ice(ICE[0],32.5f,2.5f,dwidth,dheight);
+        spinPlatform.setDrawScale(scale);
+        spinPlatform.setTexture(iceTextureRegion);
+        addObject(spinPlatform);
     }
 
     /**

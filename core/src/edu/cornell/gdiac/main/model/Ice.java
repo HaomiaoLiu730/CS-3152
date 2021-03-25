@@ -1,14 +1,15 @@
 package edu.cornell.gdiac.main.model;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
+import edu.cornell.gdiac.main.obstacle.ComplexObstacle;
 import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.main.obstacle.WheelObstacle;
 
 
-public class Ice extends PolygonObstacle {
+public class Ice extends ComplexObstacle {
     // Physics constants
     /**
      * The density of the character
@@ -36,7 +37,7 @@ public class Ice extends PolygonObstacle {
     private PolygonShape sensorShape;
 
     private float[] vertices;
-
+    private PolygonObstacle barrier;
     /**
      * Returns true if the dude is on the ground.
      *
@@ -77,18 +78,31 @@ public class Ice extends PolygonObstacle {
      * @param x Initial x position of the avatar center
      * @param y Initial y position of the avatar center
      */
-    public Ice(float[] points, float x, float y, String name) {
-        super(points, x, y);
-        setDensity(DENSITY);
-        setFriction(FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
-        setRestitution(0.1f);
-        setFixedRotation(true);
+    public Ice(float[] points, float x, float y, float width, float height) {
+        super(x, y);
+        setName("ice");
+//        this.data=data;
+
+        barrier=new PolygonObstacle(points, x,y);
+        barrier.setName(("barrier"));
+        barrier.setDensity(10.0f);
+        barrier.setFriction(0.2f);
+        barrier.setRestitution(0.1f);
+        bodies.add(barrier);
+//        setFixedRotation(true);
 
         // Gameplay attributes
         isGrounded = false;
 
-        setName(name);
+//        setName(name);
         vertices = points;
+
+        WheelObstacle pin = new WheelObstacle(x,y,0.1f);
+        pin.setDensity(0);
+        pin.setName("pin");
+        //make it static body
+        pin.setBodyType(BodyDef.BodyType.StaticBody);
+        bodies.add(pin);
     }
 
     /**
@@ -113,7 +127,7 @@ public class Ice extends PolygonObstacle {
         // To determine whether or not the dude is on the ground,
         // we create a thin sensor under his feet, which reports
         // collisions with the world but has no collision response.
-        Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
+//        Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
         FixtureDef sensorDef = new FixtureDef();
         sensorDef.density = DENSITY;
         sensorDef.isSensor = true;
@@ -126,4 +140,30 @@ public class Ice extends PolygonObstacle {
 
         return true;
     }
+
+    @Override
+    protected boolean createJoints(World world) {
+        assert bodies.size > 0;
+
+        //#region INSERT CODE HERE
+        // Attach the barrier to the pin here
+        RevoluteJointDef jointDef = new RevoluteJointDef();
+        //get barrier
+        jointDef.bodyA = bodies.get(0).getBody();
+        //get pin
+        jointDef.bodyB = bodies.get(1).getBody();
+        //set anchors
+        jointDef.localAnchorA.set(0,0);
+        jointDef.localAnchorB.set(0,0);
+        Joint joint = world.createJoint(jointDef);
+        //add joint
+        joints.add(joint);
+        //#endregion
+
+        return true;
+    }
+    public void setTexture(TextureRegion texture) {
+        barrier.setTexture(texture);
+    }
+
 }
