@@ -93,7 +93,8 @@ public class Player extends CapsuleObstacle {
     /** force for throwing */
     private float throwingForce;
     /** angle for throwing */
-    private float throwingAngle = 0;
+    private float xDir;
+    private float yDir;
     /** How long until we can shoot again */
     private int shootCooldown;
     /** Whether our feet are on the ground */
@@ -256,32 +257,24 @@ public class Player extends CapsuleObstacle {
         }
     }
 
-    public void setThrowingAngle(float clickX, float clickY, float avatarX, float avatarY){
-//        System.out.println(clickX+", "+clickY+", "+avatarX+", "+avatarY);
-        //TODO: SCALE SUBJECT TO CHANGE
-        float xDir = clickX/1280f*32 - avatarX;
-        float yDir = (720f-clickY)/720f*18 - avatarY;
-        throwingAngle = (float)Math.atan(yDir/xDir)-(float)(Math.PI)/2f;
-    }
-
     public void setThrowing(float clickX, float clickY, float avatarX, float avatarY, boolean touchUp, boolean isTouching ) {
         isThrowing = isTouching;
         // setting throwing direction
         if(touchUp && throwingCount == 0){
-            setThrowingAngle(clickX, clickY, avatarX, avatarY);
-            System.out.println("angle: "+throwingAngle);
+            xDir = clickX/1280f*32 - avatarX;
+            yDir = (720f-clickY)/720f*18 - avatarY;
             throwingCount = 1;
         }else if(throwingCount == 1 && isTouching){
             // setting force
-            throwingForce += 1f;
-            System.out.println("force: "+throwingForce);
+            throwingForce += 5f;
+//            System.out.println("force: "+throwingForce);
         }else if(throwingCount == 1 && !isTouching && throwingForce != 0f){
             if(numPenguins > 0){
                 for(Penguin p: penguins){
                     if(p.getIndex() == numPenguins-1){
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+2);
-                        p.setMovement(throwingForce, throwingAngle);
+                        p.setMovement(throwingForce, xDir, yDir);
                         numPenguins -=1;
                         break;
                     }
@@ -289,7 +282,8 @@ public class Player extends CapsuleObstacle {
             }
             throwingCount = 0;
             throwingForce = 0f;
-            throwingAngle = 0f;
+            xDir = 0f;
+            yDir = 0f;
         }
 
     }
@@ -570,7 +564,7 @@ public class Player extends CapsuleObstacle {
             shootCooldown = Math.max(0, shootCooldown - 1);
         }
         for(Penguin p: penguins){
-            p.applyForce(0,0);
+            p.applyForce(0,0, 0);
         }
         super.update(dt);
     }
@@ -582,7 +576,10 @@ public class Player extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-
+        float throwingAngle = (float)(Math.atan(yDir/xDir));
+        if(throwingAngle < 0){
+            throwingAngle = -throwingAngle + (float)(Math.PI/2);
+        }
         if(throwingAngle != 0){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
