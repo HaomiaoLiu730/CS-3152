@@ -25,6 +25,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "monsterAttacking": {
+      "file": "images/shared/monsterAttacking.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "avatarPunching": {
       "file": "images/shared/avatarPunching.png",
       "minFilter": "linear",
