@@ -13,7 +13,7 @@ import edu.cornell.gdiac.util.FilmStrip;
 public class Icicle extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
-    private static final float PLAYER_DENSITY = 1.0f;
+    private static final float PLAYER_DENSITY = 50.0f;
     /** The factor to multiply by the input */
     private static final float PLAYER_FORCE = 20.0f;
     /** The amount to slow the character down */

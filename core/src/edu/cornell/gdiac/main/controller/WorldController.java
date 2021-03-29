@@ -73,6 +73,8 @@ public abstract class WorldController implements Screen {
     protected FilmStrip waterStrip;
     /** The texture for the ice */
     protected FilmStrip iceStrip;
+    /** The texture for the monster attacking */
+    protected FilmStrip attackStrip;
     /** The texture for the arrow */
     protected Texture arrowTexture;
     /** The texture for the icicle */
@@ -123,15 +125,14 @@ public abstract class WorldController implements Screen {
 //        }
 
         // Allocate the tiles
-        Texture texture = directory.getEntry("avatarWalking", Texture.class);
-        avatarStrip = new FilmStrip(texture, 3, 6);
+        avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 3, 6);
         penguinStrip = new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
+        attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
+        icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
-        Texture texture2 = directory.getEntry("avatarPunching", Texture.class);
-        punchStrip = new FilmStrip(texture2, 1, 1);
-        Texture texture3 = directory.getEntry("avatarJumping", Texture.class);
-        jumpStrip = new FilmStrip(texture3, 2, 4);
+        punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
+        jumpStrip = new FilmStrip(directory.getEntry("avatarJumping", Texture.class), 2, 4);
         worldAssetState = AssetState.COMPLETE;
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         waterStrip= new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
