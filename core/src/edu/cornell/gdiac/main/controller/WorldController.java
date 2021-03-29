@@ -135,7 +135,6 @@ public abstract class WorldController implements Screen {
         throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
 
-
     }
 
     /**

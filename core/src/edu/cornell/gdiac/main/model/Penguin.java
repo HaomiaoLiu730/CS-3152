@@ -99,9 +99,9 @@ public class Penguin extends CapsuleObstacle {
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
             temp.set(xDir, yDir).nor();
-            forceCache.set((float) (force*temp.x*5),0f);
+            forceCache.set((float) (force*temp.x*10),0f);
             body.applyForce(forceCache,getPosition(),true);
-            forceCache.set(0, (float) (force*temp.y*0.2f));
+            forceCache.set(0, (float) (force*temp.y*0.1f));
             body.applyLinearImpulse(forceCache,getPosition(),true);
         }
 
