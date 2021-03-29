@@ -16,9 +16,6 @@ import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class NorthAmericaController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
@@ -269,6 +266,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
+        avatar.setJumpHangingStrip(jumpHangingStrip);
+        avatar.setJumpLandingStrip(jumpLandingStrip);
+        avatar.setJumpRisingStrip(jumpRisingStrip);
+        avatar.setWalkingStrip(avatarStrip);
 //        avatar.setPenguinWidth(penguinStrip.getRegionWidth());
 //        avatar.setPenguinHeight(penguinStrip.getRegionHeight());
         addObject(avatar);
@@ -351,7 +352,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
         if(Math.abs(moveX) < 1e-2) moveX = 0;
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
         if(InputController.getInstance().didPrimary()){
-            avatar.setFilmStrip(jumpStrip);
+            avatar.moveState = Player.animationState.jumpRising;
+            avatar.setFilmStrip(jumpRisingStrip);
         }
         avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setThrowing(InputController.getInstance().didSecondary());
@@ -443,7 +445,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                     (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
                 avatar.setGrounded(true);
-                avatar.setFilmStrip(avatarStrip);
+                if(avatar.moveState == Player.animationState.jumpHanging){
+                    avatar.moveState = Player.animationState.jumpLanding;
+                    avatar.setFilmStrip(jumpLandingStrip);
+                }
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
             for(Penguin p: avatar.getPenguins()){

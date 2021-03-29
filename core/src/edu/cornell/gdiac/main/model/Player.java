@@ -55,6 +55,15 @@ public class Player extends CapsuleObstacle {
     private float PENGUIN_WIDTH = 1.6f;
     private float PENGUIN_HEIGHT = 2f;
 
+    /** The texture for the player jumping */
+    private FilmStrip jumpRisingStrip;
+    /** The texture for the player jumping */
+    private FilmStrip jumpHangingStrip;
+    /** The texture for the player jumping */
+    private FilmStrip jumpLandingStrip;
+    /** The texture for the player jumping */
+    private FilmStrip walkingStrip;
+
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
     private static final float PLAYER_VSHRINK = 0.95f;
@@ -103,6 +112,18 @@ public class Player extends CapsuleObstacle {
     private float timeCounter = 0;
     private int totalPenguins;
     private int numPenguins;
+    public animationState moveState = animationState.walking;
+
+    public enum animationState {
+        /** walking state*/
+        walking,
+        /** rising for jumping*/
+        jumpRising,
+        /** handing for jumping */
+        jumpHanging,
+        /** landing for jumping */
+        jumpLanding
+    }
 
     private ArrayList<Penguin> penguins = new ArrayList<>();
 
@@ -120,6 +141,22 @@ public class Player extends CapsuleObstacle {
      */
     public float getMovement() {
         return movement;
+    }
+
+    public void setJumpRisingStrip(FilmStrip strip){
+        jumpRisingStrip = strip;
+    }
+
+    public void setJumpHangingStrip(FilmStrip strip){
+        jumpHangingStrip = strip;
+    }
+
+    public void setJumpLandingStrip(FilmStrip strip){
+        jumpLandingStrip = strip;
+    }
+
+    public void setWalkingStrip(FilmStrip strip){
+        walkingStrip = strip;
     }
 
     /**
@@ -141,7 +178,7 @@ public class Player extends CapsuleObstacle {
         for(int i = 0; i<penguins.size(); i++){
             if(!penguins.get(i).isThrowOut()){
                 penguins.get(i).setX(getX() + PENGUIN_WIDTH * (penguins.get(i).getIndex() +1) * (faceRight? -1 : 1));
-                penguins.get(i).setY(getY()-1);
+//                penguins.get(i).setY(getY()-1);
                 penguins.get(i).setFaceRight(faceRight);
             }
 //            if(!p.isThrowOut() || !p.isGrounded()){
@@ -495,17 +532,46 @@ public class Player extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
         timeCounter += dt;
-        if(isGrounded){
-            if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
+
+        if(moveState == animationState.walking){
+            if(timeCounter >= 0.1 && getVX()>0.1f) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
             }
-        }else{
-            if(timeCounter >= 0.2 && Math.abs(getVX()) > 1e-1) {
+        }else if(moveState == animationState.jumpRising){
+            if(timeCounter >= 0.2) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
+                if (filmStrip.getFrame() == 0){
+                    moveState = animationState.jumpHanging;
+                    setFilmStrip(jumpHangingStrip);
+                }
+            }
+        }else if(moveState == animationState.jumpHanging){
+            // nothing here
+        }else if(moveState == animationState.jumpLanding){
+            if(timeCounter >= 0.2) {
+                timeCounter = 0;
+                filmStrip.nextFrame();
+                if (filmStrip.getFrame() == 0){
+                    setFilmStrip(walkingStrip);
+                    moveState = animationState.walking;
+                }
             }
         }
+
+
+//        if(isGrounded){
+//            if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
+//                timeCounter = 0;
+//                filmStrip.nextFrame();
+//            }
+//        }else{
+//            if(timeCounter >= 0.2 && Math.abs(getVX()) > 1e-1) {
+//                timeCounter = 0;
+//                filmStrip.nextFrame();
+//            }
+//        }
         if (isJumping()) {
             jumpCooldown = JUMP_COOLDOWN;
         } else {
@@ -541,7 +607,6 @@ public class Player extends CapsuleObstacle {
         if(throwingCount == 1 && isThrowing){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
-        // canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         float scale = isPunching ? 0.24f : 1.0f;
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*scale,scale);
     }

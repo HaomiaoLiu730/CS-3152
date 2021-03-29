@@ -5,8 +5,18 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "avatarJumping": {
-      "file": "images/shared/avatarJumping.png",
+    "jumpRising": {
+      "file": "images/shared/jumpRising.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging": {
+      "file": "images/shared/jumpHanging.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding": {
+      "file": "images/shared/jumpLanding.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

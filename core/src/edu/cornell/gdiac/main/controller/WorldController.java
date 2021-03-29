@@ -77,8 +77,11 @@ public abstract class WorldController implements Screen {
     /** The texture for the player punching */
     protected FilmStrip punchStrip;
     /** The texture for the player jumping */
-    protected FilmStrip jumpStrip;
-
+    protected FilmStrip jumpRisingStrip;
+    /** The texture for the player jumping */
+    protected FilmStrip jumpHangingStrip;
+    /** The texture for the player jumping */
+    protected FilmStrip jumpLandingStrip;
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -125,7 +128,9 @@ public abstract class WorldController implements Screen {
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
-        jumpStrip = new FilmStrip(directory.getEntry("avatarJumping", Texture.class), 2, 4);
+        jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 3);
+        jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
+        jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 4);
         worldAssetState = AssetState.COMPLETE;
 
 
