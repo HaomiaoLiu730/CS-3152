@@ -15,6 +15,7 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
+import edu.cornell.gdiac.main.controller.CollisionController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
     /** The texture for walls and platforms */
     private TextureRegion snow;
     private TextureRegion ice;
+
+    /** Handle collision and physics (CONTROLLER CLASS) */
+    protected CollisionController physicsController;
 
 
     // Physics constants for initialization
@@ -153,6 +157,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         waterTexture = internal.getEntry("water", Texture.class);
 
         sensorFixtures = new ObjectSet<Fixture>();
+        physicsController = new CollisionController();
     }
 
     public NorthAmericaController(){
@@ -367,21 +372,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 if (!hitIcicle) obj.setActive(false);
-                for (Penguin p: avatar.getPenguins()){
-                    float dist = p.getPosition().dst(obj.getPosition());
 
-                    if (dist < 0.8){
-                        hitIcicle = true;
-                    }
-                }
                 continue;
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
         }
-        if(hitIcicle){
-            icicle.setActive(true);
-            icicle.setAwake(true);
-        }
+//        if(hitIcicle){
+//            icicle.setActive(true);
+//            icicle.setAwake(true);
+//        }
+        hitIcicle = physicsController.checkForCollision(avatar.getPenguins(), icicle, hitIcicle);
 
         prevavatarX = avatar.getX();
         avatar.applyForce();
