@@ -338,11 +338,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
         }
         if (avatar.isPunching()) {
             float dist = avatar.getPosition().dst(monster.getPosition());
-                    if (dist < 2) {
-                        objects.remove(monster);
-                        monster.setActive(false);
-                        monster.setAwake(false);
-                    }
+            if (dist < 2) {
+                objects.remove(monster);
+                monster.setActive(false);
+                monster.setAwake(false);
+            }
         }
 
         if(hitWater){
@@ -356,17 +356,25 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.setFilmStrip(jumpRisingStrip);
         }
         avatar.setJumping(InputController.getInstance().didPrimary());
-        avatar.setThrowing(InputController.getInstance().didSecondary());
+//        avatar.setThrowing(InputController.getInstance().didSecondary());
+//        avatar.setThrowingAngle(InputController.getInstance().getClickX(),InputController.getInstance().getClickY(), avatar.getX(), avatar.getY());
+//        avatar.setThrowingForce(InputController.getInstance().isTouched());
+        avatar.setThrowing(InputController.getInstance().getClickX(),
+                InputController.getInstance().getClickY(),
+                avatar.getX(),
+                avatar.getY(),
+                InputController.getInstance().touchUp(),
+                InputController.getInstance().isTouching());
         avatar.setInteract(InputController.getInstance().didXPressed());
         for(Obstacle obj: objects){
             if(obj instanceof Player || obj instanceof Penguin){
                 continue;
             }
-            if(obj instanceof  Monster){
+            if(obj instanceof Monster){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
-            if(obj instanceof  Icicle){
+            if(obj instanceof Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 if (!hitIcicle) obj.setActive(false);
                 for (Penguin p: avatar.getPenguins()){
