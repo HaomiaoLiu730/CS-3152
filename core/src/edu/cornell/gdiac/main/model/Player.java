@@ -61,8 +61,10 @@ public class Player extends CapsuleObstacle {
     private FilmStrip jumpHangingStrip;
     /** The texture for the player jumping */
     private FilmStrip jumpLandingStrip;
-    /** The texture for the player jumping */
+    /** The texture for the player walking */
     private FilmStrip walkingStrip;
+    /** The texture for the player throwing */
+    private FilmStrip throwingStrip;
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
@@ -121,7 +123,9 @@ public class Player extends CapsuleObstacle {
         /** handing for jumping */
         jumpHanging,
         /** landing for jumping */
-        jumpLanding
+        jumpLanding,
+        /** throwing penguins*/
+        throwing,
     }
 
     private ArrayList<Penguin> penguins = new ArrayList<>();
@@ -156,6 +160,10 @@ public class Player extends CapsuleObstacle {
 
     public void setWalkingStrip(FilmStrip strip){
         walkingStrip = strip;
+    }
+
+    public void setThrowingStrip(FilmStrip strip){
+        throwingStrip = strip;
     }
 
     /**
@@ -272,6 +280,8 @@ public class Player extends CapsuleObstacle {
             if(numPenguins > 0){
                 for(Penguin p: penguins){
                     if(p.getIndex() == numPenguins-1){
+                        setFilmStrip(throwingStrip);
+                        moveState = animationState.throwing;
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+2);
                         p.setMovement(throwingForce, xDir, yDir);
@@ -525,7 +535,7 @@ public class Player extends CapsuleObstacle {
             }
         }else if(moveState == animationState.jumpHanging){
             // nothing here
-        }else if(moveState == animationState.jumpLanding){
+        }else if(moveState == animationState.jumpLanding || moveState == animationState.throwing){
             if(timeCounter >= 0.2) {
                 timeCounter = 0;
                 filmStrip.nextFrame();

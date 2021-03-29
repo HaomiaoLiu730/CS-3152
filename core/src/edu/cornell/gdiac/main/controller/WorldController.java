@@ -82,6 +82,7 @@ public abstract class WorldController implements Screen {
     protected FilmStrip jumpHangingStrip;
     /** The texture for the player jumping */
     protected FilmStrip jumpLandingStrip;
+    protected FilmStrip throwingStrip;
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -131,6 +132,7 @@ public abstract class WorldController implements Screen {
         jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 3);
         jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
         jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 4);
+        throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
 
 

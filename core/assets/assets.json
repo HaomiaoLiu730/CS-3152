@@ -20,6 +20,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "avatarThrow": {
+      "file": "images/shared/throw.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "arrow": {
       "file": "images/shared/arrow.png",
       "minFilter": "linear",

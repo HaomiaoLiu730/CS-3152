@@ -270,6 +270,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setJumpLandingStrip(jumpLandingStrip);
         avatar.setJumpRisingStrip(jumpRisingStrip);
         avatar.setWalkingStrip(avatarStrip);
+        avatar.setThrowingStrip(throwingStrip);
+
 //        avatar.setPenguinWidth(penguinStrip.getRegionWidth());
 //        avatar.setPenguinHeight(penguinStrip.getRegionHeight());
         addObject(avatar);
