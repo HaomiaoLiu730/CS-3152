@@ -65,6 +65,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     /** Length (in animation frames) for punching */
     private static final int PUNCH_TIME = 30;
     private int punchCooldown = 0;
+    private int resetCountdown = 30;
 
     /** The initial position of the player */
     private static Vector2 PLAYER_POS = new Vector2(3f, 5.0f);
@@ -210,6 +211,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         setComplete(false);
         setFailure(false);
         populateLevel();
+        resetCountdown = 30;
     }
 
     /**
@@ -279,7 +281,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(avatar.getPenguins().get(i));
         }
 
-        monster = new Monster(2.5f, 5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster");
+        monster = new Monster(4f, 3f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 50);
         monster.setFilmStrip(monsterStrip);
         monster.setDrawScale(scale);
         addObject(monster);
@@ -322,8 +324,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     @Override
     public void update(float dt) {
-
-        //TODO: waterComponent.setFilmStrip(waterFilmStrip);
+        // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             avatar.setFilmStrip(punchStrip);
             avatar.setPunching(true);
@@ -335,18 +336,37 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.setFilmStrip(avatarStrip);
             avatar.setPunching(false);
         }
+        float dist = avatar.getPosition().dst(monster.getPosition());
         if (avatar.isPunching()) {
-            float dist = avatar.getPosition().dst(monster.getPosition());
-                    if (dist < 2) {
+                    if (dist < 3) {
                         objects.remove(monster);
                         monster.setActive(false);
                         monster.setAwake(false);
                     }
         }
-
-        if(hitWater){
+        // Monster moving and attacking
+        if (monster.isActive()) {
+            boolean moveMon = true;
+            for(Penguin p: avatar.getPenguins()){
+                float dist2 = p.getPosition().dst(monster.getPosition());
+                if (dist2 < 3 && dist2 < dist) {
+                    monster.setFilmStrip(attackStrip);
+                    if (p.getPosition().x < monster.getPosition().x) {
+                        monster.setFacingRight(-1);
+                    }
+                    moveMon = false;
+                    resetCountdown -= 1;
+                }
+            }
+            if (moveMon) {
+                monster.applyForce();
+            }
+        }
+        // Losing condition
+        if(hitWater || resetCountdown<=0){
             reset();
         }
+        // Player moving
         float moveX = -avatar.getX() + prevavatarX;
         if(Math.abs(moveX) < 1e-2) moveX = 0;
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
@@ -368,7 +388,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 if (!hitIcicle) obj.setActive(false);
                 for (Penguin p: avatar.getPenguins()){
-                    float dist = p.getPosition().dst(obj.getPosition());
+                    dist = p.getPosition().dst(obj.getPosition());
 
                     if (dist < 0.8){
                         hitIcicle = true;
