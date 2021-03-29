@@ -50,6 +50,7 @@ public class Ice extends ComplexObstacle {
         iceBar.setName("iceBar");
         iceBar.setDensity(3f);
         bodies.add(iceBar);
+        iceBar.setFriction(2f);
 
         //#region INSERT CODE HERE
         // Create a pin to anchor the barrier 
@@ -92,15 +93,17 @@ public class Ice extends ComplexObstacle {
 
         //#region INSERT CODE HERE
         // Attach the barrier to the pin here
-        Vector2 anchor = new Vector2();
+        Vector2 anchorA = new Vector2();
+        Vector2 anchorB = new Vector2();
+        anchorB.y = 0.1f;
         // Definition for a revolute joint
         RevoluteJointDef jointDef = new RevoluteJointDef();
 
         // Initial joint
         jointDef.bodyB = iceBar.getBody();
         jointDef.bodyA = pin.getBody();
-        jointDef.localAnchorB.set(anchor);
-        jointDef.localAnchorA.set(anchor);
+        jointDef.localAnchorB.set(anchorB);
+        jointDef.localAnchorA.set(anchorA);
         jointDef.collideConnected = false;
         Joint joint = world.createJoint(jointDef);
         joints.add(joint);
