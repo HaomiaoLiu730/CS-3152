@@ -38,7 +38,7 @@ public class Player extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float PLAYER_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float PLAYER_MAXSPEED = 2.0f;
+    private static final float PLAYER_MAXSPEED = 3.0f;
     /** The impulse for the character jump */
     private static final float PLAYER_JUMP = 20f;
     /** Cooldown (in animation frames) for jumping */
@@ -533,8 +533,9 @@ public class Player extends CapsuleObstacle {
         // Apply cooldowns
         timeCounter += dt;
 
-        if(moveState == animationState.walking){
-            if(timeCounter >= 0.1 && getVX()>0.1f) {
+        if(moveState == animationState.walking && Math.abs(getVX())>0.01f){
+            System.out.println(getVX());
+            if(timeCounter >= 0.1 && Math.abs(getVX())>0.0f) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
             }
