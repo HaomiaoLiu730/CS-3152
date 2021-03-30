@@ -54,6 +54,16 @@
       "file": "images/shared/NotCollected.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "ice": {
+      "file": "images/shared/ice.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "water": {
+      "file": "images/shared/water.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {

@@ -69,6 +69,10 @@ public abstract class WorldController implements Screen {
     protected FilmStrip penguinStrip;
     /** The texture for the monster */
     protected FilmStrip monsterStrip;
+    /** The texture for the water */
+    protected FilmStrip waterStrip;
+    /** The texture for the ice */
+    protected FilmStrip iceStrip;
     /** The texture for the monster attacking */
     protected FilmStrip attackStrip;
     /** The texture for the arrow */
@@ -136,7 +140,9 @@ public abstract class WorldController implements Screen {
         noteLeftStrip = new FilmStrip(directory.getEntry("notcollected", Texture.class), 1, 1);
         noteCollectedStrip = new FilmStrip(directory.getEntry("collected", Texture.class), 1, 1);
         worldAssetState = AssetState.COMPLETE;
-
+        icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
+        waterStrip= new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
+        iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
 
     }
 

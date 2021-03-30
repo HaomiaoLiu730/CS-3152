@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -32,19 +33,22 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Icicle icicle;
     private ArrayList<Note> notes;
     private ArrayList<Integer> notesCollected = new ArrayList<>();
+    private Water water;
+    private Ice ice;
 
 
     private Texture background;
     private Texture waterTexture;
     /** The texture for walls and platforms */
     private TextureRegion snow;
-    private TextureRegion ice;
     private BitmapFont gameFont ;
+    private TextureRegion iceTextureRegion;
+//    private TextureRegion ice;
 
 
     // Physics constants for initialization
     /** Density of non-crate objects */
-    private static final float BASIC_DENSITY   = 0.0f;
+    private static final float BASIC_DENSITY   = 2.65f;
     /** Density of the crate objects */
     private static final float CRATE_DENSITY   = 1.0f;
     /** Friction of non-crate objects */
@@ -120,7 +124,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     };
     private static final float[][] ICE = {
             {
-                    35f, 3f, 35f, 0f, 30f,0f,30f,3f
+                    35f, 3f, 35f, 2f, 30f,2f,30f,3f
             },
 
 
@@ -155,7 +159,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
         snow = new TextureRegion(internal.getEntry("snow", Texture.class));
-        ice = new TextureRegion(internal.getEntry("ice", Texture.class));
+        iceTextureRegion = new TextureRegion(internal.getEntry("ice", Texture.class));
         waterTexture = internal.getEntry("water", Texture.class);
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
 
@@ -229,19 +233,19 @@ public class NorthAmericaController extends WorldController implements ContactLi
         // Add level goal
         float dwidth, dheight;
 
-        String iname="ice";
-        for (int ii=0; ii< ICE.length;ii++){
-            PolygonObstacle obj;
-            obj = new PolygonObstacle(ICE[ii], START_X, START_Y);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            obj.setTexture(ice);
-            obj.setName(iname+ii);
-            addObject(obj);
-        }
+//        String iname="ice";
+//        for (int ii=0; ii< ICE.length;ii++){
+//            PolygonObstacle obj;
+//            obj = new PolygonObstacle(ICE[ii], START_X, START_Y);
+//            obj.setBodyType(BodyDef.BodyType.StaticBody);
+//            obj.setDensity(BASIC_DENSITY);
+//            obj.setFriction(BASIC_FRICTION);
+//            obj.setRestitution(BASIC_RESTITUTION);
+//            obj.setDrawScale(scale);
+//            obj.setTexture(ice);
+//            obj.setName(iname+ii);
+//            addObject(obj);
+//        }
 
 
         String sname = "snow";
@@ -258,18 +262,18 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(obj);
         }
 
-        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
-        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
-        waterComponent.setFilmStrip(waterFilmStrip);
-        waterComponent.setDrawScale(scale);
-        waterComponent.setBodyType(BodyDef.BodyType.StaticBody);
-        waterComponent.setDensity(BASIC_DENSITY);
-        waterComponent.setFriction(BASIC_FRICTION);
-        waterComponent.setRestitution(BASIC_RESTITUTION);
-        waterComponent.setSensor(true);
-        waterComponent.setDrawScale(scale);
-        waterComponent.setName("water");
-        addObject(waterComponent);
+//        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
+//        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
+//        waterComponent.setFilmStrip(waterFilmStrip);
+//        waterComponent.setDrawScale(scale);
+//        waterComponent.setBodyType(BodyDef.BodyType.StaticBody);
+//        waterComponent.setDensity(BASIC_DENSITY);
+//        waterComponent.setFriction(BASIC_FRICTION);
+//        waterComponent.setRestitution(BASIC_RESTITUTION);
+//        waterComponent.setSensor(true);
+//        waterComponent.setDrawScale(scale);
+//        waterComponent.setName("water");
+//        addObject(waterComponent);
 
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
@@ -309,6 +313,25 @@ public class NorthAmericaController extends WorldController implements ContactLi
         }
 
 
+//        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+        water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+
+        water.setFilmStrip(waterStrip);
+        water.setDrawScale(scale);
+        addObject(water);
+
+//        ice = new Ice(ICE[0],START_X, START_Y, "ice");
+        //ice.setFilmStrip(iceStrip);
+//        ice.setTexture(iceTextureRegion);
+//        ice.setDrawScale(scale);
+//        addObject(ice);
+
+        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
+       dheight = iceTextureRegion.getRegionHeight()/scale.y;
+        Ice spinPlatform = new Ice(2.5f,1.8f,dwidth,dheight);
+        spinPlatform.setDrawScale(scale);
+        spinPlatform.setTexture(iceTextureRegion);
+        addObject(spinPlatform);
     }
 
     /**
@@ -419,8 +442,22 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 }
                 continue;
             }
+            if(obj instanceof Ice){
+                //obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                ((Ice) obj).setTranform(obj.getX()+moveX, obj.getY(), 0);
+//                System.out.println(obj.getX()+" ice ");
+                //obj.setActive(false);
+                continue;
+            }
+            if(obj instanceof  Water){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                // obj.setActive(false);
+                continue;
+            }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
+
         }
+
         if(hitIcicle){
             icicle.setActive(true);
             icicle.setAwake(true);
@@ -506,10 +543,21 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 monster.setGrounded(true);
                 sensorFixtures.add(monster == bd1 ? fix2 : fix1); // Could have more than one ground
             }
+            if ((water.getSensorName().equals(fd2) && water != bd1) ||
+                    (water.getSensorName().equals(fd1) && water != bd2)) {
+                water.setGrounded(true);
+                sensorFixtures.add(water == bd1 ? fix2 : fix1); // Could have more than one ground
+            }
+
+//            if ((ice.getSensorName().equals(fd2) && ice != bd1) ||
+//                    (ice.getSensorName().equals(fd1) && ice != bd2)) {
+//                ice.setGrounded(true);
+//                sensorFixtures.add(ice == bd1 ? fix2 : fix1); // Could have more than one ground
+//            }
 
             // Check for win condition
-            if ((bd1 == avatar   && bd2 == waterComponent) ||
-                    (bd1 == waterComponent && bd2 == avatar)) {
+            if ((bd1 == avatar   && bd2 == water) ||
+                    (bd1 == water && bd2 == avatar)) {
                 hitWater(true);
             }
 
@@ -539,6 +587,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     @Override
     public void endContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
+
         Fixture fix2 = contact.getFixtureB();
 
         Body body1 = fix1.getBody();
