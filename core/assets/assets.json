@@ -5,8 +5,23 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "avatarJumping": {
-      "file": "images/shared/avatarJumping.png",
+    "jumpRising": {
+      "file": "images/shared/jumpRising.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging": {
+      "file": "images/shared/jumpHanging.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding": {
+      "file": "images/shared/jumpLanding.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow": {
+      "file": "images/shared/throw.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
@@ -42,6 +57,16 @@
     },
     "icicle": {
       "file": "images/shared/icicle.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "energyBar": {
+      "file": "images/shared/energyBar.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "energyBarOutline": {
+      "file": "images/shared/energyBarOutline.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
