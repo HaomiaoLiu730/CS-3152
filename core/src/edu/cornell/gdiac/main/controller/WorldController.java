@@ -71,6 +71,10 @@ public abstract class WorldController implements Screen {
     protected FilmStrip monsterStrip;
     /** The texture for the arrow */
     protected Texture arrowTexture;
+    /** The texture for the energy bar */
+    protected Texture energyBarTexture;
+    /** The texture for the energy bar */
+    protected Texture energyBarOutlineTexture;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
 
@@ -128,6 +132,8 @@ public abstract class WorldController implements Screen {
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
+        energyBarOutlineTexture = directory.getEntry("energyBarOutline", Texture.class);
+        energyBarTexture = directory.getEntry("energyBar", Texture.class);
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
         jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 3);
         jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);

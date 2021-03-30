@@ -266,6 +266,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
+        avatar.setEnergyBar(energyBarTexture);
+        avatar.setEnergyBarOutline(energyBarOutlineTexture);
         avatar.setJumpHangingStrip(jumpHangingStrip);
         avatar.setJumpLandingStrip(jumpLandingStrip);
         avatar.setJumpRisingStrip(jumpRisingStrip);

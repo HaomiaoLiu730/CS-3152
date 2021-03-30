@@ -51,6 +51,8 @@ public class Player extends CapsuleObstacle {
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
     private static final String SENSOR_NAME = "DudeGroundSensor";
+    /** max throwing force*/
+    private static final float MAX_THROWING_FORCE = 200;
 
     private float PENGUIN_WIDTH = 1.6f;
     private float PENGUIN_HEIGHT = 2f;
@@ -110,6 +112,8 @@ public class Player extends CapsuleObstacle {
     private PolygonShape sensorShape;
     private FilmStrip filmStrip;
     private Texture arrowTexture;
+    private Texture energyBarOutline;
+    private Texture energyBar;
     private float timeCounter = 0;
     private int totalPenguins;
     private int numPenguins;
@@ -275,6 +279,7 @@ public class Player extends CapsuleObstacle {
         }else if(throwingCount == 1 && isTouching){
             // setting force
             throwingForce += 5f;
+            throwingForce = Math.min(throwingForce, MAX_THROWING_FORCE);
         }else if(throwingCount == 1 && !isTouching && throwingForce != 0f){
             if(numPenguins > 0){
                 for(Penguin p: penguins){
@@ -505,6 +510,12 @@ public class Player extends CapsuleObstacle {
     public void setArrowTexture(Texture arrow){
         this.arrowTexture = arrow;
     }
+    public void setEnergyBarOutline(Texture texture){
+        this.energyBarOutline = texture;
+    }
+    public void setEnergyBar(Texture texture){
+        this.energyBar = texture;
+    }
 
     public float vToDelta(float v){
         float k = (0.3f - 0.05f) / (0.1f - PLAYER_MAXSPEED);
@@ -597,9 +608,13 @@ public class Player extends CapsuleObstacle {
         if(throwingAngle != 0){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
-        if(throwingCount == 1 && isThrowing){
-            canvas.drawLine(Color.BLACK, getX()*drawScale.x-30, getY()*drawScale.y-20, getX()*drawScale.x-30, getY()*drawScale.y-20+throwingForce, 4);
+        if(throwingCount == 1  && isThrowing){
+            canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
+            canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
         }
+//        if(throwingCount == 1 && isThrowing){
+//            canvas.drawLine(Color.BLACK, getX()*drawScale.x-30, getY()*drawScale.y-20, getX()*drawScale.x-30, getY()*drawScale.y-20+throwingForce, 4);
+//        }
         float scale = isPunching ? 0.24f : 1.0f;
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*scale,scale);
     }

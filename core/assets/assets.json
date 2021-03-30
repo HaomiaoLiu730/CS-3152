@@ -54,6 +54,16 @@
       "file": "images/shared/icicle.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "energyBar": {
+      "file": "images/shared/energyBar.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "energyBarOutline": {
+      "file": "images/shared/energyBarOutline.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
