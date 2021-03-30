@@ -4,6 +4,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
@@ -17,6 +18,8 @@ import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.util.ArrayList;
+
 public class NorthAmericaController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
@@ -27,6 +30,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Player avatar;
     private Monster monster;
     private Icicle icicle;
+    private ArrayList<Note> notes;
+    private ArrayList<Integer> notesCollected = new ArrayList<>();
     private Water water;
     private Ice ice;
 
@@ -35,6 +40,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Texture waterTexture;
     /** The texture for walls and platforms */
     private TextureRegion snow;
+    private BitmapFont gameFont ;
     private TextureRegion iceTextureRegion;
 //    private TextureRegion ice;
 
@@ -153,6 +159,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         snow = new TextureRegion(internal.getEntry("snow", Texture.class));
         iceTextureRegion = new TextureRegion(internal.getEntry("ice", Texture.class));
         waterTexture = internal.getEntry("water", Texture.class);
+        gameFont = internal.getEntry("gameFont", BitmapFont.class);
 
         sensorFixtures = new ObjectSet<Fixture>();
     }
@@ -196,6 +203,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        notesCollected = new ArrayList<>();
         levelComplete = false;
         hitWater(false);
         prevavatarX=16;
@@ -207,6 +215,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         objects.clear();
         addQueue.clear();
         world.dispose();
+
 
         world = new World(gravity,false);
         world.setContactListener(this);
@@ -284,6 +293,17 @@ public class NorthAmericaController extends WorldController implements ContactLi
         icicle.setDrawScale(scale);
         addObject(icicle);
 
+        notes = new ArrayList<>();
+        notes.add(new Note(-7f, 3.6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note1"));
+        notes.add(new Note(3f, 5f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note2"));
+        for (Note n: notes){
+            n.setFilmStrip(noteLeftStrip);
+            n.setDrawScale(scale);
+            addObject(n);
+        }
+
+
+//        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
         water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
 
         water.setFilmStrip(waterStrip);
@@ -399,6 +419,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
+            if(obj instanceof  Note){ 
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                continue;
+            }
+
             if(obj.getName() == "exit"){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
@@ -456,6 +481,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
+
+        String message = "Notes collected: "+ notesCollected.size() + "/2";
+        canvas.drawText( gameFont, message,5.0f, canvas.getHeight()-5.0f);
+
         canvas.end();
 
 //        if (debug) {
@@ -531,6 +560,22 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((bd1 == avatar   && bd2 == water) ||
                     (bd1 == water && bd2 == avatar)) {
                 hitWater(true);
+            }
+
+            if (bd1 instanceof Note && (bd2 instanceof Penguin || bd2 == avatar)){
+                int noteHit = bd1.getName().charAt(bd1.getName().length() - 1) - 48;
+                ((Note) bd1).setFilmStrip(noteCollectedStrip);
+                if (!notesCollected.contains(noteHit)){
+                    notesCollected.add(noteHit);
+                }
+
+            }
+            if (bd2 instanceof Note && (bd1 instanceof Penguin || bd1 == avatar)){
+                int noteHit = bd2.getName().charAt(bd2.getName().length() - 1) - 48;
+                ((Note) bd2).setFilmStrip(noteCollectedStrip);
+                if (!notesCollected.contains(noteHit)){
+                    notesCollected.add(noteHit);
+                }
             }
 
             if ((bd1.getName() == "exit"   && bd2 == avatar && avatar.getNumPenguins() >= 2) ||

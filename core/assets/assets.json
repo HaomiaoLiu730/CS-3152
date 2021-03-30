@@ -60,6 +60,16 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "collected": {
+      "file": "images/shared/Collected.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "notcollected": {
+      "file": "images/shared/NotCollected.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "energyBar": {
       "file": "images/shared/energyBar.png",
       "minFilter": "linear",

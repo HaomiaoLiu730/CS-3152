@@ -83,6 +83,10 @@ public abstract class WorldController implements Screen {
     protected Texture energyBarOutlineTexture;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
+    /** The texture for the notes not collected */
+    protected FilmStrip noteLeftStrip;
+    /** The texture for the notes collected */
+    protected FilmStrip noteCollectedStrip;
     /** The texture for the exit */
     protected FilmStrip exitStrip;
 
@@ -145,6 +149,9 @@ public abstract class WorldController implements Screen {
         energyBarOutlineTexture = directory.getEntry("energyBarOutline", Texture.class);
         energyBarTexture = directory.getEntry("energyBar", Texture.class);
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 7);
+        //jumpStrip = new FilmStrip(directory.getEntry("avatarJumping", Texture.class), 2, 4);
+        noteLeftStrip = new FilmStrip(directory.getEntry("notcollected", Texture.class), 1, 1);
+        noteCollectedStrip = new FilmStrip(directory.getEntry("collected", Texture.class), 1, 1);
         jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 3);
         jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
         jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 4);
