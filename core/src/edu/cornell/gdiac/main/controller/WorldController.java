@@ -77,6 +77,10 @@ public abstract class WorldController implements Screen {
     protected FilmStrip attackStrip;
     /** The texture for the arrow */
     protected Texture arrowTexture;
+    /** The texture for the energy bar */
+    protected Texture energyBarTexture;
+    /** The texture for the energy bar */
+    protected Texture energyBarOutlineTexture;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
     /** The texture for the notes not collected */
@@ -87,8 +91,12 @@ public abstract class WorldController implements Screen {
     /** The texture for the player punching */
     protected FilmStrip punchStrip;
     /** The texture for the player jumping */
-    protected FilmStrip jumpStrip;
-
+    protected FilmStrip jumpRisingStrip;
+    /** The texture for the player jumping */
+    protected FilmStrip jumpHangingStrip;
+    /** The texture for the player jumping */
+    protected FilmStrip jumpLandingStrip;
+    protected FilmStrip throwingStrip;
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -135,10 +143,16 @@ public abstract class WorldController implements Screen {
         attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
+        energyBarOutlineTexture = directory.getEntry("energyBarOutline", Texture.class);
+        energyBarTexture = directory.getEntry("energyBar", Texture.class);
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
-        jumpStrip = new FilmStrip(directory.getEntry("avatarJumping", Texture.class), 2, 4);
+        //jumpStrip = new FilmStrip(directory.getEntry("avatarJumping", Texture.class), 2, 4);
         noteLeftStrip = new FilmStrip(directory.getEntry("notcollected", Texture.class), 1, 1);
         noteCollectedStrip = new FilmStrip(directory.getEntry("collected", Texture.class), 1, 1);
+        jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 3);
+        jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
+        jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 4);
+        throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         waterStrip= new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
