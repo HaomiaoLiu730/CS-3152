@@ -17,9 +17,6 @@ import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class NorthAmericaController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
@@ -74,8 +71,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     /** The initial position of the player */
     private static Vector2 PLAYER_POS = new Vector2(3f, 5.0f);
-
-    private Component waterComponent;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -226,21 +221,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
         // Add level goal
         float dwidth, dheight;
 
-//        String iname="ice";
-//        for (int ii=0; ii< ICE.length;ii++){
-//            PolygonObstacle obj;
-//            obj = new PolygonObstacle(ICE[ii], START_X, START_Y);
-//            obj.setBodyType(BodyDef.BodyType.StaticBody);
-//            obj.setDensity(BASIC_DENSITY);
-//            obj.setFriction(BASIC_FRICTION);
-//            obj.setRestitution(BASIC_RESTITUTION);
-//            obj.setDrawScale(scale);
-//            obj.setTexture(ice);
-//            obj.setName(iname+ii);
-//            addObject(obj);
-//        }
-
-
         String sname = "snow";
         for (int ii = 0; ii < SNOW.length; ii++) {
             PolygonObstacle obj;
@@ -255,19 +235,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(obj);
         }
 
-//        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
-//        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
-//        waterComponent.setFilmStrip(waterFilmStrip);
-//        waterComponent.setDrawScale(scale);
-//        waterComponent.setBodyType(BodyDef.BodyType.StaticBody);
-//        waterComponent.setDensity(BASIC_DENSITY);
-//        waterComponent.setFriction(BASIC_FRICTION);
-//        waterComponent.setRestitution(BASIC_RESTITUTION);
-//        waterComponent.setSensor(true);
-//        waterComponent.setDrawScale(scale);
-//        waterComponent.setName("water");
-//        addObject(waterComponent);
-
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
@@ -276,8 +243,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
-//        avatar.setPenguinWidth(penguinStrip.getRegionWidth());
-//        avatar.setPenguinHeight(penguinStrip.getRegionHeight());
+        avatar.setEnergyBar(energyBarTexture);
+        avatar.setEnergyBarOutline(energyBarOutlineTexture);
+        avatar.setJumpHangingStrip(jumpHangingStrip);
+        avatar.setJumpLandingStrip(jumpLandingStrip);
+        avatar.setJumpRisingStrip(jumpRisingStrip);
+        avatar.setWalkingStrip(avatarStrip);
+        avatar.setThrowingStrip(throwingStrip);
+
         addObject(avatar);
 
         for(int i = 0; i<NUM_PENGUIN; i++){
@@ -286,7 +259,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(avatar.getPenguins().get(i));
         }
 
-        monster = new Monster(4f, 3f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 50);
+        monster = new Monster(2.7f, 2.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
         monster.setFilmStrip(monsterStrip);
         monster.setDrawScale(scale);
         addObject(monster);
@@ -296,21 +269,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
         icicle.setDrawScale(scale);
         addObject(icicle);
 
-//        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
         water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
 
         water.setFilmStrip(waterStrip);
         water.setDrawScale(scale);
         addObject(water);
 
-//        ice = new Ice(ICE[0],START_X, START_Y, "ice");
-        //ice.setFilmStrip(iceStrip);
-//        ice.setTexture(iceTextureRegion);
-//        ice.setDrawScale(scale);
-//        addObject(ice);
-
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
-       dheight = iceTextureRegion.getRegionHeight()/scale.y;
+        dheight = iceTextureRegion.getRegionHeight()/scale.y;
         Ice spinPlatform = new Ice(2.5f,1.8f,dwidth,dheight);
         spinPlatform.setDrawScale(scale);
         spinPlatform.setTexture(iceTextureRegion);
@@ -363,11 +329,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
         }
         float dist = avatar.getPosition().dst(monster.getPosition());
         if (avatar.isPunching()) {
-                    if (dist < 3) {
-                        objects.remove(monster);
-                        monster.setActive(false);
-                        monster.setAwake(false);
-                    }
+            if (dist < 3) {
+                objects.remove(monster);
+                monster.setActive(false);
+                monster.setAwake(false);
+            }
         }
         // Monster moving and attacking
         if (monster.isActive()) {
@@ -396,20 +362,26 @@ public class NorthAmericaController extends WorldController implements ContactLi
         if(Math.abs(moveX) < 1e-2) moveX = 0;
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
         if(InputController.getInstance().didPrimary()){
-            avatar.setFilmStrip(jumpStrip);
+            avatar.moveState = Player.animationState.jumpRising;
+            avatar.setFilmStrip(jumpRisingStrip);
         }
         avatar.setJumping(InputController.getInstance().didPrimary());
-        avatar.setThrowing(InputController.getInstance().didSecondary());
+        avatar.setThrowing(InputController.getInstance().getClickX(),
+                InputController.getInstance().getClickY(),
+                avatar.getX(),
+                avatar.getY(),
+                InputController.getInstance().touchUp(),
+                InputController.getInstance().isTouching());
         avatar.setInteract(InputController.getInstance().didXPressed());
         for(Obstacle obj: objects){
             if(obj instanceof Player || obj instanceof Penguin){
                 continue;
             }
-            if(obj instanceof  Monster){
+            if(obj instanceof Monster){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
-            if(obj instanceof  Icicle){
+            if(obj instanceof Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 if (!hitIcicle) obj.setActive(false);
                 for (Penguin p: avatar.getPenguins()){
@@ -502,7 +474,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                     (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
                 avatar.setGrounded(true);
-                avatar.setFilmStrip(avatarStrip);
+                if(avatar.moveState == Player.animationState.jumpHanging){
+                    avatar.moveState = Player.animationState.jumpLanding;
+                    avatar.setFilmStrip(jumpLandingStrip);
+                }
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
             for(Penguin p: avatar.getPenguins()){

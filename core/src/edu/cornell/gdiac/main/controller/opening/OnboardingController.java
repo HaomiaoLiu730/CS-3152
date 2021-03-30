@@ -35,6 +35,8 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
     /** The actual assets to be loaded */
     private AssetDirectory assets;
 
+    /** Front image */
+    private Texture front;
     /** Background texture for start-up */
     private Texture postcard;
     /** Black image */
@@ -87,6 +89,7 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         internal.loadAssets();
         internal.finishLoading();
 
+        front = internal.getEntry("front", Texture.class);
         postcard = internal.getEntry( "postcard", Texture.class );
         whiteTexture = internal.getEntry("white", Texture.class);
         roundPenguin = internal.getEntry("roundPenguin", Texture.class);
@@ -130,9 +133,7 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         pengiunAngle %= 360;
         penguinX += 2f;
         if(time < 0){
-            canvas.drawOverlay(whiteTexture, true);
-            canvas.drawText(gameFont,"Bear With Me", 400, 600);
-            canvas.drawText(gameFont,"Team Octave", 500, 400);
+            canvas.drawOverlay(front, true);
             lineEnd.x = penguinX;
             canvas.drawLine(Color.BLACK, lineStart, lineEnd, 1);
             canvas.draw(roundPenguin,Color.WHITE,roundPenguin.getWidth()/2f,roundPenguin.getHeight()/2f, penguinX, penguinY, pengiunAngle,PENGUIN_SCALE,PENGUIN_SCALE);

@@ -1,5 +1,10 @@
 {
   "textures": {
+    "front": {
+      "file":     "images/onboarding/front.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "postcard": {
       "file":     "images/onboarding/postcard.jpg",
       "minFilter": "linear",
