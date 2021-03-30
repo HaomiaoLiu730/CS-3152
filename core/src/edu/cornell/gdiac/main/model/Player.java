@@ -159,6 +159,12 @@ public class Player extends CapsuleObstacle {
     }
 
     /**
+     * Returns the number of penguins following the avatar.
+     *
+     */
+    public int getNumPenguins(){return numPenguins; }
+
+    /**
      * Returns true if the dude is actively firing.
      *
      * @return true if the dude is actively firing.

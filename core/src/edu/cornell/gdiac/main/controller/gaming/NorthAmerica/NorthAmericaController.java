@@ -64,6 +64,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private boolean hitWater = false;
     private boolean hitIce = false;
     private boolean hitIcicle = false;
+    private boolean levelComplete = false;
 
     /** Cooldown (in animation frames) for punching */
     private static final int PUNCH_COOLDOWN = 100;
@@ -200,6 +201,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        levelComplete = false;
         hitWater(false);
         prevavatarX=16;
         Vector2 gravity = new Vector2(world.getGravity());
@@ -361,6 +363,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     @Override
     public void update(float dt) {
+        if (levelComplete){
+            reset();
+        }
         // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             avatar.setFilmStrip(punchStrip);
@@ -552,9 +557,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 hitWater(true);
             }
 
-            if ((bd1.getName() == "exit"   && bd2 == avatar) ||
-                    (bd1 == avatar && bd2.getName() == "exit")) {
-                hitWater(true);
+            if ((bd1.getName() == "exit"   && bd2 == avatar && avatar.getNumPenguins() >= 2) ||
+                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() >= 2)) {
+                levelComplete = true;
             }
 
         } catch (Exception e) {
