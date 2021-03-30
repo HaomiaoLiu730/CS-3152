@@ -24,6 +24,11 @@
       "file": "images/northAmerica/icicle.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "exit": {
+      "file": "images/shared/inCage.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {

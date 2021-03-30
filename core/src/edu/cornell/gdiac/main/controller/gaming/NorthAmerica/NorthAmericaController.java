@@ -255,6 +255,18 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(obj);
         }
 
+        BoxObstacle exit;
+        exit = new BoxObstacle(20, 1.9f, 3, 3);
+        exit.setBodyType(BodyDef.BodyType.StaticBody);
+        exit.setDensity(BASIC_DENSITY);
+        exit.setFriction(BASIC_FRICTION);
+        exit.setRestitution(BASIC_RESTITUTION);
+        exit.setDrawScale(scale);
+        exit.setName("exit");
+        exit.setTexture(exitStrip);
+        addObject(exit);
+
+
 //        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
 //        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
 //        waterComponent.setFilmStrip(waterFilmStrip);
@@ -409,6 +421,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
+            if(obj.getName() == "exit"){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                continue;
+            }
             if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 if (!hitIcicle) obj.setActive(false);
@@ -533,6 +549,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
             // Check for win condition
             if ((bd1 == avatar   && bd2 == water) ||
                     (bd1 == water && bd2 == avatar)) {
+                hitWater(true);
+            }
+
+            if ((bd1.getName() == "exit"   && bd2 == avatar) ||
+                    (bd1 == avatar && bd2.getName() == "exit")) {
                 hitWater(true);
             }
 

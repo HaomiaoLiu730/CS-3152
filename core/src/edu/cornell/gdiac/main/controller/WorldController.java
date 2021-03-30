@@ -79,6 +79,8 @@ public abstract class WorldController implements Screen {
     protected Texture arrowTexture;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
+    /** The texture for the exit */
+    protected FilmStrip exitStrip;
 
     /** The texture for the player punching */
     protected FilmStrip punchStrip;
@@ -130,6 +132,7 @@ public abstract class WorldController implements Screen {
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
         attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
+        exitStrip = new FilmStrip(directory.getEntry("exit", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
         jumpStrip = new FilmStrip(directory.getEntry("avatarJumping", Texture.class), 2, 4);
