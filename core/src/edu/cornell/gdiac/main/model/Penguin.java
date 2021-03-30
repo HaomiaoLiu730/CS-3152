@@ -55,6 +55,8 @@ public class Penguin extends CapsuleObstacle {
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
+    /** Cache for angle calculations */
+    private Vector2 temp = new Vector2();
 
     /**
      * Sets left/right movement of this character.
@@ -62,17 +64,17 @@ public class Penguin extends CapsuleObstacle {
      * This is the result of input times dude force.
      *
      * @param force force movement of this character.
-     * @param angle anggle movement of this character.
+     * @param xDir x movement of this character.
      */
-    public void setMovement(float force, float angle) {
+    public void setMovement(float force, float xDir, float yDir) {
         // Change facing if appropriate
 
-        if (angle < 0) {
+        if (xDir < 0) {
             faceRight = false;
-        } else if (angle > 0) {
+        } else {
             faceRight = true;
         }
-        applyForce(force, angle);
+        applyForce(force, xDir, yDir);
     }
 
     /**
@@ -80,7 +82,7 @@ public class Penguin extends CapsuleObstacle {
      *
      * This method should be called after the force attribute is set.
      */
-    public void applyForce(float force, float angle) {
+    public void applyForce(float force, float xDir, float yDir) {
         if (!isActive()) {
             return;
         }
@@ -96,9 +98,10 @@ public class Penguin extends CapsuleObstacle {
         if (Math.abs(getVX()) >= getMaxSpeed()) {
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
-            forceCache.set((float) (-force*Math.sin(angle)*5),0f);
+            temp.set(xDir, yDir).nor();
+            forceCache.set((float) (force*temp.x*10),0f);
             body.applyForce(forceCache,getPosition(),true);
-            forceCache.set(0, (float) (force*Math.cos(angle)*0.2f));
+            forceCache.set(0, (float) (force*temp.y*0.1f));
             body.applyLinearImpulse(forceCache,getPosition(),true);
         }
 
