@@ -540,7 +540,7 @@ public class Player extends CapsuleObstacle {
                 filmStrip.nextFrame();
             }
         }else if(moveState == animationState.jumpRising){
-            if(timeCounter >= 0.1) {
+            if(timeCounter >= 0.2) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
@@ -551,7 +551,7 @@ public class Player extends CapsuleObstacle {
         }else if(moveState == animationState.jumpHanging){
             // nothing here
         }else if(moveState == animationState.jumpLanding || moveState == animationState.throwing){
-            if(timeCounter >= 0.1) {
+            if(timeCounter >= 0.2) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
