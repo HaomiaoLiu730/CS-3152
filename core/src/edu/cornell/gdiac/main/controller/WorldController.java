@@ -141,7 +141,7 @@ public abstract class WorldController implements Screen {
         arrowTexture = directory.getEntry("arrow", Texture.class);
         energyBarOutlineTexture = directory.getEntry("energyBarOutline", Texture.class);
         energyBarTexture = directory.getEntry("energyBar", Texture.class);
-        punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
+        punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 7);
         jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 3);
         jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
         jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 4);
