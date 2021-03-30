@@ -45,12 +45,15 @@ public class Ice extends ComplexObstacle {
         super(x,y);
         setName("Ice");
 
-        // Create the barrier
+//         Create the barrier
         iceBar = new BoxObstacle(x,y,width,height);
         iceBar.setName("iceBar");
         iceBar.setDensity(3f);
-        bodies.add(iceBar);
         iceBar.setFriction(2f);
+        iceBar.setRestitution(0);
+//        iceBar.setAngularDamping(0.2f);
+        bodies.add(iceBar);
+
 
         //#region INSERT CODE HERE
         // Create a pin to anchor the barrier 
@@ -61,6 +64,8 @@ public class Ice extends ComplexObstacle {
         pin.setName("pin");
         pin.setDensity(0);
         pin.setBodyType(BodyDef.BodyType.StaticBody);
+        pin.setRestitution(0);
+
         //pin.setActive(false);
         bodies.add(pin);
         //pin.activatePhysics(world);
