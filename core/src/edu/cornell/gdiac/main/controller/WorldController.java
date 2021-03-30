@@ -69,6 +69,12 @@ public abstract class WorldController implements Screen {
     protected FilmStrip penguinStrip;
     /** The texture for the monster */
     protected FilmStrip monsterStrip;
+    /** The texture for the water */
+    protected FilmStrip waterStrip;
+    /** The texture for the ice */
+    protected FilmStrip iceStrip;
+    /** The texture for the monster attacking */
+    protected FilmStrip attackStrip;
     /** The texture for the arrow */
     protected Texture arrowTexture;
     /** The texture for the energy bar */
@@ -130,6 +136,7 @@ public abstract class WorldController implements Screen {
         avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 3, 6);
         penguinStrip = new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
+        attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
         energyBarOutlineTexture = directory.getEntry("energyBarOutline", Texture.class);
@@ -140,6 +147,9 @@ public abstract class WorldController implements Screen {
         jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 4);
         throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
+        icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
+        waterStrip= new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
+        iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
 
     }
 

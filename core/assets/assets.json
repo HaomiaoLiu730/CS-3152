@@ -40,6 +40,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "monsterAttacking": {
+      "file": "images/shared/monsterAttacking.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "avatarPunching": {
       "file": "images/shared/avatarPunching.png",
       "minFilter": "linear",
@@ -62,6 +67,16 @@
     },
     "energyBarOutline": {
       "file": "images/shared/energyBarOutline.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "ice": {
+      "file": "images/shared/ice.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "water": {
+      "file": "images/shared/water.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }
