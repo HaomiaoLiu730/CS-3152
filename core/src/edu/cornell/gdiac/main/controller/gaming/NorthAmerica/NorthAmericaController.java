@@ -212,6 +212,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         setFailure(false);
         populateLevel();
         resetCountdown = 30;
+        hitIcicle = false;
     }
 
     /**
