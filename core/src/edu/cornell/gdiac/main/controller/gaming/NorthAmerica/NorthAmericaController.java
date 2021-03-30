@@ -75,8 +75,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
     /** The initial position of the player */
     private static Vector2 PLAYER_POS = new Vector2(3f, 5.0f);
 
-    private Component waterComponent;
-
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
@@ -226,21 +224,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
         // Add level goal
         float dwidth, dheight;
 
-//        String iname="ice";
-//        for (int ii=0; ii< ICE.length;ii++){
-//            PolygonObstacle obj;
-//            obj = new PolygonObstacle(ICE[ii], START_X, START_Y);
-//            obj.setBodyType(BodyDef.BodyType.StaticBody);
-//            obj.setDensity(BASIC_DENSITY);
-//            obj.setFriction(BASIC_FRICTION);
-//            obj.setRestitution(BASIC_RESTITUTION);
-//            obj.setDrawScale(scale);
-//            obj.setTexture(ice);
-//            obj.setName(iname+ii);
-//            addObject(obj);
-//        }
-
-
         String sname = "snow";
         for (int ii = 0; ii < SNOW.length; ii++) {
             PolygonObstacle obj;
@@ -254,19 +237,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
             obj.setName(sname+ii);
             addObject(obj);
         }
-
-//        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
-//        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
-//        waterComponent.setFilmStrip(waterFilmStrip);
-//        waterComponent.setDrawScale(scale);
-//        waterComponent.setBodyType(BodyDef.BodyType.StaticBody);
-//        waterComponent.setDensity(BASIC_DENSITY);
-//        waterComponent.setFriction(BASIC_FRICTION);
-//        waterComponent.setRestitution(BASIC_RESTITUTION);
-//        waterComponent.setSensor(true);
-//        waterComponent.setDrawScale(scale);
-//        waterComponent.setName("water");
-//        addObject(waterComponent);
 
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
@@ -286,7 +256,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(avatar.getPenguins().get(i));
         }
 
-        monster = new Monster(4f, 3f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 50);
+        monster = new Monster(2.7f, 2.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
         monster.setFilmStrip(monsterStrip);
         monster.setDrawScale(scale);
         addObject(monster);
@@ -310,7 +280,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
 //        addObject(ice);
 
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
-       dheight = iceTextureRegion.getRegionHeight()/scale.y;
+        dheight = iceTextureRegion.getRegionHeight()/scale.y;
         Ice spinPlatform = new Ice(2.5f,1.8f,dwidth,dheight);
         spinPlatform.setDrawScale(scale);
         spinPlatform.setTexture(iceTextureRegion);

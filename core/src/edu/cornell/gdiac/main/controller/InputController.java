@@ -322,10 +322,6 @@ public class InputController {
             jump = true;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.X) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            jump = true;
-        }
-
         // Shooting
         if (!Gdx.input.isKeyPressed(Input.Keys.SPACE) && pressed) {
             throwPengiun = true;

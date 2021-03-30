@@ -19,7 +19,7 @@ public class Monster extends CapsuleObstacle {
     /** The amount to slow the character down */
     private static final float MONSTER_DAMPING = 10.0f;
     /** The monster is a slippery one */
-    private static final float MONSTER_FRICTION = 30.0f;
+    private static final float MONSTER_FRICTION = 15.0f;
     /** The maximum character speed */
     private static final float MONSTER_MAXSPEED = 5.0f;
     /** Height of the sensor attached to the monster's feet */
