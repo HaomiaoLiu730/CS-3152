@@ -61,6 +61,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private boolean hitWater = false;
     private boolean hitIce = false;
     private boolean hitIcicle = false;
+    private boolean levelComplete = false;
 
     /** Cooldown (in animation frames) for punching */
     private static final int PUNCH_COOLDOWN = 100;
@@ -195,6 +196,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        levelComplete = false;
         hitWater(false);
         prevavatarX=16;
         Vector2 gravity = new Vector2(world.getGravity());
@@ -236,6 +238,18 @@ public class NorthAmericaController extends WorldController implements ContactLi
             addObject(obj);
         }
 
+        BoxObstacle exit;
+        exit = new BoxObstacle(20, 1.9f, 3, 3);
+        exit.setBodyType(BodyDef.BodyType.StaticBody);
+        exit.setDensity(BASIC_DENSITY);
+        exit.setFriction(BASIC_FRICTION);
+        exit.setRestitution(BASIC_RESTITUTION);
+        exit.setDrawScale(scale);
+        exit.setName("exit");
+        exit.setTexture(exitStrip);
+        addObject(exit);
+
+        
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
@@ -316,6 +330,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     @Override
     public void update(float dt) {
+        if (levelComplete){
+            reset();
+        }
         // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             avatar.setFilmStrip(punchStrip);
@@ -382,7 +399,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
-            if(obj instanceof Icicle){
+            if(obj.getName() == "exit"){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                continue;
+            }
+            if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 if (!hitIcicle) obj.setActive(false);
                 for (Penguin p: avatar.getPenguins()){
@@ -510,6 +531,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((bd1 == avatar   && bd2 == water) ||
                     (bd1 == water && bd2 == avatar)) {
                 hitWater(true);
+            }
+
+            if ((bd1.getName() == "exit"   && bd2 == avatar && avatar.getNumPenguins() >= 2) ||
+                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() >= 2)) {
+                levelComplete = true;
             }
 
         } catch (Exception e) {
