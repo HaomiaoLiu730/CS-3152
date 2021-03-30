@@ -4,6 +4,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -29,12 +30,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private Player avatar;
     private Monster monster;
     private Icicle icicle;
+    private ArrayList<Note> notes;
+    private ArrayList<Integer> notesCollected = new ArrayList<>();
+
 
     private Texture background;
     private Texture waterTexture;
     /** The texture for walls and platforms */
     private TextureRegion snow;
     private TextureRegion ice;
+    private BitmapFont gameFont ;
 
 
     // Physics constants for initialization
@@ -152,6 +157,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         snow = new TextureRegion(internal.getEntry("snow", Texture.class));
         ice = new TextureRegion(internal.getEntry("ice", Texture.class));
         waterTexture = internal.getEntry("water", Texture.class);
+        gameFont = internal.getEntry("gameFont", BitmapFont.class);
 
         sensorFixtures = new ObjectSet<Fixture>();
     }
@@ -195,6 +201,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        notesCollected = new ArrayList<>();
         hitWater(false);
         prevavatarX=16;
         Vector2 gravity = new Vector2(world.getGravity());
@@ -205,6 +212,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         objects.clear();
         addQueue.clear();
         world.dispose();
+
 
         world = new World(gravity,false);
         world.setContactListener(this);
@@ -290,6 +298,17 @@ public class NorthAmericaController extends WorldController implements ContactLi
         icicle.setFilmStrip(icicleStrip);
         icicle.setDrawScale(scale);
         addObject(icicle);
+
+        notes = new ArrayList<>();
+        notes.add(new Note(-7f, 3.6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note1"));
+        notes.add(new Note(3f, 5f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note2"));
+        for (Note n: notes){
+            n.setFilmStrip(noteLeftStrip);
+            n.setDrawScale(scale);
+            addObject(n);
+        }
+
+
     }
 
     /**
@@ -384,6 +403,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
+            if(obj instanceof  Note){
+                obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                continue;
+            }
             if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 if (!hitIcicle) obj.setActive(false);
@@ -423,6 +446,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
+
+        String message = "Notes collected: "+ notesCollected.size() + "/2";
+        canvas.drawText( gameFont, message,5.0f, canvas.getHeight()-5.0f);
+
         canvas.end();
 
 //        if (debug) {
@@ -484,6 +511,23 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((bd1 == avatar   && bd2 == waterComponent) ||
                     (bd1 == waterComponent && bd2 == avatar)) {
                 hitWater(true);
+            }
+
+            if (bd1 instanceof Note){
+                int noteHit = bd1.getName().charAt(bd1.getName().length() - 1) - 48;
+                ((Note) bd1).setFilmStrip(noteCollectedStrip);
+                if (!notesCollected.contains(noteHit)){
+                    notesCollected.add(noteHit);
+                }
+
+            }
+            if (bd2 instanceof Note){
+                int noteHit = bd2.getName().charAt(bd2.getName().length() - 1) - 48;
+                ((Note) bd2).setFilmStrip(noteCollectedStrip);
+                if (!notesCollected.contains(noteHit)){
+                    notesCollected.add(noteHit);
+                }
+
             }
 
         } catch (Exception e) {

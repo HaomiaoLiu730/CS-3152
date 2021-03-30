@@ -75,6 +75,10 @@ public abstract class WorldController implements Screen {
     protected Texture arrowTexture;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
+    /** The texture for the notes not collected */
+    protected FilmStrip noteLeftStrip;
+    /** The texture for the notes collected */
+    protected FilmStrip noteCollectedStrip;
 
     /** The texture for the player punching */
     protected FilmStrip punchStrip;
@@ -129,6 +133,8 @@ public abstract class WorldController implements Screen {
         arrowTexture = directory.getEntry("arrow", Texture.class);
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
         jumpStrip = new FilmStrip(directory.getEntry("avatarJumping", Texture.class), 2, 4);
+        noteLeftStrip = new FilmStrip(directory.getEntry("notcollected", Texture.class), 1, 1);
+        noteCollectedStrip = new FilmStrip(directory.getEntry("collected", Texture.class), 1, 1);
         worldAssetState = AssetState.COMPLETE;
 
 
