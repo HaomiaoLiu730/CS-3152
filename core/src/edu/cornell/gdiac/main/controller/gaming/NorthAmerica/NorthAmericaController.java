@@ -249,20 +249,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         exit.setTexture(exitStrip);
         addObject(exit);
 
-
-//        waterComponent = new Component(WATER1_X,WATER1_Y, waterTexture.getWidth()/scale.x,waterTexture.getHeight()/scale.y, "water");
-//        FilmStrip waterFilmStrip = new FilmStrip(waterTexture, 1  ,1);
-//        waterComponent.setFilmStrip(waterFilmStrip);
-//        waterComponent.setDrawScale(scale);
-//        waterComponent.setBodyType(BodyDef.BodyType.StaticBody);
-//        waterComponent.setDensity(BASIC_DENSITY);
-//        waterComponent.setFriction(BASIC_FRICTION);
-//        waterComponent.setRestitution(BASIC_RESTITUTION);
-//        waterComponent.setSensor(true);
-//        waterComponent.setDrawScale(scale);
-//        waterComponent.setName("water");
-//        addObject(waterComponent);
-
+        
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
