@@ -70,6 +70,17 @@ public class InputController {
     /** The crosshair cache (for using as a return value) */
     private Vector2 crosscache;
 
+    /** mouse click in x direction*/
+    private float clickX;
+    /** mouse click in y direction*/
+    private float clickY;
+    /** whether mouse is touched */
+    private boolean isTouching;
+    /** whether mouse is touched */
+    private boolean prevIsTouching;
+    /** whether mouse is touched */
+    private boolean touchUp;
+
     private boolean throwPengiun = false;
     private boolean pressed = false;
     private boolean jump = false;
@@ -225,6 +236,38 @@ public class InputController {
     }
 
     /**
+     *
+     * @return mouse click in x direction
+     */
+    public float getClickX() {
+        return clickX;
+    }
+
+    /**
+     *
+     * @return mouse click in x direction
+     */
+    public float getClickY() {
+        return clickY;
+    }
+
+    /**
+     *
+     * @return mouse click
+     */
+    public boolean isTouching() {
+        return isTouching;
+    }
+
+    /**
+     *
+     * @return mouse click up
+     */
+    public boolean touchUp() {
+        return touchUp;
+    }
+
+    /**
      * Creates a new input controller
      *
      * The input controller attempts to connect to the X-Box controller at device 0,
@@ -300,6 +343,17 @@ public class InputController {
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         xPressed = (secondary && xPressed) || (Gdx.input.isKeyPressed(Input.Keys.Z));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
+
+        clickX = Gdx.input.getX();
+        clickY = Gdx.input.getY();
+
+        prevIsTouching = isTouching;
+        isTouching = Gdx.input.isTouched();
+        if(prevIsTouching && !isTouching){
+            touchUp = true;
+        }else{
+            touchUp = false;
+        }
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
