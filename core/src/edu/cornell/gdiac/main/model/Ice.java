@@ -51,7 +51,7 @@ public class Ice extends ComplexObstacle {
         iceBar.setDensity(3f);
         iceBar.setFriction(2f);
         iceBar.setRestitution(0);
-//        iceBar.setAngularDamping(0.2f);
+        iceBar.setFixedRotation(true);
         bodies.add(iceBar);
 
 
@@ -123,5 +123,9 @@ public class Ice extends ComplexObstacle {
 
     public TextureRegion getTexture() {
         return iceBar.getTexture();
+    }
+
+    public void setTilting(boolean tilt){
+        iceBar.setFixedRotation(!tilt);
     }
 }
