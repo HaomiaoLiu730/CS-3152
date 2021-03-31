@@ -50,11 +50,6 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "white": {
-      "file": "images/white.jpg",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
     "icicle": {
       "file": "images/shared/icicle.png",
       "minFilter": "linear",

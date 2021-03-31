@@ -90,12 +90,6 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void updateScreen(Screen screen, int exitCode) {
 		if (screen instanceof OnboardingController) {
-			loading.dispose();
-			loading = null;
-			loading = new GameSpecController(canvas, "gameSpecs.json");
-			loading.setScreenListener(this);
-			setScreen(loading);
-		} else if(screen instanceof GameSpecController){
 			for(int ii = 0; ii < controllers.length; ii++) {
 				controllers[ii].loadContent(directory);
 				controllers[ii].setScreenListener(this);

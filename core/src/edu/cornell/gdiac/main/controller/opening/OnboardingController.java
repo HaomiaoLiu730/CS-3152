@@ -37,14 +37,8 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
 
     /** Front image */
     private Texture front;
-    /** Background texture for start-up */
-    private Texture postcard;
-    /** Black image */
-    private Texture whiteTexture;
     /** penguin image*/
     private Texture roundPenguin;
-    /** Cached Color attribute */
-    private Color fadingColor;
 
     /** Standard width that the assets were designed for */
     private static int STANDARD_WIDTH  = 1280;
@@ -90,8 +84,6 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         internal.finishLoading();
 
         front = internal.getEntry("front", Texture.class);
-        postcard = internal.getEntry( "postcard", Texture.class );
-        whiteTexture = internal.getEntry("white", Texture.class);
         roundPenguin = internal.getEntry("roundPenguin", Texture.class);
         Gdx.input.setInputProcessor( this );
 
@@ -104,7 +96,6 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         // Start loading the real assets
         assets = new AssetDirectory( file );
         assets.loadAssets();
-        fadingColor = new Color(0,0,0,1);
 
         inputController = InputController.getInstance();
         active = true;
@@ -138,27 +129,8 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
             canvas.drawLine(Color.BLACK, lineStart, lineEnd, 1);
             canvas.draw(roundPenguin,Color.WHITE,roundPenguin.getWidth()/2f,roundPenguin.getHeight()/2f, penguinX, penguinY, pengiunAngle,PENGUIN_SCALE,PENGUIN_SCALE);
         }else{
-            canvas.drawOverlay(postcard, true);
-            if(time > FADING_TIME){
-                canvas.drawText(letterFont, "Hi my polar bear,", 730, 450);
-            }
-            if(time > FIRST_TEXT_TIME){
-                canvas.drawText(letterFont, "I'm very sick right now", 730, 370);
-            }
-            if(time > SECOND_TEXT_TIME){
-                canvas.drawText(letterFont, "and I really want to see you", 730, 290);
-            }
-            if(time > THIRD_TEXT_TIME){
-                canvas.drawText(letterFont, "Pengiun", 730, 210);
-            }
-            if(time > FOURTH_TEXT_TIME){
-                canvas.drawText(letterFont, "Press space to continue", 200, 350);
-            }
-
-            fadingColor.a = 1 - (float) time / FADING_TIME;
-            if(fadingColor.a < 0){
-                fadingColor.a = 0;}
-            canvas.drawOverlay(whiteTexture, fadingColor, 0,0);
+            canvas.drawOverlay(front, true);
+            canvas.drawText(letterFont, "Press Space to Start", 485, 250);
         }
         canvas.end();
     }

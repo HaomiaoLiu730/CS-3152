@@ -139,7 +139,7 @@ public abstract class WorldController implements Screen {
 //        }
 
         // Allocate the tiles
-        avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 3, 6);
+        avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 1, 18);
         penguinStrip = new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
         attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
@@ -148,13 +148,12 @@ public abstract class WorldController implements Screen {
         arrowTexture = directory.getEntry("arrow", Texture.class);
         energyBarOutlineTexture = directory.getEntry("energyBarOutline", Texture.class);
         energyBarTexture = directory.getEntry("energyBar", Texture.class);
-        punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 7);
-        //jumpStrip = new FilmStrip(directory.getEntry("avatarJumping", Texture.class), 2, 4);
+        punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
         noteLeftStrip = new FilmStrip(directory.getEntry("notcollected", Texture.class), 1, 1);
         noteCollectedStrip = new FilmStrip(directory.getEntry("collected", Texture.class), 1, 1);
-        jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 3);
+        jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 4);
         jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
-        jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 4);
+        jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 3);
         throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);

@@ -5,16 +5,6 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "postcard": {
-      "file":     "images/onboarding/postcard.jpg",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "white": {
-      "file":     "images/white.jpg",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
     "roundPenguin": {
       "file":     "images/onboarding/round-penguin.png",
       "minFilter": "linear",

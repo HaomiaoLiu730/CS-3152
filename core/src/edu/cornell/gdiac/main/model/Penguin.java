@@ -33,7 +33,7 @@ public class Penguin extends CapsuleObstacle {
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.95f;
+    private static final float PLAYER_VSHRINK = 0.7f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
     private static final float PLAYER_HSHRINK = 0.7f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
