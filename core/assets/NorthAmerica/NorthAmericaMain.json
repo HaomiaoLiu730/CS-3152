@@ -24,12 +24,23 @@
       "file": "images/northAmerica/icicle.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "collected": {
+      "file": "images/shared/Collected.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "notcollected": {
+      "file": "images/shared/NotCollected.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
     "gameFont": {
       "file": "fonts/MarkerFelt.ttf",
-      "size": 16
+      "size": 24,
+      "color": "black"
     }
   }
 }
