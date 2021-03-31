@@ -38,7 +38,7 @@ public class Player extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float PLAYER_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float PLAYER_MAXSPEED = 4.0f;
+    private static final float PLAYER_MAXSPEED = 3.0f;
     /** The impulse for the character jump */
     private static final float PLAYER_JUMP = 20f;
     /** Cooldown (in animation frames) for jumping */
@@ -70,9 +70,9 @@ public class Player extends CapsuleObstacle {
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.95f;
+    private static final float PLAYER_VSHRINK = 0.25f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float PLAYER_HSHRINK = 0.7f;
+    private static final float PLAYER_HSHRINK = 0.25f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float PLAYER_SSHRINK = 0.6f;
 
@@ -205,6 +205,12 @@ public class Player extends CapsuleObstacle {
     public ArrayList<Penguin> getPenguins(){
         return penguins;
     }
+
+    /**
+     * Returns the number of penguins following the avatar.
+     *
+     */
+    public int getNumPenguins(){return numPenguins; }
 
     /**
      * Returns true if the dude is actively firing.
@@ -615,8 +621,7 @@ public class Player extends CapsuleObstacle {
 //        if(throwingCount == 1 && isThrowing){
 //            canvas.drawLine(Color.BLACK, getX()*drawScale.x-30, getY()*drawScale.y-20, getX()*drawScale.x-30, getY()*drawScale.y-20+throwingForce, 4);
 //        }
-        float scale = isPunching ? 0.24f : 1.0f;
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*scale,scale);
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 
     /**

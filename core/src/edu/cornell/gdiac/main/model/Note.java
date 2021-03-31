@@ -1,31 +1,35 @@
 package edu.cornell.gdiac.main.model;
 
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.physics.box2d.*;
-
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
-import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
-/**
- * Player avatar for the plaform game.
- *
- * Note that this class returns to static loading.  That is because there are
- * no other subclasses that we might loop through.
- */
-public class Penguin extends CapsuleObstacle {
+import static com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody;
+
+public class Note extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
-    private static final float PENGUIN_DENSITY = 1.0f;
+    private static final float PLAYER_DENSITY = 50.0f;
     /** The factor to multiply by the input */
-    private static final float PENGUIN_FORCE = 20.0f;
+    private static final float PLAYER_FORCE = 20.0f;
     /** The amount to slow the character down */
-    private static final float PENGUIN_DAMPING = 2.0f;
+    private static final float PLAYER_DAMPING = 10.0f;
     /** The dude is a slippery one */
-    private static final float PENGUIN_FRICTION = 0.0f;
+    private static final float PLAYER_FRICTION = 5.0f;
     /** The maximum character speed */
-    private static final float PENGUIN_MAXSPEED = 3.0f;
+    private static final float PLAYER_MAXSPEED = 5.0f;
+    /** The impulse for the character jump */
+    private static final float PLAYER_JUMP = 12f;
+    /** Cooldown (in animation frames) for jumping */
+    private static final int JUMP_COOLDOWN = 30;
+    /** Cooldown (in animation frames) for shooting */
+    private static final int SHOOT_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
@@ -33,17 +37,12 @@ public class Penguin extends CapsuleObstacle {
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.7f;
+    private static final float PLAYER_VSHRINK = 0.95f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
     private static final float PLAYER_HSHRINK = 0.7f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float PLAYER_SSHRINK = 0.6f;
 
-    private int index;
-
-
-    /** Which direction is the character facing */
-    private boolean faceRight;
     /** Whether our feet are on the ground */
     private boolean isGrounded;
     /** Ground sensor to represent our feet */
@@ -51,73 +50,9 @@ public class Penguin extends CapsuleObstacle {
     private PolygonShape sensorShape;
     private FilmStrip filmStrip;
     private float timeCounter = 0;
-    private boolean isThrownOut;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
-    /** Cache for angle calculations */
-    private Vector2 temp = new Vector2();
-
-    /**
-     * Sets left/right movement of this character.
-     *
-     * This is the result of input times dude force.
-     *
-     * @param force force movement of this character.
-     * @param xDir x movement of this character.
-     */
-    public void setMovement(float force, float xDir, float yDir) {
-        // Change facing if appropriate
-
-        if (xDir < 0) {
-            faceRight = false;
-        } else {
-            faceRight = true;
-        }
-        applyForce(force, xDir, yDir);
-    }
-
-    /**
-     * Applies the force to the body of this dude
-     *
-     * This method should be called after the force attribute is set.
-     */
-    public void applyForce(float force, float xDir, float yDir) {
-        if (!isActive()) {
-            return;
-        }
-
-        // Don't want to be moving. Damp out player motion
-        if (force == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache, getPosition(),true);
-            return;
-        }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            temp.set(xDir, yDir).nor();
-            forceCache.set((float) (force*temp.x*10),0f);
-            body.applyForce(forceCache,getPosition(),true);
-            forceCache.set(0, (float) (force*temp.y*0.1f));
-            body.applyLinearImpulse(forceCache,getPosition(),true);
-        }
-
-    }
-
-    public void setThrownOut(boolean value){
-        isThrownOut = value;
-    }
-
-    public boolean isThrowOut(){
-        return isThrownOut;
-    }
-
-    public void setFaceRight(boolean faceRight) {
-        this.faceRight = faceRight;
-    }
 
     /**
      * Returns true if the dude is on the ground.
@@ -145,7 +80,7 @@ public class Penguin extends CapsuleObstacle {
      * @return how much force to apply to get the dude moving
      */
     public float getForce() {
-        return PENGUIN_FORCE;
+        return PLAYER_FORCE;
     }
 
     /**
@@ -154,7 +89,7 @@ public class Penguin extends CapsuleObstacle {
      * @return ow hard the brakes are applied to get a dude to stop moving
      */
     public float getDamping() {
-        return PENGUIN_DAMPING;
+        return PLAYER_DAMPING;
     }
 
     /**
@@ -165,7 +100,7 @@ public class Penguin extends CapsuleObstacle {
      * @return the upper limit on dude left-right movement.
      */
     public float getMaxSpeed() {
-        return PENGUIN_MAXSPEED;
+        return PLAYER_MAXSPEED;
     }
 
     /**
@@ -180,12 +115,17 @@ public class Penguin extends CapsuleObstacle {
     }
 
     /**
-     * Returns true if this character is facing right
+     * Creates a new dude at the origin.
      *
-     * @return true if this character is facing right
+     * The size is expressed in physics units NOT pixels.  In order for
+     * drawing to work properly, you MUST set the drawScale. The drawScale
+     * converts the physics units to pixels.
+     *
+     * @param width		The object width in physics units
+     * @param height	The object width in physics units
      */
-    public boolean isFacingRight() {
-        return faceRight;
+    public Note(float width, float height, String name) {
+        this(0,0,width,height, name);
     }
 
     /**
@@ -200,17 +140,19 @@ public class Penguin extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Penguin(float x, float y, float width, float height, int index) {
+    public Note(float x, float y, float width, float height, String name) {
         super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
-        setDensity(PENGUIN_DENSITY);
-        setFriction(PENGUIN_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
+        setDensity(PLAYER_DENSITY);
+        setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
+        setRestitution(0f);
         setFixedRotation(true);
+        setBodyType(StaticBody);
+        setSensor(true);
 
         // Gameplay attributes
         isGrounded = false;
-        faceRight = true;
-        this.index = index;
-        setName("penguin"+index);
+
+        setName(name);
     }
 
     /**
@@ -227,9 +169,18 @@ public class Penguin extends CapsuleObstacle {
         if (!super.activatePhysics(world)) {
             return false;
         }
+
+        // Ground Sensor
+        // -------------
+        // We only allow the dude to jump when he's on the ground.
+        // Double jumping is not allowed.
+        //
+        // To determine whether or not the dude is on the ground,
+        // we create a thin sensor under his feet, which reports
+        // collisions with the world but has no collision response.
         Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
         FixtureDef sensorDef = new FixtureDef();
-        sensorDef.density = PENGUIN_DENSITY;
+        sensorDef.density = PLAYER_DENSITY;
         sensorDef.isSensor = true;
         sensorShape = new PolygonShape();
         sensorShape.setAsBox(PLAYER_SSHRINK *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
@@ -241,19 +192,12 @@ public class Penguin extends CapsuleObstacle {
         return true;
     }
 
-
     public void setFilmStrip(FilmStrip strip){
         this.filmStrip = strip;
         origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
     }
 
-    public void setIndex(int value){
-        this.index = value;
-    }
 
-    public int getIndex(){
-        return index;
-    }
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
@@ -277,8 +221,7 @@ public class Penguin extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1f, 1f);
     }
 
     /**
