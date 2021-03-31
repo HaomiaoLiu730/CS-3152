@@ -20,6 +20,7 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Player avatar for the plaform game.
@@ -132,7 +133,7 @@ public class Player extends CapsuleObstacle {
         throwing,
     }
 
-    private ArrayList<Penguin> penguins = new ArrayList<>();
+    private LinkedList<Penguin> penguins = new LinkedList<>();
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -188,8 +189,8 @@ public class Player extends CapsuleObstacle {
 
         for(int i = 0; i<penguins.size(); i++){
             if(!penguins.get(i).isThrowOut()){
-                penguins.get(i).setX(getX() + PENGUIN_WIDTH * (penguins.get(i).getIndex() +1) * (faceRight? -1 : 1));
-//                penguins.get(i).setY(getY()-1);
+                penguins.get(i).setX(getX() + PENGUIN_WIDTH * (1) * (faceRight? -1 : 1));
+                penguins.get(i).setY(getY());
                 penguins.get(i).setFaceRight(faceRight);
             }
 //            if(!p.isThrowOut() || !p.isGrounded()){
@@ -202,7 +203,7 @@ public class Player extends CapsuleObstacle {
      * get all penguins
      * @return all penguins
      */
-    public ArrayList<Penguin> getPenguins(){
+    public LinkedList<Penguin> getPenguins(){
         return penguins;
     }
 
@@ -266,7 +267,8 @@ public class Player extends CapsuleObstacle {
         isInteracting = value;
         if(isInteracting){
             for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 2){
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 2 && p.isThrowOut()){
+                    p.getBody().setType(BodyDef.BodyType.StaticBody);
                     p.setThrownOut(false);
                     p.setIndex(numPenguins);
                     numPenguins += 1;
@@ -290,6 +292,7 @@ public class Player extends CapsuleObstacle {
             if(numPenguins > 0){
                 for(Penguin p: penguins){
                     if(p.getIndex() == numPenguins-1){
+                        p.getBody().setType(BodyDef.BodyType.DynamicBody);
                         setFilmStrip(throwingStrip);
                         moveState = animationState.throwing;
                         p.setThrownOut(true);

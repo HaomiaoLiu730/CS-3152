@@ -231,6 +231,7 @@ public class Penguin extends CapsuleObstacle {
         FixtureDef sensorDef = new FixtureDef();
         sensorDef.density = PENGUIN_DENSITY;
         sensorDef.isSensor = true;
+        sensorDef.filter.groupIndex = -1;
         sensorShape = new PolygonShape();
         sensorShape.setAsBox(PLAYER_SSHRINK *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
         sensorDef.shape = sensorShape;

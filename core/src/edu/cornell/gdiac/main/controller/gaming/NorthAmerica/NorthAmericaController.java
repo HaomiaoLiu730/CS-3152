@@ -281,6 +281,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.getPenguins().get(i).setDrawScale(scale);
             avatar.getPenguins().get(i).setFilmStrip(penguinStrip);
             addObject(avatar.getPenguins().get(i));
+            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.StaticBody);
         }
 
         monster = new Monster(2.7f, 2.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
@@ -482,8 +483,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
             obj.draw(canvas);
         }
 
-        String message = "Notes collected: "+ notesCollected.size() + "/2";
-        canvas.drawText( gameFont, message,5.0f, canvas.getHeight()-5.0f);
+        String noteMsg = "Notes collected: "+ notesCollected.size() + "/2";
+        String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+NUM_PENGUIN;
+        canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
+        canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
 
         canvas.end();
 
