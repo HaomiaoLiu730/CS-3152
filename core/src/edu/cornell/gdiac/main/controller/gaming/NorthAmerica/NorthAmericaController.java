@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -15,7 +14,6 @@ import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
-import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
 import java.util.ArrayList;
@@ -274,14 +272,18 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setJumpRisingStrip(jumpRisingStrip);
         avatar.setWalkingStrip(avatarStrip);
         avatar.setThrowingStrip(throwingStrip);
+        avatar.setPenguinWalkingStrip((penguinWalkingStrip));
+        avatar.setPenguinRollingStrip(penguinRollingStrip);
 
         addObject(avatar);
 
         for(int i = 0; i<NUM_PENGUIN; i++){
             avatar.getPenguins().get(i).setDrawScale(scale);
-            avatar.getPenguins().get(i).setFilmStrip(penguinStrip);
+            avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
+            avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
             addObject(avatar.getPenguins().get(i));
             avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.StaticBody);
+            avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
         }
 
         monster = new Monster(2.7f, 2.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);

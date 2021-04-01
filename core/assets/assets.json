@@ -35,6 +35,16 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "penguinWalking": {
+      "file": "images/shared/penguinWalking.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguinRolling": {
+      "file": "images/shared/penguinRolling.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "monster": {
       "file": "images/shared/monster.png",
       "minFilter": "linear",

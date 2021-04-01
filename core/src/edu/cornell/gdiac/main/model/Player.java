@@ -68,6 +68,8 @@ public class Player extends CapsuleObstacle {
     private FilmStrip walkingStrip;
     /** The texture for the player throwing */
     private FilmStrip throwingStrip;
+    private FilmStrip penguinWalkingStrip;
+    private FilmStrip penguinRollingStrip;
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
@@ -171,6 +173,14 @@ public class Player extends CapsuleObstacle {
         throwingStrip = strip;
     }
 
+    public void setPenguinWalkingStrip(FilmStrip strip){
+        this.penguinWalkingStrip = strip;
+    }
+
+    public void setPenguinRollingStrip(FilmStrip strip){
+        this.penguinRollingStrip = strip;
+    }
+
     /**
      * Sets left/right movement of this character.
      *
@@ -270,6 +280,7 @@ public class Player extends CapsuleObstacle {
                 if(position.set(getPosition()).sub(p.getPosition()).len() < 2 && p.isThrowOut()){
                     p.getBody().setType(BodyDef.BodyType.StaticBody);
                     p.setThrownOut(false);
+                    p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     numPenguins += 1;
                 }
@@ -294,6 +305,7 @@ public class Player extends CapsuleObstacle {
                     if(p.getIndex() == numPenguins-1){
                         p.getBody().setType(BodyDef.BodyType.DynamicBody);
                         setFilmStrip(throwingStrip);
+                        p.setFilmStrip(penguinRollingStrip);
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+2);
@@ -597,9 +609,14 @@ public class Player extends CapsuleObstacle {
         } else {
             shootCooldown = Math.max(0, shootCooldown - 1);
         }
+
+
         for(Penguin p: penguins){
+            p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
             p.applyForce(0,0, 0);
+            p.update(dt);
         }
+
         super.update(dt);
     }
 
@@ -621,9 +638,6 @@ public class Player extends CapsuleObstacle {
             canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
             canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
         }
-//        if(throwingCount == 1 && isThrowing){
-//            canvas.drawLine(Color.BLACK, getX()*drawScale.x-30, getY()*drawScale.y-20, getX()*drawScale.x-30, getY()*drawScale.y-20+throwingForce, 4);
-//        }
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 

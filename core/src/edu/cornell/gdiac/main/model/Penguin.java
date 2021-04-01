@@ -50,8 +50,11 @@ public class Penguin extends CapsuleObstacle {
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     private FilmStrip filmStrip;
+    private FilmStrip walkingStrip;
+    private FilmStrip rollingStrip;
     private float timeCounter = 0;
     private boolean isThrownOut;
+    public boolean updateWalking = false;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -243,9 +246,17 @@ public class Penguin extends CapsuleObstacle {
     }
 
 
+    public void setWalkingStrip(FilmStrip strip){
+        this.walkingStrip = strip;
+        origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
+    }
+
     public void setFilmStrip(FilmStrip strip){
         this.filmStrip = strip;
-        origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
+    }
+
+    public void setRolllingFilmStrip(FilmStrip strip){
+        this.rollingStrip = strip;
     }
 
     public void setIndex(int value){
@@ -265,7 +276,7 @@ public class Penguin extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
         timeCounter += dt;
-        if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
+        if(timeCounter >= 0.2 && updateWalking) {
             timeCounter = 0;
             filmStrip.nextFrame();
         }

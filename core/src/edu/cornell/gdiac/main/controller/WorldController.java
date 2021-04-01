@@ -66,7 +66,9 @@ public abstract class WorldController implements Screen {
     /** The texture for the player */
     protected FilmStrip avatarStrip;
     /** The texture for the penguin */
-    protected FilmStrip penguinStrip;
+    protected FilmStrip penguinWalkingStrip;
+    /** The texture for the penguin rolling */
+    protected FilmStrip penguinRollingStrip;
     /** The texture for the monster */
     protected FilmStrip monsterStrip;
     /** The texture for the water */
@@ -140,7 +142,8 @@ public abstract class WorldController implements Screen {
 
         // Allocate the tiles
         avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 1, 18);
-        penguinStrip = new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
+        penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
+        penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 12);
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
         attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
