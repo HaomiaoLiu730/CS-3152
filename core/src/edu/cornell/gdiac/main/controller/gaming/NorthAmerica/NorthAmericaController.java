@@ -27,7 +27,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     /** Reference to the character avatar */
     private Player avatar;
     private Monster monster;
-    private Icicle icicle;
+    private ArrayList<Icicle> icicles = new ArrayList<>();
     private ArrayList<Note> notes;
     private ArrayList<Integer> notesCollected = new ArrayList<>();
     private Water water;
@@ -65,7 +65,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private int playerGround = 0;
     private boolean hitWater = false;
     private boolean hitIce = false;
-    private boolean hitIcicle = false;
+    private boolean[] hitIcicle = {false, false};
     private boolean levelComplete = false;
 
     /** Cooldown (in animation frames) for punching */
@@ -115,6 +115,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
         setComplete(false);
         setFailure(false);
         world.setContactListener(this);
+        setHitIcicle(0,false);
+        setHitIcicle(1,false);
 
         internal = new AssetDirectory("NorthAmerica/NorthAmericaMain.json");
         internal.loadAssets();
@@ -170,6 +172,9 @@ public class NorthAmericaController extends WorldController implements ContactLi
         notesCollected = new ArrayList<>();
         levelComplete = false;
         hitWater(false);
+        setHitIcicle(0,false);
+        setHitIcicle(1,false);
+        icicles.clear();
         prevavatarX=16;
         Vector2 gravity = new Vector2(world.getGravity());
 
@@ -187,7 +192,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
         setFailure(false);
         populateLevel();
         resetCountdown = 30;
-        hitIcicle = false;
     }
 
     /**
@@ -257,10 +261,20 @@ public class NorthAmericaController extends WorldController implements ContactLi
         monster.setDrawScale(scale);
         addObject(monster);
 
-        icicle = new Icicle(6f, 6.75f, icicleStrip.getRegionWidth()/scale.x, icicleStrip.getRegionHeight()/scale.y, "icicle");
+        setHitIcicle(0,false);
+        setHitIcicle(1,false);
+        float[] point1 = {25, 50, -25, 50, 0, -50};
+        Icicle icicle = new Icicle(2.7f, 6.75f, point1, "icicle1");
         icicle.setFilmStrip(icicleStrip);
         icicle.setDrawScale(scale);
         addObject(icicle);
+        icicles.add(icicle);
+
+        Icicle icicle2 = new Icicle(6f, 6.75f, point1, "icicle2");
+        icicle2.setFilmStrip(icicleStrip);
+        icicle2.setDrawScale(scale);
+        addObject(icicle2);
+        icicles.add(icicle2);
 
         notes = new ArrayList<>();
         notes.add(new Note(-7f, 3.6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note1"));
@@ -387,6 +401,13 @@ public class NorthAmericaController extends WorldController implements ContactLi
             }
             if(obj instanceof Monster){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                for (Icicle icicle: icicles){
+                    if (icicle.getPosition().dst(obj.getPosition()) <= 1){
+                        objects.remove(monster);
+                        monster.setActive(false);
+                        monster.setAwake(false);
+                    }
+                }
                 continue;
             }
             if(obj instanceof  Note){ 
@@ -400,13 +421,31 @@ public class NorthAmericaController extends WorldController implements ContactLi
             }
             if(obj instanceof  Icicle){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
-                if (!hitIcicle) obj.setActive(false);
+                int numIcicle = obj.getName().charAt(obj.getName().length() - 1) - 49;
+                if (!hitIcicle[numIcicle]) {
+                    obj.setActive(false);
+                }
                 for (Penguin p: avatar.getPenguins()){
                     dist = p.getPosition().dst(obj.getPosition());
 
                     if (dist < 0.8){
-                        hitIcicle = true;
+                        hitIcicle[numIcicle] = true;
                     }
+                }
+                if (avatar.getPosition().dst(obj.getPosition()) < 1){
+                    //Vector2 normal =avatar.getPosition().sub(obj.getPosition());
+                    //normal.nor();
+//                    Vector2 temp =new Vector2();
+//                    float impactDistance = (avatar.getHeight() + ((Icicle) obj).getHeight())/2;
+//                    float distance =normal.len();
+//                    temp.set(normal).scl((impactDistance - distance) / 2);
+//                    float impulse = (-(1 + 100f) * normal.dot(avatar.getLinearVelocity())) /
+//                    (normal.dot(normal) * (1 / avatar.getMass() + 1 / obj.getMass()));
+//                    temp.set(normal).scl(impulse / avatar.getMass());
+//                    avatar.getLinearVelocity().sub(temp);
+                    //avatar.setLinearVelocity(new Vector2(2/3*avatar.getLinearVelocity().rotateDeg(180).x,
+                           // 2/3*avatar.getLinearVelocity().rotateDeg(180).y));
+                    avatar.setLinearVelocity((avatar.getLinearVelocity().rotateDeg(180)));
                 }
                 continue;
             }
@@ -426,9 +465,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
         }
 
-        if(hitIcicle){
-            icicle.setActive(true);
-            icicle.setAwake(true);
+        for (int i = 0; i<=1; i++){
+            if (hitIcicle[i]){
+                icicles.get(i).setActive(true);
+                icicles.get(i).setAwake(true);
+            }
         }
 
         prevavatarX = avatar.getX();
@@ -473,8 +514,16 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
     }
 
+    public int numIcicle(Icicle obj){
+        return obj.getName().charAt(obj.getName().length() - 1) - 49;
+    }
+
     public void hitWater(boolean value){
         hitWater = value;
+    }
+
+    public void setHitIcicle(int i, boolean b){
+        hitIcicle[i] = b;
     }
 
 
@@ -538,7 +587,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 if (!notesCollected.contains(noteHit)){
                     notesCollected.add(noteHit);
                 }
-
             }
             if (bd2 instanceof Note && (bd1 instanceof Penguin || bd1 == avatar)){
                 int noteHit = bd2.getName().charAt(bd2.getName().length() - 1) - 48;
