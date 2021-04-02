@@ -64,6 +64,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
     private static final float WATER1_Y = 0f;
     private static final int NUM_PENGUIN = 2;
 
+    private int playerGround = 0;
     private boolean hitWater = false;
     private boolean hitIce = false;
     private boolean hitIcicle = false;
@@ -90,49 +91,14 @@ public class NorthAmericaController extends WorldController implements ContactLi
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
-    // Wall vertices
-    private static final float[][] WALLS = {
-            {
-                16f, 1f, 16f, 0f, 0f, 0f, 0f, 1f
-            },
-            {
-                200f, 1f, 200, 0f, 16f, 0f, 16f, 1f
-            }
-    };
-
-    /** The outlines of all of the platforms */
-    private static final float[][] PLATFORMS = {
-            {
-                0f, 20f, 3f, 16f, 10f, 14f, 13f, 11f, 19f, 10f, 23f, 7f, 29f, 6.5f, 30f, 4f, 39f, 3f, 40f, 0f, 0f, 0f, 0f, 20f
-            }
-    };
-
+    /** The outlines of snow lands */
     private static final float[][] SNOW = {
-            {
-                    200f, 1f, 200, 0f, 16f, 0f, 16f, 1f
-            },
-            {
-                21f, 5f, 21f, 0f, 17f,0f,17f,5f
-            },
+            {200f, 1f, 200, 0f, 16f, 0f, 16f, 1f},
+            {21f, 5f, 21f, 0f, 17f,0f,17f,5f},
             {27f,3f,27f,0f,21f,0f,21f,3f},
             {40f,5f,40f,0f,37.7f,0f,37.7f,5f},
             {100f,30f,100f,8f,30f,8f,30f,30f},
-
-
     };
-    private static final float[][] ICE = {
-            {
-                    35f, 3f, 35f, 2f, 30f,2f,30f,3f
-            },
-
-
-
-    };
-
-//    private static final float[][] WATER = {
-//            {37f,2f,37f,0f,27f,0f,27f,2f},
-//    };
-
 
     /**
      * Creates a new game with a playing field of the given size.
@@ -399,11 +365,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
         float moveX = -avatar.getX() + prevavatarX;
         if(Math.abs(moveX) < 1e-2) moveX = 0;
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
-        if(InputController.getInstance().didPrimary()){
+        avatar.setJumping(InputController.getInstance().didPrimary());
+        if(avatar.isJumping()&&InputController.getInstance().didPrimary()){
             avatar.moveState = Player.animationState.jumpRising;
             avatar.setFilmStrip(jumpRisingStrip);
         }
-        avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setThrowing(InputController.getInstance().getClickX(),
                 InputController.getInstance().getClickY(),
                 avatar.getX(),
@@ -522,9 +488,15 @@ public class NorthAmericaController extends WorldController implements ContactLi
             Obstacle bd2 = (Obstacle)body2.getUserData();
 
             // See if we have landed on the ground.
-            if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-                    (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+            boolean bd1IsGround = !(bd1 instanceof Icicle) && !(bd1 instanceof Note) &&
+                    !(bd1 instanceof Penguin) && !(bd1 instanceof Water);
+            boolean bd2IsGround = !(bd2 instanceof Icicle) && !(bd2 instanceof Note) &&
+                    !(bd2 instanceof Penguin) && !(bd2 instanceof Water);
+
+            if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
+                    (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
                 avatar.setGrounded(true);
+                playerGround += 1;
                 if(avatar.moveState == Player.animationState.jumpHanging){
                     avatar.moveState = Player.animationState.jumpLanding;
                     avatar.setFilmStrip(jumpLandingStrip);
@@ -532,29 +504,12 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
             for(Penguin p: avatar.getPenguins()){
-                // See if we have landed on the ground.
-                if ((p.getSensorName().equals(fd2) && p != bd1) ||
-                        (p.getSensorName().equals(fd1) && p != bd2)) {
+                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1IsGround && bd1 != avatar) ||
+                        (p.getSensorName().equals(fd1) && p != bd2 && bd2IsGround && bd2 != avatar)) {
                     p.setGrounded(true);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
             }
-            if ((monster.getSensorName().equals(fd2) && monster != bd1) ||
-                    (monster.getSensorName().equals(fd1) && monster != bd2)) {
-                monster.setGrounded(true);
-                sensorFixtures.add(monster == bd1 ? fix2 : fix1); // Could have more than one ground
-            }
-            if ((water.getSensorName().equals(fd2) && water != bd1) ||
-                    (water.getSensorName().equals(fd1) && water != bd2)) {
-                water.setGrounded(true);
-                sensorFixtures.add(water == bd1 ? fix2 : fix1); // Could have more than one ground
-            }
-
-//            if ((ice.getSensorName().equals(fd2) && ice != bd1) ||
-//                    (ice.getSensorName().equals(fd1) && ice != bd2)) {
-//                ice.setGrounded(true);
-//                sensorFixtures.add(ice == bd1 ? fix2 : fix1); // Could have more than one ground
-//            }
 
             // Check for win condition
             if ((bd1 == avatar   && bd2 == water) ||
@@ -592,7 +547,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
     @Override
     public void endContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
-
         Fixture fix2 = contact.getFixtureB();
 
         Body body1 = fix1.getBody();
@@ -604,21 +558,26 @@ public class NorthAmericaController extends WorldController implements ContactLi
         Object bd1 = body1.getUserData();
         Object bd2 = body2.getUserData();
 
-        if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-                (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+        boolean bd1IsGround = !(bd1 instanceof Icicle) && !(bd1 instanceof Note) &&
+                !(bd1 instanceof Penguin) && !(bd1 instanceof Water);
+        boolean bd2IsGround = !(bd2 instanceof Icicle) && !(bd2 instanceof Note) &&
+                !(bd2 instanceof Penguin) && !(bd2 instanceof Water);
+
+        if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
+                (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
-            if (sensorFixtures.size == 0) {
-                avatar.setGrounded(false);
-            }
+            playerGround -= 1;
+            avatar.setGrounded(false);
+//            if (playerGround == 0) {
+//                avatar.setGrounded(false);
+//            }
         }
 
         for(Penguin p: avatar.getPenguins()){
-            if ((p.getSensorName().equals(fd2) && p != bd1) ||
-                    (p.getSensorName().equals(fd1) && p != bd2)) {
+            if ((p.getSensorName().equals(fd2) && p != bd1 && bd1IsGround && bd1 != avatar) ||
+                    (p.getSensorName().equals(fd1) && p != bd2 && bd2IsGround && bd2 != avatar)) {
                 sensorFixtures.remove(p == bd1 ? fix2 : fix1);
-                if (sensorFixtures.size == 0) {
-                    p.setGrounded(false);
-                }
+                p.setGrounded(false);
             }
         }
 
