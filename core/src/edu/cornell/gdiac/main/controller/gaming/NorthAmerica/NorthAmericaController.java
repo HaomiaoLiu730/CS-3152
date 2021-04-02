@@ -254,7 +254,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         monster.setDrawScale(scale);
         addObject(monster);
 
-        icicle = new Icicle(6f, 6.75f, icicleStrip.getRegionWidth()/scale.x, icicleStrip.getRegionHeight()/scale.y, "icicle");
+        icicle = new Icicle(2.7f, 6.75f, icicleStrip.getRegionWidth()/scale.x, icicleStrip.getRegionHeight()/scale.y, "icicle");
         icicle.setFilmStrip(icicleStrip);
         icicle.setDrawScale(scale);
         addObject(icicle);
@@ -383,6 +383,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
             }
             if(obj instanceof Monster){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                if (icicle.getPosition().dst(obj.getPosition()) <= 2){
+                    objects.remove(monster);
+                    monster.setActive(false);
+                    monster.setAwake(false);
+                }
                 continue;
             }
             if(obj instanceof  Note){ 
