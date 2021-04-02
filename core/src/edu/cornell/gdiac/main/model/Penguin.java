@@ -276,7 +276,7 @@ public class Penguin extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
         timeCounter += dt;
-        if(timeCounter >= 0.2 && updateWalking) {
+        if(timeCounter >= 0.2 && updateWalking && !isThrownOut) {
             timeCounter = 0;
             filmStrip.nextFrame();
         }

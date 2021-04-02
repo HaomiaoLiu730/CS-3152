@@ -614,7 +614,7 @@ public class Player extends CapsuleObstacle {
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
             p.applyForce(0,0, 0);
-            p.update(dt);
+//            p.update(dt);
         }
 
         super.update(dt);

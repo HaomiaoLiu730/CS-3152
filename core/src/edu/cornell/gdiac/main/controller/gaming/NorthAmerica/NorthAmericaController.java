@@ -541,6 +541,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 if ((p.getSensorName().equals(fd2) && p != bd1) ||
                         (p.getSensorName().equals(fd1) && p != bd2)) {
                     p.setGrounded(true);
+//                    p.getBody().setType(BodyDef.BodyType.StaticBody);
+//                    p.setFilmStrip(penguinWalkingStrip);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
             }
