@@ -427,7 +427,7 @@ public class Player extends CapsuleObstacle {
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
-
+        setRestitution(0f);
         // Gameplay attributes
         isGrounded = false;
         isShooting = false;

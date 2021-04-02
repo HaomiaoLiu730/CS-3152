@@ -252,7 +252,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
         }
 
-        monster = new Monster(2.7f, 2.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
+        monster = new Monster(2.5f, 2.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
         monster.setFilmStrip(monsterStrip);
         monster.setDrawScale(scale);
         addObject(monster);
@@ -281,10 +281,11 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
         dheight = iceTextureRegion.getRegionHeight()/scale.y;
-        Ice spinPlatform = new Ice(2.5f,1.8f,dwidth,dheight);
-        spinPlatform.setDrawScale(scale);
-        spinPlatform.setTexture(iceTextureRegion);
-        addObject(spinPlatform);
+        ice = new Ice(2.5f,1.8f,dwidth,dheight);
+        ice.setDrawScale(scale);
+        ice.setTexture(iceTextureRegion);
+        ice.setRestitution(0);
+        addObject(ice);
     }
 
     /**
@@ -522,6 +523,13 @@ public class NorthAmericaController extends WorldController implements ContactLi
             if ((bd1 == avatar   && bd2 == water) ||
                     (bd1 == water && bd2 == avatar)) {
                 hitWater(true);
+            }
+
+            if (bd1.getName()=="iceBar" && bd2 == avatar) {
+                bd1.setFixedRotation(false);
+            }
+            if (bd1 == avatar && bd2.getName()=="iceBar") {
+                bd2.setFixedRotation(false);
             }
 
             if (bd1 instanceof Note && (bd2 instanceof Penguin || bd2 == avatar)){
