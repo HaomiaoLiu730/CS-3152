@@ -8,7 +8,7 @@ import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 
-public class Icicle extends PolygonObstacle {
+public class Icicle extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
     private static final float PLAYER_DENSITY = 50.0f;
@@ -17,7 +17,7 @@ public class Icicle extends PolygonObstacle {
     /** The amount to slow the character down */
     private static final float PLAYER_DAMPING = 10.0f;
     /** The dude is a slippery one */
-    private static final float PLAYER_FRICTION = 5.0f;
+    private static final float PLAYER_FRICTION = 20.0f;
     /** The maximum character speed */
     private static final float PLAYER_MAXSPEED = 5.0f;
     /** Height of the sensor attached to the player's feet */
@@ -27,7 +27,7 @@ public class Icicle extends PolygonObstacle {
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.95f;
+    private static final float PLAYER_VSHRINK = 1f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
     private static final float PLAYER_HSHRINK = 0.7f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
@@ -105,6 +105,20 @@ public class Icicle extends PolygonObstacle {
     }
 
     /**
+     * Creates a new dude at the origin.
+     *
+     * The size is expressed in physics units NOT pixels.  In order for
+     * drawing to work properly, you MUST set the drawScale. The drawScale
+     * converts the physics units to pixels.
+     *
+     * @param width		The object width in physics units
+     * @param height	The object width in physics units
+     */
+    public Icicle(float width, float height, String name) {
+        this(0,0,width,height, name);
+    }
+
+    /**
      * Creates a new dude avatar at the given position.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -113,9 +127,11 @@ public class Icicle extends PolygonObstacle {
      *
      * @param x  		Initial x position of the avatar center
      * @param y  		Initial y position of the avatar center
+     * @param width		The object width in physics units
+     * @param height	The object width in physics units
      */
-    public Icicle(float x, float y, float[] points, String name) {
-        super(points, x,y);
+    public Icicle(float x, float y, float width, float height, String name) {
+        super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(0f);

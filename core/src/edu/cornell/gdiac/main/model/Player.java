@@ -41,7 +41,7 @@ public class Player extends CapsuleObstacle {
     /** The maximum character speed */
     private static final float PLAYER_MAXSPEED = 3.0f;
     /** The impulse for the character jump */
-    private static final float PLAYER_JUMP = 20f;
+    private static final float PLAYER_JUMP = 16f;
     /** Cooldown (in animation frames) for jumping */
     private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for jumping */
