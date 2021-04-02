@@ -2,15 +2,13 @@ package edu.cornell.gdiac.main.model;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
+import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 
-public class Icicle extends CapsuleObstacle {
+public class Icicle extends PolygonObstacle {
     // Physics constants
     /** The density of the character */
     private static final float PLAYER_DENSITY = 50.0f;
@@ -22,12 +20,6 @@ public class Icicle extends CapsuleObstacle {
     private static final float PLAYER_FRICTION = 5.0f;
     /** The maximum character speed */
     private static final float PLAYER_MAXSPEED = 5.0f;
-    /** The impulse for the character jump */
-    private static final float PLAYER_JUMP = 12f;
-    /** Cooldown (in animation frames) for jumping */
-    private static final int JUMP_COOLDOWN = 30;
-    /** Cooldown (in animation frames) for shooting */
-    private static final int SHOOT_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
@@ -113,20 +105,6 @@ public class Icicle extends CapsuleObstacle {
     }
 
     /**
-     * Creates a new dude at the origin.
-     *
-     * The size is expressed in physics units NOT pixels.  In order for
-     * drawing to work properly, you MUST set the drawScale. The drawScale
-     * converts the physics units to pixels.
-     *
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
-     */
-    public Icicle(float width, float height, String name) {
-        this(0,0,width,height, name);
-    }
-
-    /**
      * Creates a new dude avatar at the given position.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -135,11 +113,9 @@ public class Icicle extends CapsuleObstacle {
      *
      * @param x  		Initial x position of the avatar center
      * @param y  		Initial y position of the avatar center
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
      */
-    public Icicle(float x, float y, float width, float height, String name) {
-        super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
+    public Icicle(float x, float y, float[] points, String name) {
+        super(points, x,y);
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(0f);
