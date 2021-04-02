@@ -20,6 +20,7 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Player avatar for the plaform game.
@@ -67,6 +68,8 @@ public class Player extends CapsuleObstacle {
     private FilmStrip walkingStrip;
     /** The texture for the player throwing */
     private FilmStrip throwingStrip;
+    private FilmStrip penguinWalkingStrip;
+    private FilmStrip penguinRollingStrip;
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
@@ -132,7 +135,7 @@ public class Player extends CapsuleObstacle {
         throwing,
     }
 
-    private ArrayList<Penguin> penguins = new ArrayList<>();
+    private LinkedList<Penguin> penguins = new LinkedList<>();
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -170,6 +173,14 @@ public class Player extends CapsuleObstacle {
         throwingStrip = strip;
     }
 
+    public void setPenguinWalkingStrip(FilmStrip strip){
+        this.penguinWalkingStrip = strip;
+    }
+
+    public void setPenguinRollingStrip(FilmStrip strip){
+        this.penguinRollingStrip = strip;
+    }
+
     /**
      * Sets left/right movement of this character.
      *
@@ -188,8 +199,8 @@ public class Player extends CapsuleObstacle {
 
         for(int i = 0; i<penguins.size(); i++){
             if(!penguins.get(i).isThrowOut()){
-                penguins.get(i).setX(getX() + PENGUIN_WIDTH * (penguins.get(i).getIndex() +1) * (faceRight? -1 : 1));
-//                penguins.get(i).setY(getY()-1);
+                penguins.get(i).setX(getX() + PENGUIN_WIDTH * (1) * (faceRight? -1 : 1));
+                penguins.get(i).setY(getY());
                 penguins.get(i).setFaceRight(faceRight);
             }
 //            if(!p.isThrowOut() || !p.isGrounded()){
@@ -202,7 +213,7 @@ public class Player extends CapsuleObstacle {
      * get all penguins
      * @return all penguins
      */
-    public ArrayList<Penguin> getPenguins(){
+    public LinkedList<Penguin> getPenguins(){
         return penguins;
     }
 
@@ -266,8 +277,10 @@ public class Player extends CapsuleObstacle {
         isInteracting = value;
         if(isInteracting){
             for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 2){
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 2 && p.isThrowOut()){
+                    p.getBody().setType(BodyDef.BodyType.StaticBody);
                     p.setThrownOut(false);
+                    p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     numPenguins += 1;
                 }
@@ -290,7 +303,9 @@ public class Player extends CapsuleObstacle {
             if(numPenguins > 0){
                 for(Penguin p: penguins){
                     if(p.getIndex() == numPenguins-1){
+                        p.getBody().setType(BodyDef.BodyType.DynamicBody);
                         setFilmStrip(throwingStrip);
+                        p.setFilmStrip(penguinRollingStrip);
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+2);
@@ -594,9 +609,14 @@ public class Player extends CapsuleObstacle {
         } else {
             shootCooldown = Math.max(0, shootCooldown - 1);
         }
+
+
         for(Penguin p: penguins){
+            p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
             p.applyForce(0,0, 0);
+//            p.update(dt);
         }
+
         super.update(dt);
     }
 
@@ -618,9 +638,6 @@ public class Player extends CapsuleObstacle {
             canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
             canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
         }
-//        if(throwingCount == 1 && isThrowing){
-//            canvas.drawLine(Color.BLACK, getX()*drawScale.x-30, getY()*drawScale.y-20, getX()*drawScale.x-30, getY()*drawScale.y-20+throwingForce, 4);
-//        }
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 

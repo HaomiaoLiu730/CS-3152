@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -15,7 +14,6 @@ import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
-import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
 import java.util.ArrayList;
@@ -240,13 +238,18 @@ public class NorthAmericaController extends WorldController implements ContactLi
         avatar.setJumpRisingStrip(jumpRisingStrip);
         avatar.setWalkingStrip(avatarStrip);
         avatar.setThrowingStrip(throwingStrip);
+        avatar.setPenguinWalkingStrip((penguinWalkingStrip));
+        avatar.setPenguinRollingStrip(penguinRollingStrip);
 
         addObject(avatar);
 
         for(int i = 0; i<NUM_PENGUIN; i++){
             avatar.getPenguins().get(i).setDrawScale(scale);
-            avatar.getPenguins().get(i).setFilmStrip(penguinStrip);
+            avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
+            avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
             addObject(avatar.getPenguins().get(i));
+            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.StaticBody);
+            avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
         }
 
         monster = new Monster(2.7f, 2.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
@@ -448,8 +451,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
             obj.draw(canvas);
         }
 
-        String message = "Notes collected: "+ notesCollected.size() + "/2";
-        canvas.drawText( gameFont, message,5.0f, canvas.getHeight()-5.0f);
+        String noteMsg = "Notes collected: "+ notesCollected.size() + "/2";
+        String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+NUM_PENGUIN;
+        canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
+        canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
 
         canvas.end();
 
@@ -507,6 +512,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1IsGround && bd1 != avatar) ||
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2IsGround && bd2 != avatar)) {
                     p.setGrounded(true);
+//                    p.getBody().setType(BodyDef.BodyType.StaticBody);
+//                    p.setFilmStrip(penguinWalkingStrip);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
             }
