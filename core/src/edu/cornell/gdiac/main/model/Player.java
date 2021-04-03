@@ -236,6 +236,7 @@ public class Player extends CapsuleObstacle {
             for(Penguin p: penguins){
                 if(!p.isThrowOut()){
                     p.setX(getX() + PENGUIN_WIDTH * (p.getIndex()+1) * (faceRight? -1 : 1));
+                    System.out.println("after set: "+p.getPosition());
                     p.setFaceRight(faceRight);
                 }
             }
@@ -467,6 +468,7 @@ public class Player extends CapsuleObstacle {
         faceRight = true;
         this.totalPenguins = numOfPenguins;
         this.numPenguins = totalPenguins;
+        System.out.println(x+", "+y);
         for(int i = 0; i < numOfPenguins; i++){
             penguins.add(new Penguin(x - (i+1)*PENGUIN_WIDTH, y,PENGUIN_WIDTH, PENGUIN_HEIGHT, i));
         }
@@ -575,6 +577,11 @@ public class Player extends CapsuleObstacle {
         return k*v+b;
     }
 
+    public void getTrajectoryPoint(Vector2 startingPosition, Vector2 startingVelocity, float n){
+        float gravity = getGravityScale();
+
+    }
+
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
@@ -628,7 +635,6 @@ public class Player extends CapsuleObstacle {
         } else {
             shootCooldown = Math.max(0, shootCooldown - 1);
         }
-
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;

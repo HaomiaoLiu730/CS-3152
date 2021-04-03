@@ -383,17 +383,11 @@ public class GameplayController extends WorldController implements ContactListen
                 continue;
             }
             if(obj instanceof Penguin){
-                if(!((Penguin)obj).isThrowOut()){
-                    obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
-                    continue;
-                }
                 if(obj.getBodyType() == BodyDef.BodyType.StaticBody || ((Penguin)obj).isGrounded()){
                     obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                     continue;
                 }
-                if(((Penguin)obj).isThrowOut() ){
-                    continue;
-                }
+                continue;
             }
             if(obj instanceof Monster){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
