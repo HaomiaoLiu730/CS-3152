@@ -270,7 +270,6 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(n);
         }
 
-
         water = new Water(2.6f, 1f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
         water.setFilmStrip(waterStrip);
         water.setDrawScale(scale);
@@ -485,8 +484,10 @@ public class GameplayController extends WorldController implements ContactListen
             Obstacle bd2 = (Obstacle)body2.getUserData();
 
             // See if we have landed on the ground.
-            if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && !(bd1 instanceof Penguin)) ||
-                    (avatar.getSensorName().equals(fd1) && avatar != bd2 && !(bd2 instanceof Penguin))) {
+            boolean bd1IsGround = !(bd1 instanceof Penguin) && !(bd1 instanceof Note) && (!(bd1 instanceof Water));
+            boolean bd2IsGround = !(bd2 instanceof Penguin) && !(bd2 instanceof Note) && (!(bd2 instanceof Water));
+            if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
+                    (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
                 avatar.setGrounded(true);
                 playerGround += 1;
                 if(avatar.moveState == Player.animationState.jumpHanging){
@@ -559,8 +560,10 @@ public class GameplayController extends WorldController implements ContactListen
         Object bd1 = body1.getUserData();
         Object bd2 = body2.getUserData();
 
-        if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && !(bd1 instanceof Penguin)) ||
-                (avatar.getSensorName().equals(fd1) && avatar != bd2) && !(bd2 instanceof Penguin)) {
+        boolean bd1IsGround = !(bd1 instanceof Penguin) && !(bd1 instanceof Note) && (!(bd1 instanceof Water));
+        boolean bd2IsGround = !(bd2 instanceof Penguin) && !(bd2 instanceof Note) && (!(bd2 instanceof Water));
+        if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
+                (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
             playerGround -= 1;
             if (playerGround == 0) {
