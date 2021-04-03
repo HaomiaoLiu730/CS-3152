@@ -271,11 +271,8 @@ public class Player extends CapsuleObstacle {
     /**
      * Sets whether the dude is actively jumping.
      *
-     * @param value whether the dude is actively jumping.
      */
-    public void setInteract(boolean value) {
-        isInteracting = value;
-        if(isInteracting){
+    public void setInteract() {
             for(Penguin p: penguins){
                 if(position.set(getPosition()).sub(p.getPosition()).len() < 2 && p.isThrowOut()){
                     p.getBody().setType(BodyDef.BodyType.StaticBody);
@@ -283,7 +280,7 @@ public class Player extends CapsuleObstacle {
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     numPenguins += 1;
-                }
+//                }
             }
         }
     }

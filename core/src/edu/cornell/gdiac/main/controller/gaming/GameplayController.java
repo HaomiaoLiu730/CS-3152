@@ -256,7 +256,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
         }
 
-        monster = new Monster(2.5f, 2.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
+        monster = new Monster(2.5f, 3.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
         monster.setFilmStrip(monsterStrip);
         monster.setDrawScale(scale);
         addObject(monster);
@@ -270,14 +270,20 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(n);
         }
 
-        water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+// <<<<<<< juliane/background
+
+//        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+        water = new Water(2.6f, 1f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+// =======
+//         water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+// >>>>>>> main
         water.setFilmStrip(waterStrip);
         water.setDrawScale(scale);
         addObject(water);
 
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
         dheight = iceTextureRegion.getRegionHeight()/scale.y;
-        ice = new Ice(2.5f,1.8f,dwidth,dheight);
+        ice = new Ice(2.5f,3.2f,dwidth,dheight);
         ice.setDrawScale(scale);
         ice.setTexture(iceTextureRegion);
         ice.setRestitution(0);
@@ -376,7 +382,7 @@ public class GameplayController extends WorldController implements ContactListen
                 avatar.getY(),
                 InputController.getInstance().touchUp(),
                 InputController.getInstance().isTouching());
-        avatar.setInteract(InputController.getInstance().didXPressed());
+        avatar.setInteract();
         for(Obstacle obj: objects){
             if(obj instanceof Player || obj instanceof Penguin){
                 continue;
