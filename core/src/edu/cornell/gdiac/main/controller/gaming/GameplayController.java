@@ -395,11 +395,11 @@ public class GameplayController extends WorldController implements ContactListen
                     obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                     continue;
                 }
-                if(obj.getBodyType() == BodyDef.BodyType.StaticBody){
+                if(obj.getBodyType() == BodyDef.BodyType.StaticBody || ((Penguin)obj).isGrounded()){
                     obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                     continue;
                 }
-                if(((Penguin)obj).isThrowOut() && !((Penguin) obj).isGrounded()){
+                if(((Penguin)obj).isThrowOut() ){
                     continue;
                 }
             }
@@ -517,9 +517,10 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             for(Penguin p: avatar.getPenguins()){
-                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != p) ||
-                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != p)) {
+                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
+                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
+//                    p.setFilmStrip(penguinWalkingStrip);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
             }

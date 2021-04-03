@@ -306,8 +306,7 @@ public class Player extends CapsuleObstacle {
      */
     public void pickUpPenguins() {
             for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 2 && p.isThrowOut()){
-//                    p.getBody().setType(BodyDef.BodyType.StaticBody);
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 1.5f && p.isThrowOut() && p.isGrounded()){
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
@@ -334,6 +333,8 @@ public class Player extends CapsuleObstacle {
                     if(p.getIndex() == numPenguins-1){
                         setFilmStrip(throwingStrip);
                         p.setFilmStrip(penguinRollingStrip);
+                        p.setBodyType(BodyDef.BodyType.DynamicBody);
+                        p.setSensor(false);
                         p.setGrounded(false);
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
@@ -608,13 +609,6 @@ public class Player extends CapsuleObstacle {
                     setFilmStrip(walkingStrip);
                     moveState = animationState.walking;
                 }
-            }
-        }
-
-        for(Penguin p: penguins){
-            if(p.isThrowOut()){
-                System.out.println(p.getBodyType());
-                System.out.println(p.getX()+", "+p.getY() );
             }
         }
 
