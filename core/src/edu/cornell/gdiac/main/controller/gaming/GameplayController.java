@@ -392,7 +392,7 @@ public class GameplayController extends WorldController implements ContactListen
                 }
                 continue;
             }
-            if(obj instanceof  Note){ 
+            if(obj instanceof Note){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }

@@ -288,7 +288,8 @@ public class Penguin extends CapsuleObstacle {
             filmStrip.nextFrame();
         }else if(isThrownOut && !isGrounded && timeCounter >= 0.05 ){
             timeCounter = 0;
-            float temp = getLinearVelocity().len()/14f*0.3f;
+            float temp =velocityCache.set(getVX(), getVY()).len();
+            temp = temp/25f*0.4f;
             angle += getVX() > 0 ? -temp : temp;
             angle %= Math.PI;
         }
@@ -302,8 +303,11 @@ public class Penguin extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
-//        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        if(isThrownOut && !isGrounded){
+            canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
+        }else{
+            canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
     }
 
     /**
