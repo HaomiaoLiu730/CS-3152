@@ -261,8 +261,8 @@ public class GameplayController extends WorldController implements ContactListen
         addObject(monster);
 
         notes = new ArrayList<>();
-        notes.add(new Note(-7f, 3.6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note1"));
-        notes.add(new Note(3f, 5f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note2"));
+        notes.add(new Note(-6f, 4f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note1"));
+        notes.add(new Note(2.5f, 6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note2"));
         for (Note n: notes){
             n.setFilmStrip(noteLeftStrip);
             n.setDrawScale(scale);
