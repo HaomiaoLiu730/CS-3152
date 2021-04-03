@@ -236,7 +236,6 @@ public class Player extends CapsuleObstacle {
             for(Penguin p: penguins){
                 if(!p.isThrowOut()){
                     p.setX(getX() + PENGUIN_WIDTH * (p.getIndex()+1) * (faceRight? -1 : 1));
-                    System.out.println("after set: "+p.getPosition());
                     p.setFaceRight(faceRight);
                 }
             }
@@ -468,7 +467,6 @@ public class Player extends CapsuleObstacle {
         faceRight = true;
         this.totalPenguins = numOfPenguins;
         this.numPenguins = totalPenguins;
-        System.out.println(x+", "+y);
         for(int i = 0; i < numOfPenguins; i++){
             penguins.add(new Penguin(x - (i+1)*PENGUIN_WIDTH, y,PENGUIN_WIDTH, PENGUIN_HEIGHT, i));
         }
