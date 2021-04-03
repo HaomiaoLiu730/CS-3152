@@ -385,7 +385,7 @@ public class GameplayController extends WorldController implements ContactListen
                 avatar.getY(),
                 InputController.getInstance().touchUp(),
                 InputController.getInstance().isTouching());
-        avatar.setInteract();
+        avatar.pickUpPenguins();
         for(Obstacle obj: objects){
             if(obj instanceof Player){
                 continue;
@@ -397,6 +397,9 @@ public class GameplayController extends WorldController implements ContactListen
                 }
                 if(obj.getBodyType() == BodyDef.BodyType.StaticBody){
                     obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                    continue;
+                }
+                if(((Penguin)obj).isThrowOut() && !((Penguin) obj).isGrounded()){
                     continue;
                 }
             }
@@ -438,7 +441,6 @@ public class GameplayController extends WorldController implements ContactListen
                 continue;
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
-
         }
 
         prevavatarX = avatar.getX();
