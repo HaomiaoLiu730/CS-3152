@@ -54,6 +54,7 @@ public class Penguin extends CapsuleObstacle {
     private FilmStrip rollingStrip;
     private float timeCounter = 0;
     private boolean isThrownOut;
+    private float angle;
     public boolean updateWalking = false;
 
     /** Cache for internal force calculations */
@@ -77,7 +78,7 @@ public class Penguin extends CapsuleObstacle {
         } else {
             faceRight = true;
         }
-        applyForce(force, xDir, yDir);
+        applyForce(force, xDir-getX(), yDir-getY());
     }
 
     /**
@@ -102,9 +103,9 @@ public class Penguin extends CapsuleObstacle {
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
             temp.set(xDir, yDir).nor();
-            forceCache.set((float) (force*temp.x*10),0f);
+            forceCache.set(force*temp.x*10,0f);
             body.applyForce(forceCache,getPosition(),true);
-            forceCache.set(0, (float) (force*temp.y*0.1f));
+            forceCache.set(0,  force*temp.y*0.1f);
             body.applyLinearImpulse(forceCache,getPosition(),true);
         }
 
@@ -265,6 +266,10 @@ public class Penguin extends CapsuleObstacle {
         this.index = value;
     }
 
+    public float getAngle(){
+        return angle;
+    }
+
     public int getIndex(){
         return index;
     }
@@ -281,6 +286,12 @@ public class Penguin extends CapsuleObstacle {
         if(timeCounter >= 0.2 && updateWalking && !isThrownOut) {
             timeCounter = 0;
             filmStrip.nextFrame();
+        }else if(isThrownOut && !isGrounded && timeCounter >= 0.05 ){
+            timeCounter = 0;
+            float temp =velocityCache.set(getVX(), getVY()).len();
+            temp = temp/25f*0.4f;
+            angle += getVX() > 0 ? -temp : temp;
+            angle %= Math.PI;
         }
         super.update(dt);
     }
@@ -291,8 +302,16 @@ public class Penguin extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+
+        if(index != 0 && !isThrowOut()){
+            return;
+        }
         float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        if(isThrownOut){
+            canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
+        }else{
+            canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,0,effect,1.0f);
+        }
     }
 
     /**

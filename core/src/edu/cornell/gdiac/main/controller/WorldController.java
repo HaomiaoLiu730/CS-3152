@@ -143,7 +143,7 @@ public abstract class WorldController implements Screen {
         // Allocate the tiles
         avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 1, 18);
         penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
-        penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 12);
+        penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
         attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);

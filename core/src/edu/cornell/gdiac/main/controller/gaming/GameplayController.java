@@ -251,7 +251,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
             addObject(avatar.getPenguins().get(i));
-            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.StaticBody);
+            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
         }
 
@@ -319,6 +319,9 @@ public class GameplayController extends WorldController implements ContactListen
         if (levelComplete){
             reset();
         }
+        if(InputController.getInstance().didDebug()){
+            setDebug(true);
+        }
         // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             avatar.setFilmStrip(punchStrip);
@@ -372,13 +375,18 @@ public class GameplayController extends WorldController implements ContactListen
         }
         avatar.setThrowing(InputController.getInstance().getClickX(),
                 InputController.getInstance().getClickY(),
-                avatar.getX(),
-                avatar.getY(),
                 InputController.getInstance().touchUp(),
                 InputController.getInstance().isTouching());
-        avatar.setInteract();
+        avatar.pickUpPenguins();
         for(Obstacle obj: objects){
-            if(obj instanceof Player || obj instanceof Penguin){
+            if(obj instanceof Player){
+                continue;
+            }
+            if(obj instanceof Penguin){
+                if(obj.getBodyType() == BodyDef.BodyType.StaticBody || ((Penguin)obj).isGrounded()){
+                    obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                    continue;
+                }
                 continue;
             }
             if(obj instanceof Monster){
@@ -390,7 +398,7 @@ public class GameplayController extends WorldController implements ContactListen
                 }
                 continue;
             }
-            if(obj instanceof  Note){ 
+            if(obj instanceof Note){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
@@ -426,7 +434,6 @@ public class GameplayController extends WorldController implements ContactListen
                 continue;
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
-
         }
         prevavatarX = avatar.getX();
         avatar.applyForce();
@@ -507,7 +514,6 @@ public class GameplayController extends WorldController implements ContactListen
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
-//                    p.getBody().setType(BodyDef.BodyType.StaticBody);
 //                    p.setFilmStrip(penguinWalkingStrip);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }

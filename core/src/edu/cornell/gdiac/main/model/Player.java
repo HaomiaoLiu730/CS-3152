@@ -19,6 +19,7 @@ import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -55,7 +56,7 @@ public class Player extends CapsuleObstacle {
     /** max throwing force*/
     private static final float MAX_THROWING_FORCE = 200;
 
-    private float PENGUIN_WIDTH = 1.6f;
+    private float PENGUIN_WIDTH = 1.3f;
     private float PENGUIN_HEIGHT = 2f;
 
     /** The texture for the player jumping */
@@ -83,6 +84,8 @@ public class Player extends CapsuleObstacle {
     private float movement;
     /** Which direction is the character facing */
     private boolean faceRight;
+    /** Which direction is the character facing previously */
+    private boolean prevFaceRight;
     /** How long until we can jump again */
     private int jumpCooldown;
     /** How long until we can throw penguin again*/
@@ -120,6 +123,7 @@ public class Player extends CapsuleObstacle {
     private float timeCounter = 0;
     private int totalPenguins;
     private int numPenguins;
+    private boolean fixPenguin;
     public animationState moveState = animationState.walking;
 
     public enum animationState {
@@ -191,21 +195,50 @@ public class Player extends CapsuleObstacle {
     public void setMovement(float value) {
         movement = value;
         // Change facing if appropriate
+        prevFaceRight = faceRight;
         if (value < 0) {
             faceRight = false;
         } else if (value > 0) {
             faceRight = true;
         }
 
-        for(int i = 0; i<penguins.size(); i++){
-            if(!penguins.get(i).isThrowOut()){
-                penguins.get(i).setX(getX() + PENGUIN_WIDTH * (1) * (faceRight? -1 : 1));
-                penguins.get(i).setY(getY());
-                penguins.get(i).setFaceRight(faceRight);
+        if(faceRight != prevFaceRight){
+            fixPenguin = true;
+        }
+
+        if(!isGrounded){
+            for(Penguin p: penguins) {
+                if(!p.isThrowOut()) p.setY(getY()-0.5f);
             }
-//            if(!p.isThrowOut() || !p.isGrounded()){
-//                p.setY(getY());
-//            }
+        }
+
+        if(fixPenguin){
+            for(Penguin p: penguins){
+                p.setSensor(true);
+                p.setBodyType(BodyDef.BodyType.StaticBody);
+                if(!p.isThrowOut()){
+                    if(faceRight){
+                        if(p.getX() - getX() < -PENGUIN_WIDTH){
+                            fixPenguin = false;
+                            p.setSensor(false);
+                            p.setBodyType(BodyDef.BodyType.DynamicBody);
+                        }
+                    }else{
+                        if(p.getX() - getX() > PENGUIN_WIDTH){
+                            fixPenguin = false;
+                            p.setSensor(false);
+                            p.setBodyType(BodyDef.BodyType.DynamicBody);
+                        }
+                    }
+                }
+            }
+        }else{
+            for(Penguin p: penguins){
+                if(!p.isThrowOut()){
+                    p.setX(getX() + PENGUIN_WIDTH * (p.getIndex()+1) * (faceRight? -1 : 1));
+                    p.setFaceRight(faceRight);
+                }
+            }
         }
     }
 
@@ -272,10 +305,9 @@ public class Player extends CapsuleObstacle {
      * Sets whether the dude is actively jumping.
      *
      */
-    public void setInteract() {
+    public void pickUpPenguins() {
             for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 2 && p.isThrowOut()){
-                    p.getBody().setType(BodyDef.BodyType.StaticBody);
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 2f && p.isThrowOut() && p.isGrounded()){
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
@@ -285,12 +317,12 @@ public class Player extends CapsuleObstacle {
         }
     }
 
-    public void setThrowing(float clickX, float clickY, float avatarX, float avatarY, boolean touchUp, boolean isTouching ) {
+    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching ) {
         isThrowing = isTouching;
         // setting throwing direction
         if(touchUp && throwingCount == 0){
-            xDir = clickX/1280f*32 - avatarX;
-            yDir = (720f-clickY)/720f*18 - avatarY;
+            xDir = clickX/1280f*32;
+            yDir = (720f-clickY)/720f*18;
             throwingCount = 1;
         }else if(throwingCount == 1 && isTouching){
             // setting force
@@ -300,9 +332,11 @@ public class Player extends CapsuleObstacle {
             if(numPenguins > 0){
                 for(Penguin p: penguins){
                     if(p.getIndex() == numPenguins-1){
-                        p.getBody().setType(BodyDef.BodyType.DynamicBody);
+                        p.setBodyType(BodyDef.BodyType.DynamicBody);
+                        p.setSensor(false);
                         setFilmStrip(throwingStrip);
                         p.setFilmStrip(penguinRollingStrip);
+                        p.setGrounded(false);
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+2);
@@ -541,6 +575,11 @@ public class Player extends CapsuleObstacle {
         return k*v+b;
     }
 
+    public void getTrajectoryPoint(Vector2 startingPosition, Vector2 startingVelocity, float n){
+        float gravity = getGravityScale();
+
+    }
+
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
@@ -579,18 +618,6 @@ public class Player extends CapsuleObstacle {
             }
         }
 
-
-//        if(isGrounded){
-//            if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
-//                timeCounter = 0;
-//                filmStrip.nextFrame();
-//            }
-//        }else{
-//            if(timeCounter >= 0.2 && Math.abs(getVX()) > 1e-1) {
-//                timeCounter = 0;
-//                filmStrip.nextFrame();
-//            }
-//        }
         if (isJumping()) {
             jumpCooldown = JUMP_COOLDOWN;
         } else {
@@ -607,11 +634,9 @@ public class Player extends CapsuleObstacle {
             shootCooldown = Math.max(0, shootCooldown - 1);
         }
 
-
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
             p.applyForce(0,0, 0);
-//            p.update(dt);
         }
 
         super.update(dt);
@@ -624,11 +649,11 @@ public class Player extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        float throwingAngle = (float)(Math.atan(yDir/xDir));
+        float throwingAngle = (float)(Math.atan((yDir-getY())/(xDir-getX())));
         if(throwingAngle < 0){
             throwingAngle = -throwingAngle + (float)(Math.PI/2);
         }
-        if(throwingAngle != 0){
+        if(throwingAngle != 0 && throwingCount == 1){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
         }
         if(throwingCount == 1  && isThrowing){
