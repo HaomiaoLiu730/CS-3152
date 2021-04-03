@@ -7,7 +7,4 @@ CONTROLS:
 LEFT/RIGHT KEY: move left/right  
 UP KEY: jump  
 X KEY: punch (the monster)  
-MOUSE CLICK: first quick click to determine the direction, then hold to determine the power   
-Z KEY: pick back a penguin
-
-
+MOUSE CLICK: first quick click to determine the direction, then hold to determine the power  
