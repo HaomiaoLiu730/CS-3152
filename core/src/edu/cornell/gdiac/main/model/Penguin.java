@@ -302,6 +302,10 @@ public class Penguin extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+
+        if(index != 0 && !isThrowOut()){
+            return;
+        }
         float effect = faceRight ? 1.0f : -1.0f;
         if(isThrownOut && !isGrounded){
             canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);

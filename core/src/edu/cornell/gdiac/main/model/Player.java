@@ -205,17 +205,28 @@ public class Player extends CapsuleObstacle {
             fixPenguin = true;
         }
 
+        if(!isGrounded){
+            for(Penguin p: penguins) {
+                if(!p.isThrowOut()) p.setY(getY());
+            }
+        }
+
         if(fixPenguin){
             for(Penguin p: penguins){
                 p.setSensor(true);
+                p.setBodyType(BodyDef.BodyType.StaticBody);
                 if(!p.isThrowOut()){
                     if(faceRight){
                         if(p.getX() - getX() < -PENGUIN_WIDTH){
                             fixPenguin = false;
+                            p.setSensor(false);
+                            p.setBodyType(BodyDef.BodyType.DynamicBody);
                         }
                     }else{
                         if(p.getX() - getX() > PENGUIN_WIDTH){
                             fixPenguin = false;
+                            p.setSensor(false);
+                            p.setBodyType(BodyDef.BodyType.DynamicBody);
                         }
                     }
                 }
@@ -223,8 +234,8 @@ public class Player extends CapsuleObstacle {
         }else{
             for(int i = 0; i<penguins.size(); i++){
                 if(!penguins.get(i).isThrowOut()){
-                    penguins.get(i).setX(getX() + PENGUIN_WIDTH * (1) * (faceRight? -1 : 1));
-                    penguins.get(i).setY(getY());
+                    penguins.get(i).setX(getX() + PENGUIN_WIDTH * (i+1) * (faceRight? -1 : 1));
+//                    penguins.get(i).setY(getY());
                     penguins.get(i).setFaceRight(faceRight);
                 }
             }
@@ -300,7 +311,7 @@ public class Player extends CapsuleObstacle {
         if(isInteracting){
             for(Penguin p: penguins){
                 if(position.set(getPosition()).sub(p.getPosition()).len() < 2 && p.isThrowOut()){
-                    p.getBody().setType(BodyDef.BodyType.StaticBody);
+//                    p.getBody().setType(BodyDef.BodyType.StaticBody);
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);

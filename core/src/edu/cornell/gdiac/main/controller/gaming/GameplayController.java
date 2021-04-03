@@ -247,7 +247,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
             addObject(avatar.getPenguins().get(i));
-            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.StaticBody);
+            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
         }
 
@@ -321,6 +321,9 @@ public class GameplayController extends WorldController implements ContactListen
         if (levelComplete){
             reset();
         }
+        if(InputController.getInstance().didDebug()){
+            setDebug(true);
+        }
         // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             avatar.setFilmStrip(punchStrip);
@@ -380,8 +383,18 @@ public class GameplayController extends WorldController implements ContactListen
                 InputController.getInstance().isTouching());
         avatar.setInteract(InputController.getInstance().didXPressed());
         for(Obstacle obj: objects){
-            if(obj instanceof Player || obj instanceof Penguin){
+            if(obj instanceof Player){
                 continue;
+            }
+            if(obj instanceof Penguin){
+                if(!((Penguin)obj).isThrowOut()){
+                    obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                    continue;
+                }
+                if(((Penguin)obj).getBodyType() == BodyDef.BodyType.StaticBody){
+                    obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
+                    continue;
+                }
             }
             if(obj instanceof Monster){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
