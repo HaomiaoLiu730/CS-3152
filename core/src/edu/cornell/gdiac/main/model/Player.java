@@ -271,7 +271,6 @@ public class Player extends CapsuleObstacle {
     /**
      * Sets whether the dude is actively jumping.
      *
-     * @param value whether the dude is actively jumping.
      */
     public void setInteract() {
 //        isInteracting = value;

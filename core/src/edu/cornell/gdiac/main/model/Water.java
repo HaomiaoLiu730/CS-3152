@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
-
 public class Water extends CapsuleObstacle{
     /** The density of the character */
     private static final float PLAYER_DENSITY = 1.0f;
@@ -16,19 +15,15 @@ public class Water extends CapsuleObstacle{
     private static final float PLAYER_FORCE = 20.0f;
     /** The dude is a slippery one */
     private static final float PLAYER_FRICTION = 5.0f;
-
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
     private static final float PLAYER_VSHRINK = 0.95f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
     private static final float PLAYER_HSHRINK = 0.7f;
-
     private FilmStrip filmStrip;
     private float timeCounter = 0;
-
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
-
     /**
      * Returns how much force to apply to get the dude moving
      *
@@ -39,7 +34,6 @@ public class Water extends CapsuleObstacle{
     public float getForce() {
         return PLAYER_FORCE;
     }
-
     /**
      * Creates a new dude avatar at the given position.
      *
@@ -47,20 +41,21 @@ public class Water extends CapsuleObstacle{
      * drawing to work properly, you MUST set the drawScale. The drawScale
      * converts the physics units to pixels.
      *
-     * @param x  		Initial x position of the avatar center
-     * @param y  		Initial y position of the avatar center
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
+     * @param x         Initial x position of the avatar center
+     * @param y         Initial y position of the avatar center
+     * @param width     The object width in physics units
+     * @param height    The object width in physics units
      */
     public Water(float x, float y, float width, float height, String name) {
-        super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
+        super(x,y,width,height);
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(0f);
         setFixedRotation(true);
+        setActive(false);
+        setAwake(false);
         setName(name);
     }
-
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
      *
@@ -77,12 +72,10 @@ public class Water extends CapsuleObstacle{
         }
         return true;
     }
-
     public void setFilmStrip(FilmStrip strip){
         this.filmStrip = strip;
         origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
     }
-
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
@@ -99,14 +92,12 @@ public class Water extends CapsuleObstacle{
         }
         super.update(dt);
     }
-
     /**
      * Draws the physics object.
      *
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1f, 1f);
+        canvas.draw(filmStrip,new Color(255,255,255,0.5f),origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1f, 1f);
     }
 }
-
