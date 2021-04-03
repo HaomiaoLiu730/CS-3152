@@ -88,8 +88,8 @@ public class GameplayController extends WorldController implements ContactListen
             {200f,1f,200,0f,16f,0f,16f,1f},
             {21f,5f,21f,0f,17f,0f,17f,5f},
             {27f,3f,27f,0f,21f,0f,21f,3f},
-            {40f,5f,40f,0f,37.7f,0f,37.7f,5f},
-            {100f,30f,100f,8f,30f,8f,30f,30f},
+            {40f,6.5f,40f,0f,37.7f,0f,37.7f,6.5f},
+            {100f,30f,100f,11f,30f,11f,30f,30f},
     };
 
     private static final float[][] ICICLE = {
@@ -206,7 +206,7 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(obj);
         }
 
-        icicle = new PolygonObstacle(ICICLE[0], 6.25f, 6.75f);
+        icicle = new PolygonObstacle(ICICLE[0], 6.25f, 9.75f);
         icicle.setBodyType(BodyDef.BodyType.StaticBody);
         icicle.setDensity(30f);
         icicle.setFriction(0.5f);
@@ -270,13 +270,7 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(n);
         }
 
-// <<<<<<< juliane/background
-
-//        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
         water = new Water(2.6f, 1f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
-// =======
-//         water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
-// >>>>>>> main
         water.setFilmStrip(waterStrip);
         water.setDrawScale(scale);
         addObject(water);
@@ -505,8 +499,10 @@ public class GameplayController extends WorldController implements ContactListen
             Obstacle bd2 = (Obstacle)body2.getUserData();
 
             // See if we have landed on the ground.
-            if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && !(bd1 instanceof Penguin)) ||
-                    (avatar.getSensorName().equals(fd1) && avatar != bd2 && !(bd2 instanceof Penguin))) {
+            boolean bd1IsGround = !(bd1 instanceof Penguin) && !(bd1 instanceof Note) && (!(bd1 instanceof Water));
+            boolean bd2IsGround = !(bd2 instanceof Penguin) && !(bd2 instanceof Note) && (!(bd2 instanceof Water));
+            if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
+                    (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
                 avatar.setGrounded(true);
                 playerGround += 1;
                 if(avatar.moveState == Player.animationState.jumpHanging){
@@ -578,8 +574,10 @@ public class GameplayController extends WorldController implements ContactListen
         Object bd1 = body1.getUserData();
         Object bd2 = body2.getUserData();
 
-        if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && !(bd1 instanceof Penguin)) ||
-                (avatar.getSensorName().equals(fd1) && avatar != bd2) && !(bd2 instanceof Penguin)) {
+        boolean bd1IsGround = !(bd1 instanceof Penguin) && !(bd1 instanceof Note) && (!(bd1 instanceof Water));
+        boolean bd2IsGround = !(bd2 instanceof Penguin) && !(bd2 instanceof Note) && (!(bd2 instanceof Water));
+        if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
+                (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
             playerGround -= 1;
             if (playerGround == 0) {
