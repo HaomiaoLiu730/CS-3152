@@ -533,8 +533,8 @@ public class GameplayController extends WorldController implements ContactListen
                 }
             }
 
-            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() >= 2 && notesCollected.size() >= 2) ||
-                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() >= 2 && notesCollected.size() >= 2)) {
+            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected.size() == notes.size()) ||
+                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected.size() == notes.size())) {
                 levelComplete = true;
             }
 
