@@ -20,47 +20,18 @@ public class Icicle extends CapsuleObstacle {
     private static final float PLAYER_FRICTION = 20.0f;
     /** The maximum character speed */
     private static final float PLAYER_MAXSPEED = 5.0f;
-    /** Height of the sensor attached to the player's feet */
-    private static final float SENSOR_HEIGHT = 0.05f;
-    /** Identifier to allow us to track the sensor in ContactListener */
-    private static final String SENSOR_NAME = "DudeGroundSensor";
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
     private static final float PLAYER_VSHRINK = 1f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
     private static final float PLAYER_HSHRINK = 0.7f;
-    /** The amount to shrink the sensor fixture (horizontally) relative to the image */
-    private static final float PLAYER_SSHRINK = 0.6f;
 
-    /** Whether our feet are on the ground */
-    private boolean isGrounded;
-    /** Ground sensor to represent our feet */
-    private Fixture sensorFixture;
-    private PolygonShape sensorShape;
     private FilmStrip filmStrip;
     private float timeCounter = 0;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
-
-    /**
-     * Returns true if the dude is on the ground.
-     *
-     * @return true if the dude is on the ground.
-     */
-    public boolean isGrounded() {
-        return isGrounded;
-    }
-
-    /**
-     * Sets whether the dude is on the ground.
-     *
-     * @param value whether the dude is on the ground.
-     */
-    public void setGrounded(boolean value) {
-        isGrounded = value;
-    }
 
     /**
      * Returns how much force to apply to get the dude moving
@@ -94,31 +65,6 @@ public class Icicle extends CapsuleObstacle {
     }
 
     /**
-     * Returns the name of the ground sensor
-     *
-     * This is used by ContactListener
-     *
-     * @return the name of the ground sensor
-     */
-    public String getSensorName() {
-        return SENSOR_NAME;
-    }
-
-    /**
-     * Creates a new dude at the origin.
-     *
-     * The size is expressed in physics units NOT pixels.  In order for
-     * drawing to work properly, you MUST set the drawScale. The drawScale
-     * converts the physics units to pixels.
-     *
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
-     */
-    public Icicle(float width, float height, String name) {
-        this(0,0,width,height, name);
-    }
-
-    /**
      * Creates a new dude avatar at the given position.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -136,10 +82,6 @@ public class Icicle extends CapsuleObstacle {
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(0f);
         setFixedRotation(true);
-
-        // Gameplay attributes
-        isGrounded = false;
-
         setName(name);
     }
 
@@ -157,26 +99,6 @@ public class Icicle extends CapsuleObstacle {
         if (!super.activatePhysics(world)) {
             return false;
         }
-
-        // Ground Sensor
-        // -------------
-        // We only allow the dude to jump when he's on the ground.
-        // Double jumping is not allowed.
-        //
-        // To determine whether or not the dude is on the ground,
-        // we create a thin sensor under his feet, which reports
-        // collisions with the world but has no collision response.
-        Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
-        FixtureDef sensorDef = new FixtureDef();
-        sensorDef.density = PLAYER_DENSITY;
-        sensorDef.isSensor = true;
-        sensorShape = new PolygonShape();
-        sensorShape.setAsBox(PLAYER_SSHRINK *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
-        sensorDef.shape = sensorShape;
-
-        sensorFixture = body.createFixture(sensorDef);
-        sensorFixture.setUserData(getSensorName());
-
         return true;
     }
 
@@ -210,17 +132,5 @@ public class Icicle extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1f, 1f);
-    }
-
-    /**
-     * Draws the outline of the physics body.
-     *
-     * This method can be helpful for understanding issues with collisions.
-     *
-     * @param canvas Drawing context
-     */
-    public void drawDebug(GameCanvas canvas) {
-        super.drawDebug(canvas);
-        canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 }

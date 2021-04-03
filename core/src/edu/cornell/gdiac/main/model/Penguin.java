@@ -29,13 +29,13 @@ public class Penguin extends CapsuleObstacle {
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
-    private static final String SENSOR_NAME = "DudeGroundSensor";
+    private static final String SENSOR_NAME = "PenguinGroundSensor";
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.7f;
+    private static final float PLAYER_VSHRINK = 0.75f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float PLAYER_HSHRINK = 0.7f;
+    private static final float PLAYER_HSHRINK = 0.75f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float PLAYER_SSHRINK = 0.6f;
 
@@ -253,10 +253,12 @@ public class Penguin extends CapsuleObstacle {
 
     public void setFilmStrip(FilmStrip strip){
         this.filmStrip = strip;
+        origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
     }
 
     public void setRolllingFilmStrip(FilmStrip strip){
         this.rollingStrip = strip;
+        origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
     }
 
     public void setIndex(int value){

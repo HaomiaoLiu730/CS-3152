@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.main.controller.gaming.NorthAmerica;
+package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
@@ -111,7 +111,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         super(width,height,DEFAULT_GRAVITY);
 
         scale = super.scale;
-        setDebug(false);
+        setDebug(true);
         setComplete(false);
         setFailure(false);
         world.setContactListener(this);
@@ -180,7 +180,6 @@ public class NorthAmericaController extends WorldController implements ContactLi
         addQueue.clear();
         world.dispose();
 
-
         world = new World(gravity,false);
         world.setContactListener(this);
         setComplete(false);
@@ -212,7 +211,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         }
 
         BoxObstacle exit;
-        exit = new BoxObstacle(20, 1.9f, 3, 3);
+        exit = new BoxObstacle(20, 1.9f, 2, 2);
         exit.setBodyType(BodyDef.BodyType.StaticBody);
         exit.setDensity(BASIC_DENSITY);
         exit.setFriction(BASIC_FRICTION);
@@ -463,13 +462,13 @@ public class NorthAmericaController extends WorldController implements ContactLi
 
         canvas.end();
 
-//        if (debug) {
-//            canvas.beginDebug();
-//            for(Obstacle obj : objects) {
-//                obj.drawDebug(canvas);
-//            }
-//            canvas.endDebug();
-//        }
+        if (isDebug()) {
+            canvas.beginDebug();
+            for(Obstacle obj : objects) {
+                obj.drawDebug(canvas);
+            }
+            canvas.endDebug();
+        }
     }
 
     @Override
@@ -497,11 +496,8 @@ public class NorthAmericaController extends WorldController implements ContactLi
             Obstacle bd2 = (Obstacle)body2.getUserData();
 
             // See if we have landed on the ground.
-            boolean bd1IsGround = !(bd1 instanceof Note) && !(bd1 instanceof Penguin) && !(bd1 instanceof Water);
-            boolean bd2IsGround = !(bd2 instanceof Note) && !(bd2 instanceof Penguin) && !(bd2 instanceof Water);
-
-            if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
-                    (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
+            if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && !(bd1 instanceof Penguin)) ||
+                    (avatar.getSensorName().equals(fd1) && avatar != bd2 && !(bd2 instanceof Penguin))) {
                 avatar.setGrounded(true);
                 playerGround += 1;
                 if(avatar.moveState == Player.animationState.jumpHanging){
@@ -510,9 +506,10 @@ public class NorthAmericaController extends WorldController implements ContactLi
                 }
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
+
             for(Penguin p: avatar.getPenguins()){
-                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1IsGround && bd1 != avatar) ||
-                        (p.getSensorName().equals(fd1) && p != bd2 && bd2IsGround && bd2 != avatar)) {
+                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
+                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
 //                    p.getBody().setType(BodyDef.BodyType.StaticBody);
 //                    p.setFilmStrip(penguinWalkingStrip);
@@ -573,22 +570,18 @@ public class NorthAmericaController extends WorldController implements ContactLi
         Object bd1 = body1.getUserData();
         Object bd2 = body2.getUserData();
 
-        boolean bd1IsGround = !(bd1 instanceof Note) && !(bd1 instanceof Penguin) && !(bd1 instanceof Water);
-        boolean bd2IsGround = !(bd2 instanceof Note) && !(bd2 instanceof Penguin) && !(bd2 instanceof Water);
-
-        if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
-                (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
+        if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && !(bd1 instanceof Penguin)) ||
+                (avatar.getSensorName().equals(fd1) && avatar != bd2) && !(bd2 instanceof Penguin)) {
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
             playerGround -= 1;
-            avatar.setGrounded(false);
-//            if (playerGround == 0) {
-//                avatar.setGrounded(false);
-//            }
+            if (playerGround == 0) {
+                avatar.setGrounded(false);
+            }
         }
 
         for(Penguin p: avatar.getPenguins()){
-            if ((p.getSensorName().equals(fd2) && p != bd1 && bd1IsGround && bd1 != avatar) ||
-                    (p.getSensorName().equals(fd1) && p != bd2 && bd2IsGround && bd2 != avatar)) {
+            if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
+                    (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                 sensorFixtures.remove(p == bd1 ? fix2 : fix1);
                 p.setGrounded(false);
             }

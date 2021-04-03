@@ -51,7 +51,7 @@ public class Player extends CapsuleObstacle {
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
-    private static final String SENSOR_NAME = "DudeGroundSensor";
+    private static final String SENSOR_NAME = "PlayerGroundSensor";
     /** max throwing force*/
     private static final float MAX_THROWING_FORCE = 200;
 
