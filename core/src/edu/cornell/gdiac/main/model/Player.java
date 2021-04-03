@@ -649,9 +649,9 @@ public class Player extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        float throwingAngle = (float)(Math.atan((yDir-getY())/(xDir-getX())));
-        if(throwingAngle < 0){
-            throwingAngle = -throwingAngle + (float)(Math.PI/2);
+        float throwingAngle = (float)(Math.asin((yDir-getY())/(positionCache.set((xDir-getX()), (yDir-getY()))).len()));
+        if(xDir-getX()<0){
+            throwingAngle = (float)(Math.PI/1f) - throwingAngle;
         }
         if(throwingAngle != 0 && throwingCount == 1){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
