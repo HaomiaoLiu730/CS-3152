@@ -54,6 +54,7 @@ public class Penguin extends CapsuleObstacle {
     private FilmStrip rollingStrip;
     private float timeCounter = 0;
     private boolean isThrownOut;
+    private float angle;
     public boolean updateWalking = false;
 
     /** Cache for internal force calculations */
@@ -265,6 +266,10 @@ public class Penguin extends CapsuleObstacle {
         this.index = value;
     }
 
+    public float getAngle(){
+        return angle;
+    }
+
     public int getIndex(){
         return index;
     }
@@ -281,6 +286,11 @@ public class Penguin extends CapsuleObstacle {
         if(timeCounter >= 0.2 && updateWalking && !isThrownOut) {
             timeCounter = 0;
             filmStrip.nextFrame();
+        }else if(isThrownOut && !isGrounded && timeCounter >= 0.05 ){
+            timeCounter = 0;
+            float temp = getLinearVelocity().len()/14f*0.3f;
+            angle += getVX() > 0 ? -temp : temp;
+            angle %= Math.PI;
         }
         super.update(dt);
     }
@@ -292,7 +302,8 @@ public class Penguin extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
+//        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
     /**

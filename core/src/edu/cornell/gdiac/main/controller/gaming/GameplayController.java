@@ -508,11 +508,9 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             for(Penguin p: avatar.getPenguins()){
-                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
-                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
+                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != p) ||
+                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != p)) {
                     p.setGrounded(true);
-//                    p.getBody().setType(BodyDef.BodyType.StaticBody);
-//                    p.setFilmStrip(penguinWalkingStrip);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
             }

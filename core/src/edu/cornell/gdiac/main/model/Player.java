@@ -55,7 +55,7 @@ public class Player extends CapsuleObstacle {
     /** max throwing force*/
     private static final float MAX_THROWING_FORCE = 200;
 
-    private float PENGUIN_WIDTH = 1.6f;
+    private float PENGUIN_WIDTH = 1.5f;
     private float PENGUIN_HEIGHT = 2f;
 
     /** The texture for the player jumping */
@@ -306,6 +306,7 @@ public class Player extends CapsuleObstacle {
                         p.getBody().setType(BodyDef.BodyType.DynamicBody);
                         setFilmStrip(throwingStrip);
                         p.setFilmStrip(penguinRollingStrip);
+                        p.setGrounded(false);
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+2);
