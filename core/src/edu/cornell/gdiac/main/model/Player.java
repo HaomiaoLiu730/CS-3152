@@ -273,8 +273,6 @@ public class Player extends CapsuleObstacle {
      *
      */
     public void setInteract() {
-//        isInteracting = value;
-//        if(isInteracting){
             for(Penguin p: penguins){
                 if(position.set(getPosition()).sub(p.getPosition()).len() < 2 && p.isThrowOut()){
                     p.getBody().setType(BodyDef.BodyType.StaticBody);
