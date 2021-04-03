@@ -93,7 +93,7 @@ public class GameplayController extends WorldController implements ContactListen
     };
 
     private static final float[][] ICICLE = {
-            {-0.65f,1.25f,0.65f,1.25f,0,-1.25f},
+            {-1f,1.85f,1f,1.85f,0,-1.85f},
     };
 
     /**
@@ -122,7 +122,6 @@ public class GameplayController extends WorldController implements ContactListen
         iceTextureRegion = new TextureRegion(internal.getEntry("ice", Texture.class));
         waterTexture = internal.getEntry("water", Texture.class);
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
-
         sensorFixtures = new ObjectSet<Fixture>();
     }
 
@@ -206,7 +205,7 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(obj);
         }
 
-        icicle = new PolygonObstacle(ICICLE[0], 6.25f, 9.75f);
+        icicle = new PolygonObstacle(ICICLE[0], 6.25f, 9.15f);
         icicle.setBodyType(BodyDef.BodyType.StaticBody);
         icicle.setDensity(30f);
         icicle.setFriction(0.5f);
@@ -270,7 +269,8 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(n);
         }
 
-        water = new Water(2.6f, 1f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+        water = new Water(2.35f, 1.9f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
+        water.setActive(false);
         water.setFilmStrip(waterStrip);
         water.setDrawScale(scale);
         addObject(water);
@@ -413,15 +413,21 @@ public class GameplayController extends WorldController implements ContactListen
                 ((Ice) obj).setTranform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
-            if(obj instanceof  Water){
+            if(obj instanceof Water){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
-                // obj.setActive(false);
+                obj.setActive(false);
+                float leftX = obj.getX()-((Water) obj).getWidth()/2;
+                float rightX = obj.getX()+((Water) obj).getWidth()/2;
+                float downY = obj.getY()-((Water) obj).getHeight()/2;
+                float upY = obj.getY()+((Water) obj).getHeight()/2;
+                if (avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.getY() >= downY && avatar.getY() <= upY) {
+                    hitWater(true);
+                }
                 continue;
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
 
         }
-
         prevavatarX = avatar.getX();
         avatar.applyForce();
     }
@@ -507,12 +513,6 @@ public class GameplayController extends WorldController implements ContactListen
                 }
             }
 
-            // Check for win condition
-            if ((bd1 == avatar   && bd2 == water) ||
-                    (bd1 == water && bd2 == avatar)) {
-                hitWater(true);
-            }
-
             if (bd1.getName()=="iceBar" && bd2 == avatar) {
                 bd1.setFixedRotation(false);
             }
@@ -535,6 +535,7 @@ public class GameplayController extends WorldController implements ContactListen
                 }
             }
 
+            // Check for win condition
             if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected.size() == notes.size()) ||
                     (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected.size() == notes.size())) {
                 levelComplete = true;
