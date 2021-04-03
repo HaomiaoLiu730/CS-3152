@@ -9,4 +9,4 @@ RIGHT/D KEY: move right
 UP/W KEY: jump  
 X KEY: punch (the monster)  
 MOUSE CLICK: first quick click to determine the direction, then hold to determine the power  
-* Penguins will be automatically picked back
+*Penguins will be automatically picked back
