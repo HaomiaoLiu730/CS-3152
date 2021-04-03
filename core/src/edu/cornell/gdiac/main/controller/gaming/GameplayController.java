@@ -18,7 +18,7 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 import java.util.ArrayList;
 
-public class NorthAmericaController extends WorldController implements ContactListener, ControllerListener {
+public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
@@ -107,7 +107,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
      * @param width  The width of the game window
      * @param height The height of the game window
      */
-    public NorthAmericaController(float width, float height) {
+    public GameplayController(float width, float height) {
         super(width,height,DEFAULT_GRAVITY);
 
         scale = super.scale;
@@ -128,7 +128,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         sensorFixtures = new ObjectSet<Fixture>();
     }
 
-    public NorthAmericaController(){
+    public GameplayController(){
         this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 

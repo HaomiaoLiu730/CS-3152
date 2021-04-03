@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.WorldController;
-import edu.cornell.gdiac.main.controller.gaming.NorthAmericaController;
+import edu.cornell.gdiac.main.controller.gaming.GameplayController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.controller.opening.OnboardingController;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -47,7 +47,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		directory.loadAssets();
 		directory.finishLoading();
 		controllers = new WorldController[NUMBER_OF_LEVELS];
-		controllers[0] = new NorthAmericaController();
+		controllers[0] = new GameplayController();
 //		controllers[current].loadContent(directory);
 		current = 0;
 		loading.setScreenListener(this);
@@ -99,7 +99,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			controllers[current].reset();
 			controllers[current].setScreenListener(this);
 			setScreen(controllers[current]);
-		} else if(screen instanceof NorthAmericaController){
+		} else if(screen instanceof GameplayController){
 			// NASA mode
 			if(exitCode == 1){
 
