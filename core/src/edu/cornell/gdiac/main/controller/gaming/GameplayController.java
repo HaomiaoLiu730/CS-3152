@@ -391,7 +391,7 @@ public class GameplayController extends WorldController implements ContactListen
                     obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                     continue;
                 }
-                if(((Penguin)obj).getBodyType() == BodyDef.BodyType.StaticBody){
+                if(obj.getBodyType() == BodyDef.BodyType.StaticBody){
                     obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                     continue;
                 }

@@ -336,7 +336,7 @@ public class Player extends CapsuleObstacle {
             if(numPenguins > 0){
                 for(Penguin p: penguins){
                     if(p.getIndex() == numPenguins-1){
-                        p.getBody().setType(BodyDef.BodyType.DynamicBody);
+//                        p.getBody().setType(BodyDef.BodyType.DynamicBody);
                         setFilmStrip(throwingStrip);
                         p.setFilmStrip(penguinRollingStrip);
                         p.setGrounded(false);
