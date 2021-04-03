@@ -20,11 +20,6 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "icicle": {
-      "file": "images/northAmerica/icicle.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
     "collected": {
       "file": "images/shared/Collected.png",
       "minFilter": "linear",

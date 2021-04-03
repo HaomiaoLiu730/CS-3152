@@ -27,21 +27,17 @@ public class GameplayController extends WorldController implements ContactListen
     /** Reference to the character avatar */
     private Player avatar;
     private Monster monster;
-    private Icicle icicle;
+    private PolygonObstacle icicle;
     private ArrayList<Note> notes;
     private ArrayList<Integer> notesCollected = new ArrayList<>();
     private Water water;
     private Ice ice;
 
-
     private Texture background;
     private Texture waterTexture;
-    /** The texture for walls and platforms */
     private TextureRegion snow;
     private BitmapFont gameFont ;
     private TextureRegion iceTextureRegion;
-//    private TextureRegion ice;
-
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -64,8 +60,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     private int playerGround = 0;
     private boolean hitWater = false;
-    private boolean hitIce = false;
-    private boolean hitIcicle = false;
     private boolean levelComplete = false;
 
     /** Cooldown (in animation frames) for punching */
@@ -91,11 +85,15 @@ public class GameplayController extends WorldController implements ContactListen
 
     /** The outlines of snow lands */
     private static final float[][] SNOW = {
-            {200f, 1f, 200, 0f, 16f, 0f, 16f, 1f},
-            {21f, 5f, 21f, 0f, 17f,0f,17f,5f},
+            {200f,1f,200,0f,16f,0f,16f,1f},
+            {21f,5f,21f,0f,17f,0f,17f,5f},
             {27f,3f,27f,0f,21f,0f,21f,3f},
             {40f,5f,40f,0f,37.7f,0f,37.7f,5f},
             {100f,30f,100f,8f,30f,8f,30f,30f},
+    };
+
+    private static final float[][] ICICLE = {
+            {-0.65f,1.25f,0.65f,1.25f,0,-1.25f},
     };
 
     /**
@@ -152,7 +150,6 @@ public class GameplayController extends WorldController implements ContactListen
      * @param directory Reference to global asset manager.
      */
     public void loadContent(AssetDirectory directory) {
-        // TODO: load assets
         super.loadContent(directory);
         if (platformAssetState != AssetState.LOADING) {
             return;
@@ -186,7 +183,6 @@ public class GameplayController extends WorldController implements ContactListen
         setFailure(false);
         populateLevel();
         resetCountdown = 30;
-        hitIcicle = false;
     }
 
     /**
@@ -210,6 +206,16 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(obj);
         }
 
+        icicle = new PolygonObstacle(ICICLE[0], 6.25f, 6.75f);
+        icicle.setBodyType(BodyDef.BodyType.StaticBody);
+        icicle.setDensity(30f);
+        icicle.setFriction(0.5f);
+        icicle.setRestitution(0.2f);
+        icicle.setDrawScale(scale);
+        icicle.setTexture(icicleStrip);
+        icicle.setName("icicle");
+        addObject(icicle);
+
         BoxObstacle exit;
         exit = new BoxObstacle(20, 1.9f, 2, 2);
         exit.setBodyType(BodyDef.BodyType.StaticBody);
@@ -221,7 +227,6 @@ public class GameplayController extends WorldController implements ContactListen
         exit.setTexture(exitStrip);
         addObject(exit);
 
-        
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
@@ -256,11 +261,6 @@ public class GameplayController extends WorldController implements ContactListen
         monster.setDrawScale(scale);
         addObject(monster);
 
-        icicle = new Icicle(6f, 6.75f, icicleStrip.getRegionWidth()/scale.x, icicleStrip.getRegionHeight()/scale.y, "icicle");
-        icicle.setFilmStrip(icicleStrip);
-        icicle.setDrawScale(scale);
-        addObject(icicle);
-
         notes = new ArrayList<>();
         notes.add(new Note(-7f, 3.6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note1"));
         notes.add(new Note(3f, 5f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note2"));
@@ -270,8 +270,6 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(n);
         }
 
-
-//        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
         water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
         water.setFilmStrip(waterStrip);
         water.setDrawScale(scale);
@@ -401,23 +399,18 @@ public class GameplayController extends WorldController implements ContactListen
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 continue;
             }
-            if(obj instanceof  Icicle){
+            if(obj.getName() == "icicle"){
                 obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
-                int numIcicle = obj.getName().charAt(obj.getName().length() - 1) - 49;
-                if (!hitIcicle) obj.setActive(false);
                 for (Penguin p: avatar.getPenguins()){
                     dist = p.getPosition().dst(obj.getPosition());
-                    if (dist < 0.8){
-                        hitIcicle = true;
+                    if (dist < 2){
+                        icicle.setBodyType(BodyDef.BodyType.DynamicBody);
                     }
                 }
                 continue;
             }
             if(obj instanceof Ice){
-                //obj.getBody().setTransform(obj.getX()+moveX, obj.getY(), 0);
                 ((Ice) obj).setTranform(obj.getX()+moveX, obj.getY(), 0);
-//                System.out.println(obj.getX()+" ice ");
-                //obj.setActive(false);
                 continue;
             }
             if(obj instanceof  Water){
@@ -427,11 +420,6 @@ public class GameplayController extends WorldController implements ContactListen
             }
             obj.getBody().setTransform(obj.getX()+moveX, 0, 0);
 
-        }
-
-        if (hitIcicle) {
-            icicle.setActive(true);
-            icicle.setAwake(true);
         }
 
         prevavatarX = avatar.getX();
@@ -545,8 +533,8 @@ public class GameplayController extends WorldController implements ContactListen
                 }
             }
 
-            if ((bd1.getName() == "exit"   && bd2 == avatar && avatar.getNumPenguins() >= 2) ||
-                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() >= 2)) {
+            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected.size() == notes.size()) ||
+                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected.size() == notes.size())) {
                 levelComplete = true;
             }
 
