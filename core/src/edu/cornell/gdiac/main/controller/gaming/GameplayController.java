@@ -378,7 +378,7 @@ public class GameplayController extends WorldController implements ContactListen
                 avatar.getY(),
                 InputController.getInstance().touchUp(),
                 InputController.getInstance().isTouching());
-        avatar.setInteract(InputController.getInstance().didXPressed());
+        avatar.setInteract();
         for(Obstacle obj: objects){
             if(obj instanceof Player || obj instanceof Penguin){
                 continue;
