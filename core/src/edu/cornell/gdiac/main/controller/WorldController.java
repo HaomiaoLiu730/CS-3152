@@ -162,7 +162,6 @@ public abstract class WorldController implements Screen {
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         waterStrip= new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
-
     }
 
     /**
