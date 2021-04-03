@@ -88,8 +88,8 @@ public class GameplayController extends WorldController implements ContactListen
             {200f,1f,200,0f,16f,0f,16f,1f},
             {21f,5f,21f,0f,17f,0f,17f,5f},
             {27f,3f,27f,0f,21f,0f,21f,3f},
-            {40f,5f,40f,0f,37.7f,0f,37.7f,5f},
-            {100f,30f,100f,8f,30f,8f,30f,30f},
+            {40f,6.5f,40f,0f,37.7f,0f,37.7f,6.5f},
+            {100f,30f,100f,11f,30f,11f,30f,30f},
     };
 
     private static final float[][] ICICLE = {
@@ -206,7 +206,7 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(obj);
         }
 
-        icicle = new PolygonObstacle(ICICLE[0], 6.25f, 6.75f);
+        icicle = new PolygonObstacle(ICICLE[0], 6.25f, 9.75f);
         icicle.setBodyType(BodyDef.BodyType.StaticBody);
         icicle.setDensity(30f);
         icicle.setFriction(0.5f);
@@ -270,13 +270,8 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(n);
         }
 
-// <<<<<<< juliane/background
 
-//        water = new Water(4f, 4f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
         water = new Water(2.6f, 1f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
-// =======
-//         water = new Water(2.4f, 0.5f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
-// >>>>>>> main
         water.setFilmStrip(waterStrip);
         water.setDrawScale(scale);
         addObject(water);
