@@ -111,7 +111,7 @@ public class NorthAmericaController extends WorldController implements ContactLi
         super(width,height,DEFAULT_GRAVITY);
 
         scale = super.scale;
-        setDebug(true);
+        setDebug(false);
         setComplete(false);
         setFailure(false);
         world.setContactListener(this);
