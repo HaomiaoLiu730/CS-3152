@@ -50,7 +50,6 @@ public class GameplayController extends WorldController implements ContactListen
     /** Collision restitution for all objects */
     private static final float BASIC_RESTITUTION = 0.1f;
     /** Threshold for generating sound on collision */
-    private static final float START_X = -30f;
     private static final int NUM_PENGUIN = 2;
 
     private int playerGround = 0;
@@ -174,11 +173,18 @@ public class GameplayController extends WorldController implements ContactListen
         setFailure(false);
         populateLevel();
         resetCountdown = 30;
-        cameraX = canvas.getCamera().position.x;
-        System.out.println("camera x: "+cameraX);
 
-        System.out.println("camera position "+canvas.getCamera().position.x+", "+canvas.getCamera().position.y+", "+canvas.getCamera().position.z);
-        System.out.println("view port"+canvas.getCamera().viewportWidth+", "+ canvas.getCamera().viewportHeight);
+        cameraX = canvas.getCamera().position.x;
+        if(avatar.getX()/32*1280 > cameraX){
+            canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
+            canvas.getCamera().update();
+            cameraX = canvas.getCamera().position.x;
+        }
+        else if(avatar.getX()/32*1280 < cameraX){
+            canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
+            canvas.getCamera().update();
+            cameraX = canvas.getCamera().position.x;
+        }
     }
 
     /**
@@ -314,15 +320,17 @@ public class GameplayController extends WorldController implements ContactListen
     @Override
     public void update(float dt) {
 
-        if(avatar.getX()/32*1280 > cameraX){
-            canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
-            canvas.getCamera().update();
-            cameraX = canvas.getCamera().position.x;
-        }
-        else if(avatar.getX()/32*1280 < cameraX){
-            canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
-            canvas.getCamera().update();
-            cameraX = canvas.getCamera().position.x;
+        if(avatar.getX()>16){
+            if(avatar.getX()/32*1280 > cameraX){
+                canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
+                canvas.getCamera().update();
+                cameraX = canvas.getCamera().position.x;
+            }
+            else if(avatar.getX()/32*1280 < cameraX){
+                canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
+                canvas.getCamera().update();
+                cameraX = canvas.getCamera().position.x;
+            }
         }
         if (levelComplete){
             reset();
@@ -385,14 +393,12 @@ public class GameplayController extends WorldController implements ContactListen
                 InputController.getInstance().isTouching());
         avatar.pickUpPenguins();
         for(Obstacle obj: objects){
-
             if(obj instanceof Monster){
                 if (icicle.getPosition().dst(obj.getPosition()) <= 1){
                         objects.remove(monster);
                         monster.setActive(false);
                         monster.setAwake(false);
                 }
-                continue;
             }
 
             if(obj.getName() == "icicle"){
@@ -402,7 +408,6 @@ public class GameplayController extends WorldController implements ContactListen
                         icicle.setBodyType(BodyDef.BodyType.DynamicBody);
                     }
                 }
-                continue;
             }
             if(obj instanceof Water){
                 obj.setActive(false);
@@ -437,8 +442,8 @@ public class GameplayController extends WorldController implements ContactListen
 
         String noteMsg = "Notes collected: "+ notesCollected.size() + "/2";
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+NUM_PENGUIN;
-        canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
-        canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
+        canvas.drawText( gameFont, noteMsg,5.0f+cameraX-640, canvas.getHeight()-5.0f);
+        canvas.drawText( gameFont, penguinMsg,5.0f+cameraX-640, canvas.getHeight()-40.0f);
 
         canvas.end();
 
