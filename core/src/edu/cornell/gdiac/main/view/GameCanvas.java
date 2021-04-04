@@ -164,6 +164,10 @@ public class GameCanvas {
         resize();
     }
 
+    public OrthographicCamera getCamera(){
+        return camera;
+    }
+
     /**
      * Returns the height of this canvas
      *
