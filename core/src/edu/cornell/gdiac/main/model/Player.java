@@ -214,9 +214,9 @@ public class Player extends CapsuleObstacle {
 
         if(fixPenguin){
             for(Penguin p: penguins){
-                p.setSensor(true);
-                p.setBodyType(BodyDef.BodyType.StaticBody);
                 if(!p.isThrowOut()){
+                    p.setSensor(true);
+                    p.setBodyType(BodyDef.BodyType.StaticBody);
                     if(faceRight){
                         if(p.getX() - getX() < -PENGUIN_WIDTH){
                             fixPenguin = false;
