@@ -512,10 +512,10 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             if (bd1.getName()=="iceBar" && bd2 == avatar) {
-//                bd1.setFixedRotation(false);
+                bd1.setFixedRotation(false);
             }
             if (bd1 == avatar && bd2.getName()=="iceBar") {
-//                bd2.setFixedRotation(false);
+                bd2.setFixedRotation(false);
             }
 
             if (bd1 instanceof Note && (bd2 instanceof Penguin || bd2 == avatar)){
