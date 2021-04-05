@@ -326,7 +326,7 @@ public class Player extends CapsuleObstacle {
         // setting throwing direction
         if(touchUp && throwingCount == 0){
             xDir = ((clickX+cameraX-640)%1280)/1280f*32;
-            yDir = (720f-clickY)/720f*18;
+            yDir = (720-clickY)/720f*18;
             throwingCount = 1;
         }else if(throwingCount == 1 && isTouching){
             // setting force
@@ -344,7 +344,8 @@ public class Player extends CapsuleObstacle {
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+2);
-                        p.setMovement(throwingForce, xDir, yDir);
+
+                        p.setMovement(throwingForce, xDir-getX(), yDir-getY());
                         numPenguins -=1;
                         break;
                     }

@@ -78,7 +78,8 @@ public class Penguin extends CapsuleObstacle {
         } else {
             faceRight = true;
         }
-        applyForce(force, xDir-getX(), getY());
+
+        applyForce(force, xDir, yDir);
     }
 
     /**
