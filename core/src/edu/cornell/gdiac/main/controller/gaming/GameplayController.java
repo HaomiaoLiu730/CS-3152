@@ -430,14 +430,14 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.begin();
         canvas.drawBackground(background,0, -100);
 
+        for(Obstacle obj : objects) {
+            obj.draw(canvas);
+        }
+
         String noteMsg = "Notes collected: "+ notesCollected + "/"+NUM_NOTES;
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+NUM_PENGUIN;
         canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
-
-        for(Obstacle obj : objects) {
-            obj.draw(canvas);
-        }
         canvas.end();
 
         if (isDebug()) {

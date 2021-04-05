@@ -17,7 +17,7 @@ import edu.cornell.gdiac.util.FilmStrip;
 public class Penguin extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
-    private static final float PENGUIN_DENSITY = 1.0f;
+    private static final float PENGUIN_DENSITY = 1f;
     /** The factor to multiply by the input */
     private static final float PENGUIN_FORCE = 20.0f;
     /** The amount to slow the character down */
@@ -33,11 +33,11 @@ public class Penguin extends CapsuleObstacle {
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.75f;
+    private static final float PENGUIN_VSHRINK = 0.75f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float PLAYER_HSHRINK = 0.75f;
+    private static final float PENGUIN_HSHRINK = 0.75f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
-    private static final float PLAYER_SSHRINK = 0.6f;
+    private static final float PENGUIN_SSHRINK = 0.6f;
 
     private int index;
 
@@ -205,7 +205,7 @@ public class Penguin extends CapsuleObstacle {
      * @param height	The object width in physics units
      */
     public Penguin(float x, float y, float width, float height, int index) {
-        super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
+        super(x,y,width* PENGUIN_HSHRINK,height* PENGUIN_VSHRINK);
         setDensity(PENGUIN_DENSITY);
         setFriction(PENGUIN_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
@@ -237,7 +237,7 @@ public class Penguin extends CapsuleObstacle {
         sensorDef.isSensor = true;
         sensorDef.filter.groupIndex = -1;
         sensorShape = new PolygonShape();
-        sensorShape.setAsBox(PLAYER_SSHRINK *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
+        sensorShape.setAsBox(PENGUIN_SSHRINK *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
         sensorDef.shape = sensorShape;
 
         sensorFixture = body.createFixture(sensorDef);

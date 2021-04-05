@@ -321,6 +321,12 @@ public class Player extends CapsuleObstacle {
             }
     }
 
+    public void calculateTrajectory(float force, float xDir, float yDir){
+        for(int i = 0; i<5; i++){
+
+        }
+    }
+
     public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching ) {
         isThrowing = isTouching;
         // setting throwing direction
