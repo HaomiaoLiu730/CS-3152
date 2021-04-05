@@ -346,11 +346,6 @@ public class GameplayController extends WorldController implements ContactListen
         updateCamera();
         updatePlayer();
 
-        // completion detection
-//        if (levelComplete){
-//            reset();
-//        }
-
         if(complete){
             resetCountDown-=1;
         }
@@ -503,6 +498,7 @@ public class GameplayController extends WorldController implements ContactListen
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
+            // check whether the penguin is grounded
             for(Penguin p: avatar.getPenguins()){
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
@@ -511,6 +507,7 @@ public class GameplayController extends WorldController implements ContactListen
                 }
             }
 
+            // set the ice bar tilt only for avatar
             if (bd1.getName()=="iceBar" && bd2 == avatar) {
                 bd1.setFixedRotation(false);
             }
@@ -518,6 +515,7 @@ public class GameplayController extends WorldController implements ContactListen
                 bd2.setFixedRotation(false);
             }
 
+            // check for note collection
             if (bd1 instanceof Note && (bd2 instanceof Penguin || bd2 == avatar)){
                 if(!((Note) bd1).isCollected()){
                     ((Note) bd1).setFilmStrip(noteCollectedStrip);
