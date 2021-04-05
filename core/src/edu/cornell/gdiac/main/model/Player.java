@@ -125,6 +125,7 @@ public class Player extends CapsuleObstacle {
     private int numPenguins;
     private boolean fixPenguin;
     public animationState moveState = animationState.walking;
+    private float cameraX;
 
     public enum animationState {
         /** walking state*/
@@ -183,6 +184,10 @@ public class Player extends CapsuleObstacle {
 
     public void setPenguinRollingStrip(FilmStrip strip){
         this.penguinRollingStrip = strip;
+    }
+
+    public void setCameraX(float val){
+        this.cameraX = val;
     }
 
     /**
@@ -321,7 +326,8 @@ public class Player extends CapsuleObstacle {
         isThrowing = isTouching;
         // setting throwing direction
         if(touchUp && throwingCount == 0){
-            xDir = clickX/1280f*32;
+            System.out.println("camerax: "+cameraX);
+            xDir = ((clickX+cameraX-640)%1280)/1280f*32;
             yDir = (720f-clickY)/720f*18;
             throwingCount = 1;
         }else if(throwingCount == 1 && isTouching){

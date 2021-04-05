@@ -332,6 +332,7 @@ public class GameplayController extends WorldController implements ContactListen
                 cameraX = canvas.getCamera().position.x;
             }
         }
+        avatar.setCameraX(cameraX);
         if (levelComplete){
             reset();
         }
@@ -434,7 +435,7 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.clear();
 
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth()*10,canvas.getHeight()*10);
 
         for(Obstacle obj : objects) {
             obj.draw(canvas);

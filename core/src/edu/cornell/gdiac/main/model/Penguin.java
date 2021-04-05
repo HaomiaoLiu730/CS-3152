@@ -78,7 +78,11 @@ public class Penguin extends CapsuleObstacle {
         } else {
             faceRight = true;
         }
-        applyForce(force, xDir-getX(), yDir-getY());
+        System.out.println("xDir:"+xDir);
+        System.out.println("yDir:"+yDir);
+        System.out.println("getX()%16: "+getX());
+        System.out.println("getY()%18: "+getY());
+        applyForce(force, xDir-getX(), getY());
     }
 
     /**
