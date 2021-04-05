@@ -917,7 +917,7 @@ public class GameCanvas {
         GlyphLayout layout = new GlyphLayout(font,text);
         float x = (getWidth()  - layout.width) / 2.0f;
         float y = (getHeight() + layout.height) / 2.0f;
-        font.draw(spriteBatch, layout, x, y+offset);
+        font.draw(spriteBatch, layout, x+camera.position.x-640, y+offset);
     }
     /**
      * Draw an unscaled overlay image.
@@ -1258,7 +1258,7 @@ public class GameCanvas {
             Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
             return;
         }
-        font.draw(spriteBatch, text, x, y);
+        font.draw(spriteBatch, text, x+camera.position.x-640f, y);
     }
 
     public void drawLine(Color color, Vector2 start, Vector2 end, int lineWidth){

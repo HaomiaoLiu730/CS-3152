@@ -301,56 +301,6 @@ public abstract class WorldController implements Screen {
     }
 
     /**
-     * Returns true if the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @return true if the level is completed.
-     */
-    public boolean isComplete( ) {
-        return complete;
-    }
-
-    /**
-     * Sets whether the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @param value whether the level is completed.
-     */
-    public void setComplete(boolean value) {
-        if (value) {
-            countdown = EXIT_COUNT;
-        }
-        complete = value;
-    }
-
-    /**
-     * Returns true if the level is failed.
-     *
-     * If true, the level will reset after a countdown
-     *
-     * @return true if the level is failed.
-     */
-    public boolean isFailure( ) {
-        return failed;
-    }
-
-    /**
-     * Sets whether the level is failed.
-     *
-     * If true, the level will reset after a countdown
-     *
-     * @param value whether the level is failed.
-     */
-    public void setFailure(boolean value) {
-        if (value) {
-            countdown = EXIT_COUNT;
-        }
-        failed = value;
-    }
-
-    /**
      * Returns true if this is the active screen
      *
      * @return true if this is the active screen
@@ -606,7 +556,6 @@ public abstract class WorldController implements Screen {
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
-        canvas.end();
 
         if (debug) {
             canvas.beginDebug();
@@ -615,19 +564,7 @@ public abstract class WorldController implements Screen {
             }
             canvas.endDebug();
         }
-
-        // Final message
-//        if (complete && !failed) {
-//            displayFont.setColor(Color.YELLOW);
-//            canvas.begin(); // DO NOT SCALE
-//            canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
-//            canvas.end();
-//        } else if (failed) {
-//            displayFont.setColor(Color.RED);
-//            canvas.begin(); // DO NOT SCALE
-//            canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
-//            canvas.end();
-//        }
+        canvas.end();
     }
 
     /**

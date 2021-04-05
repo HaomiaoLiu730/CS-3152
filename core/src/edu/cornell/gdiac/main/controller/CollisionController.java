@@ -1,18 +1,13 @@
 package edu.cornell.gdiac.main.controller;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import edu.cornell.gdiac.main.controller.gaming.GameplayController;
-import edu.cornell.gdiac.main.model.Monster;
-import edu.cornell.gdiac.main.model.Penguin;
-import edu.cornell.gdiac.main.model.Player;
-import edu.cornell.gdiac.main.model.Water;
+import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.Obstacle;
 import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CollisionController {
@@ -57,7 +52,7 @@ public class CollisionController {
                         monster.setFacingRight(-1);
                     }
                     moveMon = false;
-                    GameplayController.resetCountdown -= 1;
+                    GameplayController.resetCountDown -= 1;
                 }
             }
             if (moveMon) {

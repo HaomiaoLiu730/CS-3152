@@ -17,8 +17,6 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.ScreenListener;
 
-import java.util.ArrayList;
-
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
@@ -27,12 +25,16 @@ public class GameplayController extends WorldController implements ContactListen
     private AssetDirectory internal;
     /** Reference to the character avatar */
     private Player avatar;
+    /** Reference to the monster */
     private Monster monster;
+    /** Reference to the icicle */
     private PolygonObstacle icicle;
-    private ArrayList<Note> notes;
-    private ArrayList<Integer> notesCollected = new ArrayList<>();
+    /** Reference to the water */
     private Water water;
+    /** Reference to the ice */
     private Ice ice;
+    /** number of notes collected*/
+    public static int notesCollected;
     /** Handle collision and physics (CONTROLLER CLASS) */
     private CollisionController collisionController;
 
@@ -52,19 +54,23 @@ public class GameplayController extends WorldController implements ContactListen
     private static final float CRATE_FRICTION  = 0.3f;
     /** Collision restitution for all objects */
     private static final float BASIC_RESTITUTION = 0.1f;
-    /** Threshold for generating sound on collision */
+    /** number of penguins */
     private static final int NUM_PENGUIN = 2;
+    /** number of notes */
+    private static final int NUM_NOTES = 2;
 
     private int playerGround = 0;
     private static boolean hitWater = false;
-    private boolean levelComplete = false;
+    private boolean complete = false;
+    private boolean failed = false;
 
     /** Cooldown (in animation frames) for punching */
     private static final int PUNCH_COOLDOWN = 100;
     /** Length (in animation frames) for punching */
     private static final int PUNCH_TIME = 30;
     private int punchCooldown = 0;
-    public static int resetCountdown = 30;
+    /** resetCountdown */
+    public static int resetCountDown = 30;
 
     /** The initial position of the player */
     private static Vector2 PLAYER_POS = new Vector2(16f, 5.0f);
@@ -74,6 +80,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     /** The world scale */
     protected Vector2 scale;
+    /** camera absolute position*/
     private float cameraX;
 
     /** Mark set to handle more sophisticated collision callbacks */
@@ -135,6 +142,15 @@ public class GameplayController extends WorldController implements ContactListen
         this.listener = listener;
     }
 
+
+    public void setComplete(boolean val){
+        this.complete = val;
+    }
+
+    public void setFailure(boolean val){
+        this.failed = val;
+    }
+
     /**
      * Load the assets for this controller.
      *
@@ -160,8 +176,7 @@ public class GameplayController extends WorldController implements ContactListen
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
-        notesCollected = new ArrayList<>();
-        levelComplete = false;
+        notesCollected = 0;
         hitWater(false);
         Vector2 gravity = new Vector2(world.getGravity());
 
@@ -177,7 +192,7 @@ public class GameplayController extends WorldController implements ContactListen
         setComplete(false);
         setFailure(false);
         populateLevel();
-        resetCountdown = 30;
+        resetCountDown = 30;
 
         cameraX = canvas.getCamera().position.x;
         if(avatar.getX()/32*1280 > cameraX){
@@ -226,6 +241,7 @@ public class GameplayController extends WorldController implements ContactListen
         BoxObstacle exit;
         exit = new BoxObstacle(48, 1.9f, 2, 2);
         exit.setBodyType(BodyDef.BodyType.StaticBody);
+        exit.setSensor(true);
         exit.setDensity(BASIC_DENSITY);
         exit.setFriction(BASIC_FRICTION);
         exit.setRestitution(BASIC_RESTITUTION);
@@ -268,14 +284,14 @@ public class GameplayController extends WorldController implements ContactListen
         monster.setDrawScale(scale);
         addObject(monster);
 
-        notes = new ArrayList<>();
-        notes.add(new Note(20f, 4f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note1"));
-        notes.add(new Note(28.35f, 6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, "note2"));
-        for (Note n: notes){
-            n.setFilmStrip(noteLeftStrip);
-            n.setDrawScale(scale);
-            addObject(n);
-        }
+        Note note1 = new Note(20f, 4f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, 1);
+        note1.setFilmStrip(noteLeftStrip);
+        note1.setDrawScale(scale);
+        addObject(note1);
+        Note note2 = new Note(28.35f, 6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, 2);
+        note2.setFilmStrip(noteLeftStrip);
+        note2.setDrawScale(scale);
+        addObject(note2);
 
         water = new Water(28.35f, 1.9f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
         water.setActive(false);
@@ -308,7 +324,7 @@ public class GameplayController extends WorldController implements ContactListen
             return false;
         }
 
-        if (!isFailure() && avatar.getY() < -1) {
+        if (!failed && avatar.getY() < -1) {
             setFailure(true);
             return false;
         }
@@ -331,7 +347,14 @@ public class GameplayController extends WorldController implements ContactListen
         updatePlayer();
 
         // completion detection
-        if (levelComplete){
+//        if (levelComplete){
+//            reset();
+//        }
+
+        if(complete){
+            resetCountDown-=1;
+        }
+        if(resetCountDown < 0 && failed){
             reset();
         }
 
@@ -354,8 +377,9 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Losing condition
-        if(hitWater || resetCountdown<=0){
-            reset();
+        if(hitWater || resetCountDown <=0){
+            setFailure(true);
+            setComplete(true);
         }
 
         // Monster moving and attacking
@@ -411,15 +435,14 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.begin();
         canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth()*10,canvas.getHeight()*10);
 
+        String noteMsg = "Notes collected: "+ notesCollected + "/"+NUM_NOTES;
+        String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+NUM_PENGUIN;
+        canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
+        canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
+
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
-
-        String noteMsg = "Notes collected: "+ notesCollected.size() + "/2";
-        String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+NUM_PENGUIN;
-        canvas.drawText( gameFont, noteMsg,5.0f+cameraX-640, canvas.getHeight()-5.0f);
-        canvas.drawText( gameFont, penguinMsg,5.0f+cameraX-640, canvas.getHeight()-40.0f);
-
         canvas.end();
 
         if (isDebug()) {
@@ -428,6 +451,17 @@ public class GameplayController extends WorldController implements ContactListen
                 obj.drawDebug(canvas);
             }
             canvas.endDebug();
+        }
+
+        // Final message
+        if (complete && !failed) {
+            canvas.begin(); // DO NOT SCALE
+            canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
+            canvas.end();
+        } else if (failed) {
+            canvas.begin(); // DO NOT SCALE
+            canvas.drawTextCentered("FAILURE!", gameFont, 0.0f);
+            canvas.end();
         }
     }
 
@@ -473,43 +507,40 @@ public class GameplayController extends WorldController implements ContactListen
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
-//                    p.setFilmStrip(penguinWalkingStrip);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
             }
 
             if (bd1.getName()=="iceBar" && bd2 == avatar) {
-                bd1.setFixedRotation(false);
+//                bd1.setFixedRotation(false);
             }
             if (bd1 == avatar && bd2.getName()=="iceBar") {
-                bd2.setFixedRotation(false);
+//                bd2.setFixedRotation(false);
             }
 
             if (bd1 instanceof Note && (bd2 instanceof Penguin || bd2 == avatar)){
-                int noteHit = bd1.getName().charAt(bd1.getName().length() - 1) - 48;
-                ((Note) bd1).setFilmStrip(noteCollectedStrip);
-                if (!notesCollected.contains(noteHit)){
-                    notesCollected.add(noteHit);
+                if(!((Note) bd1).isCollected()){
+                    ((Note) bd1).setFilmStrip(noteCollectedStrip);
+                    ((Note) bd1).setCollected(true);
+                    notesCollected++;
                 }
-            }
-            if (bd2 instanceof Note && (bd1 instanceof Penguin || bd1 == avatar)){
-                int noteHit = bd2.getName().charAt(bd2.getName().length() - 1) - 48;
-                ((Note) bd2).setFilmStrip(noteCollectedStrip);
-                if (!notesCollected.contains(noteHit)){
-                    notesCollected.add(noteHit);
+            }else if(bd2 instanceof Note && (bd1 instanceof Penguin || bd1 == avatar)){
+                if(!((Note) bd2).isCollected()){
+                    ((Note) bd2).setFilmStrip(noteCollectedStrip);
+                    ((Note) bd2).setCollected(true);
+                    notesCollected++;
                 }
             }
 
             // Check for win condition
-            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected.size() == notes.size()) ||
-                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected.size() == notes.size())) {
-                levelComplete = true;
+            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected == NUM_NOTES) ||
+                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected == NUM_NOTES)) {
+                setComplete(true);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -544,11 +575,6 @@ public class GameplayController extends WorldController implements ContactListen
                 p.setGrounded(false);
             }
         }
-
-    }
-
-    public void removeObjects(Object obj){
-        objects.remove(obj);
     }
 
     @Override
