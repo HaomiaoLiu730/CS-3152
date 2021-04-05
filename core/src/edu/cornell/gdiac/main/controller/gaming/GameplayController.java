@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.CollisionController;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
@@ -32,6 +33,8 @@ public class GameplayController extends WorldController implements ContactListen
     private ArrayList<Integer> notesCollected = new ArrayList<>();
     private Water water;
     private Ice ice;
+    /** Handle collision and physics (CONTROLLER CLASS) */
+    private CollisionController collisionController;
 
     private Texture background;
     private TextureRegion snow;
@@ -53,7 +56,7 @@ public class GameplayController extends WorldController implements ContactListen
     private static final int NUM_PENGUIN = 2;
 
     private int playerGround = 0;
-    private boolean hitWater = false;
+    private static boolean hitWater = false;
     private boolean levelComplete = false;
 
     /** Cooldown (in animation frames) for punching */
@@ -61,7 +64,7 @@ public class GameplayController extends WorldController implements ContactListen
     /** Length (in animation frames) for punching */
     private static final int PUNCH_TIME = 30;
     private int punchCooldown = 0;
-    private int resetCountdown = 30;
+    public static int resetCountdown = 30;
 
     /** The initial position of the player */
     private static Vector2 PLAYER_POS = new Vector2(16f, 5.0f);
@@ -114,6 +117,8 @@ public class GameplayController extends WorldController implements ContactListen
         snow = new TextureRegion(internal.getEntry("snow", Texture.class));
         iceTextureRegion = new TextureRegion(internal.getEntry("ice", Texture.class));
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
+
+        collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
     }
 
@@ -315,11 +320,53 @@ public class GameplayController extends WorldController implements ContactListen
     public void dispose() {
         internal.unloadAssets();
         internal.dispose();
+        collisionController = null;
+        canvas = null;
     }
 
     @Override
     public void update(float dt) {
 
+        updateCamera();
+        updatePlayer();
+
+        // completion detection
+        if (levelComplete){
+            reset();
+        }
+
+        // debug mode
+        if(InputController.getInstance().didDebug()){
+            setDebug(true);
+        }
+
+        // Punching
+        if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
+            avatar.setFilmStrip(punchStrip);
+            avatar.setPunching(true);
+            punchCooldown = PUNCH_COOLDOWN;
+        } else {
+            punchCooldown -= 1;
+        }
+        if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
+            avatar.setFilmStrip(avatarStrip);
+            avatar.setPunching(false);
+        }
+
+        // Losing condition
+        if(hitWater || resetCountdown<=0){
+            reset();
+        }
+
+        // Monster moving and attacking
+        collisionController.processCollision(monster, avatar, attackStrip, objects);
+        collisionController.processCollision(monster, icicle, objects);
+        collisionController.processCollision(avatar.getPenguins(), icicle, objects);
+        collisionController.processCollision(water, avatar);
+    }
+
+    public void updateCamera(){
+        // camera
         if(avatar.getX()>16){
             if(avatar.getX()/32*1280 > cameraX){
                 canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
@@ -333,57 +380,13 @@ public class GameplayController extends WorldController implements ContactListen
             }
         }
         avatar.setCameraX(cameraX);
-        if (levelComplete){
-            reset();
-        }
-        if(InputController.getInstance().didDebug()){
-            setDebug(true);
-        }
-        // Punching
-        if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
-            avatar.setFilmStrip(punchStrip);
-            avatar.setPunching(true);
-            punchCooldown = PUNCH_COOLDOWN;
-        } else {
-            punchCooldown -= 1;
-        }
-        if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
-            avatar.setFilmStrip(avatarStrip);
-            avatar.setPunching(false);
-        }
-        float dist = avatar.getPosition().dst(monster.getPosition());
-        if (avatar.isPunching()) {
-            if (dist < 3) {
-                objects.remove(monster);
-                monster.setActive(false);
-                monster.setAwake(false);
-            }
-        }
-        // Monster moving and attacking
-        if (monster.isActive()) {
-            boolean moveMon = true;
-            for(Penguin p: avatar.getPenguins()){
-                float dist2 = p.getPosition().dst(monster.getPosition());
-                if (dist2 < 3 && dist2 < dist) {
-                    monster.setFilmStrip(attackStrip);
-                    if (p.getPosition().x < monster.getPosition().x) {
-                        monster.setFacingRight(-1);
-                    }
-                    moveMon = false;
-                    resetCountdown -= 1;
-                }
-            }
-            if (moveMon) {
-                monster.applyForce();
-            }
-        }
-        // Losing condition
-        if(hitWater || resetCountdown<=0){
-            reset();
-        }
-        // Player moving
+    }
+
+    public void updatePlayer(){
+        // avatar motion
         avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
         avatar.setJumping(InputController.getInstance().didPrimary());
+        avatar.applyForce();
         if(avatar.isJumping()&&InputController.getInstance().didPrimary()){
             avatar.moveState = Player.animationState.jumpRising;
             avatar.setFilmStrip(jumpRisingStrip);
@@ -393,35 +396,6 @@ public class GameplayController extends WorldController implements ContactListen
                 InputController.getInstance().touchUp(),
                 InputController.getInstance().isTouching());
         avatar.pickUpPenguins();
-        for(Obstacle obj: objects){
-            if(obj instanceof Monster){
-                if (icicle.getPosition().dst(obj.getPosition()) <= 1){
-                        objects.remove(monster);
-                        monster.setActive(false);
-                        monster.setAwake(false);
-                }
-            }
-
-            if(obj.getName() == "icicle"){
-                for (Penguin p: avatar.getPenguins()){
-                    dist = p.getPosition().dst(obj.getPosition());
-                    if (dist < 2){
-                        icicle.setBodyType(BodyDef.BodyType.DynamicBody);
-                    }
-                }
-            }
-            if(obj instanceof Water){
-                obj.setActive(false);
-                float leftX = obj.getX()-((Water) obj).getWidth()/2;
-                float rightX = obj.getX()+((Water) obj).getWidth()/2;
-                float downY = obj.getY()-((Water) obj).getHeight()/2;
-                float upY = obj.getY()+((Water) obj).getHeight()/2;
-                if (avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.getY() >= downY && avatar.getY() <= upY) {
-                    hitWater(true);
-                }
-            }
-        }
-        avatar.applyForce();
     }
 
     /**
@@ -462,7 +436,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     }
 
-    public void hitWater(boolean value){
+    public static void hitWater(boolean value){
         hitWater = value;
     }
 
@@ -571,6 +545,10 @@ public class GameplayController extends WorldController implements ContactListen
             }
         }
 
+    }
+
+    public void removeObjects(Object obj){
+        objects.remove(obj);
     }
 
     @Override
