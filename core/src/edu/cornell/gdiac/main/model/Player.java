@@ -317,16 +317,14 @@ public class Player extends CapsuleObstacle {
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     numPenguins += 1;
-//                }
+                }
             }
-        }
     }
 
     public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching ) {
         isThrowing = isTouching;
         // setting throwing direction
         if(touchUp && throwingCount == 0){
-            System.out.println("camerax: "+cameraX);
             xDir = ((clickX+cameraX-640)%1280)/1280f*32;
             yDir = (720f-clickY)/720f*18;
             throwingCount = 1;
