@@ -1,7 +1,7 @@
 {
   "textures": {
     "background": {
-      "file":     "images/northAmerica/lightBlue.png",
+      "file":     "images/northAmerica/background2.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

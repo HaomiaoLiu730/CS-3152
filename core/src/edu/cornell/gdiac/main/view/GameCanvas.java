@@ -410,6 +410,30 @@ public class GameCanvas {
     }
 
     /**
+     * Draw the seamless background image.
+     *
+     * The background image is drawn (with NO SCALING) at position x, y.  Width-wise,
+     * the image is seamlessly scrolled; when we reach the image we draw a second copy.
+     *
+     * To work properly, the image should be wide and high enough to fill the screen.
+     *
+     * @param image  Texture to draw as an overlay
+     * @param x      The x-coordinate of the bottom left corner
+     * @param y 	 The y-coordinate of the bottom left corner
+     */
+    public void drawBackground(Texture image, float x, float y) {
+        if (active != DrawPass.STANDARD) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+
+        float w = image.getWidth();
+        // Have to draw the background twice for continuous scrolling.
+        spriteBatch.draw(image, x,   y);
+        spriteBatch.draw(image, x+w, y);
+    }
+
+    /**
      * Draws the tinted texture at the given position.
      *
      * The texture colors will be multiplied by the given color.  This will turn
@@ -436,6 +460,7 @@ public class GameCanvas {
         spriteBatch.setColor(tint);
         spriteBatch.draw(image, x,  y, width, height);
     }
+
 
     /**
      * Draws the tinted texture at the given position.

@@ -89,9 +89,9 @@ public class GameplayController extends WorldController implements ContactListen
     /** The outlines of snow lands */
     private static final float[][] SNOW = {
             {200f,1f,200,0f,0f,0f,0f,1f},
-            {18f,5f,18f,0f,0f,0f,0f,5f},
+            {18f,4.5f,18f,0f,0f,0f,0f,4.5f},
             {23f,3f,23f,0f,18f,0f,18f,3f},
-            {36f,6f,36f,0f,33.7f,0f,33.7f,6f},
+            {36f,5f,36f,0f,33.7f,0f,33.7f,5f},
             {96f,30f,96f,11f,26f,11f,26f,30f},
     };
 
@@ -428,7 +428,7 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.clear();
 
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth()*10,canvas.getHeight()*10);
+        canvas.drawBackground(background,0, -100);
 
         String noteMsg = "Notes collected: "+ notesCollected + "/"+NUM_NOTES;
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+NUM_PENGUIN;
