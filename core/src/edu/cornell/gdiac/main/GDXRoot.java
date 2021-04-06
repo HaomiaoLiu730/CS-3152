@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.main.controller.gaming.GameplayController;
+import edu.cornell.gdiac.main.controller.gaming.MenuController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.controller.opening.OnboardingController;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -24,8 +25,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	Loading loading;
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
-
-	private WorldController currentController;
+	/** menu controller*/
+	private MenuController menuController;
 
 	/**
 	 * Creates a new game application root
@@ -48,8 +49,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		directory.finishLoading();
 		controllers = new WorldController[NUMBER_OF_LEVELS];
 		controllers[0] = new GameplayController();
-//		controllers[current].loadContent(directory);
 		current = 0;
+		menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
 		setScreen(loading);
 	}
@@ -96,15 +97,15 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 			loading.dispose();
 			loading = null;
+			menuController.setScreenListener(this);
+			setScreen(menuController);
+		} else if(screen instanceof MenuController){
+			current = exitCode;
+			menuController.dispose();
+			menuController = null;
 			controllers[current].reset();
 			controllers[current].setScreenListener(this);
 			setScreen(controllers[current]);
-		} else if(screen instanceof GameplayController){
-			// NASA mode
-			if(exitCode == 1){
-
-			}
-
 		}
 	}
 }

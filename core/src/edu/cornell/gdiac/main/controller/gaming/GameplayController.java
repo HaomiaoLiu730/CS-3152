@@ -194,6 +194,10 @@ public class GameplayController extends WorldController implements ContactListen
         populateLevel();
         resetCountDown = 30;
 
+        canvas.getCamera().viewportWidth = 1280;
+        canvas.getCamera().viewportHeight = 720;
+        canvas.getCamera().position.x = 1280/2;
+        canvas.getCamera().position.y = 720/2;
         cameraX = canvas.getCamera().position.x;
         if(avatar.getX()/32*1280 > cameraX){
             canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
@@ -205,6 +209,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.getCamera().update();
             cameraX = canvas.getCamera().position.x;
         }
+        canvas.getCamera().update();
     }
 
     /**
