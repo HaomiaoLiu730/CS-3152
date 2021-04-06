@@ -1297,6 +1297,16 @@ public class GameCanvas {
         spriteBatch.begin();
     }
 
+    public void drawCircle(Color color, float x, float y, float radius){
+        spriteBatch.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Gdx.gl.glLineWidth(radius);
+        shapeRenderer.setColor(color);
+        shapeRenderer.circle(x, y, radius);
+        shapeRenderer.end();
+        spriteBatch.begin();
+    }
+
     public void drawLine(Color color, float startX, float startY, float endX, float endY, int lineWidth){
         spriteBatch.end();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
