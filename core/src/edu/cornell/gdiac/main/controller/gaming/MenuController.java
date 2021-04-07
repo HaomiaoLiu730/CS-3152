@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import edu.cornell.gdiac.assets.AssetDirectory;
-import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
@@ -88,19 +87,56 @@ public class MenuController extends ClickListener implements Screen, InputProces
         this.canvas = canvas;
     }
 
+    private void zoomInto(float viewportWidth, float viewportHeight, float cameraPosX, float cameraPosY){
+        float scale = Math.abs(cameraPosY - 360);
+        float deltaWidth = (viewportWidth-1280)/scale;
+        float deltaHeight = (viewportHeight-720)/scale;
+        float deltaPosX = (cameraPosX - 640f)/scale;
+        camera.viewportWidth = camera.viewportWidth >= viewportWidth ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
+        camera.viewportHeight = camera.viewportHeight >= viewportHeight ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
+
+        if(cameraPosX - 640 > 0){
+            camera.position.x = camera.position.x <= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
+        }else{
+            camera.position.x = camera.position.x >= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
+        }
+        if(cameraPosY - 360 > 0){
+            camera.position.y = camera.position.y <= cameraPosY ? camera.position.y + 1 :camera.position.y;
+        }else{
+            camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - 1 :camera.position.y;
+        }
+        camera.update();
+        if(Math.abs(camera.position.y - cameraPosY) <= 1){
+            drawPoints = true;
+            zoomIn = false;
+        }
+    }
+
     public void update(float delta) {
         if(zoomIn){
-            // -620 -370 360 120 per 120
             switch (currentContinent){
                 case NorthAmerica:
-                    camera.viewportWidth = camera.viewportWidth >= 660 ? camera.viewportWidth-5.167f : camera.viewportWidth;
-                    camera.viewportHeight = camera.viewportHeight >= 350 ? camera.viewportHeight-3.083f : camera.viewportHeight;
-                    camera.position.x = camera.position.x <= 1000 ? camera.position.x + 3 :camera.position.x;
-                    camera.position.y = camera.position.y <= 480 ? camera.position.y + 1 :camera.position.y;
-                    camera.update();
-                    if(camera.position.y == 480){
-                        drawPoints = true;
-                    }
+                    // -620 -370 360 120 per 120
+                    zoomInto(660f, 350f, 1000f, 480f);
+                    break;
+                case SouthAmerica:
+                    // -620 -370 360 120 per 120
+                    zoomInto(560f, 300f, 1180f, 220f);
+                    break;
+                case Asia:
+                    zoomInto(720f, 390f, 460f, 440f);
+                    break;
+                case Europe:
+                    zoomInto(560f, 300f, 230f, 530f);
+                    break;
+                case Africa:
+                    zoomInto(580f, 320f, 160f, 300f);
+                    break;
+                case Oceania:
+                    zoomInto(420f, 230f,600f, 220f);
+                    break;
+                case Antarctica:
+                    zoomInto(700f, 300f, 350f, 20f);
                     break;
                 default:
                     break;
@@ -129,13 +165,13 @@ public class MenuController extends ClickListener implements Screen, InputProces
     public void draw() {
         canvas.begin();
         canvas.drawOverlay(background,true);
-        canvas.drawOverlay(northAmerica,0, 0);
-        canvas.drawOverlay(southAmerica,grey,0,0);
-        canvas.drawOverlay(oceania, grey,0, 0);
-        canvas.drawOverlay(asia, grey,0, 0);
-        canvas.drawOverlay(europe, grey,0, 0);
-        canvas.drawOverlay(africa, grey,0, 0);
-        canvas.drawOverlay(antarctica, grey,0, 0);
+        canvas.drawOverlay(northAmerica, currentContinent == Continent.NorthAmerica ? Color.WHITE : grey, 0, 0);
+        canvas.drawOverlay(southAmerica, currentContinent == Continent.SouthAmerica ? Color.WHITE : grey,0,0);
+        canvas.drawOverlay(oceania, currentContinent == Continent.Oceania ? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(asia, currentContinent == Continent.Asia ? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(europe, currentContinent == Continent.Europe ? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(africa, currentContinent == Continent.Africa ? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(antarctica, currentContinent == Continent.Antarctica ? Color.WHITE : grey,0, 0);
         if(drawPoints){
             switch (currentContinent){
                 case NorthAmerica:
