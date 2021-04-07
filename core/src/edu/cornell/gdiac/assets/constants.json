@@ -1,0 +1,46 @@
+{
+  "defaults" : {
+    "gravity" : -9.8,
+    "friction": 0.3,
+    "density" : 2.65,
+    "restitution": 0.1,
+    "num_penguins":2,
+    "num_notes": 2
+  },
+  "goal" : {
+    "pos": [4.0, 14.0],
+    "density": 0.0,
+    "friction": 0.0,
+    "restitution": 0.0
+  },
+  "player" : {
+    "pos": [16, 5.0],
+    "shrink": [0.95, 0.7],
+    "force": 12.0,
+    "damping": 10.0,
+    "density": 1.0,
+    "friction": 0.0,
+    "maxspeed": 4.0,
+    "jump": 26,
+    "jump_cool": 30,
+    "throw_cool": 30,
+    "shoot_cool": 40,
+    "max_throw_force": 300,
+    "sensor": {
+      "name" : "PlayerGroundSensor",
+      "height" : 0.05
+    },
+    "penguin_width": 1.3,
+    "penguin_height": 2
+  },
+  "snow": 		[
+[200,1,200,0,0,0,0,1],
+[18,4.5,18,0,0,0,0,4.5],
+[23,3,23,0,18,0,18,3],
+[36,5,36,0,33.7,0,33.7,5],
+[96,30,96,11,26,11,26,30]
+],
+  "icicles":	[
+   [-1,1.85,1,1.85,0,-1.85]
+  ]
+}
