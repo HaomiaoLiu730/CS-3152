@@ -41,9 +41,9 @@ public class Player extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float PLAYER_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float PLAYER_MAXSPEED = 3.0f;
+    private static final float PLAYER_MAXSPEED = 4.0f;
     /** The impulse for the character jump */
-    private static final float PLAYER_JUMP = 21f;
+    private static final float PLAYER_JUMP = 26f;
     /** Cooldown (in animation frames) for jumping */
     private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for jumping */
@@ -103,6 +103,7 @@ public class Player extends CapsuleObstacle {
     private int throwingCount;
     /** force for throwing */
     private float throwingForce;
+    private boolean incr = true;
     /** angle for throwing */
     private float xDir;
     private float yDir;
@@ -348,8 +349,13 @@ public class Player extends CapsuleObstacle {
             throwingCount = 1;
         }else if(throwingCount == 1 && isTouching){
             // setting force
-            throwingForce += 5f;
+            throwingForce += incr ? 5f : -5f;
             throwingForce = Math.min(throwingForce, MAX_THROWING_FORCE);
+            if(throwingForce >= MAX_THROWING_FORCE){
+                incr = false;
+            }else if(throwingForce <= 0){
+                incr = true;
+            }
             calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
         }else if(throwingCount == 1 && !isTouching && throwingForce != 0f){
             if(numPenguins > 0){

@@ -1,7 +1,6 @@
-package edu.cornell.gdiac.main.controller;
+package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import edu.cornell.gdiac.main.controller.gaming.GameplayController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.Obstacle;
 import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
@@ -31,7 +30,7 @@ public class CollisionController {
     }
 
 
-    public void processCollision(Monster monster, Player avatar, FilmStrip attackStrip, PooledList<Obstacle> objects ){
+    public void processCollision(Monster monster, Player avatar, PooledList<Obstacle> objects ){
         // Monster moving and attacking
         distMonsterAvatar = avatar.getPosition().dst(monster.getPosition());
         if (avatar.isPunching()) {
@@ -41,10 +40,12 @@ public class CollisionController {
                 objects.remove(monster);
             }
         }
+    }
 
+    public void processCollision(Monster monster, FilmStrip attackStrip, List<Penguin> penguins){
         if (monster.isActive()) {
             boolean moveMon = true;
-            for(Penguin p: avatar.getPenguins()){
+            for(Penguin p: penguins){
                 float dist2 = p.getPosition().dst(monster.getPosition());
                 if (dist2 < 3 && dist2 < distMonsterAvatar) {
                     monster.setFilmStrip(attackStrip);

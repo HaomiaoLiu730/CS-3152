@@ -2,7 +2,6 @@ package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,7 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
-import edu.cornell.gdiac.main.controller.CollisionController;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
@@ -383,7 +381,8 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Monster moving and attacking
-        collisionController.processCollision(monster, avatar, attackStrip, objects);
+        collisionController.processCollision(monster, avatar, objects);
+        collisionController.processCollision(monster, attackStrip, avatar.getPenguins());
         collisionController.processCollision(monster, icicle, objects);
         collisionController.processCollision(avatar.getPenguins(), icicle, objects);
         collisionController.processCollision(water, avatar);
