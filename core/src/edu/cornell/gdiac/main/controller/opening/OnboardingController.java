@@ -17,13 +17,7 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 public class OnboardingController implements Screen, InputProcessor, ControllerListener, Loading {
 
-    private final long FADING_TIME = 100;
-    private final long FIRST_TEXT_TIME = 140;
-    private final long SECOND_TEXT_TIME = 180;
-    private final long THIRD_TEXT_TIME = 220;
-    private final long FOURTH_TEXT_TIME = 250;
     private final float penguinY = 200;
-    private final float PENGUIN_SCALE = 0.1f;
 
     /** is ready for game mode*/
     private boolean isReady = false;
@@ -127,7 +121,7 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
             canvas.drawOverlay(front, true);
             lineEnd.x = penguinX;
             canvas.drawLine(Color.BLACK, lineStart, lineEnd, 1);
-            canvas.draw(roundPenguin,Color.WHITE,roundPenguin.getWidth()/2f,roundPenguin.getHeight()/2f, penguinX, penguinY, pengiunAngle,PENGUIN_SCALE,PENGUIN_SCALE);
+            canvas.draw(roundPenguin,Color.WHITE,roundPenguin.getWidth()/2f,roundPenguin.getHeight()/2f, penguinX, penguinY, pengiunAngle,1f,1f);
         }else{
             canvas.drawOverlay(front, true);
             canvas.drawText(letterFont, "Press Space to Start", 485, 250);

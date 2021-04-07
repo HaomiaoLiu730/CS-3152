@@ -248,7 +248,7 @@ public abstract class WorldController implements Screen {
     /** Height of the game world in Box2d units */
     protected static final float DEFAULT_HEIGHT = 18.0f;
     /** The default value of gravity (going down) */
-    protected static final float DEFAULT_GRAVITY = -5f;
+    protected static final float DEFAULT_GRAVITY = -9.8f;
 
     // TODO: see this
     /** Reference to the game canvas */
@@ -298,56 +298,6 @@ public abstract class WorldController implements Screen {
      */
     public void setDebug(boolean value) {
         debug = value;
-    }
-
-    /**
-     * Returns true if the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @return true if the level is completed.
-     */
-    public boolean isComplete( ) {
-        return complete;
-    }
-
-    /**
-     * Sets whether the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @param value whether the level is completed.
-     */
-    public void setComplete(boolean value) {
-        if (value) {
-            countdown = EXIT_COUNT;
-        }
-        complete = value;
-    }
-
-    /**
-     * Returns true if the level is failed.
-     *
-     * If true, the level will reset after a countdown
-     *
-     * @return true if the level is failed.
-     */
-    public boolean isFailure( ) {
-        return failed;
-    }
-
-    /**
-     * Sets whether the level is failed.
-     *
-     * If true, the level will reset after a countdown
-     *
-     * @param value whether the level is failed.
-     */
-    public void setFailure(boolean value) {
-        if (value) {
-            countdown = EXIT_COUNT;
-        }
-        failed = value;
     }
 
     /**
@@ -606,7 +556,6 @@ public abstract class WorldController implements Screen {
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
-        canvas.end();
 
         if (debug) {
             canvas.beginDebug();
@@ -615,19 +564,7 @@ public abstract class WorldController implements Screen {
             }
             canvas.endDebug();
         }
-
-        // Final message
-//        if (complete && !failed) {
-//            displayFont.setColor(Color.YELLOW);
-//            canvas.begin(); // DO NOT SCALE
-//            canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
-//            canvas.end();
-//        } else if (failed) {
-//            displayFont.setColor(Color.RED);
-//            canvas.begin(); // DO NOT SCALE
-//            canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
-//            canvas.end();
-//        }
+        canvas.end();
     }
 
     /**

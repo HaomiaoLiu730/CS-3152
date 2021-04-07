@@ -2,47 +2,26 @@ package edu.cornell.gdiac.main.model;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.main.obstacle.BoxObstacle;
 import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 
 import static com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody;
 
-public class Note extends CapsuleObstacle {
+public class Note extends BoxObstacle {
     // Physics constants
-    /** The density of the character */
-    private static final float PLAYER_DENSITY = 50.0f;
-    /** The factor to multiply by the input */
-    private static final float PLAYER_FORCE = 20.0f;
-    /** The dude is a slippery one */
-    private static final float PLAYER_FRICTION = 5.0f;
 
-    // This is to fit the image to a tigher hitbox
+    // This is to fit the image to a tighter hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.95f;
+    private static final float NOTE_VSHRINK = 0.95f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float PLAYER_HSHRINK = 0.8f;
+    private static final float NOTE_HSHRINK = 0.8f;
 
     private FilmStrip filmStrip;
-    private float timeCounter = 0;
-
-    /** Cache for internal force calculations */
-    private Vector2 forceCache = new Vector2();
-
-    /**
-     * Returns how much force to apply to get the dude moving
-     *
-     * Multiply this by the input to get the movement value.
-     *
-     * @return how much force to apply to get the dude moving
-     */
-    public float getForce() {
-        return PLAYER_FORCE;
-    }
+    private boolean isCollected;
+    private int index;
 
     /**
      * Creates a new dude avatar at the given position.
@@ -56,15 +35,21 @@ public class Note extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Note(float x, float y, float width, float height, String name) {
-        super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
-        setDensity(PLAYER_DENSITY);
-        setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
-        setRestitution(0f);
-        setFixedRotation(true);
+    public Note(float x, float y, float width, float height, int index) {
+        super(x,y,width* NOTE_HSHRINK,height* NOTE_VSHRINK);
         setBodyType(StaticBody);
         setSensor(true);
-        setName(name);
+        setName("note"+index);
+        this.index = index;
+        isCollected = false;
+    }
+
+    public void setCollected(boolean val){
+        isCollected = val;
+    }
+
+    public boolean isCollected(){
+        return isCollected;
     }
 
     /**
@@ -98,11 +83,6 @@ public class Note extends CapsuleObstacle {
      */
     public void update(float dt) {
         // Apply cooldowns
-        timeCounter += dt;
-        if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
-            timeCounter = 0;
-            filmStrip.nextFrame();
-        }
         super.update(dt);
     }
 

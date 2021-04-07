@@ -6,7 +6,7 @@
       "magFilter": "linear"
     },
     "roundPenguin": {
-      "file":     "images/onboarding/round-penguin.png",
+      "file":     "images/shared/penguinRolling.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }

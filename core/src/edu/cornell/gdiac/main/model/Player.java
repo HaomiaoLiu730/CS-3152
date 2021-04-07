@@ -19,6 +19,7 @@ import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.sql.Array;
 import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,9 +41,9 @@ public class Player extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float PLAYER_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float PLAYER_MAXSPEED = 3.0f;
+    private static final float PLAYER_MAXSPEED = 4.0f;
     /** The impulse for the character jump */
-    private static final float PLAYER_JUMP = 16f;
+    private static final float PLAYER_JUMP = 26f;
     /** Cooldown (in animation frames) for jumping */
     private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for jumping */
@@ -54,7 +55,7 @@ public class Player extends CapsuleObstacle {
     /** Identifier to allow us to track the sensor in ContactListener */
     private static final String SENSOR_NAME = "PlayerGroundSensor";
     /** max throwing force*/
-    private static final float MAX_THROWING_FORCE = 200;
+    private static final float MAX_THROWING_FORCE = 300;
 
     private float PENGUIN_WIDTH = 1.3f;
     private float PENGUIN_HEIGHT = 2f;
@@ -102,6 +103,7 @@ public class Player extends CapsuleObstacle {
     private int throwingCount;
     /** force for throwing */
     private float throwingForce;
+    private boolean incr = true;
     /** angle for throwing */
     private float xDir;
     private float yDir;
@@ -125,6 +127,8 @@ public class Player extends CapsuleObstacle {
     private int numPenguins;
     private boolean fixPenguin;
     public animationState moveState = animationState.walking;
+    private float cameraX;
+    private float[] trajectories = new float[10];
 
     public enum animationState {
         /** walking state*/
@@ -143,6 +147,8 @@ public class Player extends CapsuleObstacle {
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
+    /** Cache for internal direction calculations */
+    private Vector2 direcctionCache = new Vector2();
     /** Cache for internal position calculations */
     private Vector2 position = new Vector2();
 
@@ -183,6 +189,10 @@ public class Player extends CapsuleObstacle {
 
     public void setPenguinRollingStrip(FilmStrip strip){
         this.penguinRollingStrip = strip;
+    }
+
+    public void setCameraX(float val){
+        this.cameraX = val;
     }
 
     /**
@@ -312,22 +322,41 @@ public class Player extends CapsuleObstacle {
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     numPenguins += 1;
-//                }
+                }
             }
+    }
+
+    public void calculateTrajectory(float force, float xDir, float yDir){
+        float dt =  0.01643628f;
+        direcctionCache.set(xDir, yDir).nor();
+        float vx = force*direcctionCache.x*10 * dt / penguins.getFirst().getMass();
+        float vy = force*direcctionCache.y*10f * dt / penguins.getFirst().getMass();
+        for(int i = 0; i<10; i+=2){
+            float t = i * 0.05f;
+            float x = (16 + t * vx) * 1280 / 32f;
+            float y = (getY()+2 + vy * t + 0.5f * (-17f) * t * t) * 720f/ 18f;
+            trajectories[i] = x;
+            trajectories[i+1] = y;
         }
     }
 
-    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching ) {
+    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching) {
         isThrowing = isTouching;
         // setting throwing direction
         if(touchUp && throwingCount == 0){
-            xDir = clickX/1280f*32;
-            yDir = (720f-clickY)/720f*18;
+            xDir = ((clickX+cameraX-640))/1280f*32;
+            yDir = (720-clickY)/720f*18;
             throwingCount = 1;
         }else if(throwingCount == 1 && isTouching){
             // setting force
-            throwingForce += 5f;
+            throwingForce += incr ? 5f : -5f;
             throwingForce = Math.min(throwingForce, MAX_THROWING_FORCE);
+            if(throwingForce >= MAX_THROWING_FORCE){
+                incr = false;
+            }else if(throwingForce <= 0){
+                incr = true;
+            }
+            calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
         }else if(throwingCount == 1 && !isTouching && throwingForce != 0f){
             if(numPenguins > 0){
                 for(Penguin p: penguins){
@@ -340,7 +369,7 @@ public class Player extends CapsuleObstacle {
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+2);
-                        p.setMovement(throwingForce, xDir, yDir);
+                        p.setMovement(throwingForce, xDir-getX(), yDir-getY());
                         numPenguins -=1;
                         break;
                     }
@@ -476,14 +505,6 @@ public class Player extends CapsuleObstacle {
         setName("dude");
     }
 
-    public void setPenguinWidth(float width){
-        this.PENGUIN_WIDTH = width;
-    }
-
-    public void setPenguinHeight(float height){
-        this.PENGUIN_HEIGHT = height;
-    }
-
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
      *
@@ -575,11 +596,6 @@ public class Player extends CapsuleObstacle {
         return k*v+b;
     }
 
-    public void getTrajectoryPoint(Vector2 startingPosition, Vector2 startingVelocity, float n){
-        float gravity = getGravityScale();
-
-    }
-
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
@@ -659,7 +675,11 @@ public class Player extends CapsuleObstacle {
         if(throwingCount == 1  && isThrowing){
             canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
             canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
+            for(int i = 0; i<trajectories.length; i+=2){
+                canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 2-i*0.1f);
+            }
         }
+
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 

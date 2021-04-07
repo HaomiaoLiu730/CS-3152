@@ -164,6 +164,10 @@ public class GameCanvas {
         resize();
     }
 
+    public OrthographicCamera getCamera(){
+        return camera;
+    }
+
     /**
      * Returns the height of this canvas
      *
@@ -406,6 +410,30 @@ public class GameCanvas {
     }
 
     /**
+     * Draw the seamless background image.
+     *
+     * The background image is drawn (with NO SCALING) at position x, y.  Width-wise,
+     * the image is seamlessly scrolled; when we reach the image we draw a second copy.
+     *
+     * To work properly, the image should be wide and high enough to fill the screen.
+     *
+     * @param image  Texture to draw as an overlay
+     * @param x      The x-coordinate of the bottom left corner
+     * @param y 	 The y-coordinate of the bottom left corner
+     */
+    public void drawBackground(Texture image, float x, float y) {
+        if (active != DrawPass.STANDARD) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+
+        float w = image.getWidth();
+        // Have to draw the background twice for continuous scrolling.
+        spriteBatch.draw(image, x,   y);
+        spriteBatch.draw(image, x+w, y);
+    }
+
+    /**
      * Draws the tinted texture at the given position.
      *
      * The texture colors will be multiplied by the given color.  This will turn
@@ -432,6 +460,7 @@ public class GameCanvas {
         spriteBatch.setColor(tint);
         spriteBatch.draw(image, x,  y, width, height);
     }
+
 
     /**
      * Draws the tinted texture at the given position.
@@ -913,7 +942,7 @@ public class GameCanvas {
         GlyphLayout layout = new GlyphLayout(font,text);
         float x = (getWidth()  - layout.width) / 2.0f;
         float y = (getHeight() + layout.height) / 2.0f;
-        font.draw(spriteBatch, layout, x, y+offset);
+        font.draw(spriteBatch, layout, x+camera.position.x-640, y+offset);
     }
     /**
      * Draw an unscaled overlay image.
@@ -1254,7 +1283,7 @@ public class GameCanvas {
             Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
             return;
         }
-        font.draw(spriteBatch, text, x, y);
+        font.draw(spriteBatch, text, x+camera.position.x-640f, y);
     }
 
     public void drawLine(Color color, Vector2 start, Vector2 end, int lineWidth){
@@ -1264,6 +1293,16 @@ public class GameCanvas {
         shapeRenderer.setColor(color);
         shapeRenderer.line(start, end);
         Gdx.gl.glLineWidth(1);
+        shapeRenderer.end();
+        spriteBatch.begin();
+    }
+
+    public void drawCircle(Color color, float x, float y, float radius){
+        spriteBatch.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Gdx.gl.glLineWidth(radius);
+        shapeRenderer.setColor(color);
+        shapeRenderer.circle(x, y, radius);
         shapeRenderer.end();
         spriteBatch.begin();
     }

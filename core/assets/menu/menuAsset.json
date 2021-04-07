@@ -1,0 +1,86 @@
+{
+  "textures": {
+    "background": {
+      "file":     "images/menu/lightBlue.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "Africa": {
+      "file":     "images/menu/Africa.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "Antarctica": {
+      "file":     "images/menu/Antarctica.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "Asia": {
+      "file":     "images/menu/Asia.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "Europe": {
+      "file":     "images/menu/Europe.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "Oceania": {
+      "file":     "images/menu/Oceania.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "SouthAmerica": {
+      "file":     "images/menu/SouthAmerica.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "NorthAmerica": {
+      "file":     "images/menu/NorthAmerica.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "flight0": {
+      "file":     "images/menu/flight0.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "flight1": {
+      "file":     "images/menu/flight1.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "flight2": {
+      "file":     "images/menu/flight2.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "flight3": {
+      "file":     "images/menu/flight3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "flight4": {
+      "file":     "images/menu/flight4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "flight5": {
+      "file":     "images/menu/flight5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "flight6": {
+      "file":     "images/menu/flight6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    }
+  },
+  "fonts": {
+    "gameFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 24,
+      "color": "black"
+    }
+  }
+}
