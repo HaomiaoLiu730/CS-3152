@@ -38,9 +38,9 @@ public class GameplayController extends WorldController implements ContactListen
     private CollisionController collisionController;
 
     private Texture background;
-    private TextureRegion snow;
+    //private TextureRegion snow;
     private BitmapFont gameFont ;
-    private TextureRegion iceTextureRegion;
+    //private TextureRegion iceTextureRegion;
 
     // Physics constants for initialization
     /** Density of non-crate objects */
@@ -54,9 +54,9 @@ public class GameplayController extends WorldController implements ContactListen
     /** Collision restitution for all objects */
     private static final float BASIC_RESTITUTION = 0.1f;
     /** number of penguins */
-    private static final int NUM_PENGUIN = 2;
+    private int num_penguins;
     /** number of notes */
-    private static final int NUM_NOTES = 2;
+    private int num_notes;
 
     private int playerGround = 0;
     private static boolean hitWater = false;
@@ -120,12 +120,17 @@ public class GameplayController extends WorldController implements ContactListen
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
-        snow = new TextureRegion(internal.getEntry("snow", Texture.class));
-        iceTextureRegion = new TextureRegion(internal.getEntry("ice", Texture.class));
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
 
         collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
+
+        JsonValue levels = internal.getEntry( "NA:Level", JsonValue.class );
+        JsonValue defaults = levels.get("defaults");
+        num_penguins = defaults.getInt("num_penguins",0);
+        num_notes = defaults.getInt("num_notes",0);
+
+
     }
 
     public GameplayController(){
@@ -227,7 +232,7 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setFriction(BASIC_FRICTION);
             obj.setRestitution(BASIC_RESTITUTION);
             obj.setDrawScale(scale);
-            obj.setTexture(snow);
+            obj.setTexture(snowTextureRegion);
             obj.setName(sname+ii);
             addObject(obj);
         }
@@ -274,7 +279,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         addObject(avatar);
 
-        for(int i = 0; i<NUM_PENGUIN; i++){
+        for(int i = 0; i<num_penguins; i++){
             avatar.getPenguins().get(i).setDrawScale(scale);
             avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
@@ -439,8 +444,8 @@ public class GameplayController extends WorldController implements ContactListen
             obj.draw(canvas);
         }
 
-        String noteMsg = "Notes collected: "+ notesCollected + "/"+NUM_NOTES;
-        String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+NUM_PENGUIN;
+        String noteMsg = "Notes collected: "+ notesCollected + "/"+num_notes;
+        String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+num_penguins;
         canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
         canvas.end();
@@ -536,8 +541,8 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             // Check for win condition
-            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected == NUM_NOTES) ||
-                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == NUM_PENGUIN && notesCollected == NUM_NOTES)) {
+            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == num_penguins && notesCollected == num_notes) ||
+                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == num_penguins && notesCollected == num_notes)) {
                 setComplete(true);
             }
 

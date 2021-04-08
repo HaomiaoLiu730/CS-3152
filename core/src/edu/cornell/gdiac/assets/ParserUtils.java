@@ -18,6 +18,22 @@ import com.badlogic.gdx.utils.JsonValue;
  */
 public class ParserUtils {
 
+    public static String safeConcatenate(String first, String second, char sep, char alt) {
+        StringBuffer suffix = new StringBuffer();
+        for (int ii = 0; ii < second.length(); ii++) {
+            char c = second.charAt( ii );
+            if (c == alt) {
+                suffix.append( alt );
+                suffix.append( alt );
+            } else if (c == sep) {
+                suffix.append( alt );
+            } else {
+                suffix.append( c );
+            }
+        }
+        return first + sep + suffix.toString();
+    }
+
     /**
      * Returns the {@link Color} represented by the given JSON entry
      *
