@@ -4,31 +4,6 @@
       "file":     "images/northAmerica/background2.png",
       "minFilter": "linear",
       "magFilter": "linear"
-    },
-    "water":  {
-      "file":     "images/northAmerica/water.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "snow":  {
-      "file":     "images/northAmerica/snow.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "ice":  {
-      "file":     "images/northAmerica/ice.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "collected": {
-      "file": "images/shared/Collected.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "notcollected": {
-      "file": "images/shared/NotCollected.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
     }
   },
   "fonts": {
@@ -37,5 +12,8 @@
       "size": 24,
       "color": "black"
     }
+  },
+  "jsons": {
+    "NA:Level": "NorthAmerica/Levels.json"
   }
 }

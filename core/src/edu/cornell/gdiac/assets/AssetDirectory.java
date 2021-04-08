@@ -26,7 +26,7 @@ import com.badlogic.gdx.assets.loaders.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import edu.cornell.gdiac.audio.*;
-//import edu.cornell.gdiac.utils.ResourceManager;
+import edu.cornell.gdiac.util.FilmStrip;
 
 /**
  * An asset manager that uses a JSON file to define its assets.
@@ -137,7 +137,7 @@ public class AssetDirectory extends AssetManager {
         setLoader( Index.class, topLoader );
         setLoader( FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader( resolver ) );
         setLoader( BitmapFont.class, ".ttf", new FreetypeFontLoader( resolver ) );
-        //setLoader( BitmapFont.class, new BitmapFontLoader( resolver ) ); // fallback
+        setLoader( BitmapFont.class, new BitmapFontLoader( resolver ) ); // fallback
 
         setLoader( AudioSource.class, new AudioSourceLoader( resolver ) );
         setLoader( Sound.class, new SoundLoader( resolver ) );
@@ -149,6 +149,7 @@ public class AssetDirectory extends AssetManager {
         setLoader( Texture.class, new TextureLoader( resolver ) );
         setLoader( TextureAtlas.class, new TextureAtlasLoader( resolver ) );
         setLoader( TextureRegion.class, new TextureRegionLoader( resolver ) );
+        setLoader( FilmStrip.class, new FilmStripLoader( resolver ) );
 
         setLoader( JsonValue.class, new JsonValueLoader( resolver ) );
 
@@ -158,8 +159,10 @@ public class AssetDirectory extends AssetManager {
         setLoader( PolygonRegion.class, new PolygonRegionLoader( resolver ) );
 
         // And now the default parsers
+        topLoader.addParser( new JsonValueParser() );
         topLoader.addParser( new TextureParser() );
         topLoader.addParser( new TextureRegionParser() );
+        topLoader.addParser( new FilmStripParser() );
         topLoader.addParser( new FreetypeFontParser() );
         topLoader.addParser( new SoundBufferParser() );
         topLoader.addParser( new MusicBufferParser() );

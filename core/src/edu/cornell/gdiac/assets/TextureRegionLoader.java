@@ -2,7 +2,7 @@
  * TextureRegionLoader.java
  *
  * This is a simple loader for processing texture regions (and making them assets managed
- * by the asset manager. This is a simpler form of texture atlas for students.
+ * by the asset manager). This is a simpler form of texture atlas for students.
  *
  * This code is based on the template for PolygonRegions by dermetfan.
  *
@@ -71,6 +71,8 @@ public class TextureRegionLoader extends AsynchronousAssetLoader<TextureRegion, 
          */
         public TextureRegionParameters(String fileName, int width, int height) {
             this.source = fileName;
+            this.width = width;
+            this.height = height;
         }
 
         /**
@@ -86,6 +88,10 @@ public class TextureRegionLoader extends AsynchronousAssetLoader<TextureRegion, 
          */
         public TextureRegionParameters(String fileName, int x, int y, int width, int height) {
             this.source = fileName;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.width = height;
         }
 
     }
@@ -167,7 +173,7 @@ public class TextureRegionLoader extends AsynchronousAssetLoader<TextureRegion, 
     public FileHandle resolve (String fileName) {
         int suffix = fileName.lastIndexOf(':');
         if (suffix == -1) {
-            throw new GdxRuntimeException( "Texture region file name must end in ':name'." );
+            throw new GdxRuntimeException( "Texture region file name must end in '"+TextureRegionParser.ALIAS_SEP+"name'." );
         }
         String prefix = fileName.substring( 0,suffix );
         return resolver.resolve(prefix);
@@ -188,7 +194,7 @@ public class TextureRegionLoader extends AsynchronousAssetLoader<TextureRegion, 
     @Override
     public Array<AssetDescriptor> getDependencies (String fileName, FileHandle file, TextureRegionParameters params) {
         if (params == null) {
-            int suffix = fileName.lastIndexOf(':');
+            int suffix = fileName.lastIndexOf(TextureRegionParser.ALIAS_SEP);
             String prefix = (suffix == -1) ? fileName : fileName.substring( 0,suffix );
             params = new TextureRegionParameters( prefix );
         }
