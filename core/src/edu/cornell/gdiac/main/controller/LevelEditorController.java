@@ -1,19 +1,21 @@
 package edu.cornell.gdiac.main.controller;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LevelEditorController implements Screen, InputProcessor, ControllerListener, Loading {
@@ -28,6 +30,12 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     private static final int WIDTH = 32;
     private static final int HEIGHT = 18;
+
+    private static final float ICICLE_X = 320;
+    private static final float ICEBAR_X = 80;
+    private static final float NOTE_X = 20;
+    private static final float TARGET_X = 680f;
+    private static final float TARGET_Y = 640f;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
@@ -47,9 +55,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     /** The texture for the monster */
     protected FilmStrip monsterStrip;
     /** The texture for the water */
-    protected TextureRegion water;
+    protected FilmStrip water;
     /** The texture for the ice */
-    protected TextureRegion iceStrip;
+    protected FilmStrip iceStrip;
     /** The texture for the monster attacking */
     protected FilmStrip attackStrip;
     /** The texture for the arrow */
@@ -67,13 +75,33 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     /** The texture for the exit */
     protected FilmStrip exitStrip;
     protected TextureRegion snow;
+    /** The font for giving messages to the player */
+    protected BitmapFont displayFont;
+
+    private float icicleWidth = 80;
+    private float iceBarWidth = 200f;
+
+    private int currentWidth;
+    private int currentHeight;
+    private FilmStrip currentStrip;
+
+    private ArrayList<GenericComponent> objects = new ArrayList<>();
+
     private Tile[] tiles= new Tile[WIDTH];
     private int[] height = new int[WIDTH];
+    private Component currentComponent;
+    private Vector2 posCache = new Vector2();
 
     private enum Tile{
         Snow,
         Water,
         Air,
+    }
+
+    private enum Component{
+        Note,
+        IceBar,
+        Icicle
     }
 
     public LevelEditorController(GameCanvas canvas){
@@ -97,8 +125,13 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         noteLeftStrip = new FilmStrip(internal.getEntry("notcollected", Texture.class), 1, 1);
         noteCollectedStrip = new FilmStrip(internal.getEntry("collected", Texture.class), 1, 1);
         icicleStrip = new FilmStrip(internal.getEntry("icicle", Texture.class), 1, 1);
-        water = new TextureRegion(internal.getEntry("water", Texture.class), 40, 40);
-        iceStrip= new TextureRegion(internal.getEntry("ice", Texture.class), 200, 40);
+        water = new FilmStrip(internal.getEntry("water", Texture.class), 1,1);
+        water.setRegionWidth(40);
+        water.setRegionHeight(40);
+        iceStrip= new FilmStrip(internal.getEntry("ice", Texture.class), 1, 1);
+        iceStrip.setRegionWidth(200);
+        iceStrip.setRegionHeight(40);
+        displayFont =  internal.getEntry("gameFont", BitmapFont.class);
         Arrays.fill(tiles, Tile.Air);
         Arrays.fill(height, -1);
     }
@@ -166,14 +199,78 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     public void update(float delta) {
         inputController.readInput();
+        float x = inputController.getClickX();
+        float y = inputController.getClickY();
         if(inputController.didTouchUp()){
-            int i = (int)(inputController.getClickX()/40f);
-            int j = (int)((720 - inputController.getClickY())/40f);
-            if(height[i] == j){
-                tiles[i] = tiles[i] == Tile.Air ? Tile.Snow:(tiles[i] == Tile.Snow ? Tile.Water : Tile.Air);
+            if(y > 320){
+                formTile(x,y);
             }else{
-                height[i] = j;
-                tiles[i] = Tile.Snow;
+                updateCurrentComponent(x,y);
+                updateSize(x, y);
+                addComponent(x,y);
+            }
+        }
+    }
+
+    public void addComponent(float x, float y){
+        if(x > 1160 && x < 1240 && y > 60 && y < 100){
+            if(currentComponent != null){
+                switch (currentComponent){
+                    case Note:
+                        objects.add(new GenericComponent(currentStrip, "note"));
+                        break;
+                    case IceBar:
+                        objects.add(new GenericComponent(currentStrip, "ice bar"));
+                        break;
+                    case Icicle:
+                        objects.add(new GenericComponent(currentStrip, "icicle"));
+                        break;
+                }
+                currentComponent = null;
+            }
+        }
+    }
+
+    public void formTile(float x, float y){
+        int i = (int)(x/40f);
+        int j = (int)((720 - y)/40f);
+        if(height[i] == j){
+            tiles[i] = tiles[i] == Tile.Air ? Tile.Snow:(tiles[i] == Tile.Snow ? Tile.Water : Tile.Air);
+        }else{
+            height[i] = j;
+            tiles[i] = Tile.Snow;
+        }
+    }
+
+    public void updateSize(float x, float y){
+        if(posCache.set(x, y).sub(1060, 720-680).len() < 16){
+            currentWidth += 4;
+        }else if(posCache.set(x, y).sub(1060, 720-620).len() <16){
+            currentWidth -= 4;
+        }else if(posCache.set(x, y).sub(1120, 720-680).len() <16){
+            currentHeight += 4;
+        }else if(posCache.set(x, y).sub(1120, 720-620).len() <16){
+            currentHeight -= 4;
+        }
+    }
+
+    public void updateCurrentComponent(float x, float y){
+        if(y < 320){
+            if(x - NOTE_X <= 40){
+                currentComponent = Component.Note;
+                currentStrip = noteLeftStrip.copy();
+                currentWidth = noteLeftStrip.getRegionWidth();
+                currentHeight = noteLeftStrip.getRegionHeight();
+            }else if(x - ICEBAR_X <= iceBarWidth){
+                currentComponent = Component.IceBar;
+                currentStrip = iceStrip.copy();
+                currentWidth = iceStrip.getRegionWidth();
+                currentHeight = iceStrip.getRegionHeight();
+            }else if(x - ICICLE_X <= icicleWidth){
+                currentComponent = Component.Icicle;
+                currentStrip = icicleStrip.copy();
+                currentWidth = icicleStrip.getRegionWidth();
+                currentHeight = icicleStrip.getRegionHeight();
             }
         }
     }
@@ -190,8 +287,24 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         canvas.begin();
         canvas.drawOverlay(white, gray, true);
         drawGrid();
+        drawPanel();
+        drawTarget();
         drawComponents();
         canvas.end();
+    }
+
+    public void drawComponents(){
+        for(GenericComponent obj: objects){
+            canvas.draw(obj.filmStrip, obj.position.x, obj.position.y);
+        }
+    }
+
+    public void drawTarget(){
+        if(currentComponent != null){
+            currentStrip.setRegionWidth(currentWidth);
+            currentStrip.setRegionHeight(currentHeight);
+            canvas.draw(currentStrip, TARGET_X, TARGET_Y);
+        }
     }
 
     public void drawGrid(){
@@ -214,10 +327,19 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         }
     }
 
-    public void drawComponents(){
-        canvas.draw(noteCollectedStrip,20,660);
-        canvas.draw(iceStrip,80,660);
-        canvas.draw(icicleStrip,320,660);
+    public void drawPanel(){
+        canvas.draw(noteCollectedStrip,NOTE_X,640);
+        canvas.draw(iceStrip,ICEBAR_X,640);
+        canvas.draw(icicleStrip,ICICLE_X,640);
+        canvas.drawText(displayFont, "width", 1040, 660);
+        canvas.drawText(displayFont, "height", 1100, 660);
+        canvas.drawCircle(Color.BLACK, 1060, 680, 6);
+        canvas.drawCircle(Color.BLACK, 1060, 620, 6);
+        canvas.drawCircle(Color.BLACK, 1120, 680, 6);
+        canvas.drawCircle(Color.BLACK, 1120, 620, 6);
+        canvas.drawText(displayFont, currentComponent == null ? "" : currentComponent.name(), 1180, 700);
+        canvas.drawSquare(Color.BLACK, 1160, 620, 80, 40);
+        canvas.drawText(displayFont, "add", 1200, 640);
     }
 
     @Override
@@ -270,4 +392,20 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     public boolean axisMoved(Controller controller, int axisCode, float value) {
         return false;
     }
+
+
+    protected class GenericComponent{
+        public Vector2 position;
+        public FilmStrip filmStrip;
+        public String name;
+        public GenericComponent(Vector2 position){
+            this.position = position;
+        }
+        public GenericComponent(FilmStrip filmStrip, String name){
+            this.filmStrip = filmStrip;
+            this.position = new Vector2(TARGET_X, TARGET_Y);
+        }
+    }
+
+
 }
