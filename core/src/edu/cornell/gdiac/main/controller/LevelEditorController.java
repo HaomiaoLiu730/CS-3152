@@ -30,7 +30,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private boolean active;
     private InputController inputController = InputController.getInstance();
 
-    private static final int WIDTH = 32;
+    private static final int WIDTH = 320;
     private static final int HEIGHT = 18;
 
     private static final float ICICLE_X = 340;
@@ -222,15 +222,11 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         inputController.readInput();
         float x = inputController.getClickX();
         float y = inputController.getClickY();
-        if(inputController.didTouchUp() && !isDragging){
-            if(y > 320){
-                formTile(x,y);
-            }else{
-                updateCurrentComponent(x,y);
-                updateSize(x, y);
-                addComponent(x,y);
-            }
-        }
+        createComponents(x,y);
+        positionComponents(x,y);
+    }
+
+    public void positionComponents(float x, float y){
         if(!inputController.getPrevIsTouching() && Gdx.input.isTouched()){
             for(GenericComponent obj: objects){
                 float posX = obj.position.x;
@@ -267,6 +263,19 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             float posY = ((int)(draggingObj.position.y)/4)*4;
             draggingObj.position.set(posX,posY);
         }
+    }
+
+    public void createComponents(float x, float y){
+        if(inputController.didTouchUp() && !isDragging){
+            if(y > 320){
+                formTile(x,y);
+            }else{
+                updateCurrentComponent(x,y);
+                updateSize(x, y);
+                addComponent(x,y);
+            }
+        }
+
     }
 
     public static float sign (Vector2 p1, Vector2 p2, Vector2 p3)
@@ -397,13 +406,13 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     public void drawGrid(){
         for (int i = 0; i < WIDTH; i++) {
             // draw vertical
-            float x = 1280/WIDTH*i;
+            float x = 12800/WIDTH*i;
             canvas.drawLine(Color.WHITE,x, 0, x, 720, 1);
         }
         for (int i = 0; i < HEIGHT; i++) {
             // draw horizontal
             float y = 720/HEIGHT*i;
-            canvas.drawLine(Color.WHITE,0, y, 1280, y, 1);
+            canvas.drawLine(Color.WHITE,0, y, 12800, y, 1);
         }
         for(int i = 0; i<WIDTH; i++){
             for(int j = 0; j<=height[i]; j++){
