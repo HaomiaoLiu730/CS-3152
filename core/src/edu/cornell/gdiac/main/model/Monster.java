@@ -6,35 +6,31 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class Monster extends CapsuleObstacle {
+    private final JsonValue data;
+
     // Physics constants
     /** The density of the monster */
-    private static final float MONSTER_DENSITY = 1.0f;
+    private float MONSTER_DENSITY;
     /** The factor to multiply by the input */
-    private static final float MONSTER_FORCE = 20.0f;
+    private float MONSTER_FORCE;
     /** The amount to slow the character down */
-    private static final float MONSTER_DAMPING = 10.0f;
+    private float MONSTER_DAMPING;
     /** The monster is a slippery one */
-    private static final float MONSTER_FRICTION = 15.0f;
+    private float MONSTER_FRICTION;
 
     /** The maximum character speed */
-    private static final float MONSTER_MAXSPEED = 5.0f;
+    private final float MONSTER_MAXSPEED;
     /** Height of the sensor attached to the monster's feet */
-    private static final float SENSOR_HEIGHT = 0.05f;
+    private final float SENSOR_HEIGHT;
     /** Identifier to allow us to track the sensor in ContactListener */
-    private static final String SENSOR_NAME = "MonsterGroundSensor";
+    private final String SENSOR_NAME;
 
-    // This is to fit the image to a tigher hitbox
-    /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float MONSTER_VSHRINK = 0.25f;
-    /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float MONSTER_HSHRINK = 0.25f;
-    /** The amount to shrink the sensor fixture (horizontally) relative to the image */
-    private static final float MONSTER_SSHRINK = 0.6f;
 
     /** Whether our feet are on the ground */
     private boolean isGrounded;
@@ -137,16 +133,23 @@ public class Monster extends CapsuleObstacle {
      * drawing to work properly, you MUST set the drawScale. The drawScale
      * converts the physics units to pixels.
      *
-     * @param x  		Initial x position of the avatar center
-     * @param y  		Initial y position of the avatar center
+     * @param data       Json Data
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Monster(float x, float y, float width, float height, String name, float range) {
-        super(x,y,width*MONSTER_HSHRINK,height*MONSTER_VSHRINK);
+    public Monster(JsonValue data, float width, float height, String name, float range, int index) {
+        super(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),width*data.getFloat("hshrink"),height*data.getFloat("vshrink"));
+        MONSTER_DENSITY= data.getFloat("density");
+        MONSTER_FORCE=data.getFloat("force");
+        MONSTER_DAMPING=data.getFloat("damping");
+        MONSTER_FRICTION=data.getFloat("friction");
+        MONSTER_MAXSPEED=data.getFloat("maxspeed");
+        SENSOR_HEIGHT=data.getFloat("sensorheight");
+        SENSOR_NAME=data.getString("sensorname");
+        this.data=data;
         setDensity(MONSTER_DENSITY);
         setFriction(MONSTER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
-        setRestitution(0f);
+        setRestitution(data.getFloat("restitution"));
         setFixedRotation(true);
 
         // Gameplay attributes
@@ -181,7 +184,7 @@ public class Monster extends CapsuleObstacle {
         sensorDef.density = MONSTER_DENSITY;
         sensorDef.isSensor = true;
         sensorShape = new PolygonShape();
-        sensorShape.setAsBox(MONSTER_SSHRINK*getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
+        sensorShape.setAsBox(data.getFloat("sshrink")*getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
         sensorDef.shape = sensorShape;
 
         sensorFixture = body.createFixture(sensorDef);

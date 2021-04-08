@@ -5,23 +5,21 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 public class Water extends CapsuleObstacle{
+    private final JsonValue data;
+
     /** The density of the character */
-    private static final float PLAYER_DENSITY = 1.0f;
+    private final float WATER_DENSITY;
     /** The factor to multiply by the input */
-    private static final float PLAYER_FORCE = 20.0f;
+    private final float WATER_FORCE;
     /** The dude is a slippery one */
-    private static final float PLAYER_FRICTION = 5.0f;
-    // This is to fit the image to a tigher hitbox
-    /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.95f;
-    /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float PLAYER_HSHRINK = 0.7f;
+    private final float WATER_FRICTION;
     private FilmStrip filmStrip;
-    private float timeCounter = 0;
+    private float timeCounter;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
     /**
@@ -32,7 +30,7 @@ public class Water extends CapsuleObstacle{
      * @return how much force to apply to get the dude moving
      */
     public float getForce() {
-        return PLAYER_FORCE;
+        return WATER_FORCE;
     }
     /**
      * Creates a new dude avatar at the given position.
@@ -41,16 +39,20 @@ public class Water extends CapsuleObstacle{
      * drawing to work properly, you MUST set the drawScale. The drawScale
      * converts the physics units to pixels.
      *
-     * @param x         Initial x position of the avatar center
-     * @param y         Initial y position of the avatar center
+     * @param data      Json Data
      * @param width     The object width in physics units
      * @param height    The object width in physics units
      */
-    public Water(float x, float y, float width, float height, String name) {
-        super(x,y,width,height);
-        setDensity(PLAYER_DENSITY);
-        setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
-        setRestitution(0f);
+    public Water(JsonValue data, float width, float height, String name,int index) {
+        super(data.get("pos").get(index).getFloat(0), data.get("pos").get(index).getFloat(1),width,height);
+        WATER_DENSITY=data.getFloat("density");
+        WATER_FORCE=data.getFloat("force");
+        WATER_FRICTION=data.getFloat("friction");
+        this.data=data;
+
+        setDensity(WATER_DENSITY);
+        setFriction(WATER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
+        setRestitution(data.getFloat("restitution"));
         setFixedRotation(true);
         setActive(false);
         setAwake(false);

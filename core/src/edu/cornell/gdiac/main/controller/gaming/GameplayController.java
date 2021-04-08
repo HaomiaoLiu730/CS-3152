@@ -242,7 +242,7 @@ public class GameplayController extends WorldController implements ContactListen
         icicle.setRestitution(icicles.getFloat("restitution"));
         icicle.setDrawScale(scale);
         icicle.setTexture(icicleStrip);
-        icicle.setName(icicles.getString("name"));
+        icicle.setName("ice");
         addObject(icicle);
 
         JsonValue goal = constants.get("goal");
@@ -255,19 +255,17 @@ public class GameplayController extends WorldController implements ContactListen
         exit.setFriction(goal.getFloat("friction"));
         exit.setRestitution(goal.getFloat("restitution"));
         exit.setDrawScale(scale);
-        exit.setName(goal.getString("name"));
+        exit.setName("exit");
         exit.setTexture(exitStrip);
         addObject(exit);
 
-        JsonValue player = constants.get("player");
-        JsonValue playerpos = player.get("pos");
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
-        PUNCH_COOLDOWN=player.getInt("punch_cool");
-        PUNCH_TIME=player.getInt("punch_time");
-        punchCooldown=player.getInt("punch_cooldown");
-        avatar = new Player(playerpos.getFloat(0), playerpos.getFloat(1), dwidth, dheight, num_penguins);
+        PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool");
+        PUNCH_TIME=constants.get("player").getInt("punch_time");
+        punchCooldown=constants.get("player").getInt("punch_cooldown");
+        avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight, num_penguins);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
@@ -294,7 +292,7 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue enemy = constants.get("enemy");
         JsonValue enemypos = enemy.get("pos");
         for (int i=0; i < enemypos.size; i++) { //multiple monsters
-            monster = new Monster(enemypos.get(i).getFloat(0), enemypos.get(i).getFloat(1), monsterStrip.getRegionWidth() / scale.x, monsterStrip.getRegionHeight() / scale.y, enemy.getString("name"), enemy.getInt("range"));
+            monster = new Monster(enemy, monsterStrip.getRegionWidth() / scale.x, monsterStrip.getRegionHeight() / scale.y, "monster", enemy.getInt("range"),i);
             monster.setFilmStrip(monsterStrip);
             monster.setDrawScale(scale);
             addObject(monster);
@@ -302,7 +300,7 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue notes = constants.get("notes");
         JsonValue notespos = notes.get("pos");
         for (int i =0; i< notespos.size; i++) {
-            Note note = new Note(notespos.get(i).getFloat(0), notespos.get(i).getFloat(1), noteLeftStrip.getRegionWidth() / scale.x, noteLeftStrip.getRegionHeight() / scale.y, i + 1);
+            Note note = new Note(notes, noteLeftStrip.getRegionWidth() / scale.x, noteLeftStrip.getRegionHeight() / scale.y, i );
             note.setFilmStrip(noteLeftStrip);
             note.setDrawScale(scale);
             addObject(note);
@@ -314,7 +312,7 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue waters = constants.get("water");
         JsonValue waterpos = waters.get("pos");
         for (int i =0; i< waterpos.size; i++) {
-            water = new Water(waterpos.get(i).getFloat(0), waterpos.get(i).getFloat(1), waterStrip.getRegionWidth() / scale.x, waterStrip.getRegionHeight() / scale.y, waters.getString("name"));
+            water = new Water(waters, waterStrip.getRegionWidth() / scale.x, waterStrip.getRegionHeight() / scale.y, "water",i);
             water.setActive(false);
             water.setFilmStrip(waterStrip);
             water.setDrawScale(scale);
@@ -325,7 +323,7 @@ public class GameplayController extends WorldController implements ContactListen
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
         dheight = iceTextureRegion.getRegionHeight()/scale.y;
         for (int i =0; i< icepos.size; i++) {
-            ice = new Ice(icepos.get(i).getFloat(0), icepos.get(i).getFloat(1), dwidth, dheight);
+            ice = new Ice(ices, i, dwidth, dheight);
             ice.setDrawScale(scale);
             ice.setTexture(iceTextureRegion);
             ice.setRestitution(ices.getFloat("restitution"));
