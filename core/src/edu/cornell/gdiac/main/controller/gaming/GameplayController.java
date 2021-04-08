@@ -41,18 +41,14 @@ public class GameplayController extends WorldController implements ContactListen
     //private TextureRegion snow;
     private BitmapFont gameFont ;
     //private TextureRegion iceTextureRegion;
-
+    private JsonValue constants;
     // Physics constants for initialization
     /** Density of non-crate objects */
-    private static final float BASIC_DENSITY   = 2.65f;
-    /** Density of the crate objects */
-    private static final float CRATE_DENSITY   = 1.0f;
-    /** Friction of non-crate objects */
-    private static final float BASIC_FRICTION  = 0.3f;
-    /** Friction of the crate objects */
-    private static final float CRATE_FRICTION  = 0.3f;
-    /** Collision restitution for all objects */
-    private static final float BASIC_RESTITUTION = 0.1f;
+//    private static final float BASIC_DENSITY   = 2.65f;
+//    /** Friction of non-crate objects */
+//    private static final float BASIC_FRICTION  = 0.3f;
+//    /** Collision restitution for all objects */
+//    private static final float BASIC_RESTITUTION = 0.1f;
     /** number of penguins */
     private int num_penguins;
     /** number of notes */
@@ -64,15 +60,15 @@ public class GameplayController extends WorldController implements ContactListen
     private boolean failed = false;
 
     /** Cooldown (in animation frames) for punching */
-    private static final int PUNCH_COOLDOWN = 100;
+    private static  int PUNCH_COOLDOWN;
     /** Length (in animation frames) for punching */
-    private static final int PUNCH_TIME = 30;
-    private int punchCooldown = 0;
+    private static  int PUNCH_TIME;
+    private int punchCooldown;
     /** resetCountdown */
     public static int resetCountDown = 30;
 
     /** The initial position of the player */
-    private static Vector2 PLAYER_POS = new Vector2(16f, 5.0f);
+    private static Vector2 PLAYER_POS ;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -94,9 +90,9 @@ public class GameplayController extends WorldController implements ContactListen
             {96f,30f,96f,11f,26f,11f,26f,30f},
     };
 
-    private static final float[][] ICICLE = {
-            {-1f,1.85f,1f,1.85f,0,-1.85f},
-    };
+//    private static final float[][] ICICLE = {
+//            {-1f,1.85f,1f,1.85f,0,-1.85f},
+//    };
 
     /**
      * Creates a new game with a playing field of the given size.
@@ -125,8 +121,8 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
 
-        JsonValue levels = internal.getEntry( "NA:Level", JsonValue.class );
-        JsonValue defaults = levels.get("defaults");
+        constants = internal.getEntry( "NA:Level", JsonValue.class );
+        JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
 
@@ -222,48 +218,56 @@ public class GameplayController extends WorldController implements ContactListen
     private void populateLevel() {
         // Add level goal
         float dwidth, dheight;
-
+        JsonValue defaults = constants.get("defaults");
         String sname = "snow";
         for (int ii = 0; ii < SNOW.length; ii++) {
             PolygonObstacle obj;
-            obj = new PolygonObstacle(SNOW[ii], 0, 0);
+            obj = new PolygonObstacle(defaults.get("snow").get(ii).asFloatArray(), 0, 0);
             obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
+            obj.setDensity(defaults.getFloat("density", 0));
+            obj.setFriction(defaults.getFloat("friction", 0));
+            obj.setRestitution(defaults.getFloat("restitution", 0));
             obj.setDrawScale(scale);
             obj.setTexture(snowTextureRegion);
             obj.setName(sname+ii);
             addObject(obj);
         }
+         JsonValue icicles = constants.get("icicles");
+        JsonValue iciclepos=icicles.get("pos");
 
-        icicle = new PolygonObstacle(ICICLE[0], 32f, 9.15f);
+        icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
         icicle.setBodyType(BodyDef.BodyType.StaticBody);
-        icicle.setDensity(30f);
-        icicle.setFriction(0.5f);
-        icicle.setRestitution(0.2f);
+        icicle.setDensity(icicles.getFloat("density"));
+        icicle.setFriction(icicles.getFloat("friction"));
+        icicle.setRestitution(icicles.getFloat("restitution"));
         icicle.setDrawScale(scale);
         icicle.setTexture(icicleStrip);
-        icicle.setName("icicle");
+        icicle.setName(icicles.getString("name"));
         addObject(icicle);
 
+        JsonValue goal = constants.get("goal");
+        JsonValue goalpos=goal.get("pos");
         BoxObstacle exit;
-        exit = new BoxObstacle(48, 1.9f, 2, 2);
+        exit = new BoxObstacle( goalpos.getFloat(0), goalpos.getFloat(1), goal.getFloat(("width")), goal.getFloat(("height")));
         exit.setBodyType(BodyDef.BodyType.StaticBody);
         exit.setSensor(true);
-        exit.setDensity(BASIC_DENSITY);
-        exit.setFriction(BASIC_FRICTION);
-        exit.setRestitution(BASIC_RESTITUTION);
+        exit.setDensity(goal.getFloat("density"));
+        exit.setFriction(goal.getFloat("friction"));
+        exit.setRestitution(goal.getFloat("restitution"));
         exit.setDrawScale(scale);
-        exit.setName("exit");
+        exit.setName(goal.getString("name"));
         exit.setTexture(exitStrip);
         addObject(exit);
 
+        JsonValue player = constants.get("player");
+        JsonValue playerpos = player.get("pos");
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
-
-        avatar = new Player(PLAYER_POS.x, PLAYER_POS.y, dwidth, dheight, 2);
+        PUNCH_COOLDOWN=player.getInt("punch_cool");
+        PUNCH_TIME=player.getInt("punch_time");
+        punchCooldown=player.getInt("punch_cooldown");
+        avatar = new Player(playerpos.getFloat(0), playerpos.getFloat(1), dwidth, dheight, num_penguins);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
@@ -276,7 +280,6 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setThrowingStrip(throwingStrip);
         avatar.setPenguinWalkingStrip((penguinWalkingStrip));
         avatar.setPenguinRollingStrip(penguinRollingStrip);
-
         addObject(avatar);
 
         for(int i = 0; i<num_penguins; i++){
@@ -288,33 +291,46 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
         }
 
-        monster = new Monster(28.3f, 3.5f, monsterStrip.getRegionWidth()/scale.x, monsterStrip.getRegionHeight()/scale.y, "monster", 80);
-        monster.setFilmStrip(monsterStrip);
-        monster.setDrawScale(scale);
-        addObject(monster);
-
-        Note note1 = new Note(20f, 4f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, 1);
-        note1.setFilmStrip(noteLeftStrip);
-        note1.setDrawScale(scale);
-        addObject(note1);
-        Note note2 = new Note(28.35f, 6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, 2);
-        note2.setFilmStrip(noteLeftStrip);
-        note2.setDrawScale(scale);
-        addObject(note2);
-
-        water = new Water(28.35f, 1.9f, waterStrip.getRegionWidth()/scale.x, waterStrip.getRegionHeight()/scale.y, "water");
-        water.setActive(false);
-        water.setFilmStrip(waterStrip);
-        water.setDrawScale(scale);
-        addObject(water);
-
+        JsonValue enemy = constants.get("enemy");
+        JsonValue enemypos = enemy.get("pos");
+        for (int i=0; i < enemypos.size; i++) { //multiple monsters
+            monster = new Monster(enemypos.get(i).getFloat(0), enemypos.get(i).getFloat(1), monsterStrip.getRegionWidth() / scale.x, monsterStrip.getRegionHeight() / scale.y, enemy.getString("name"), enemy.getInt("range"));
+            monster.setFilmStrip(monsterStrip);
+            monster.setDrawScale(scale);
+            addObject(monster);
+        }
+        JsonValue notes = constants.get("notes");
+        JsonValue notespos = notes.get("pos");
+        for (int i =0; i< notespos.size; i++) {
+            Note note = new Note(notespos.get(i).getFloat(0), notespos.get(i).getFloat(1), noteLeftStrip.getRegionWidth() / scale.x, noteLeftStrip.getRegionHeight() / scale.y, i + 1);
+            note.setFilmStrip(noteLeftStrip);
+            note.setDrawScale(scale);
+            addObject(note);
+        }
+//        Note note2 = new Note(28.35f, 6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, 2);
+//        note2.setFilmStrip(noteLeftStrip);
+//        note2.setDrawScale(scale);
+//        addObject(note2);
+        JsonValue waters = constants.get("water");
+        JsonValue waterpos = waters.get("pos");
+        for (int i =0; i< waterpos.size; i++) {
+            water = new Water(waterpos.get(i).getFloat(0), waterpos.get(i).getFloat(1), waterStrip.getRegionWidth() / scale.x, waterStrip.getRegionHeight() / scale.y, waters.getString("name"));
+            water.setActive(false);
+            water.setFilmStrip(waterStrip);
+            water.setDrawScale(scale);
+            addObject(water);
+        }
+        JsonValue ices = constants.get("ice");
+        JsonValue icepos = ices.get("pos");
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
         dheight = iceTextureRegion.getRegionHeight()/scale.y;
-        ice = new Ice(28.35f,3.2f,dwidth,dheight);
-        ice.setDrawScale(scale);
-        ice.setTexture(iceTextureRegion);
-        ice.setRestitution(0);
-        addObject(ice);
+        for (int i =0; i< icepos.size; i++) {
+            ice = new Ice(icepos.get(i).getFloat(0), icepos.get(i).getFloat(1), dwidth, dheight);
+            ice.setDrawScale(scale);
+            ice.setTexture(iceTextureRegion);
+            ice.setRestitution(ices.getFloat("restitution"));
+            addObject(ice);
+        }
     }
 
     /**

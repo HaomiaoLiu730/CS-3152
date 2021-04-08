@@ -5,13 +5,23 @@
     "density" : 2.65,
     "restitution": 0.1,
     "num_penguins":2,
-    "num_notes": 2
+    "num_notes": 2,
+    "snow": 		[
+      [200,1,200,0,0,0,0,1],
+      [18,4.5,18,0,0,0,0,4.5],
+      [23,3,23,0,18,0,18,3],
+      [36,5,36,0,33.7,0,33.7,5],
+      [96,30,96,11,26,11,26,30]
+    ]
   },
   "goal" : {
-    "pos": [4.0, 14.0],
-    "density": 0.0,
-    "friction": 0.0,
-    "restitution": 0.0
+    "pos": [48, 1.9],
+    "friction": 0.3,
+    "density" : 2.65,
+    "restitution": 0.1,
+    "width": 2,
+    "height": 2,
+    "name": "exit"
   },
   "player" : {
     "pos": [16, 5.0],
@@ -24,7 +34,9 @@
     "jump": 26,
     "jump_cool": 30,
     "throw_cool": 30,
-    "shoot_cool": 40,
+    "punch_cool": 100,
+    "punch_time" : 30,
+    "punch_cooldown": 0,
     "max_throw_force": 300,
     "sensor": {
       "name" : "PlayerGroundSensor",
@@ -33,14 +45,30 @@
     "penguin_width": 1.3,
     "penguin_height": 2
   },
-  "snow": 		[
-    [200,1,200,0,0,0,0,1],
-    [18,4.5,18,0,0,0,0,4.5],
-    [23,3,23,0,18,0,18,3],
-    [36,5,36,0,33.7,0,33.7,5],
-    [96,30,96,11,26,11,26,30]
-  ],
-  "icicles":	[
+  "icicles": {
+    "pos": [32,9.15],
+    "layout":	[
     [-1,1.85,1,1.85,0,-1.85]
-  ]
+  ],
+    "density": 30,
+    "friction": 0.5,
+    "restitution" : 0.2,
+    "name": "icicle"
+    },
+  "enemy" : {
+    "pos": [[28.3,3.5]],
+    "name": "monster",
+    "range": 80
+  },
+  "notes": {
+    "pos": [[20,4],[28.35,6]]
+  },
+  "water": {
+    "pos": [[28.35,1.9]],
+    "name": "water"
+  },
+  "ice":{
+    "pos": [[28.35,3.2]],
+    "restitution" : 0
+  }
 }
