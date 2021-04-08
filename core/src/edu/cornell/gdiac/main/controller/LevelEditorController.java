@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.main.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
@@ -91,6 +92,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private int[] height = new int[WIDTH];
     private Component currentComponent;
     private Vector2 posCache = new Vector2();
+    private boolean isDragging;
+    private GenericComponent draggingObj;
 
     private enum Tile{
         Snow,
@@ -201,7 +204,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         inputController.readInput();
         float x = inputController.getClickX();
         float y = inputController.getClickY();
-        if(inputController.didTouchUp()){
+        if(inputController.didTouchUp() && !isDragging){
             if(y > 320){
                 formTile(x,y);
             }else{
@@ -209,6 +212,27 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                 updateSize(x, y);
                 addComponent(x,y);
             }
+        }
+        if(!inputController.getPrevIsTouching() && Gdx.input.isTouched()){
+            for(GenericComponent obj: objects){
+                float posX = obj.position.x;
+                float posY = obj.position.y;
+                float objWidth = obj.filmStrip.getRegionWidth();
+                float objHeight = obj.filmStrip.getRegionHeight();
+                if(x > posX && x < posX + objWidth && 720-y > posY && 720-y < posY + objHeight){
+                    isDragging = true;
+                    draggingObj = obj;
+                }
+            }
+        }
+        if(isDragging){
+            draggingObj.position.set(x, 720-y);
+        }
+        if(isDragging && !Gdx.input.isTouched()){
+            isDragging = false;
+            float posX = ((int)x/4)*4;
+            float posY = ((int)(720-y)/4)*4;
+            draggingObj.position.set(posX,posY);
         }
     }
 

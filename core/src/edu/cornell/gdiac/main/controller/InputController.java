@@ -341,6 +341,9 @@ public class InputController {
     public boolean didTouchUp(){
         return touchUp;
     }
+    public boolean getPrevIsTouching(){
+        return prevIsTouching;
+    }
 
 
     /**
