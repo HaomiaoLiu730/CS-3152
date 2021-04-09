@@ -76,7 +76,7 @@
     "density": 1.0,
     "force": 20,
     "damping": 10,
-    "friction": 15,
+    "friction": 5,
     "maxspeed": 5,
     "sensorheight": 0.05,
     "sensorname": "MonsterGroundSensor",

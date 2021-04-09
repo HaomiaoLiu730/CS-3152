@@ -84,6 +84,6 @@
     }
   },
   "jsons": {
-    "finishedLevels": "menu/LevelProgress.json"
+    "finishedLevels": "menu/levelProgress.json"
   }
 }

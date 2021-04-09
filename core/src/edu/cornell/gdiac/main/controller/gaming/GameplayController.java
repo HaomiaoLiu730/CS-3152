@@ -91,7 +91,7 @@ public class GameplayController extends WorldController implements ContactListen
         setFailure(false);
         world.setContactListener(this);
 
-        internal = new AssetDirectory("NorthAmerica/NorthAmericaMain.json");
+        internal = new AssetDirectory("NorthAmerica/northAmericaMain.json");
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
@@ -100,7 +100,7 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
 
-        constants = internal.getEntry( "NA:Level", JsonValue.class );
+        constants = internal.getEntry( "level1", JsonValue.class );
         JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
