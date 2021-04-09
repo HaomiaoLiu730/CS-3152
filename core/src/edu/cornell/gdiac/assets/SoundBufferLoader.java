@@ -127,9 +127,9 @@ public class SoundBufferLoader extends AsynchronousAssetLoader<SoundBuffer, Soun
      */
     @Override
     public FileHandle resolve (String fileName) {
-        int suffix = fileName.lastIndexOf(':');
+        int suffix = fileName.lastIndexOf(SoundBufferParser.ALIAS_SEP);
         if (suffix == -1) {
-            throw new GdxRuntimeException( "Sound buffer file name must end in ':alias'." );
+            throw new GdxRuntimeException( "Sound buffer file name must end in '"+SoundBufferParser.ALIAS_SEP+"alias'." );
         }
         String prefix = fileName.substring( 0,suffix );
         return resolver.resolve(prefix);
@@ -150,7 +150,7 @@ public class SoundBufferLoader extends AsynchronousAssetLoader<SoundBuffer, Soun
     @Override
     public Array<AssetDescriptor> getDependencies (String fileName, FileHandle file, SoundBufferParameters params) {
         if (params == null) {
-            int suffix = fileName.lastIndexOf(':');
+            int suffix = fileName.lastIndexOf(SoundBufferParser.ALIAS_SEP);
             String prefix = (suffix == -1) ? fileName : fileName.substring( 0,suffix );
             params = new SoundBufferLoader.SoundBufferParameters( prefix );
         }

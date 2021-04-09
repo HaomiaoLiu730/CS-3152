@@ -19,11 +19,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.main.obstacle.*;
 
 public class Ice extends ComplexObstacle {
     /** The initializing data (to avoid magic numbers) */
-    //private final JsonValue data;
+    private final JsonValue data;
 
     /** The primary spinner obstacle */
     private BoxObstacle iceBar;
@@ -36,49 +38,34 @@ public class Ice extends ComplexObstacle {
      * drawing to work properly, you MUST set the drawScale. The drawScale
      * converts the physics units to pixels.
      *
-     * @param x  	    The x coordinate of the center
-     * @param y         The y coordinate of the center
+     * @param data        Json Data
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Ice(float x,float y, float width, float height) {
-        super(x,y);
+    public Ice(JsonValue data, int index, float width, float height) {
+        super(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1));
         setName("Ice");
 
-//         Create the barrier
-        iceBar = new BoxObstacle(x,y,width,height);
+        iceBar = new BoxObstacle(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),width,height);
         iceBar.setName("iceBar");
-        iceBar.setDensity(3f);
-        iceBar.setFriction(2f);
-        iceBar.setRestitution(0);
+        iceBar.setDensity(data.getFloat("bar_density"));
+        iceBar.setFriction(data.getFloat("friction"));
+        iceBar.setRestitution(data.getFloat("restitution"));
         iceBar.setFixedRotation(true);
+        iceBar.setAngularDamping(0.5f);
         bodies.add(iceBar);
 
 
-        //#region INSERT CODE HERE
-        // Create a pin to anchor the barrier 
-        // Radius:  data.getFloat("radius")
-        // Density: data.getFloat("low_density")
-        // Name: "pin"
-        pin = new WheelObstacle(x,y,0.1f);
+        pin = new WheelObstacle(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),data.getFloat("pin_radius"));
         pin.setName("pin");
-        pin.setDensity(0);
+        pin.setDensity(data.getFloat("pin_density"));
         pin.setBodyType(BodyDef.BodyType.StaticBody);
-        pin.setRestitution(0);
+        pin.setRestitution(data.getFloat("restitution"));
 
-        //pin.setActive(false);
         bodies.add(pin);
-        //pin.activatePhysics(world);
-
-        //#endregion
+        this.data=data;
     }
 
-    public void setTranform(float x, float y,float angle){
-        super.getBody().setTransform(x,y,angle);
-        for(Obstacle obj : bodies) {
-            obj.getBody().setTransform(x,y,angle);
-        }
-    }
 
     public float getX(){
         return iceBar.getPosition().x;
@@ -96,23 +83,21 @@ public class Ice extends ComplexObstacle {
     protected boolean createJoints(World world) {
         assert bodies.size > 0;
 
-        //#region INSERT CODE HERE
-        // Attach the barrier to the pin here
         Vector2 anchorA = new Vector2();
-        Vector2 anchorB = new Vector2();
-        anchorB.y = 0.1f;
-        // Definition for a revolute joint
+        Vector2 anchorB = new Vector2(0,iceBar.getHeight()*3/8);
         RevoluteJointDef jointDef = new RevoluteJointDef();
 
-        // Initial joint
         jointDef.bodyB = iceBar.getBody();
         jointDef.bodyA = pin.getBody();
         jointDef.localAnchorB.set(anchorB);
         jointDef.localAnchorA.set(anchorA);
         jointDef.collideConnected = false;
+        jointDef.lowerAngle = -0.08f * (float)Math.PI;
+        jointDef.upperAngle = 0.08f * (float)Math.PI;
+        jointDef.enableLimit = true;
+
         Joint joint = world.createJoint(jointDef);
         joints.add(joint);
-        //#endregion
 
         return true;
     }
