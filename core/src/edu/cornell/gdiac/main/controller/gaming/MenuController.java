@@ -60,7 +60,8 @@ public class MenuController extends ClickListener implements Screen, InputProces
 
     private BitmapFont gameFont;
 
-    private int[] finishedLevels;
+    private JsonValue finishedLevels;
+    private int[] NAfinishedLevels;
     /**
      * Creates a new game with a playing field of the given size.
      * <p>
@@ -84,7 +85,8 @@ public class MenuController extends ClickListener implements Screen, InputProces
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
 
         JsonValue levelProgress = internal.getEntry("finishedLevels", JsonValue.class);
-        finishedLevels = levelProgress.get("finished").asIntArray();
+        finishedLevels = levelProgress.get("finished");
+        NAfinishedLevels = finishedLevels.get("NorthAmerica").asIntArray();
 
 
         active  = true;
