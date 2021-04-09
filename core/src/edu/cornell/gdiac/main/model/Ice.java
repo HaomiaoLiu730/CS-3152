@@ -53,6 +53,7 @@ public class Ice extends ComplexObstacle {
         iceBar.setFriction(data.getFloat("friction"));
         iceBar.setRestitution(data.getFloat("restitution"));
         iceBar.setFixedRotation(true);
+        iceBar.setAngularDamping(0.5f);
         bodies.add(iceBar);
 
 
@@ -94,7 +95,7 @@ public class Ice extends ComplexObstacle {
         //#region INSERT CODE HERE
         // Attach the barrier to the pin here
         Vector2 anchorA = new Vector2();
-        Vector2 anchorB = new Vector2();
+        Vector2 anchorB = new Vector2(0,iceBar.getHeight()*3/8);
         // Definition for a revolute joint
         RevoluteJointDef jointDef = new RevoluteJointDef();
 
@@ -104,6 +105,9 @@ public class Ice extends ComplexObstacle {
         jointDef.localAnchorB.set(anchorB);
         jointDef.localAnchorA.set(anchorA);
         jointDef.collideConnected = false;
+        jointDef.lowerAngle = -0.08f * (float)Math.PI;
+        jointDef.upperAngle = 0.08f * (float)Math.PI;
+        jointDef.enableLimit = true;
 
         Joint joint = world.createJoint(jointDef);
         joints.add(joint);

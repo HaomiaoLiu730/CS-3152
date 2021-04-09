@@ -38,17 +38,9 @@ public class GameplayController extends WorldController implements ContactListen
     private CollisionController collisionController;
 
     private Texture background;
-    //private TextureRegion snow;
     private BitmapFont gameFont ;
-    //private TextureRegion iceTextureRegion;
     private JsonValue constants;
-    // Physics constants for initialization
-    /** Density of non-crate objects */
-//    private static final float BASIC_DENSITY   = 2.65f;
-//    /** Friction of non-crate objects */
-//    private static final float BASIC_FRICTION  = 0.3f;
-//    /** Collision restitution for all objects */
-//    private static final float BASIC_RESTITUTION = 0.1f;
+
     /** number of penguins */
     private int num_penguins;
     /** number of notes */
@@ -80,19 +72,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
-
-    /** The outlines of snow lands */
-    private static final float[][] SNOW = {
-            {200f,1f,200,0f,0f,0f,0f,1f},
-            {18f,4.5f,18f,0f,0f,0f,0f,4.5f},
-            {23f,3f,23f,0f,18f,0f,18f,3f},
-            {36f,5f,36f,0f,33.7f,0f,33.7f,5f},
-            {96f,30f,96f,11f,26f,11f,26f,30f},
-    };
-
-//    private static final float[][] ICICLE = {
-//            {-1f,1.85f,1f,1.85f,0,-1.85f},
-//    };
 
     /**
      * Creates a new game with a playing field of the given size.
@@ -220,7 +199,7 @@ public class GameplayController extends WorldController implements ContactListen
         float dwidth, dheight;
         JsonValue defaults = constants.get("defaults");
         String sname = "snow";
-        for (int ii = 0; ii < SNOW.length; ii++) {
+        for (int ii = 0; ii < defaults.get("snow").size; ii++) {
             PolygonObstacle obj;
             obj = new PolygonObstacle(defaults.get("snow").get(ii).asFloatArray(), 0, 0);
             obj.setBodyType(BodyDef.BodyType.StaticBody);
@@ -242,7 +221,7 @@ public class GameplayController extends WorldController implements ContactListen
         icicle.setRestitution(icicles.getFloat("restitution"));
         icicle.setDrawScale(scale);
         icicle.setTexture(icicleStrip);
-        icicle.setName("ice");
+        icicle.setName("icicle");
         addObject(icicle);
 
         JsonValue goal = constants.get("goal");
@@ -305,10 +284,7 @@ public class GameplayController extends WorldController implements ContactListen
             note.setDrawScale(scale);
             addObject(note);
         }
-//        Note note2 = new Note(28.35f, 6f, noteLeftStrip.getRegionWidth()/scale.x, noteLeftStrip.getRegionHeight()/scale.y, 2);
-//        note2.setFilmStrip(noteLeftStrip);
-//        note2.setDrawScale(scale);
-//        addObject(note2);
+
         JsonValue waters = constants.get("water");
         JsonValue waterpos = waters.get("pos");
         for (int i =0; i< waterpos.size; i++) {
