@@ -46,7 +46,6 @@ public class Ice extends ComplexObstacle {
         super(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1));
         setName("Ice");
 
-//         Create the barrier
         iceBar = new BoxObstacle(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),width,height);
         iceBar.setName("iceBar");
         iceBar.setDensity(data.getFloat("bar_density"));
@@ -57,22 +56,14 @@ public class Ice extends ComplexObstacle {
         bodies.add(iceBar);
 
 
-        //#region INSERT CODE HERE
-        // Create a pin to anchor the barrier 
-        // Radius:  data.getFloat("radius")
-        // Density: data.getFloat("low_density")
-        // Name: "pin"
         pin = new WheelObstacle(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),data.getFloat("pin_radius"));
         pin.setName("pin");
         pin.setDensity(data.getFloat("pin_density"));
         pin.setBodyType(BodyDef.BodyType.StaticBody);
         pin.setRestitution(data.getFloat("restitution"));
 
-        //pin.setActive(false);
         bodies.add(pin);
-        //pin.activatePhysics(world);
         this.data=data;
-        //#endregion
     }
 
 
@@ -92,14 +83,10 @@ public class Ice extends ComplexObstacle {
     protected boolean createJoints(World world) {
         assert bodies.size > 0;
 
-        //#region INSERT CODE HERE
-        // Attach the barrier to the pin here
         Vector2 anchorA = new Vector2();
         Vector2 anchorB = new Vector2(0,iceBar.getHeight()*3/8);
-        // Definition for a revolute joint
         RevoluteJointDef jointDef = new RevoluteJointDef();
 
-        // Initial joint
         jointDef.bodyB = iceBar.getBody();
         jointDef.bodyA = pin.getBody();
         jointDef.localAnchorB.set(anchorB);
@@ -111,7 +98,6 @@ public class Ice extends ComplexObstacle {
 
         Joint joint = world.createJoint(jointDef);
         joints.add(joint);
-        //#endregion
 
         return true;
     }
