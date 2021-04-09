@@ -99,6 +99,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private Tile[] tiles= new Tile[WIDTH*10];
     private int[] height = new int[WIDTH*10];
     private Component currentComponent;
+    private GenericComponent draggingComponent;
     private Vector2 posCache = new Vector2();
     private boolean isDragging;
     private GenericComponent draggingObj;
@@ -230,6 +231,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         float y = inputController.getClickY();
         createComponents(x,y);
         positionComponents(x,y);
+        deleteComponent(x,y);
         moveCamera();
     }
 
@@ -254,6 +256,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                     if(x > posX && x < posX + objWidth && 720-y > posY && 720-y < posY + objHeight){
                         isDragging = true;
                         draggingObj = obj;
+                        draggingComponent = obj;
+                        break;
                     }
                 }else{
                     posCache1.set(x,720 - y);
@@ -263,6 +267,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                     if(pointInTriangle(posCache1, posCache2, posCache3, posCache4)){
                         isDragging = true;
                         draggingObj = obj;
+                        draggingComponent = obj;
+                        break;
                     }
                 }
             }
@@ -317,7 +323,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     public void addComponent(float x, float y){
-        if(x > 1160 && x < 1240 && y > 60 && y < 100){
+        if(x > 1160 && x < 1220 && y > 50 && y < 80){
             if(currentComponent != null){
                 switch (currentComponent){
                     case Note:
@@ -331,6 +337,15 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                         break;
                 }
                 currentComponent = null;
+            }
+        }
+    }
+
+    public void deleteComponent(float x, float y){
+        if(x > 1160 && x < 1220 && y > 90 && y < 120 && inputController.didTouchUp()){
+            if(draggingComponent != null){
+                objects.remove(draggingComponent);
+                draggingComponent = null;
             }
         }
     }
@@ -453,9 +468,11 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         canvas.drawCircle(Color.BLACK, 1060, 620, 6);
         canvas.drawCircle(Color.BLACK, 1120, 680, 6);
         canvas.drawCircle(Color.BLACK, 1120, 620, 6);
-        canvas.drawText(displayFont, currentComponent == null ? "" : currentComponent.name(), 1180, 700);
-        canvas.drawSquare(Color.BLACK, 1160, 620, 80, 40);
-        canvas.drawText(displayFont, "add", 1200, 640);
+        canvas.drawText(displayFont, draggingComponent == null ? "" : draggingComponent.component.name(), 1180, 700);
+        canvas.drawSquare(Color.BLACK, 1160, 640, 60, 30);
+        canvas.drawText(displayFont, "add", 1180, 660);
+        canvas.drawSquare(Color.BLACK, 1160, 600, 60, 30);
+        canvas.drawText(displayFont, "delete", 1180, 620);
     }
 
     @Override
