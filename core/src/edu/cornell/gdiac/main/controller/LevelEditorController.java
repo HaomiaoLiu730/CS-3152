@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.main.controller;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
@@ -36,6 +37,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private static final float ICICLE_X = 340;
     private static final float ICEBAR_X = 80;
     private static final float NOTE_X = 20;
+    private static float target_x = 680f;
     private static final float TARGET_X = 680f;
     private static final float TARGET_Y = 640f;
 
@@ -94,8 +96,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     private ArrayList<GenericComponent> objects = new ArrayList<>();
 
-    private Tile[] tiles= new Tile[WIDTH];
-    private int[] height = new int[WIDTH];
+    private Tile[] tiles= new Tile[WIDTH*10];
+    private int[] height = new int[WIDTH*10];
     private Component currentComponent;
     private Vector2 posCache = new Vector2();
     private boolean isDragging;
@@ -105,6 +107,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private Vector2 posCache2 = new Vector2();
     private Vector2 posCache3 = new Vector2();
     private Vector2 posCache4 = new Vector2();
+
+    private float cameraOffset;
 
     private enum Tile{
         Snow,
@@ -220,13 +224,26 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     public void update(float delta) {
         inputController.readInput();
+        cameraOffset = canvas.getCamera().position.x-640;
+        target_x = TARGET_X + cameraOffset;
         float x = inputController.getClickX();
         float y = inputController.getClickY();
         createComponents(x,y);
         positionComponents(x,y);
+        moveCamera();
+    }
+
+    public void moveCamera(){
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+            canvas.getCamera().position.x += 40;
+        }else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+            canvas.getCamera().position.x = Math.max(canvas.getCamera().position.x-20, 640);
+        }
+        canvas.getCamera().update();
     }
 
     public void positionComponents(float x, float y){
+        x += cameraOffset;
         if(!inputController.getPrevIsTouching() && Gdx.input.isTouched()){
             for(GenericComponent obj: objects){
                 float posX = obj.position.x;
@@ -319,6 +336,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     public void formTile(float x, float y){
+        x += cameraOffset;
         int i = (int)(x/40f);
         int j = (int)((720 - y)/40f);
         if(height[i] == j){
@@ -371,8 +389,10 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     public void draw() {
+        canvas.clear();
         canvas.begin();
         canvas.drawOverlay(white, gray, true);
+        canvas.draw(white, gray,0,0,12800, 720);
         drawGrid();
         drawPanel();
         drawTarget();
@@ -394,12 +414,12 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         if(currentComponent != null && TEXTURE_COMPONENTS.contains(currentComponent)){
             currentStrip.setRegionWidth(currentWidth);
             currentStrip.setRegionHeight(currentHeight);
-            canvas.draw(currentStrip, TARGET_X, TARGET_Y);
+            canvas.drawFixed(currentStrip, TARGET_X, TARGET_Y);
         }else if(currentComponent != null && POLYGON_COMPONENTS.contains(currentComponent)){
             currentPolygonRegion.getVertices()[0] = -currentWidth/2f;
             currentPolygonRegion.getVertices()[2] = currentWidth/2f;
             currentPolygonRegion.getVertices()[5] = -currentHeight;
-            canvas.draw(currentPolygonRegion, TARGET_X, TARGET_Y);
+            canvas.drawFixed(currentPolygonRegion, TARGET_X, TARGET_Y);
         }
     }
 
@@ -424,9 +444,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     public void drawPanel(){
-        canvas.draw(noteLeftStrip,NOTE_X,640);
-        canvas.draw(iceStrip,ICEBAR_X,640);
-        canvas.draw(icicleRegion,ICICLE_X,640);
+        canvas.drawFixed(noteLeftStrip,NOTE_X,640);
+        canvas.drawFixed(iceStrip,ICEBAR_X,640);
+        canvas.drawFixed(icicleRegion,ICICLE_X,640);
         canvas.drawText(displayFont, "width", 1040, 660);
         canvas.drawText(displayFont, "height", 1100, 660);
         canvas.drawCircle(Color.BLACK, 1060, 680, 6);
@@ -498,15 +518,13 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public Component component;
         public GenericComponent(FilmStrip filmStrip, Component component){
             this.filmStrip = filmStrip;
-            this.position = new Vector2(TARGET_X, TARGET_Y);
+            this.position = new Vector2(target_x , TARGET_Y);
             this.component = component;
         }
         public GenericComponent(PolygonRegion polygonRegion, Component component){
             this.polygonRegion = polygonRegion;
-            this.position = new Vector2(TARGET_X, TARGET_Y);
+            this.position = new Vector2(target_x, TARGET_Y);
             this.component = component;
         }
     }
-
-
 }
