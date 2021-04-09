@@ -82,5 +82,8 @@
       "size": 24,
       "color": "black"
     }
+  },
+  "jsons": {
+    "finishedLevels": "menu/LevelProgress.json"
   }
 }

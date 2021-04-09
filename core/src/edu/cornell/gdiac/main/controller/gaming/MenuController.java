@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -58,6 +59,8 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private Texture antarctica;
 
     private BitmapFont gameFont;
+
+    private int[] finishedLevels;
     /**
      * Creates a new game with a playing field of the given size.
      * <p>
@@ -79,6 +82,10 @@ public class MenuController extends ClickListener implements Screen, InputProces
         africa = internal.getEntry("Africa", Texture.class);
         oceania = internal.getEntry("Oceania", Texture.class);
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
+
+        JsonValue levelProgress = internal.getEntry("finishedLevels", JsonValue.class);
+        finishedLevels = levelProgress.get("finished").asIntArray();
+
 
         active  = true;
         zoomIn = true;
