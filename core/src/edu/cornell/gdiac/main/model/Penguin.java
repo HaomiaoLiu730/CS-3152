@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -15,29 +16,24 @@ import edu.cornell.gdiac.util.FilmStrip;
  * no other subclasses that we might loop through.
  */
 public class Penguin extends CapsuleObstacle {
+    private final JsonValue data;
+
     // Physics constants
     /** The density of the character */
-    private static final float PENGUIN_DENSITY = 1f;
+    private final float PENGUIN_DENSITY;
     /** The factor to multiply by the input */
-    private static final float PENGUIN_FORCE = 20.0f;
+    private final float PENGUIN_FORCE;
     /** The amount to slow the character down */
-    private static final float PENGUIN_DAMPING = 2.0f;
+    private final float PENGUIN_DAMPING;
     /** The dude is a slippery one */
-    private static final float PENGUIN_FRICTION = 0.0f;
+    private final float PENGUIN_FRICTION;
     /** The maximum character speed */
-    private static final float PENGUIN_MAXSPEED = 3.0f;
+    private final float PENGUIN_MAXSPEED;
     /** Height of the sensor attached to the player's feet */
-    private static final float SENSOR_HEIGHT = 0.05f;
+    private final float SENSOR_HEIGHT;
     /** Identifier to allow us to track the sensor in ContactListener */
-    private static final String SENSOR_NAME = "PenguinGroundSensor";
+    private final String SENSOR_NAME;
 
-    // This is to fit the image to a tigher hitbox
-    /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PENGUIN_VSHRINK = 0.75f;
-    /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float PENGUIN_HSHRINK = 0.75f;
-    /** The amount to shrink the sensor fixture (horizontally) relative to the image */
-    private static final float PENGUIN_SSHRINK = 0.6f;
 
     private int index;
 
@@ -199,13 +195,20 @@ public class Penguin extends CapsuleObstacle {
      * drawing to work properly, you MUST set the drawScale. The drawScale
      * converts the physics units to pixels.
      *
-     * @param x  		Initial x position of the avatar center
-     * @param y  		Initial y position of the avatar center
+     * @param data      Json Data
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Penguin(float x, float y, float width, float height, int index) {
-        super(x,y,width* PENGUIN_HSHRINK,height* PENGUIN_VSHRINK);
+    public Penguin(JsonValue data, float width, float height, int index) {
+        super(data.get("pos").getFloat(0) - (index+1)*data.getFloat("width"), data.get("pos").getFloat(1),width* data.getFloat("hshrink"),height* data.getFloat("vshrink"));
+        PENGUIN_DENSITY=data.getFloat("density");
+        PENGUIN_FRICTION=data.getFloat("friction");
+        PENGUIN_FORCE=data.getFloat("force");
+        PENGUIN_DAMPING=data.getFloat("damping");
+        PENGUIN_MAXSPEED= data.getFloat("maxspeed");
+        SENSOR_HEIGHT=data.getFloat("sensorheight");
+        SENSOR_NAME= data.getString("sensorname");
+
         setDensity(PENGUIN_DENSITY);
         setFriction(PENGUIN_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
@@ -215,6 +218,7 @@ public class Penguin extends CapsuleObstacle {
         faceRight = true;
         this.index = index;
         setName("penguin"+index);
+        this.data=data;
     }
 
     /**
@@ -237,7 +241,7 @@ public class Penguin extends CapsuleObstacle {
         sensorDef.isSensor = true;
         sensorDef.filter.groupIndex = -1;
         sensorShape = new PolygonShape();
-        sensorShape.setAsBox(PENGUIN_SSHRINK *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
+        sensorShape.setAsBox(data.getFloat("sshrink") *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
         sensorDef.shape = sensorShape;
 
         sensorFixture = body.createFixture(sensorDef);

@@ -3,6 +3,7 @@ package edu.cornell.gdiac.main.model;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.main.obstacle.BoxObstacle;
 import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -11,13 +12,10 @@ import edu.cornell.gdiac.util.FilmStrip;
 import static com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody;
 
 public class Note extends BoxObstacle {
+    private final JsonValue data;
     // Physics constants
 
     // This is to fit the image to a tighter hitbox
-    /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float NOTE_VSHRINK = 0.95f;
-    /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float NOTE_HSHRINK = 0.8f;
 
     private FilmStrip filmStrip;
     private boolean isCollected;
@@ -30,18 +28,18 @@ public class Note extends BoxObstacle {
      * drawing to work properly, you MUST set the drawScale. The drawScale
      * converts the physics units to pixels.
      *
-     * @param x  		Initial x position of the avatar center
-     * @param y  		Initial y position of the avatar center
+     * @param data      Json data
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Note(float x, float y, float width, float height, int index) {
-        super(x,y,width* NOTE_HSHRINK,height* NOTE_VSHRINK);
+    public Note(JsonValue data, float width, float height, int index) {
+        super(data.get("pos").get(index).getFloat(0), data.get("pos").get(index).getFloat(1),width* data.getFloat("hshrink"),height* data.getFloat("vshrink"));
         setBodyType(StaticBody);
         setSensor(true);
         setName("note"+index);
         this.index = index;
         isCollected = false;
+        this.data=data;
     }
 
     public void setCollected(boolean val){

@@ -110,8 +110,8 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "snow":  {
-      "file":     "images/northAmerica/snow.png",
+    "snow": {
+      "file": "images/shared/snow.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }

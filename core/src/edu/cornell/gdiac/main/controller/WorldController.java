@@ -83,6 +83,10 @@ public abstract class WorldController implements Screen {
     protected Texture energyBarTexture;
     /** The texture for the energy bar */
     protected Texture energyBarOutlineTexture;
+    /** The texture region for the snow */
+    protected TextureRegion snowTextureRegion;
+    /** The texture region for the ice */
+    protected TextureRegion iceTextureRegion;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
     /** The texture for the notes not collected */
@@ -162,6 +166,8 @@ public abstract class WorldController implements Screen {
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         waterStrip= new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
+        snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
+        iceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Pipeline.java
+ * ResourceManager.java
  *
  * This module provides a general resource manager singleton.  Resources are like
  * assets in that we are likely to need them all over the application.  And like 

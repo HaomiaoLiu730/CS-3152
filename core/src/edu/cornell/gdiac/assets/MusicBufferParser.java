@@ -65,8 +65,8 @@ public class MusicBufferParser implements AssetParser<MusicBuffer> {
      * Processes the next available music buffer, loading it into the asset manager
      *
      * The parser converts JSON entries into {@link MusicBufferLoader.MusicBufferParameters}
-     * values of the same name. The file will be the contents of the file entry.  The 
-     * key will be the name of the font object.
+     * values of the same name. The keys are the same name as the fields of that object.
+     * The sources entry is a array of strings, all of which should be file names.
      *
      * If the JSON value is a string and not an object, it will interpret that
      * string as the file and use the default settings.

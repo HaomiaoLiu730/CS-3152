@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -31,34 +32,35 @@ import java.util.LinkedList;
  * no other subclasses that we might loop through.
  */
 public class Player extends CapsuleObstacle {
+    private final JsonValue data;
     // Physics constants
     /** The density of the character */
-    private static final float PLAYER_DENSITY = 1.0f;
+    private final float PLAYER_DENSITY;
     /** The factor to multiply by the input */
-    private static final float PLAYER_FORCE = 12.0f;
+    private final float PLAYER_FORCE;
     /** The amount to slow the character down */
-    private static final float PLAYER_DAMPING = 10.0f;
+    private final float PLAYER_DAMPING ;
     /** The dude is a slippery one */
-    private static final float PLAYER_FRICTION = 0.0f;
+    private final float PLAYER_FRICTION;
     /** The maximum character speed */
-    private static final float PLAYER_MAXSPEED = 4.0f;
+    private final float PLAYER_MAXSPEED;
     /** The impulse for the character jump */
-    private static final float PLAYER_JUMP = 26f;
+    private final float PLAYER_JUMP;
     /** Cooldown (in animation frames) for jumping */
-    private static final int JUMP_COOLDOWN = 30;
+    private final int JUMP_COOLDOWN;
     /** Cooldown (in animation frames) for jumping */
-    private static final int THROW_COOLDOWN = 30;
+    private final int THROW_COOLDOWN ;
     /** Cooldown (in animation frames) for shooting */
-    private static final int SHOOT_COOLDOWN = 40;
+    private final int SHOOT_COOLDOWN ;
     /** Height of the sensor attached to the player's feet */
-    private static final float SENSOR_HEIGHT = 0.05f;
+    private final float SENSOR_HEIGHT;
     /** Identifier to allow us to track the sensor in ContactListener */
-    private static final String SENSOR_NAME = "PlayerGroundSensor";
+    private final String SENSOR_NAME;
     /** max throwing force*/
-    private static final float MAX_THROWING_FORCE = 300;
+    private final float MAX_THROWING_FORCE;
 
-    private float PENGUIN_WIDTH = 1.3f;
-    private float PENGUIN_HEIGHT = 2f;
+    private float PENGUIN_WIDTH;
+    private float PENGUIN_HEIGHT;
 
     /** The texture for the player jumping */
     private FilmStrip jumpRisingStrip;
@@ -73,13 +75,6 @@ public class Player extends CapsuleObstacle {
     private FilmStrip penguinWalkingStrip;
     private FilmStrip penguinRollingStrip;
 
-    // This is to fit the image to a tigher hitbox
-    /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float PLAYER_VSHRINK = 0.25f;
-    /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float PLAYER_HSHRINK = 0.25f;
-    /** The amount to shrink the sensor fixture (horizontally) relative to the image */
-    private static final float PLAYER_SSHRINK = 0.6f;
 
     /** The current horizontal movement of the character */
     private float movement;
@@ -122,7 +117,7 @@ public class Player extends CapsuleObstacle {
     private Texture arrowTexture;
     private Texture energyBarOutline;
     private Texture energyBar;
-    private float timeCounter = 0;
+    private float timeCounter;
     private int totalPenguins;
     private int numPenguins;
     private boolean fixPenguin;
@@ -477,17 +472,33 @@ public class Player extends CapsuleObstacle {
      * drawing to work properly, you MUST set the drawScale. The drawScale
      * converts the physics units to pixels.
      *
-     * @param x  		Initial x position of the avatar center
-     * @param y  		Initial y position of the avatar center
+     * @param data      Data json
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Player(float x, float y, float width, float height, int numOfPenguins) {
-        super(x,y,width* PLAYER_HSHRINK,height* PLAYER_VSHRINK);
+    public Player(JsonValue data, JsonValue p_data, float width, float height, int numOfPenguins) {
+        super(data.get("pos").getFloat(0),data.get("pos").getFloat(1),width* data.getFloat("hshrink"),height* data.getFloat("vshrink"));
+        PLAYER_DENSITY=data.getFloat("density");
+        PLAYER_FRICTION=data.getFloat("friction");
+        PLAYER_FORCE=data.getFloat("force");
+        PLAYER_DAMPING= data.getFloat("damping");
+        PLAYER_MAXSPEED=data.getFloat("maxspeed");
+        PLAYER_JUMP=data.getFloat("player_jump");
+        JUMP_COOLDOWN=data.getInt("jump_cooldown");
+        THROW_COOLDOWN=data.getInt("throw_cooldown");
+        SHOOT_COOLDOWN=data.getInt("shoot_cooldown");
+        SENSOR_HEIGHT=data.getFloat("sensorheight");
+        SENSOR_NAME=data.getString("sensorname");
+        MAX_THROWING_FORCE=data.getFloat("max_throw_force");
+        PENGUIN_WIDTH=p_data.getFloat("width");
+        PENGUIN_HEIGHT=p_data.getFloat("height");
+
+        this.data=data;
+
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
-        setRestitution(0f);
+        setRestitution(data.getFloat("restitution"));
         // Gameplay attributes
         isGrounded = false;
         isShooting = false;
@@ -497,11 +508,11 @@ public class Player extends CapsuleObstacle {
         this.totalPenguins = numOfPenguins;
         this.numPenguins = totalPenguins;
         for(int i = 0; i < numOfPenguins; i++){
-            penguins.add(new Penguin(x - (i+1)*PENGUIN_WIDTH, y,PENGUIN_WIDTH, PENGUIN_HEIGHT, i));
+            penguins.add(new Penguin(p_data, p_data.getFloat("width"), p_data.getFloat("height"), i));
         }
 
-        shootCooldown = 0;
-        jumpCooldown = 0;
+        shootCooldown = data.getInt("shoot_cooldown");
+        jumpCooldown = data.getInt("jump_cooldown");
         setName("dude");
     }
 
@@ -533,7 +544,7 @@ public class Player extends CapsuleObstacle {
         sensorDef.density = PLAYER_DENSITY;
         sensorDef.isSensor = true;
         sensorShape = new PolygonShape();
-        sensorShape.setAsBox(PLAYER_SSHRINK *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
+        sensorShape.setAsBox(data.getFloat("sshrink") *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
         sensorDef.shape = sensorShape;
 
         sensorFixture = body.createFixture(sensorDef);
