@@ -482,13 +482,13 @@ public class Player extends CapsuleObstacle {
         PLAYER_FRICTION=data.getFloat("friction");
         PLAYER_FORCE=data.getFloat("force");
         PLAYER_DAMPING= data.getFloat("damping");
-        PLAYER_MAXSPEED=data.getFloat("maxspeed");
+        PLAYER_MAXSPEED=data.getFloat("max_speed");
         PLAYER_JUMP=data.getFloat("player_jump");
         JUMP_COOLDOWN=data.getInt("jump_cooldown");
         THROW_COOLDOWN=data.getInt("throw_cooldown");
         SHOOT_COOLDOWN=data.getInt("shoot_cooldown");
-        SENSOR_HEIGHT=data.getFloat("sensorheight");
-        SENSOR_NAME=data.getString("sensorname");
+        SENSOR_HEIGHT=data.getFloat("sensor_height");
+        SENSOR_NAME=data.getString("sensor_name");
         MAX_THROWING_FORCE=data.getFloat("max_throw_force");
         PENGUIN_WIDTH=p_data.getFloat("width");
         PENGUIN_HEIGHT=p_data.getFloat("height");

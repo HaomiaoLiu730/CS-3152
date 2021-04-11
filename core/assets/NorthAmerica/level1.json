@@ -20,7 +20,7 @@
     "density" : 2.65,
     "restitution": 0.1,
     "width": 2,
-    "height": 2,
+    "height": 2
   },
   "player" : {
     "pos": [16, 5.0],
@@ -29,7 +29,7 @@
     "damping": 10.0,
     "density": 1.0,
     "friction": 0.0,
-    "maxspeed": 4.0,
+    "max_speed": 4.0,
     "restitution": 0,
     "player_jump": 26,
     "jump_cooldown": 30,
@@ -39,12 +39,12 @@
     "punch_time" : 30,
     "punch_cooldown": 0,
     "max_throw_force": 300,
-    "sensorheight" : 0.05,
-    "sensorname": "PlayerGroundSensor",
+    "sensor_height" : 0.05,
+    "sensor_name": "PlayerGroundSensor",
     "vshrink": 0.25,
     "hshrink": 0.25,
     "sshrink" : 0.6,
-    "timecount": 0
+    "time_count": 0
   },
   "penguins": {
     "pos": [16, 5.0],
@@ -54,15 +54,15 @@
     "force": 20,
     "damping": 2,
     "friction": 0,
-    "maxspeed": 3,
-    "sensorheight": 0.05,
-    "sensorname": "PenguinGroundSensor",
+    "max_speed": 3,
+    "sensor_height": 0.05,
+    "sensor_name": "PenguinGroundSensor",
     "vshrink": 0.75,
     "hshrink": 0.75,
     "sshrink": 0.6
   },
   "icicles": {
-    "pos": [32,9.15],
+    "pos": [[32,9.15]],
     "layout":	[
     [-1,1.85,1,1.85,0,-1.85]
   ],
@@ -77,9 +77,9 @@
     "force": 20,
     "damping": 10,
     "friction": 5,
-    "maxspeed": 5,
-    "sensorheight": 0.05,
-    "sensorname": "MonsterGroundSensor",
+    "max_speed": 5,
+    "sensor_height": 0.05,
+    "sensor_name": "MonsterGroundSensor",
     "vshrink": 0.25,
     "hshrink": 0.25,
     "sshrink": 0.6,

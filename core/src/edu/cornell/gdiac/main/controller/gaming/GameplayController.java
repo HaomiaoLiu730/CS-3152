@@ -213,16 +213,18 @@ public class GameplayController extends WorldController implements ContactListen
         }
          JsonValue icicles = constants.get("icicles");
         JsonValue iciclepos=icicles.get("pos");
+        for (int i=0; i < iciclepos.size; i++) { //multiple monsters
 
-        icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
-        icicle.setBodyType(BodyDef.BodyType.StaticBody);
-        icicle.setDensity(icicles.getFloat("density"));
-        icicle.setFriction(icicles.getFloat("friction"));
-        icicle.setRestitution(icicles.getFloat("restitution"));
-        icicle.setDrawScale(scale);
-        icicle.setTexture(icicleStrip);
-        icicle.setName("icicle");
-        addObject(icicle);
+            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));
+            icicle.setBodyType(BodyDef.BodyType.StaticBody);
+            icicle.setDensity(icicles.getFloat("density"));
+            icicle.setFriction(icicles.getFloat("friction"));
+            icicle.setRestitution(icicles.getFloat("restitution"));
+            icicle.setDrawScale(scale);
+            icicle.setTexture(icicleStrip);
+            icicle.setName("icicle");
+            addObject(icicle);
+        }
 
         JsonValue goal = constants.get("goal");
         JsonValue goalpos=goal.get("pos");

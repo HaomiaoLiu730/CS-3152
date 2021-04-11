@@ -143,9 +143,9 @@ public class Monster extends CapsuleObstacle {
         MONSTER_FORCE=data.getFloat("force");
         MONSTER_DAMPING=data.getFloat("damping");
         MONSTER_FRICTION=data.getFloat("friction");
-        MONSTER_MAXSPEED=data.getFloat("maxspeed");
-        SENSOR_HEIGHT=data.getFloat("sensorheight");
-        SENSOR_NAME=data.getString("sensorname");
+        MONSTER_MAXSPEED=data.getFloat("max_speed");
+        SENSOR_HEIGHT=data.getFloat("sensor_height");
+        SENSOR_NAME=data.getString("sensor_name");
         this.data=data;
         setDensity(MONSTER_DENSITY);
         setFriction(MONSTER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
