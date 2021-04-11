@@ -7,20 +7,15 @@
     "num_penguins":2,
     "num_notes": 2,
     "snow": 		[
-      [200,1,200,0,0,0,0,1],
-      [18,4.5,18,0,0,0,0,4.5],
-      [23,3,23,0,18,0,18,3],
-      [36,5,36,0,33.7,0,33.7,5],
-      [96,30,96,11,26,11,26,30]
     ]
   },
   "goal" : {
-    "pos": [48, 1.9],
+    "pos": [],
     "friction": 0.3,
     "density" : 2.65,
     "restitution": 0.1,
     "width": 2,
-    "height": 2
+    "height": 2,
   },
   "player" : {
     "pos": [16, 5.0],
@@ -62,16 +57,14 @@
     "sshrink": 0.6
   },
   "icicles": {
-    "pos": [[32,9.15]],
-    "layout":	[
-    [-1,1.85,1,1.85,0,-1.85]
-  ],
+    "pos": [],
+    "layout":	[],
     "density": 30,
     "friction": 0.5,
     "restitution" : 0.2
-    },
+  },
   "enemy" : {
-    "pos": [[28.3,3.5]],
+    "pos": [],
     "range": 80,
     "density": 1.0,
     "force": 20,
@@ -87,21 +80,19 @@
 
   },
   "notes": {
-    "pos": [[20,4],[28.35,6]],
+    "pos": [],
     "hshrink": 0.8,
     "vshrink": 0.95
   },
   "water": {
-    "pos": [[28.35,1.9]],
-    "layout": [[428,72]],
+    "pos": [],
     "density": 1,
     "force": 20,
     "friction": 5,
     "restitution": 0
   },
   "ice":{
-    "pos": [[28.35,3.2]],
-    "layout": [[216, 43]],
+    "pos": [],
     "restitution" : 0,
     "bar_density": 3,
     "pin_density": 0,

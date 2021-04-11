@@ -235,6 +235,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         createComponents(x,y);
         positionComponents(x,y);
         deleteComponent(x,y);
+        finishLevel(x,y);
         moveCamera();
     }
 
@@ -353,6 +354,12 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                 objects.remove(draggingComponent);
                 draggingComponent = null;
             }
+        }
+    }
+
+    public void finishLevel(float x, float y){
+        if(x > 1160 && x < 1220 && y > 130 && y < 160 && inputController.didTouchUp()){
+            generateJson();
         }
     }
 
@@ -485,6 +492,65 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         canvas.drawText(displayFont, "add", 1180, 660);
         canvas.drawSquare(Color.BLACK, 1160, 600, 60, 30);
         canvas.drawText(displayFont, "delete", 1180, 620);
+        canvas.drawSquare(Color.BLACK, 1160, 560, 60, 30);
+        canvas.drawText(displayFont, "finish", 1180, 580);
+    }
+
+    public void generateJson(){
+        generatePlatformWater();
+    }
+
+    public void generatePlatformWater(){
+        Tile prevTile = Tile.Snow;
+        ArrayList<ArrayList> retSnow = new ArrayList<>();
+        ArrayList<ArrayList> retWaterPos = new ArrayList<>();
+        ArrayList<ArrayList> retWaterLayout = new ArrayList<>();
+        ArrayList<Integer> snow = new ArrayList<>();
+        ArrayList<Float> waterPos = new ArrayList<>();
+        ArrayList<Integer> waterLayout = new ArrayList<>();
+        snow.add(0);
+        snow.add(0);
+        snow.add(0);
+        snow.add(this.height[0]);
+        int waterStart = -1;
+        for(int i = 0; i<tiles.length; i++){
+            if(tiles[i] == Tile.Snow && prevTile == Tile.Snow){
+                snow.add(i+1);
+                snow.add(this.height[i]);
+            }else if(tiles[i] == Tile.Snow && prevTile == Tile.Water){
+                waterPos.add((waterStart+i)/2f);
+                waterPos.add(this.height[i-1]/2f);
+                waterLayout.add(i-waterStart);
+                waterLayout.add(this.height[i-1]);
+                retWaterPos.add((ArrayList) waterPos.clone());
+                retWaterLayout.add((ArrayList) waterLayout.clone());
+                waterPos.clear();
+                waterLayout.clear();
+            }else if(tiles[i] == Tile.Water && prevTile == Tile.Snow){
+                snow.add(i);
+                snow.add(0);
+                retSnow.add((ArrayList) snow.clone());
+                snow.clear();
+                waterStart = i;
+            }
+            prevTile = tiles[i];
+        }
+    }
+
+    public void generateObjects(){
+        ArrayList<float[]> notePos = new ArrayList<>();
+        ArrayList<ArrayList> iceBarPos = new ArrayList<>();
+
+        for(GenericComponent obj: objects){
+            switch (obj.component){
+                case Note:
+                    float[] pos = new float[]{obj.position.x, obj.position.y};
+                    notePos.add(pos);
+                    break;
+                case Icicle:
+
+            }
+        }
     }
 
     @Override

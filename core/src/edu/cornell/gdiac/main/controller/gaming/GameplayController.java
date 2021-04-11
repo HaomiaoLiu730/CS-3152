@@ -211,18 +211,20 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setName(sname+ii);
             addObject(obj);
         }
-         JsonValue icicles = constants.get("icicles");
-        JsonValue iciclepos=icicles.get("pos");
 
-        icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
-        icicle.setBodyType(BodyDef.BodyType.StaticBody);
-        icicle.setDensity(icicles.getFloat("density"));
-        icicle.setFriction(icicles.getFloat("friction"));
-        icicle.setRestitution(icicles.getFloat("restitution"));
-        icicle.setDrawScale(scale);
-        icicle.setTexture(icicleStrip);
-        icicle.setName("icicle");
-        addObject(icicle);
+        JsonValue icicles = constants.get("icicles");
+        JsonValue iciclepos=icicles.get("pos");
+        for(int i = 0; i<iciclepos.size; i++){
+            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).asFloatArray()[0], iciclepos.get(i).asFloatArray()[1]);
+            icicle.setBodyType(BodyDef.BodyType.StaticBody);
+            icicle.setDensity(icicles.getFloat("density"));
+            icicle.setFriction(icicles.getFloat("friction"));
+            icicle.setRestitution(icicles.getFloat("restitution"));
+            icicle.setDrawScale(scale);
+            icicle.setTexture(icicleStrip);
+            icicle.setName("icicle");
+            addObject(icicle);
+        }
 
         JsonValue goal = constants.get("goal");
         JsonValue goalpos=goal.get("pos");
@@ -287,8 +289,9 @@ public class GameplayController extends WorldController implements ContactListen
 
         JsonValue waters = constants.get("water");
         JsonValue waterpos = waters.get("pos");
+        JsonValue waterLayout = waters.get("layout");
         for (int i =0; i< waterpos.size; i++) {
-            water = new Water(waters, waterStrip.getRegionWidth() / scale.x, waterStrip.getRegionHeight() / scale.y, "water",i);
+            water = new Water(waters, waterLayout.get(i).asFloatArray()[0] / scale.x, waterLayout.get(i).asFloatArray()[1]/ scale.y, "water",i);
             water.setActive(false);
             water.setFilmStrip(waterStrip);
             water.setDrawScale(scale);
@@ -296,10 +299,10 @@ public class GameplayController extends WorldController implements ContactListen
         }
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
-        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
-        dheight = iceTextureRegion.getRegionHeight()/scale.y;
+        JsonValue iceLayout = ices.get("layout");
+
         for (int i =0; i< icepos.size; i++) {
-            ice = new Ice(ices, i, dwidth, dheight);
+            ice = new Ice(ices, i, iceLayout.get(i).asFloatArray()[0] / scale.x, iceLayout.get(i).asFloatArray()[1]/ scale.y);
             ice.setDrawScale(scale);
             ice.setTexture(iceTextureRegion);
             ice.setRestitution(ices.getFloat("restitution"));
