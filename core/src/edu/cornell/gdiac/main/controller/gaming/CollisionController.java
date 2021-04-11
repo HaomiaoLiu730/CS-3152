@@ -89,17 +89,7 @@ public class CollisionController {
         }
         return numNotes;
     }
-
-    public int processCollision(Note note, FilmStrip noteCollectedFilmStrip, int numNotes, Player avatar){
-        if (!note.isCollected()){
-            if (avatar.getPosition().dst(note.getPosition()) <= 1){
-                note.setFilmStrip(noteCollectedFilmStrip);
-                note.setCollected(true);
-                numNotes ++;
-            }
-        }
-        return numNotes;
-    }
+    
 
     public void processCollision(List<Penguin> penguins, PolygonObstacle icicle, PooledList<Obstacle> objects){
         for (Penguin p: penguins){
