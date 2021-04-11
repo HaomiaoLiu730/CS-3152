@@ -70,6 +70,37 @@ public class CollisionController {
         }
     }
 
+    public int processCollision(List<Penguin> penguins, Note note, FilmStrip noteCollectedFilmStrip, int numNotes,
+                                 PooledList<Obstacle> objects, int numPenguins, Player avatar){
+        if (!note.isCollected()){
+            for (Penguin p: penguins){
+                if (p.getPosition().dst(note.getPosition()) <= 1){
+                    note.setFilmStrip(noteCollectedFilmStrip);
+                    note.setCollected(true);
+                    numNotes ++;
+                    objects.remove(p);
+                    p.setActive(false);
+                    p.setAwake(false);
+                    avatar.getPenguins().remove(p.getIndex());
+                    if (!p.isThrowOut())avatar.setNumPenguins(numPenguins - 1);
+                    avatar.resetPenguinIndex(avatar.getPenguins());
+                }
+            }
+        }
+        return numNotes;
+    }
+
+    public int processCollision(Note note, FilmStrip noteCollectedFilmStrip, int numNotes, Player avatar){
+        if (!note.isCollected()){
+            if (avatar.getPosition().dst(note.getPosition()) <= 1){
+                note.setFilmStrip(noteCollectedFilmStrip);
+                note.setCollected(true);
+                numNotes ++;
+            }
+        }
+        return numNotes;
+    }
+
     public void processCollision(List<Penguin> penguins, PolygonObstacle icicle, PooledList<Obstacle> objects){
         for (Penguin p: penguins){
             if (p.getPosition().dst(icicle.getPosition()) < 2){

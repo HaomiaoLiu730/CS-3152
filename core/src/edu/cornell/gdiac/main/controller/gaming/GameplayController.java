@@ -381,6 +381,13 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController.processCollision(monster, icicle, objects);
         collisionController.processCollision(avatar.getPenguins(), icicle, objects);
         collisionController.processCollision(water, avatar);
+        for (Object o: objects){
+            if (o instanceof Note){
+                notesCollected = collisionController.processCollision(avatar.getPenguins(), (Note)o, noteCollectedStrip, notesCollected,
+                        objects, avatar.getNumPenguins(), avatar);
+                notesCollected = collisionController.processCollision((Note)o, noteCollectedStrip, notesCollected, avatar);
+            }
+        }
     }
 
     public void updateCamera(){
@@ -514,32 +521,6 @@ public class GameplayController extends WorldController implements ContactListen
                 bd2.setFixedRotation(false);
             }
 
-            // check for note collection
-            if (bd1 instanceof Note && (bd2 instanceof Penguin || bd2 == avatar)){
-                if(!((Note) bd1).isCollected()){
-                    ((Note) bd1).setFilmStrip(noteCollectedStrip);
-                    ((Note) bd1).setCollected(true);
-                    notesCollected++;
-                    if (bd2 instanceof Penguin){
-                        objects.remove(bd2);
-                        avatar.getPenguins().remove(((Penguin) bd2).getIndex());
-                        avatar.resetPenguinIndex(avatar.getPenguins());
-                        if (!((Penguin) bd2).isThrowOut())avatar.setNumPenguins(avatar.getNumPenguins() - 1);
-                    }
-                }
-            }else if(bd2 instanceof Note && (bd1 instanceof Penguin || bd1 == avatar)){
-                if(!((Note) bd2).isCollected()){
-                    ((Note) bd2).setFilmStrip(noteCollectedStrip);
-                    ((Note) bd2).setCollected(true);
-                    notesCollected++;
-                    if (bd1 instanceof Penguin){
-                        objects.remove(bd1);
-                        avatar.getPenguins().remove(((Penguin) bd1).getIndex());
-                        avatar.resetPenguinIndex(avatar.getPenguins());
-                        if (!((Penguin) bd1).isThrowOut())avatar.setNumPenguins(avatar.getNumPenguins() - 1);
-                    }
-                }
-            }
 
             // Check for win condition
             if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||
