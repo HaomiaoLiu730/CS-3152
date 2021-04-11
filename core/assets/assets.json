@@ -50,6 +50,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "monsterScaled": {
+      "file": "images/shared/monsterScaled.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "monsterAttacking": {
       "file": "images/shared/monsterAttacking.png",
       "minFilter": "linear",

@@ -34,6 +34,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private static final int WIDTH = 320;
     private static final int HEIGHT = 18;
 
+    private static final float MONSTER_X = 460;
     private static final float ICICLE_X = 340;
     private static final float ICEBAR_X = 80;
     private static final float NOTE_X = 20;
@@ -120,7 +121,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private enum Component{
         Note,
         IceBar,
-        Icicle
+        Icicle,
+        Monster,
     }
 
     public LevelEditorController(GameCanvas canvas){
@@ -134,7 +136,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         avatarStrip = new FilmStrip(internal.getEntry("avatarWalking", Texture.class), 1, 18);
         penguinWalkingStrip = new FilmStrip(internal.getEntry("penguinWalking", Texture.class), 1, 29);
         penguinRollingStrip = new FilmStrip(internal.getEntry("penguinRolling", Texture.class), 1, 1);
-        monsterStrip = new FilmStrip(internal.getEntry("monster", Texture.class), 1, 1);
+        monsterStrip = new FilmStrip(internal.getEntry("monsterScaled", Texture.class), 1, 1);
         attackStrip = new FilmStrip(internal.getEntry("monsterAttacking", Texture.class), 1, 5);
         exitStrip = new FilmStrip(internal.getEntry("exit", Texture.class), 1, 1);
         arrowTexture = internal.getEntry("arrow", Texture.class);
@@ -159,6 +161,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
         TEXTURE_COMPONENTS.add(Component.Note);
         TEXTURE_COMPONENTS.add(Component.IceBar);
+        TEXTURE_COMPONENTS.add(Component.Monster);
         POLYGON_COMPONENTS.add(Component.Icicle);
     }
 
@@ -282,8 +285,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         }
         if(isDragging && !Gdx.input.isTouched()){
             isDragging = false;
-            float posX = ((int)draggingObj.position.x/4)*4;
-            float posY = ((int)(draggingObj.position.y)/4)*4;
+            float posX = ((int)draggingObj.position.x/8)*8;
+            float posY = ((int)(draggingObj.position.y)/8)*8;
             draggingObj.position.set(posX,posY);
         }
     }
@@ -334,6 +337,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                         break;
                     case Icicle:
                         objects.add(new GenericComponent(currentPolygonRegion, Component.Icicle));
+                        break;
+                    case Monster:
+                        objects.add(new GenericComponent(currentStrip, Component.Monster));
                         break;
                 }
                 currentComponent = null;
@@ -391,6 +397,11 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                 currentPolygonRegion = new PolygonRegion(icicleStrip, icicleRegion.getVertices().clone(), icicleRegion.getTriangles());
                 currentWidth = 80;
                 currentHeight = 80;
+            }else if(x - MONSTER_X <= monsterStrip.getRegionWidth()){
+                currentComponent = Component.Monster;
+                currentStrip = monsterStrip.copy();
+                currentWidth = monsterStrip.getRegionWidth();
+                currentHeight = monsterStrip.getRegionHeight();
             }
         }
     }
@@ -462,6 +473,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         canvas.drawFixed(noteLeftStrip,NOTE_X,640);
         canvas.drawFixed(iceStrip,ICEBAR_X,640);
         canvas.drawFixed(icicleRegion,ICICLE_X,640);
+        canvas.drawFixed(monsterStrip,MONSTER_X,640);
         canvas.drawText(displayFont, "width", 1040, 660);
         canvas.drawText(displayFont, "height", 1100, 660);
         canvas.drawCircle(Color.BLACK, 1060, 680, 6);
