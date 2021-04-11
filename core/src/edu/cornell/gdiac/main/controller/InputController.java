@@ -80,7 +80,9 @@ public class InputController {
     private boolean touchUp;
 
     private boolean throwPengiun = false;
-    private boolean pressed = false;
+    private boolean levelEditor = false;
+    private boolean spacePressed = false;
+    private boolean ePressed = false;
     private boolean jump = false;
     private boolean punch = false;
 
@@ -209,8 +211,17 @@ public class InputController {
      *
      * @return whether the pengiun is thrown
      */
-    public boolean didThrowPengiun() {
+    public boolean didPressSpace() {
         return throwPengiun;
+    }
+
+    /**
+     * Returns whether the pengiun is thrown
+     *
+     * @return whether the pengiun is thrown
+     */
+    public boolean didPressE() {
+        return levelEditor;
     }
 
     /**
@@ -301,13 +312,37 @@ public class InputController {
      * are more appropriate for menus and buttons (like the loading screen).
      */
     public void readInput() {
-        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE) && pressed) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE) && spacePressed) {
             throwPengiun = true;
-            pressed = false;
+            spacePressed = false;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-            pressed = true;
+            spacePressed = true;
         }
+
+        if (!Gdx.input.isKeyPressed(Input.Keys.E) && ePressed) {
+            levelEditor = true;
+            ePressed = false;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.E)){
+            ePressed = true;
+        }
+        prevIsTouching = isTouching;
+        isTouching = Gdx.input.isTouched();
+        if(prevIsTouching && !isTouching){
+            touchUp = true;
+        }else{
+            touchUp = false;
+        }
+        clickX = Gdx.input.getX();
+        clickY = Gdx.input.getY();
+    }
+
+    public boolean didTouchUp(){
+        return touchUp;
+    }
+    public boolean getPrevIsTouching(){
+        return prevIsTouching;
     }
 
 
@@ -357,12 +392,12 @@ public class InputController {
         }
 
         // Shooting
-        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE) && pressed) {
+        if (!Gdx.input.isKeyPressed(Input.Keys.SPACE) && spacePressed) {
             throwPengiun = true;
-            pressed = false;
+            spacePressed = false;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-            pressed = true;
+            spacePressed = true;
         }
 
         // Punching

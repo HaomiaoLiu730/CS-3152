@@ -3,6 +3,7 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.LevelEditorController;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.main.controller.gaming.GameplayController;
 import edu.cornell.gdiac.main.controller.gaming.MenuController;
@@ -90,15 +91,21 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void updateScreen(Screen screen, int exitCode) {
 		if (screen instanceof OnboardingController) {
-			for(int ii = 0; ii < controllers.length; ii++) {
-				controllers[ii].loadContent(directory);
-				controllers[ii].setScreenListener(this);
-				controllers[ii].setCanvas(canvas);
+			if(exitCode == 0){
+				for(int ii = 0; ii < controllers.length; ii++) {
+					controllers[ii].loadContent(directory);
+					controllers[ii].setScreenListener(this);
+					controllers[ii].setCanvas(canvas);
+				}
+				loading.dispose();
+				loading = null;
+				menuController.setScreenListener(this);
+				setScreen(menuController);
+			}else if(exitCode == 1){
+				LevelEditorController levelEditor = new LevelEditorController(canvas);
+				levelEditor.setScreenListener(this);
+				setScreen(levelEditor);
 			}
-			loading.dispose();
-			loading = null;
-			menuController.setScreenListener(this);
-			setScreen(menuController);
 		} else if(screen instanceof MenuController){
 			current = exitCode;
 			menuController.dispose();

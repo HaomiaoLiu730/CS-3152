@@ -8,7 +8,6 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
@@ -97,8 +96,11 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
 
     public void update(float delta) {
         inputController.readInput();
-        if(inputController.didThrowPengiun()){
-            isReady = true;
+        if(inputController.didPressSpace()){
+            listener.updateScreen(this, 0);
+        }
+        if(inputController.didPressE()){
+            listener.updateScreen(this, 1);
         }
     }
 
@@ -125,6 +127,7 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         }else{
             canvas.drawOverlay(front, true);
             canvas.drawText(letterFont, "Press Space to Start", 485, 250);
+            canvas.drawText(letterFont, "Press E to for level editor", 485, 100);
         }
         canvas.end();
     }
@@ -145,11 +148,6 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         if (active) {
             update(delta);
             draw();
-
-            // We are are ready, notify our listener
-            if (isReady() && listener != null) {
-                listener.updateScreen(this, 0);
-            }
         }
     }
 
