@@ -341,7 +341,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-
         updateCamera();
         updatePlayer();
 
