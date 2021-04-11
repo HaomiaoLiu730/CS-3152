@@ -385,7 +385,6 @@ public class GameplayController extends WorldController implements ContactListen
             if (o instanceof Note){
                 notesCollected = collisionController.processCollision(avatar.getPenguins(), (Note)o, noteCollectedStrip, notesCollected,
                         objects, avatar.getNumPenguins(), avatar);
-                notesCollected = collisionController.processCollision((Note)o, noteCollectedStrip, notesCollected, avatar);
             }
         }
     }
