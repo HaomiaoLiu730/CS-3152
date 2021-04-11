@@ -521,18 +521,30 @@ public class GameplayController extends WorldController implements ContactListen
                     ((Note) bd1).setFilmStrip(noteCollectedStrip);
                     ((Note) bd1).setCollected(true);
                     notesCollected++;
+                    if (bd2 instanceof Penguin){
+                        objects.remove(bd2);
+                        avatar.getPenguins().remove(((Penguin) bd2).getIndex());
+                        avatar.resetPenguinIndex(avatar.getPenguins());
+                        if (!((Penguin) bd2).isThrowOut())avatar.setNumPenguins(avatar.getNumPenguins() - 1);
+                    }
                 }
             }else if(bd2 instanceof Note && (bd1 instanceof Penguin || bd1 == avatar)){
                 if(!((Note) bd2).isCollected()){
                     ((Note) bd2).setFilmStrip(noteCollectedStrip);
                     ((Note) bd2).setCollected(true);
                     notesCollected++;
+                    if (bd1 instanceof Penguin){
+                        objects.remove(bd1);
+                        avatar.getPenguins().remove(((Penguin) bd1).getIndex());
+                        avatar.resetPenguinIndex(avatar.getPenguins());
+                        if (!((Penguin) bd1).isThrowOut())avatar.setNumPenguins(avatar.getNumPenguins() - 1);
+                    }
                 }
             }
 
             // Check for win condition
-            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == num_penguins && notesCollected == num_notes) ||
-                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == num_penguins && notesCollected == num_notes)) {
+            if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||
+                    (bd1 == avatar && bd2.getName() == "exit" && notesCollected == num_notes)) {
                 setComplete(true);
             }
 
