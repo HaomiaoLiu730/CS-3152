@@ -105,6 +105,7 @@ public class CollisionController {
         for (Penguin p: penguins){
             if (p.getPosition().dst(icicle.getPosition()) < 2){
                 icicle.setBodyType(BodyDef.BodyType.DynamicBody);
+                icicle.setFixedRotation(true);
             }
         }
     }
