@@ -78,29 +78,15 @@ public class CollisionController {
             if (!note.isCollected()){
                 for (Penguin p: penguins){
                     if (p.getPosition().dst(note.getPosition()) <= 1) {
-                        int last_index;
-                        if (p.getIndex() == 0 && (!p.isThrowOut())){
-                            note.setFilmStrip(noteCollectedFilmStrip);
-                            note.setCollected(true);
-                            numNotes++;
-                            last_index = numPenguins - 1;
-                            objects.remove(penguins.get(last_index));
-                            penguins.get(last_index).setActive(false);
-                            penguins.get(last_index).setAwake(false);
-                            avatar.getPenguins().remove(last_index);
+                        if(!p.isThrowOut()){
+                            Penguin temp = avatar.deleteOnePenguin();
+                            objects.remove(temp);
                             avatar.setNumPenguins(numPenguins - 1);
-                        } else if (p.isThrowOut()){
-                            note.setFilmStrip(noteCollectedFilmStrip);
-                            note.setCollected(true);
-                            numNotes++;
-                            last_index = numPenguins ;
-                            objects.remove(penguins.get(last_index));
-                            penguins.get(last_index).setActive(false);
-                            penguins.get(last_index).setAwake(false);
-                            avatar.getPenguins().remove(last_index);
                         }
-
-                        //avatar.resetPenguinIndex(avatar.getPenguins());
+                        note.setFilmStrip(noteCollectedFilmStrip);
+                        note.setCollected(true);
+                        numNotes++;
+                        break;
                     }
                 }
             }
