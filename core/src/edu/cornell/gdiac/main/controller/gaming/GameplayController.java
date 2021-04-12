@@ -306,17 +306,54 @@ public class GameplayController extends WorldController implements ContactListen
             water.setDrawScale(scale);
             addObject(water);
         }
+
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
-        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
-        dheight = iceTextureRegion.getRegionHeight()/scale.y;
         for (int i =0; i< icepos.size; i++) {
-            ice = new Ice(ices, i, dwidth, dheight);
+            int w = ices.get("layout").get(i).getInt(0);
+            int h = ices.get("layout").get(i).getInt(1);
+            ice = new Ice(ices, i, w/scale.x, h/scale.y);
+            iceTextureRegion.setRegionWidth(w);
+            iceTextureRegion.setRegionHeight(h);
             ice.setDrawScale(scale);
             ice.setTexture(iceTextureRegion);
             ice.setRestitution(ices.getFloat("restitution"));
             addObject(ice);
         }
+
+
+//        JsonValue fices = constants.get("floatingIce");
+//        JsonValue ficepos = fices.get("pos");
+//        FloatingIce fIce;
+//        for (int i =0; i< ficepos.size; i++) {
+//        int w = fices.get("layout").get(i).getInt(0);
+//        int h = fices.get("layout").get(i).getInt(1);
+//            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
+//            iceTextureRegion.setRegionWidth(w);
+//            iceTextureRegion.setRegionHeight(h);
+//            fIce.setDrawScale(scale);
+//            fIce.setTexture(iceTextureRegion);
+//            fIce.setRestitution(fices.getFloat("restitution"));
+//            addObject(fIce);
+//        }
+//
+//
+//        JsonValue mices = constants.get("movingIce");
+//        JsonValue micepos = mices.get("pos");
+//        MovingIce mIce;
+//        for (int i =0; i< micepos.size; i++) {
+//        int w = mices.get("layout").get(i).getInt(0);
+//        int h = mices.get("layout").get(i).getInt(1);
+//            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
+//            iceTextureRegion.setRegionWidth(w);
+//            iceTextureRegion.setRegionHeight(h);
+//            mIce.setDrawScale(scale);
+//            mIce.setTexture(iceTextureRegion);
+//            mIce.setRestitution(mices.getFloat("restitution"));
+//            addObject(mIce);
+//        }
+
+
     }
 
     /**
@@ -522,10 +559,10 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             // set the ice bar tilt only for avatar
-            if (bd1.getName()=="iceBar" && bd2 == avatar) {
+            if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") && bd2 == avatar) {
                 bd1.setFixedRotation(false);
             }
-            if (bd1 == avatar && bd2.getName()=="iceBar") {
+            if (bd1 == avatar && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
 
@@ -534,6 +571,36 @@ public class GameplayController extends WorldController implements ContactListen
             if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||
                     (bd1 == avatar && bd2.getName() == "exit" && notesCollected == num_notes)) {
                 setComplete(true);
+            }
+
+            if(bd1.getName() == "floatingIceBar"){
+                ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
+                if(bd2.getName() == "icicle"){
+                    float force = bd2.getMass()/2000;
+                    if (bd2.getX()<bd1.getX()){
+                        force = -force;
+                    }
+                    ((FloatingIce)master).hitByIcicle(force);
+                }
+                else if (!(bd1 instanceof Penguin)){
+                    ((FloatingIce)master).resetMomentum();
+                }
+
+            }
+
+            if(bd2.getName() == "floatingIceBar"){
+                ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
+                if(bd1.getName() == "icicle"){
+                    float force = bd1.getMass()/2000;
+                    if (bd1.getX()<bd2.getX()){
+                        force = -force;
+                    }
+                    ((FloatingIce)master).hitByIcicle(force);
+                }
+                else if (!(bd1 instanceof Penguin)){
+                    ((FloatingIce)master).resetMomentum();
+                }
+
             }
 
         } catch (Exception e) {
