@@ -582,7 +582,6 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     public void writeToFile(String filename){
         Json json = new Json();
         String text = json.toJson(this.levelJson);
-        System.out.println(json.prettyPrint(text));
         FileHandle file = Gdx.files.local(filename);
         file.writeString(text, false);
     }

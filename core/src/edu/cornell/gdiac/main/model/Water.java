@@ -50,8 +50,6 @@ public class Water extends CapsuleObstacle{
         WATER_FRICTION=data.getFloat("friction");
         this.data=data;
 
-        this.filmStrip.setRegionHeight((int)height);
-        this.filmStrip.setRegionWidth((int)width);
         setDensity(WATER_DENSITY);
         setFriction(WATER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(data.getFloat("restitution"));
