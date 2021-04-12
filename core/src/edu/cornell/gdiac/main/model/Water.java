@@ -105,6 +105,8 @@ public class Water extends CapsuleObstacle{
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(filmStrip,new Color(255,255,255,0.5f),origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),width/6.22f, height/6f);
+        filmStrip.setRegionWidth((int) (width * drawScale.x));
+        filmStrip.setRegionHeight((int) (height * drawScale.y));
+        canvas.draw(filmStrip,new Color(255,255,255,0.5f),origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1 * drawScale.x/width , 1*drawScale.y/height);
     }
 }

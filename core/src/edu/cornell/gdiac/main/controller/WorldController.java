@@ -167,7 +167,10 @@ public abstract class WorldController implements Screen {
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
         snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
         iceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
-        waterStrip = new FilmStrip(directory.getEntry("waves", Texture.class), 1, 4);
+        Texture waterTexture = directory.getEntry("waves", Texture.class);
+        waterTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge);
+
+        waterStrip = new FilmStrip(waterTexture, 1, 4);
 
     }
 
