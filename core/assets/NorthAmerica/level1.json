@@ -92,7 +92,8 @@
     "vshrink": 0.95
   },
   "water": {
-    "pos": [[28.35,1.9]],
+    "pos": [[28.35,2]],
+    "layout": [[20,1]],
     "density": 1,
     "force": 20,
     "friction": 5,

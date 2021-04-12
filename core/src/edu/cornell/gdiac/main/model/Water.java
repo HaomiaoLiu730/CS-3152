@@ -88,7 +88,7 @@ public class Water extends CapsuleObstacle{
     public void update(float dt) {
         // Apply cooldowns
         timeCounter += dt;
-        if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
+        if(timeCounter >= 0.1) {
             timeCounter = 0;
             filmStrip.nextFrame();
         }
@@ -100,6 +100,6 @@ public class Water extends CapsuleObstacle{
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(filmStrip,new Color(255,255,255,0.5f),origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1f, 1f);
+        canvas.draw(filmStrip,new Color(255,255,255,0.5f),origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1.72f, 0.3f);
     }
 }

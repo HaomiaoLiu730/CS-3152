@@ -211,7 +211,7 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setName(sname+ii);
             addObject(obj);
         }
-         JsonValue icicles = constants.get("icicles");
+        JsonValue icicles = constants.get("icicles");
         JsonValue iciclepos=icicles.get("pos");
         for (int i=0; i < iciclepos.size; i++) { //multiple monsters
 
@@ -288,13 +288,14 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         JsonValue waters = constants.get("water");
-        JsonValue waterpos = waters.get("pos");
-        for (int i =0; i< waterpos.size; i++) {
-            water = new Water(waters, waterStrip.getRegionWidth() / scale.x, waterStrip.getRegionHeight() / scale.y, "water",i);
+        JsonValue water_layout = waters.get("layout");
+        for (int i =0; i< water_layout.size; i++) {
+            water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
             water.setActive(false);
             water.setFilmStrip(waterStrip);
             water.setDrawScale(scale);
             addObject(water);
+
         }
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
