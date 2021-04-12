@@ -586,21 +586,16 @@ public class Player extends CapsuleObstacle {
         if (getMovement() == 0f) {
             forceCache.set(-getDamping()*getVX(),0);
             body.applyForce(forceCache,getPosition(),true);
-        }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
+            setVX(Math.signum(getMovement())*getMaxSpeed());
         }
 
         // Jump!
-
         if (isJumping()) {
-            forceCache.set(0, PLAYER_JUMP);
-            body.applyLinearImpulse(forceCache,getPosition(),true);
+            setVY(PLAYER_JUMP);
+        } else if (!isGrounded) {
+            forceCache.set(0, -9.8f);
+            body.applyForce(forceCache,getPosition(),true);
         }
     }
 

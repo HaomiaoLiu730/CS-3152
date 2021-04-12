@@ -31,7 +31,7 @@
     "friction": 0.0,
     "maxspeed": 4.0,
     "restitution": 0,
-    "player_jump": 26,
+    "player_jump": 7,
     "jump_cooldown": 30,
     "throw_cooldown": 30,
     "shoot_cooldown": 40,
