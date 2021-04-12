@@ -387,24 +387,11 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Monster moving and attacking
-        ArrayList<Integer> diedMon = new ArrayList<>();
-        for (int i = 0; i < monsters.size(); i++) {
-            collisionController.processCollision(monsters.get(i), avatar, objects);
-            collisionController.processCollision(monsters.get(i), attackStrip, avatar.getPenguins());
-            collisionController.processCollision(monsters.get(i), icicle, objects);
-            if (!monsters.get(i).isActive()) {
-                diedMon.add(i);
-            }
-        }
+        collisionController.processCollision(monsters, avatar, objects);
+        collisionController.processCollision(monsters, attackStrip, avatar.getPenguins());
+        collisionController.processCollision(monsters, icicle, objects);
         collisionController.processCollision(avatar.getPenguins(), icicle, objects);
         collisionController.processCollision(water, avatar);
-
-        // Update monster list
-        int offset = 0;
-        for (int i = 0; i < diedMon.size(); i++) {
-            monsters.remove(diedMon.get(i)+offset);
-            offset -= 1;
-        }
     }
 
     public void updateCamera(){

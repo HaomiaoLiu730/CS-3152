@@ -7,6 +7,7 @@ import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CollisionController {
@@ -30,43 +31,53 @@ public class CollisionController {
     }
 
 
-    public void processCollision(Monster monster, Player avatar, PooledList<Obstacle> objects ){
+    public void processCollision(ArrayList<Monster> monsters, Player avatar, PooledList<Obstacle> objects ){
         // Monster moving and attacking
-        distMonsterAvatar = avatar.getPosition().dst(monster.getPosition());
-        if (avatar.isPunching()) {
-            if (distMonsterAvatar < 3) {
-                monster.setActive(false);
-                monster.setAwake(false);
-                objects.remove(monster);
-            }
-        }
-    }
-
-    public void processCollision(Monster monster, FilmStrip attackStrip, List<Penguin> penguins){
-        if (monster.isActive()) {
-            boolean moveMon = true;
-            for(Penguin p: penguins){
-                float dist2 = p.getPosition().dst(monster.getPosition());
-                if (dist2 < 3 && dist2 < distMonsterAvatar) {
-                    monster.setFilmStrip(attackStrip);
-                    if (p.getPosition().x < monster.getPosition().x) {
-                        monster.setFacingRight(-1);
+        for (int i = 0; i < monsters.size(); i++) {
+            if (monsters.get(i).isActive()) {
+                distMonsterAvatar = avatar.getPosition().dst(monsters.get(i).getPosition());
+                if (avatar.isPunching()) {
+                    if (distMonsterAvatar < 3) {
+                        monsters.get(i).setActive(false);
+                        monsters.get(i).setAwake(false);
+                        objects.remove(monsters.get(i));
                     }
-                    moveMon = false;
-                    GameplayController.resetCountDown -= 1;
                 }
             }
-            if (moveMon) {
-                monster.applyForce();
+        }
+    }
+
+    public void processCollision(ArrayList<Monster> monsters, FilmStrip attackStrip, List<Penguin> penguins){
+        for (int i = 0; i < monsters.size(); i++) {
+            if (monsters.get(i).isActive()) {
+                boolean moveMon = true;
+                for(Penguin p: penguins){
+                    float dist2 = p.getPosition().dst(monsters.get(i).getPosition());
+                    if (dist2 < 3 && dist2 < distMonsterAvatar) {
+                        monsters.get(i).setFilmStrip(attackStrip);
+                        if (p.getPosition().x < monsters.get(i).getPosition().x) {
+                            monsters.get(i).setFacingRight(-1);
+                        }
+                        moveMon = false;
+                        GameplayController.resetCountDown -= 1;
+                    }
+                }
+                if (moveMon) {
+                    monsters.get(i).applyForce();
+                }
             }
         }
     }
 
-    public void processCollision(Monster monster, PolygonObstacle icicle, PooledList<Obstacle> objects){
-        if (icicle.getPosition().dst(monster.getPosition()) <= 1){
-            objects.remove(monster);
-            monster.setActive(false);
-            monster.setAwake(false);
+    public void processCollision(ArrayList<Monster> monsters, PolygonObstacle icicle, PooledList<Obstacle> objects){
+        for (int i = 0; i < monsters.size(); i++) {
+            if (monsters.get(i).isActive()) {
+                if (icicle.getPosition().dst(monsters.get(i).getPosition()) <= 1){
+                    objects.remove(monsters.get(i));
+                    monsters.get(i).setActive(false);
+                    monsters.get(i).setAwake(false);
+                }
+            }
         }
     }
 
