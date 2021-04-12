@@ -70,6 +70,7 @@
     "friction": 0.5,
     "restitution" : 0.2
     },
+
   "enemy" : {
     "pos": [[28.3,3.5]],
     "range": 80,

@@ -6,12 +6,14 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.*;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -20,6 +22,7 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class LevelEditorController implements Screen, InputProcessor, ControllerListener, Loading {
 
@@ -110,6 +113,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private Vector2 posCache3 = new Vector2();
     private Vector2 posCache4 = new Vector2();
 
+    private LevelJson levelJson = new LevelJson();
+
     private float cameraOffset;
 
     private enum Tile{
@@ -163,6 +168,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         TEXTURE_COMPONENTS.add(Component.IceBar);
         TEXTURE_COMPONENTS.add(Component.Monster);
         POLYGON_COMPONENTS.add(Component.Icicle);
+
     }
 
 
@@ -498,43 +504,83 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     public void generateJson(){
         generatePlatformWater();
+        writeToFile("sampleLevel.json");
     }
 
     public void generatePlatformWater(){
         Tile prevTile = Tile.Snow;
-        ArrayList<ArrayList> retSnow = new ArrayList<>();
-        ArrayList<ArrayList> retWaterPos = new ArrayList<>();
-        ArrayList<ArrayList> retWaterLayout = new ArrayList<>();
-        ArrayList<Integer> snow = new ArrayList<>();
+        ArrayList<ArrayList<Float>> retSnow = new ArrayList<>();
+        ArrayList<ArrayList<Float>> retWaterPos = new ArrayList<>();
+        ArrayList<ArrayList<Float>> retWaterLayout = new ArrayList<>();
+        ArrayList<Float> snow = new ArrayList<>();
         ArrayList<Float> waterPos = new ArrayList<>();
-        ArrayList<Integer> waterLayout = new ArrayList<>();
-        snow.add(0);
-        snow.add(0);
-        snow.add(0);
-        snow.add(this.height[0]);
+        ArrayList<Float> waterLayout = new ArrayList<>();
+        snow.add(0f);
+        snow.add(0f);
+        snow.add(0f);
+        snow.add(this.height[0]+1f);
         int waterStart = -1;
         for(int i = 0; i<tiles.length; i++){
             if(tiles[i] == Tile.Snow && prevTile == Tile.Snow){
-                snow.add(i+1);
-                snow.add(this.height[i]);
+                if(snow.get(snow.size()-1) != this.height[i]+1){
+                    snow.add((float)i);
+                    snow.add(this.height[i]+1f);
+                }
+                snow.add(i+1f);
+                snow.add(this.height[i]+1f);
             }else if(tiles[i] == Tile.Snow && prevTile == Tile.Water){
                 waterPos.add((waterStart+i)/2f);
-                waterPos.add(this.height[i-1]/2f);
-                waterLayout.add(i-waterStart);
-                waterLayout.add(this.height[i-1]);
+                waterPos.add((this.height[i-1]+1)/2f);
+                waterLayout.add((float)i-waterStart);
+                waterLayout.add(this.height[i-1]+1f);
                 retWaterPos.add((ArrayList) waterPos.clone());
                 retWaterLayout.add((ArrayList) waterLayout.clone());
                 waterPos.clear();
                 waterLayout.clear();
+                snow.add((float)i);
+                snow.add(0f);
+                snow.add((float)i);
+                snow.add(this.height[i]+1f);
+                snow.add(i+1f);
+                snow.add(this.height[i]+1f);
             }else if(tiles[i] == Tile.Water && prevTile == Tile.Snow){
-                snow.add(i);
-                snow.add(0);
+                snow.add((float)i);
+                snow.add(0f);
                 retSnow.add((ArrayList) snow.clone());
                 snow.clear();
                 waterStart = i;
+            }else if(tiles[i] == Tile.Air){
+                snow.add((float)i);
+                snow.add(0f);
+                retSnow.add((ArrayList) snow.clone());
+                break;
             }
             prevTile = tiles[i];
         }
+        this.levelJson.defaults.snow = arrayListToArr(retSnow);
+        this.levelJson.water.pos = arrayListToArr(retWaterPos);
+        this.levelJson.water.layout = arrayListToArr(retWaterLayout);
+    }
+
+    public float[][] arrayListToArr(ArrayList<ArrayList<Float>> arr){
+        float[][] ret = new float[arr.size()][];
+        for (int i = 0; i < arr.size(); i++) {
+            List<Float> innerList = arr.get(i);
+            float[] temp = new float[innerList.size()];
+            for (int k = 0; k < temp.length; k++) {
+                temp[k] = innerList.get(k);
+            }
+            ret[i] = temp;
+        }
+        return ret;
+    }
+
+    public void writeToFile(String filename){
+        Json json = new Json();
+        String text = json.toJson(this.levelJson);
+        System.out.println(json.prettyPrint(text));
+        FileHandle file = Gdx.files.local(filename);
+        file.writeString(text, false);
     }
 
     public void generateObjects(){
@@ -542,13 +588,14 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         ArrayList<ArrayList> iceBarPos = new ArrayList<>();
 
         for(GenericComponent obj: objects){
+            float[] pos = new float[2];
+            pos[0] = obj.position.x;
+            pos[1] = obj.position.y;
             switch (obj.component){
                 case Note:
-                    float[] pos = new float[]{obj.position.x, obj.position.y};
-                    notePos.add(pos);
+
                     break;
                 case Icicle:
-
             }
         }
     }
@@ -604,7 +651,6 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         return false;
     }
 
-
     protected class GenericComponent{
         public Vector2 position;
         public FilmStrip filmStrip;
@@ -621,5 +667,127 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             this.position = new Vector2(target_x, TARGET_Y);
             this.component = component;
         }
+    }
+
+    private class LevelJson{
+        public Defaults defaults = new Defaults();
+        public Goal goal = new Goal();
+        public Player player = new Player();
+        public Penguin penguins = new Penguin();
+        public Icicle icicles = new Icicle();
+        public Enemy enemy = new Enemy();
+        public Note notes = new Note();
+        public Water water = new Water();
+        public Ice ice = new Ice();
+    }
+
+    private class Defaults{
+        public float gravity = -9.8f;
+        public float friction = 0.3f;
+        public float density = 2.65f;
+        public float restitution = 0.1f;
+        public int num_penguins = 2;
+        public int num_notes= 2;
+        public float[][] snow = new float[][]{};
+    }
+
+    private class Goal{
+        public float[] pos = new float[]{48f, 1.9f};
+        public float friction = 0.3f;
+        public float density = 2.65f;
+        public float restitution = 0.1f;
+        public float width = 2f;
+        public float height = 2f;
+    }
+
+    private class Player{
+        public float[] pos = new float[]{16f,5f};
+        public float[] shrink = new float[]{0.95f, 0.7f};
+        public float force = 12f;
+        public float damping = 10.0f;
+        public float density = 1f;
+        public float friction = 0.0f;
+        public float maxspeed = 4f;
+        public float restitution = 0f;
+        public float player_jump = 26f;
+        public float jump_cooldown = 30f;
+        public float throw_cooldown = 30f;
+        public float shoot_cooldown = 40f;
+        public float punch_cool = 100f;
+        public float punch_time = 30;
+        public float punch_cooldown = 0f;
+        public float max_throw_force = 300;
+        public float sensorheight = 0.05f;
+        public String sensorname = "PlayerGroundSensor";
+        public float vshrink = 0.25f;
+        public float hshrink = 0.25f;
+        public float sshrink = 0.6f;
+        public float timecount = 0f;
+    }
+
+    private class Penguin{
+        public float[] pos = new float[]{16f,5f};
+        public float width = 1.3f;
+        public float height = 2f;
+        public float force = 20f;
+        public float damping = 2f;
+        public float density = 1f;
+        public float friction = 0.0f;
+        public float maxspeed = 3f;
+        public float sensorheight = 0.05f;
+        public String sensorname = "PenguinGroundSensor";
+        public float vshrink = 0.75f;
+        public float hshrink = 0.75f;
+        public float sshrink = 0.6f;
+    }
+
+    private class  Icicle{
+        public float[] pos = new float[]{};
+        public float[][] layout = new float[][]{};
+        public float density = 30f;
+        public float friction = 0.5f;
+        public float restitution = 0.2f;
+    }
+
+    private class Enemy{
+        public float[][] pos = new float[][]{};
+        public float range = 80;
+        public float width = 1.3f;
+        public float height = 2f;
+        public float damping = 10f;
+        public float density = 1f;
+        public float friction = 5f;
+        public float maxspeed = 5f;
+        public float sensorheight = 0.05f;
+        public String sensorname = "MonsterGroundSensor";
+        public float vshrink = 0.25f;
+        public float hshrink = 0.25f;
+        public float sshrink = 0.6f;
+        public float restitution = 0.0f;
+    }
+
+    private class Note{
+        public float[][] pos = new float[][]{};
+        public float vshrink = 0.8f;
+        public float hshrink = 0.95f;
+    }
+
+    private class Water{
+        public float[][] pos = new float[][]{};
+        public float[][] layout = new float[][]{};
+        public float density = 1f;
+        public float friction = 0.5f;
+        public float restitution = 0.2f;
+        public float force = 20f;
+    }
+
+    private class Ice{
+        public float[][] pos = new float[][]{};
+        public float[][] layout = new float[][]{};
+        public float friction = 2f;
+        public float restitution = 0.2f;
+        public float pin_radius = 0.1f;
+        public float bar_density = 3f;
+        public float pin_density = 0f;
     }
 }
