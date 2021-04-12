@@ -88,12 +88,10 @@ public class Player extends CapsuleObstacle {
     private int throwCooldown;
     /** Whether we are actively jumping */
     private boolean isJumping;
-    /** Whether we are actively interacting */
-    private boolean isInteracting;
-    /** Whether we are actively jumping */
-    private boolean prevIsThrowing;
     /** Whether we are actively jumping */
     private boolean isThrowing;
+    /** is interrupted for throwing*/
+    private boolean prevIsInterrupted;
     /** count for number of press */
     private int throwingCount;
     /** force for throwing */
@@ -353,10 +351,23 @@ public class Player extends CapsuleObstacle {
         }
     }
 
-    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching) {
+    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching, boolean isInterrupted) {
+        if(!isInterrupted && prevIsInterrupted){
+            isThrowing = false;
+            throwingCount = (throwingCount == 1 && isTouching) ? -1 : 0;
+            prevIsInterrupted = isInterrupted;
+            throwingForce = 0f;
+            return;
+        }
+        if(throwingCount == -1 && touchUp){
+            throwingCount = 0;
+            prevIsInterrupted = isInterrupted;
+            return;
+        }
+        prevIsInterrupted = isInterrupted;
         isThrowing = isTouching;
         // setting throwing direction
-        if(touchUp && throwingCount == 0){
+        if(touchUp && throwingCount == 0 && !isInterrupted){
             xDir = ((clickX+cameraX-640))/1280f*32;
             yDir = (720-clickY)/720f*18;
             throwingCount = 1;

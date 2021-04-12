@@ -402,7 +402,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         // debug mode
         if(InputController.getInstance().didDebug()){
-            setDebug(true);
+            setDebug(!isDebug());
         }
 
         // Punching
@@ -464,7 +464,7 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setThrowing(InputController.getInstance().getClickX(),
                 InputController.getInstance().getClickY(),
                 InputController.getInstance().touchUp(),
-                InputController.getInstance().isTouching());
+                InputController.getInstance().isTouching(), InputController.getInstance().didSecondary());
         avatar.pickUpPenguins();
     }
 
