@@ -87,7 +87,7 @@
     "is_hor": [true, false]
   },
   "notes": {
-    "pos": [[20,4],[28.35,6]],
+    "pos": [[10,6],[28.35,8]],
     "hshrink": 0.8,
     "vshrink": 0.95
   },
@@ -100,10 +100,31 @@
   },
   "ice":{
     "pos": [[28.35,3.2]],
+    "layout": [[210,30]],
     "restitution" : 0,
     "bar_density": 3,
     "pin_density": 0,
     "friction": 2,
     "pin_radius": 0.1
+  },
+  "floatingIce":{
+    "pos": [[29.35,3.2]],
+    "layout": [[210,30]],
+    "restitution" : 0,
+    "bar_density": 3,
+    "pin_density": 0,
+    "friction": 2,
+    "pin_radius": 0.1
+  },
+  "movingIce":{
+    "pos": [[28.35,3.3]],
+    "layout": [[210,30]],
+    "restitution" : 0,
+    "bar_density": 3,
+    "pin_density": 0,
+    "friction": 2,
+    "pin_radius": 0.1,
+    "distance": 1,
+    "speed": 0.04
   }
 }
