@@ -27,7 +27,7 @@ public class GameplayController extends WorldController implements ContactListen
     /** Reference to the character avatar */
     private Player avatar;
     /** Reference to the monster */
-    private Monster monster;
+    private ArrayList<Monster> monsters = new ArrayList<>();
     /** Reference to the icicles */
     private ArrayList<PolygonObstacle> iciclesList;
     /** Reference to the water */
@@ -167,6 +167,7 @@ public class GameplayController extends WorldController implements ContactListen
             obj.deactivatePhysics(world);
         }
         objects.clear();
+        monsters.clear();
         addQueue.clear();
         world.dispose();
 
@@ -279,13 +280,19 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         JsonValue enemy = constants.get("enemy");
-        JsonValue enemypos = enemy.get("pos");
-        for (int i=0; i < enemypos.size; i++) { //multiple monsters
-            monster = new Monster(enemy, monsterStrip.getRegionWidth() / scale.x, monsterStrip.getRegionHeight() / scale.y, "monster", enemy.getInt("range"),i);
+        JsonValue enemyPos = enemy.get("pos");
+        JsonValue enemyRange = enemy.get("range");
+        JsonValue enemyDir = enemy.get("is_hor");
+        for (int i=0; i < enemyPos.size; i++) { //multiple monsters
+            Monster monster = new Monster(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
+                    monsterStrip.getRegionWidth() / scale.x, monsterStrip.getRegionHeight() / scale.y,
+                    "monster", enemyRange.getInt(i), enemyDir.getBoolean(i));
             monster.setFilmStrip(monsterStrip);
             monster.setDrawScale(scale);
+            monsters.add(monster);
             addObject(monster);
         }
+
         JsonValue notes = constants.get("notes");
         JsonValue notespos = notes.get("pos");
         notesList = new ArrayList<Note>();
@@ -425,9 +432,9 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Monster moving and attacking
-        collisionController.processCollision(monster, avatar, objects);
-        collisionController.processCollision(monster, attackStrip, avatar.getPenguins());
-        collisionController.processCollision(monster, iciclesList, objects);
+        collisionController.processCollision(monsters, avatar, objects);
+        collisionController.processCollision(monsters, attackStrip, avatar.getPenguins());
+        collisionController.processCollision(monsters, iciclesList, objects);
         collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
         collisionController.processCollision(water, avatar);
 

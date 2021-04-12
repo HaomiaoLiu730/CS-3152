@@ -143,7 +143,7 @@ public class Player extends CapsuleObstacle {
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
     /** Cache for internal direction calculations */
-    private Vector2 direcctionCache = new Vector2();
+    private Vector2 directionCache = new Vector2();
     /** Cache for internal position calculations */
     private Vector2 position = new Vector2();
 
@@ -341,9 +341,9 @@ public class Player extends CapsuleObstacle {
 
     public void calculateTrajectory(float force, float xDir, float yDir){
         float dt =  0.01643628f;
-        direcctionCache.set(xDir, yDir).nor();
-        float vx = force*direcctionCache.x*10 * dt / penguins.getFirst().getMass();
-        float vy = force*direcctionCache.y*10f * dt / penguins.getFirst().getMass();
+        directionCache.set(xDir, yDir).nor();
+        float vx = force*directionCache.x*10 * dt / penguins.getFirst().getMass();
+        float vy = force*directionCache.y*10f * dt / penguins.getFirst().getMass();
         for(int i = 0; i<10; i+=2){
             float t = i * 0.05f;
             float x = (16 + t * vx) * 1280 / 32f;
