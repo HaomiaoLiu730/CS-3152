@@ -71,8 +71,8 @@
     "restitution" : 0.2
     },
   "enemy" : {
-    "pos": [[24.2,3.5], [28.5,3.5]],
-    "range": [50, 90],
+    "pos": [[28.5,3.5], [24.2,3.5]],
+    "range": [90, 50],
     "density": 1.0,
     "force": 20,
     "damping": 10,
@@ -84,7 +84,7 @@
     "hshrink": 0.25,
     "sshrink": 0.6,
     "restitution": 0,
-    "is_hor": [false, true]
+    "is_hor": [true, false]
   },
   "notes": {
     "pos": [[20,4],[28.35,6]],

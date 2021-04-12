@@ -214,7 +214,7 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setName(sname+ii);
             addObject(obj);
         }
-         JsonValue icicles = constants.get("icicles");
+        JsonValue icicles = constants.get("icicles");
         JsonValue iciclepos=icicles.get("pos");
 
         icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
@@ -387,13 +387,24 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Monster moving and attacking
+        ArrayList<Integer> diedMon = new ArrayList<>();
         for (int i = 0; i < monsters.size(); i++) {
             collisionController.processCollision(monsters.get(i), avatar, objects);
             collisionController.processCollision(monsters.get(i), attackStrip, avatar.getPenguins());
             collisionController.processCollision(monsters.get(i), icicle, objects);
+            if (!monsters.get(i).isActive()) {
+                diedMon.add(i);
+            }
         }
         collisionController.processCollision(avatar.getPenguins(), icicle, objects);
         collisionController.processCollision(water, avatar);
+
+        // Update monster list
+        int offset = 0;
+        for (int i = 0; i < diedMon.size(); i++) {
+            monsters.remove(diedMon.get(i)+offset);
+            offset -= 1;
+        }
     }
 
     public void updateCamera(){
