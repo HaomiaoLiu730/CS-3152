@@ -83,6 +83,8 @@ public class CollisionController {
                             objects.remove(temp);
                             avatar.setNumPenguins(numPenguins - 1);
                         }else{
+                            p.setActive(false);
+                            p.setAwake(false);
                             objects.remove(p);
                         }
                         note.setFilmStrip(noteCollectedFilmStrip);
