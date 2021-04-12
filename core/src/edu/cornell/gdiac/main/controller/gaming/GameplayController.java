@@ -218,13 +218,6 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setName(sname+ii);
             addObject(obj);
         }
-<<<<<<< HEAD
-
-        JsonValue icicles = constants.get("icicles");
-        JsonValue iciclepos=icicles.get("pos");
-        for(int i = 0; i<iciclepos.size; i++){
-            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).asFloatArray()[0], iciclepos.get(i).asFloatArray()[1]);
-=======
         JsonValue icicles = constants.get("icicles");
         JsonValue iciclepos=icicles.get("pos");
 
@@ -232,24 +225,17 @@ public class GameplayController extends WorldController implements ContactListen
         for (int i = 0; i < icicles.get("layout").size; i ++){
             PolygonObstacle icicle;
             icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
->>>>>>> main
             icicle.setBodyType(BodyDef.BodyType.StaticBody);
             icicle.setDensity(icicles.getFloat("density"));
             icicle.setFriction(icicles.getFloat("friction"));
             icicle.setRestitution(icicles.getFloat("restitution"));
             icicle.setDrawScale(scale);
             icicle.setTexture(icicleStrip);
-<<<<<<< HEAD
-            icicle.setName("icicle");
-            addObject(icicle);
-        }
-=======
             icicle.setName("icicle" + i);
             addObject(icicle);
             iciclesList.add(icicle);
         }
 
->>>>>>> main
 
         JsonValue goal = constants.get("goal");
         JsonValue goalpos=goal.get("pos");
@@ -327,19 +313,12 @@ public class GameplayController extends WorldController implements ContactListen
 
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
-<<<<<<< HEAD
-        JsonValue iceLayout = ices.get("layout");
-
-        for (int i =0; i< icepos.size; i++) {
-            ice = new Ice(ices, i, iceLayout.get(i).asFloatArray()[0] / scale.x, iceLayout.get(i).asFloatArray()[1]/ scale.y);
-=======
         for (int i =0; i< icepos.size; i++) {
             int w = ices.get("layout").get(i).getInt(0);
             int h = ices.get("layout").get(i).getInt(1);
             ice = new Ice(ices, i, w/scale.x, h/scale.y);
             iceTextureRegion.setRegionWidth(w);
             iceTextureRegion.setRegionHeight(h);
->>>>>>> main
             ice.setDrawScale(scale);
             ice.setTexture(iceTextureRegion);
             ice.setRestitution(ices.getFloat("restitution"));
