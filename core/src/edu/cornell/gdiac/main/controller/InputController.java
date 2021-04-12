@@ -88,7 +88,6 @@ public class InputController {
     private boolean levelEditor = false;
     private boolean spacePressed = false;
     private boolean ePressed = false;
-    private boolean jump = false;
     private boolean punch = false;
 
     /**
@@ -379,9 +378,9 @@ public class InputController {
         leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A);
         rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D);
         if (rightPressed && !rightPrevious) {
-            horizontal = 3.0f;
+            horizontal = 1.0f;
         } else if (leftPressed && !leftPrevious) {
-            horizontal = -3.0f;
+            horizontal = -1.0f;
         } else if (rightPressed && prevHorizontal > 0) {
             horizontal = 1.0f;
         } else if (leftPressed && prevHorizontal < 0) {
