@@ -262,6 +262,24 @@ public class Player extends CapsuleObstacle {
     public int getNumPenguins(){return numPenguins; }
 
     /**
+     * Set the number of penguins following the avatar.
+     * @param i the number
+     */
+    public void setNumPenguins(int i){numPenguins = i; }
+
+    public Penguin deleteOnePenguin(){
+        for(Penguin p: penguins){
+            if(p.getIndex() == numPenguins-1){
+                p.setActive(false);
+                p.setAwake(false);
+                return p;
+            }
+        }
+        return null;
+    }
+
+
+    /**
      * Returns true if the dude is actively firing.
      *
      * @return true if the dude is actively firing.

@@ -16,6 +16,8 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.util.ArrayList;
+
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
@@ -26,12 +28,14 @@ public class GameplayController extends WorldController implements ContactListen
     private Player avatar;
     /** Reference to the monster */
     private Monster monster;
-    /** Reference to the icicle */
-    private PolygonObstacle icicle;
+    /** Reference to the icicles */
+    private ArrayList<PolygonObstacle> iciclesList;
     /** Reference to the water */
     private Water water;
     /** Reference to the ice */
     private Ice ice;
+    /** Reference to the list of notes */
+    private ArrayList<Note> notesList;
     /** number of notes collected*/
     public static int notesCollected;
     /** Handle collision and physics (CONTROLLER CLASS) */
@@ -214,20 +218,38 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setName(sname+ii);
             addObject(obj);
         }
+<<<<<<< HEAD
 
         JsonValue icicles = constants.get("icicles");
         JsonValue iciclepos=icicles.get("pos");
         for(int i = 0; i<iciclepos.size; i++){
             icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).asFloatArray()[0], iciclepos.get(i).asFloatArray()[1]);
+=======
+        JsonValue icicles = constants.get("icicles");
+        JsonValue iciclepos=icicles.get("pos");
+
+        iciclesList = new ArrayList<PolygonObstacle>();
+        for (int i = 0; i < icicles.get("layout").size; i ++){
+            PolygonObstacle icicle;
+            icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
+>>>>>>> main
             icicle.setBodyType(BodyDef.BodyType.StaticBody);
             icicle.setDensity(icicles.getFloat("density"));
             icicle.setFriction(icicles.getFloat("friction"));
             icicle.setRestitution(icicles.getFloat("restitution"));
             icicle.setDrawScale(scale);
             icicle.setTexture(icicleStrip);
+<<<<<<< HEAD
             icicle.setName("icicle");
             addObject(icicle);
         }
+=======
+            icicle.setName("icicle" + i);
+            addObject(icicle);
+            iciclesList.add(icicle);
+        }
+
+>>>>>>> main
 
         JsonValue goal = constants.get("goal");
         JsonValue goalpos=goal.get("pos");
@@ -283,11 +305,13 @@ public class GameplayController extends WorldController implements ContactListen
         }
         JsonValue notes = constants.get("notes");
         JsonValue notespos = notes.get("pos");
+        notesList = new ArrayList<Note>();
         for (int i =0; i< notespos.size; i++) {
             Note note = new Note(notes, noteLeftStrip.getRegionWidth() / scale.x, noteLeftStrip.getRegionHeight() / scale.y, i );
             note.setFilmStrip(noteLeftStrip);
             note.setDrawScale(scale);
             addObject(note);
+            notesList.add(note);
         }
 
         JsonValue waters = constants.get("water");
@@ -300,17 +324,61 @@ public class GameplayController extends WorldController implements ContactListen
             water.setDrawScale(scale);
             addObject(water);
         }
+
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
+<<<<<<< HEAD
         JsonValue iceLayout = ices.get("layout");
 
         for (int i =0; i< icepos.size; i++) {
             ice = new Ice(ices, i, iceLayout.get(i).asFloatArray()[0] / scale.x, iceLayout.get(i).asFloatArray()[1]/ scale.y);
+=======
+        for (int i =0; i< icepos.size; i++) {
+            int w = ices.get("layout").get(i).getInt(0);
+            int h = ices.get("layout").get(i).getInt(1);
+            ice = new Ice(ices, i, w/scale.x, h/scale.y);
+            iceTextureRegion.setRegionWidth(w);
+            iceTextureRegion.setRegionHeight(h);
+>>>>>>> main
             ice.setDrawScale(scale);
             ice.setTexture(iceTextureRegion);
             ice.setRestitution(ices.getFloat("restitution"));
             addObject(ice);
         }
+
+
+//        JsonValue fices = constants.get("floatingIce");
+//        JsonValue ficepos = fices.get("pos");
+//        FloatingIce fIce;
+//        for (int i =0; i< ficepos.size; i++) {
+//        int w = fices.get("layout").get(i).getInt(0);
+//        int h = fices.get("layout").get(i).getInt(1);
+//            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
+//            iceTextureRegion.setRegionWidth(w);
+//            iceTextureRegion.setRegionHeight(h);
+//            fIce.setDrawScale(scale);
+//            fIce.setTexture(iceTextureRegion);
+//            fIce.setRestitution(fices.getFloat("restitution"));
+//            addObject(fIce);
+//        }
+//
+//
+//        JsonValue mices = constants.get("movingIce");
+//        JsonValue micepos = mices.get("pos");
+//        MovingIce mIce;
+//        for (int i =0; i< micepos.size; i++) {
+//        int w = mices.get("layout").get(i).getInt(0);
+//        int h = mices.get("layout").get(i).getInt(1);
+//            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
+//            iceTextureRegion.setRegionWidth(w);
+//            iceTextureRegion.setRegionHeight(h);
+//            mIce.setDrawScale(scale);
+//            mIce.setTexture(iceTextureRegion);
+//            mIce.setRestitution(mices.getFloat("restitution"));
+//            addObject(mIce);
+//        }
+
+
     }
 
     /**
@@ -347,7 +415,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-
         updateCamera();
         updatePlayer();
 
@@ -385,9 +452,12 @@ public class GameplayController extends WorldController implements ContactListen
         // Monster moving and attacking
         collisionController.processCollision(monster, avatar, objects);
         collisionController.processCollision(monster, attackStrip, avatar.getPenguins());
-        collisionController.processCollision(monster, icicle, objects);
-        collisionController.processCollision(avatar.getPenguins(), icicle, objects);
+        collisionController.processCollision(monster, iciclesList, objects);
+        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
         collisionController.processCollision(water, avatar);
+
+        notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
+                objects, avatar.getNumPenguins(), avatar);
     }
 
     public void updateCamera(){
@@ -514,32 +584,48 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             // set the ice bar tilt only for avatar
-            if (bd1.getName()=="iceBar" && bd2 == avatar) {
+            if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") && bd2 == avatar) {
                 bd1.setFixedRotation(false);
             }
-            if (bd1 == avatar && bd2.getName()=="iceBar") {
+            if (bd1 == avatar && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
 
-            // check for note collection
-            if (bd1 instanceof Note && (bd2 instanceof Penguin || bd2 == avatar)){
-                if(!((Note) bd1).isCollected()){
-                    ((Note) bd1).setFilmStrip(noteCollectedStrip);
-                    ((Note) bd1).setCollected(true);
-                    notesCollected++;
-                }
-            }else if(bd2 instanceof Note && (bd1 instanceof Penguin || bd1 == avatar)){
-                if(!((Note) bd2).isCollected()){
-                    ((Note) bd2).setFilmStrip(noteCollectedStrip);
-                    ((Note) bd2).setCollected(true);
-                    notesCollected++;
-                }
-            }
 
             // Check for win condition
-            if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == num_penguins && notesCollected == num_notes) ||
-                    (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == num_penguins && notesCollected == num_notes)) {
+            if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||
+                    (bd1 == avatar && bd2.getName() == "exit" && notesCollected == num_notes)) {
                 setComplete(true);
+            }
+
+            if(bd1.getName() == "floatingIceBar"){
+                ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
+                if(bd2.getName() == "icicle"){
+                    float force = bd2.getMass()/2000;
+                    if (bd2.getX()<bd1.getX()){
+                        force = -force;
+                    }
+                    ((FloatingIce)master).hitByIcicle(force);
+                }
+                else if (!(bd1 instanceof Penguin)){
+                    ((FloatingIce)master).resetMomentum();
+                }
+
+            }
+
+            if(bd2.getName() == "floatingIceBar"){
+                ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
+                if(bd1.getName() == "icicle"){
+                    float force = bd1.getMass()/2000;
+                    if (bd1.getX()<bd2.getX()){
+                        force = -force;
+                    }
+                    ((FloatingIce)master).hitByIcicle(force);
+                }
+                else if (!(bd1 instanceof Penguin)){
+                    ((FloatingIce)master).resetMomentum();
+                }
+
             }
 
         } catch (Exception e) {
