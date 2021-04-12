@@ -294,38 +294,46 @@ public class GameplayController extends WorldController implements ContactListen
             water.setDrawScale(scale);
             addObject(water);
         }
-//        JsonValue ices = constants.get("ice");
-//        JsonValue icepos = ices.get("pos");
-//        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
-//        dheight = iceTextureRegion.getRegionHeight()/scale.y;
-//        for (int i =0; i< icepos.size; i++) {
-//            ice = new Ice(ices, i, dwidth, dheight);
-//            ice.setDrawScale(scale);
-//            ice.setTexture(iceTextureRegion);
-//            ice.setRestitution(ices.getFloat("restitution"));
-//            addObject(ice);
-//        }
 
-//        JsonValue fices = constants.get("floatingIce");
-//        JsonValue ficepos = fices.get("pos");
-//        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
-//        dheight = iceTextureRegion.getRegionHeight()/scale.y;
-//        FloatingIce fIce;
-//        for (int i =0; i< ficepos.size; i++) {
-//            fIce = new FloatingIce(fices, i, dwidth, dheight);
-//            fIce.setDrawScale(scale);
-//            fIce.setTexture(iceTextureRegion);
-//            fIce.setRestitution(fices.getFloat("restitution"));
-//            addObject(fIce);
-//        }
+        //Common other kinds of ice out to test a specific kind of ice
+        JsonValue ices = constants.get("ice");
+        JsonValue icepos = ices.get("pos");
+        for (int i =0; i< icepos.size; i++) {
+            int w = ices.get("width").getInt(i);
+            int h = ices.get("height").getInt(i);
+            ice = new Ice(ices, i, w/scale.x, h/scale.y);
+            iceTextureRegion.setRegionWidth(w);
+            iceTextureRegion.setRegionHeight(h);
+            ice.setDrawScale(scale);
+            ice.setTexture(iceTextureRegion);
+            ice.setRestitution(ices.getFloat("restitution"));
+            addObject(ice);
+        }
+
+        JsonValue fices = constants.get("floatingIce");
+        JsonValue ficepos = fices.get("pos");
+        FloatingIce fIce;
+        for (int i =0; i< ficepos.size; i++) {
+            int w = fices.get("width").getInt(i);
+            int h = fices.get("height").getInt(i);
+            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
+            iceTextureRegion.setRegionWidth(w);
+            iceTextureRegion.setRegionHeight(h);
+            fIce.setDrawScale(scale);
+            fIce.setTexture(iceTextureRegion);
+            fIce.setRestitution(fices.getFloat("restitution"));
+            addObject(fIce);
+        }
 
         JsonValue mices = constants.get("movingIce");
         JsonValue micepos = mices.get("pos");
-        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
-        dheight = iceTextureRegion.getRegionHeight()/scale.y;
         MovingIce mIce;
         for (int i =0; i< micepos.size; i++) {
-            mIce = new MovingIce(mices, i, dwidth, dheight);
+            int w = mices.get("width").getInt(i);
+            int h = mices.get("height").getInt(i);
+            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
+            iceTextureRegion.setRegionWidth(w);
+            iceTextureRegion.setRegionHeight(h);
             mIce.setDrawScale(scale);
             mIce.setTexture(iceTextureRegion);
             mIce.setRestitution(mices.getFloat("restitution"));
@@ -566,8 +574,6 @@ public class GameplayController extends WorldController implements ContactListen
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
                 if(bd2.getName() == "icicle"){
                     float force = bd2.getMass()/2000;
-                    System.out.println(bd2.getMass());
-                    System.out.println(force);
                     if (bd2.getX()<bd1.getX()){
                         force = -force;
                     }
@@ -583,8 +589,6 @@ public class GameplayController extends WorldController implements ContactListen
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
                 if(bd1.getName() == "icicle"){
                     float force = bd1.getMass()/2000;
-                    System.out.println(bd2.getMass());
-                    System.out.println(force);
                     if (bd1.getX()<bd2.getX()){
                         force = -force;
                     }

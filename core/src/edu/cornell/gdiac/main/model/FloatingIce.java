@@ -60,8 +60,6 @@ public class FloatingIce extends ComplexObstacle {
 
         bodies.add(pin);
         this.data=data;
-//        System.out.println(bodies.size);
-//        this.body = iceBar.getBody();
     }
 
 

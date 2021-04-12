@@ -1,5 +1,7 @@
 package edu.cornell.gdiac.main.model;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.main.obstacle.BoxObstacle;
 import edu.cornell.gdiac.main.obstacle.ComplexObstacle;
 import edu.cornell.gdiac.main.obstacle.WheelObstacle;
+import edu.cornell.gdiac.main.view.GameCanvas;
 
 public class MovingIce extends ComplexObstacle {
     /** The initializing data (to avoid magic numbers) */
@@ -46,6 +49,7 @@ public class MovingIce extends ComplexObstacle {
         iceBar.setFixedRotation(true);
         iceBar.setAngularDamping(0.5f);
         iceBar.setMaster(this);
+
         distance = data.getFloat("distance");
         speed = data.getFloat("speed");
         initialX = iceBar.getX();

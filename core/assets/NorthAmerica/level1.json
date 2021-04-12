@@ -99,6 +99,8 @@
     "restitution": 0
   },
   "ice":{
+    "width": [210],
+    "height": [30],
     "pos": [[28.35,3.2]],
     "restitution" : 0,
     "bar_density": 3,
@@ -107,6 +109,8 @@
     "pin_radius": 0.1
   },
   "floatingIce":{
+    "width": [210],
+    "height": [30],
     "pos": [[29.35,3.2]],
     "restitution" : 0,
     "bar_density": 3,
@@ -115,7 +119,9 @@
     "pin_radius": 0.1
   },
   "movingIce":{
-    "pos": [[28.35,3.2]],
+    "width": [210],
+    "height": [30],
+    "pos": [[28.35,3.3]],
     "restitution" : 0,
     "bar_density": 3,
     "pin_density": 0,
