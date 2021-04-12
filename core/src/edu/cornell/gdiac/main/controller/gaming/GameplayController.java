@@ -16,6 +16,8 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.util.ArrayList;
+
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
@@ -25,7 +27,7 @@ public class GameplayController extends WorldController implements ContactListen
     /** Reference to the character avatar */
     private Player avatar;
     /** Reference to the monster */
-    private Monster monster;
+    private ArrayList<Monster> monsters = new ArrayList<>();
     /** Reference to the icicle */
     private PolygonObstacle icicle;
     /** Reference to the water */
@@ -163,6 +165,7 @@ public class GameplayController extends WorldController implements ContactListen
             obj.deactivatePhysics(world);
         }
         objects.clear();
+        monsters.clear();
         addQueue.clear();
         world.dispose();
 
@@ -269,13 +272,19 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         JsonValue enemy = constants.get("enemy");
-        JsonValue enemypos = enemy.get("pos");
-        for (int i=0; i < enemypos.size; i++) { //multiple monsters
-            monster = new Monster(enemy, monsterStrip.getRegionWidth() / scale.x, monsterStrip.getRegionHeight() / scale.y, "monster", enemy.getInt("range"),i);
+        JsonValue enemyPos = enemy.get("pos");
+        JsonValue enemyRange = enemy.get("range");
+        JsonValue enemyDir = enemy.get("is_hor");
+        for (int i=0; i < enemyPos.size; i++) { //multiple monsters
+            Monster monster = new Monster(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
+                    monsterStrip.getRegionWidth() / scale.x, monsterStrip.getRegionHeight() / scale.y,
+                    "monster", enemyRange.getInt(i), enemyDir.getBoolean(i));
             monster.setFilmStrip(monsterStrip);
             monster.setDrawScale(scale);
+            monsters.add(monster);
             addObject(monster);
         }
+
         JsonValue notes = constants.get("notes");
         JsonValue notespos = notes.get("pos");
         for (int i =0; i< notespos.size; i++) {
@@ -294,6 +303,7 @@ public class GameplayController extends WorldController implements ContactListen
             water.setDrawScale(scale);
             addObject(water);
         }
+
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
@@ -377,9 +387,11 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Monster moving and attacking
-        collisionController.processCollision(monster, avatar, objects);
-        collisionController.processCollision(monster, attackStrip, avatar.getPenguins());
-        collisionController.processCollision(monster, icicle, objects);
+        for (int i = 0; i < monsters.size(); i++) {
+            collisionController.processCollision(monsters.get(i), avatar, objects);
+            collisionController.processCollision(monsters.get(i), attackStrip, avatar.getPenguins());
+            collisionController.processCollision(monsters.get(i), icicle, objects);
+        }
         collisionController.processCollision(avatar.getPenguins(), icicle, objects);
         collisionController.processCollision(water, avatar);
     }
