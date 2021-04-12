@@ -398,7 +398,7 @@ public class InputController {
         }
 
         // Punching
-        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.F)) {
             punch = true;
         } else {
             punch = false;
