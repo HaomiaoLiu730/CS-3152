@@ -55,6 +55,8 @@ public class Ice extends ComplexObstacle {
         iceBar.setAngularDamping(0.5f);
         bodies.add(iceBar);
 
+        this.iceBar.getTexture().setRegionHeight((int)height);
+        this.iceBar.getTexture().setRegionWidth((int)width);
 
         pin = new WheelObstacle(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),data.getFloat("pin_radius"));
         pin.setName("pin");
