@@ -90,11 +90,10 @@ public class Water extends CapsuleObstacle{
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-//        if (this.isActive())
-//            System.out.println(this.getName());
+
         // Apply cooldowns
         timeCounter += dt;
-        if(timeCounter >= 0.1) {
+        if(timeCounter >= 0.175) {
             timeCounter = 0;
             filmStrip.nextFrame();
         }
