@@ -294,16 +294,29 @@ public class GameplayController extends WorldController implements ContactListen
             water.setDrawScale(scale);
             addObject(water);
         }
+//        JsonValue ices = constants.get("ice");
+//        JsonValue icepos = ices.get("pos");
+//        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
+//        dheight = iceTextureRegion.getRegionHeight()/scale.y;
+//        for (int i =0; i< icepos.size; i++) {
+//            ice = new Ice(ices, i, dwidth, dheight);
+//            ice.setDrawScale(scale);
+//            ice.setTexture(iceTextureRegion);
+//            ice.setRestitution(ices.getFloat("restitution"));
+//            addObject(ice);
+//        }
+
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
         dheight = iceTextureRegion.getRegionHeight()/scale.y;
+        FloatingIce fIce;
         for (int i =0; i< icepos.size; i++) {
-            ice = new Ice(ices, i, dwidth, dheight);
-            ice.setDrawScale(scale);
-            ice.setTexture(iceTextureRegion);
-            ice.setRestitution(ices.getFloat("restitution"));
-            addObject(ice);
+            fIce = new FloatingIce(ices, i, dwidth, dheight);
+            fIce.setDrawScale(scale);
+            fIce.setTexture(iceTextureRegion);
+            fIce.setRestitution(ices.getFloat("restitution"));
+            addObject(fIce);
         }
     }
 
@@ -508,10 +521,10 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             // set the ice bar tilt only for avatar
-            if (bd1.getName()=="iceBar" && bd2 == avatar) {
+            if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") && bd2 == avatar) {
                 bd1.setFixedRotation(false);
             }
-            if (bd1 == avatar && bd2.getName()=="iceBar") {
+            if (bd1 == avatar && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
 
@@ -534,6 +547,40 @@ public class GameplayController extends WorldController implements ContactListen
             if ((bd1.getName() == "exit" && bd2 == avatar && avatar.getNumPenguins() == num_penguins && notesCollected == num_notes) ||
                     (bd1 == avatar && bd2.getName() == "exit" && avatar.getNumPenguins() == num_penguins && notesCollected == num_notes)) {
                 setComplete(true);
+            }
+
+            if(bd1.getName() == "floatingIceBar"){
+                ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
+                if(bd2.getName() == "icicle"){
+                    float force = bd2.getMass()/2000;
+                    System.out.println(bd2.getMass());
+                    System.out.println(force);
+                    if (bd2.getX()<bd1.getX()){
+                        force = -force;
+                    }
+                    ((FloatingIce)master).hitByIcicle(force);
+                }
+                else if (!(bd1 instanceof Penguin)){
+                    ((FloatingIce)master).resetMomentum();
+                }
+
+            }
+
+            if(bd2.getName() == "floatingIceBar"){
+                ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
+                if(bd1.getName() == "icicle"){
+                    float force = bd1.getMass()/2000;
+                    System.out.println(bd2.getMass());
+                    System.out.println(force);
+                    if (bd1.getX()<bd2.getX()){
+                        force = -force;
+                    }
+                    ((FloatingIce)master).hitByIcicle(force);
+                }
+                else if (!(bd1 instanceof Penguin)){
+                    ((FloatingIce)master).resetMomentum();
+                }
+
             }
 
         } catch (Exception e) {
