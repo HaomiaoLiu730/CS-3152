@@ -384,8 +384,13 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController.processCollision(monster, attackStrip, avatar.getPenguins());
         collisionController.processCollision(monster, icicle, objects);
         collisionController.processCollision(avatar.getPenguins(), icicle, objects);
-        collisionController.processCollision(water, avatar);
+//        for(Obstacle obj : objects) {
+//            if (obj.getName().contains("water")){
+            collisionController.processCollision(water, avatar);
+//        }
+//    }
     }
+
 
     public void updateCamera(){
         // camera
@@ -567,6 +572,7 @@ public class GameplayController extends WorldController implements ContactListen
             if (playerGround == 0) {
                 avatar.setGrounded(false);
             }
+
         }
 
         for(Penguin p: avatar.getPenguins()){
