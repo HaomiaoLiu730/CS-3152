@@ -82,7 +82,7 @@ public class GameplayController extends WorldController implements ContactListen
      * @param width  The width of the game window
      * @param height The height of the game window
      */
-    public GameplayController(float width, float height) {
+    public GameplayController(float width, float height, boolean isEditingView) {
         super(width,height,DEFAULT_GRAVITY);
 
         scale = super.scale;
@@ -91,7 +91,7 @@ public class GameplayController extends WorldController implements ContactListen
         setFailure(false);
         world.setContactListener(this);
 
-        internal = new AssetDirectory("NorthAmerica/northAmericaMain.json");
+        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :"NorthAmerica/northAmericaMain.json");
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
@@ -109,7 +109,10 @@ public class GameplayController extends WorldController implements ContactListen
     }
 
     public GameplayController(){
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, false);
+    }
+    public GameplayController(boolean isEditorView){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, isEditorView);
     }
 
     /**

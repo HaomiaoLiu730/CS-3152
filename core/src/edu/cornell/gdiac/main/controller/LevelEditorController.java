@@ -504,7 +504,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     public void generateJson(){
         generatePlatformWater();
+        generateObjects();
         writeToFile("sampleLevel.json");
+        listener.updateScreen(this, 512);
     }
 
     public void generatePlatformWater(){
@@ -557,6 +559,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             }
             prevTile = tiles[i];
         }
+        ArrayList<Float> bottom = new ArrayList<Float>(Arrays.asList(0f,-2f,0f,0f,320f,0f, 320f, -2f));
+        retSnow.add(bottom);
         this.levelJson.defaults.snow = arrayListToArr(retSnow);
         this.levelJson.water.pos = arrayListToArr(retWaterPos);
         this.levelJson.water.layout = arrayListToArr(retWaterLayout);
@@ -585,19 +589,48 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     public void generateObjects(){
         ArrayList<float[]> notePos = new ArrayList<>();
-        ArrayList<ArrayList> iceBarPos = new ArrayList<>();
+        ArrayList<float[]> icePos = new ArrayList<>();
+        ArrayList<float[]> iciclePos = new ArrayList<>();
+        ArrayList<float[]> monsterPos = new ArrayList();
+        ArrayList<float[]> icicleLayout = new ArrayList();
+        ArrayList<float[]> iceLayout = new ArrayList();
 
         for(GenericComponent obj: objects){
             float[] pos = new float[2];
-            pos[0] = obj.position.x;
-            pos[1] = obj.position.y;
+            pos[0] = obj.position.x/40f;
+            pos[1] = obj.position.y/40f;
             switch (obj.component){
                 case Note:
-
+                    notePos.add(pos);
                     break;
                 case Icicle:
+                    for(int i = 0; i < obj.polygonRegion.getVertices().length; i++){
+                        obj.polygonRegion.getVertices()[i] /= 40;
+                    }
+                    icicleLayout.add(obj.polygonRegion.getVertices());
+                    iciclePos.add(pos);
+                    break;
+                case Monster:
+                    monsterPos.add(pos);
+                    break;
+                case IceBar:
+                    icePos.add(pos);
+                    iceLayout.add(new float[]{obj.filmStrip.getRegionWidth()/40f, obj.filmStrip.getRegionHeight()/40f});
+                    break;
             }
         }
+        this.levelJson.enemy.pos = arrayListToArr2(monsterPos);
+        this.levelJson.ice.layout = arrayListToArr2(iceLayout);
+        this.levelJson.ice.pos = arrayListToArr2(icePos);
+        this.levelJson.icicles.pos = arrayListToArr2(iciclePos);
+        this.levelJson.icicles.layout = arrayListToArr2(icicleLayout);
+    }
+    public float[][] arrayListToArr2(ArrayList<float[]> arr){
+        float[][] ret = new float[arr.size()][];
+        for(int i = 0; i < arr.size(); i++){
+            ret[i] = arr.get(i);
+        }
+        return ret;
     }
 
     @Override
@@ -742,7 +775,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     private class  Icicle{
-        public float[] pos = new float[]{};
+        public float[][] pos = new float[][]{};
         public float[][] layout = new float[][]{};
         public float density = 30f;
         public float friction = 0.5f;
@@ -764,6 +797,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public float hshrink = 0.25f;
         public float sshrink = 0.6f;
         public float restitution = 0.0f;
+        public float force = 20f;
     }
 
     private class Note{
