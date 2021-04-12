@@ -28,8 +28,8 @@ public class GameplayController extends WorldController implements ContactListen
     private Player avatar;
     /** Reference to the monster */
     private Monster monster;
-    /** Reference to the icicle */
-    private PolygonObstacle icicle;
+    /** Reference to the icicles */
+    private ArrayList<PolygonObstacle> iciclesList;
     /** Reference to the water */
     private Water water;
     /** Reference to the ice */
@@ -215,18 +215,24 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setName(sname+ii);
             addObject(obj);
         }
-         JsonValue icicles = constants.get("icicles");
+        JsonValue icicles = constants.get("icicles");
         JsonValue iciclepos=icicles.get("pos");
 
-        icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
-        icicle.setBodyType(BodyDef.BodyType.StaticBody);
-        icicle.setDensity(icicles.getFloat("density"));
-        icicle.setFriction(icicles.getFloat("friction"));
-        icicle.setRestitution(icicles.getFloat("restitution"));
-        icicle.setDrawScale(scale);
-        icicle.setTexture(icicleStrip);
-        icicle.setName("icicle");
-        addObject(icicle);
+        iciclesList = new ArrayList<PolygonObstacle>();
+        for (int i = 0; i < icicles.get("layout").size; i ++){
+            PolygonObstacle icicle;
+            icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
+            icicle.setBodyType(BodyDef.BodyType.StaticBody);
+            icicle.setDensity(icicles.getFloat("density"));
+            icicle.setFriction(icicles.getFloat("friction"));
+            icicle.setRestitution(icicles.getFloat("restitution"));
+            icicle.setDrawScale(scale);
+            icicle.setTexture(icicleStrip);
+            icicle.setName("icicle" + i);
+            addObject(icicle);
+            iciclesList.add(icicle);
+        }
+
 
         JsonValue goal = constants.get("goal");
         JsonValue goalpos=goal.get("pos");
@@ -384,8 +390,8 @@ public class GameplayController extends WorldController implements ContactListen
         // Monster moving and attacking
         collisionController.processCollision(monster, avatar, objects);
         collisionController.processCollision(monster, attackStrip, avatar.getPenguins());
-        collisionController.processCollision(monster, icicle, objects);
-        collisionController.processCollision(avatar.getPenguins(), icicle, objects);
+        collisionController.processCollision(monster, iciclesList, objects);
+        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
         collisionController.processCollision(water, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,

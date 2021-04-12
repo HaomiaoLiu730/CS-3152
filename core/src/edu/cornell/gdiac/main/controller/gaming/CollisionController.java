@@ -62,11 +62,13 @@ public class CollisionController {
         }
     }
 
-    public void processCollision(Monster monster, PolygonObstacle icicle, PooledList<Obstacle> objects){
-        if (icicle.getPosition().dst(monster.getPosition()) <= 1){
-            objects.remove(monster);
-            monster.setActive(false);
-            monster.setAwake(false);
+    public void processCollision(Monster monster, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
+        for (PolygonObstacle icicle: icicles){
+            if (icicle.getPosition().dst(monster.getPosition()) <= 1){
+                objects.remove(monster);
+                monster.setActive(false);
+                monster.setAwake(false);
+            }
         }
     }
 
@@ -107,11 +109,13 @@ public class CollisionController {
     }
 
 
-    public void processCollision(List<Penguin> penguins, PolygonObstacle icicle, PooledList<Obstacle> objects){
+    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
         for (Penguin p: penguins){
-            if (p.getPosition().dst(icicle.getPosition()) < 2){
-                icicle.setBodyType(BodyDef.BodyType.DynamicBody);
-                icicle.setFixedRotation(true);
+            for (PolygonObstacle icicle: icicles){
+                if (p.getPosition().dst(icicle.getPosition()) < 2){
+                    icicle.setBodyType(BodyDef.BodyType.DynamicBody);
+                    icicle.setFixedRotation(true);
+                }
             }
         }
     }
