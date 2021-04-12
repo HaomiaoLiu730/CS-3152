@@ -432,9 +432,9 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Monster moving and attacking
-        collisionController.processCollision(monster, avatar, objects);
-        collisionController.processCollision(monster, attackStrip, avatar.getPenguins());
-        collisionController.processCollision(monster, iciclesList, objects);
+        collisionController.processCollision(monsters, avatar, objects);
+        collisionController.processCollision(monsters, attackStrip, avatar.getPenguins());
+        collisionController.processCollision(monsters, iciclesList, objects);
         collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
         collisionController.processCollision(water, avatar);
 
