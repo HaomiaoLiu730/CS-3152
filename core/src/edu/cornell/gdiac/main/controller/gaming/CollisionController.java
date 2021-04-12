@@ -70,34 +70,36 @@ public class CollisionController {
         }
     }
 
-    public int processCollision(List<Penguin> penguins, Note note, FilmStrip noteCollectedFilmStrip, int numNotes,
+    public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip, int numNotes,
                                  PooledList<Obstacle> objects, int numPenguins, Player avatar){
-        if (!note.isCollected()){
-            for (Penguin p: penguins){
-                if (p.getPosition().dst(note.getPosition()) <= 1) {
-                    int last_index;
-                    if (p.getIndex() == 0 && (!p.isThrowOut())){
-                        note.setFilmStrip(noteCollectedFilmStrip);
-                        note.setCollected(true);
-                        numNotes++;
-                        last_index = numPenguins - 1;
-                        objects.remove(penguins.get(last_index));
-                        penguins.get(last_index).setActive(false);
-                        penguins.get(last_index).setAwake(false);
-                        avatar.getPenguins().remove(last_index);
-                        avatar.setNumPenguins(numPenguins - 1);
-                    } else if (p.isThrowOut()){
-                        note.setFilmStrip(noteCollectedFilmStrip);
-                        note.setCollected(true);
-                        numNotes++;
-                        last_index = numPenguins ;
-                        objects.remove(penguins.get(last_index));
-                        penguins.get(last_index).setActive(false);
-                        penguins.get(last_index).setAwake(false);
-                        avatar.getPenguins().remove(last_index);
-                    }
+        for (Note note: notes){
+            if (!note.isCollected()){
+                for (Penguin p: penguins){
+                    if (p.getPosition().dst(note.getPosition()) <= 1) {
+                        int last_index;
+                        if (p.getIndex() == 0 && (!p.isThrowOut())){
+                            note.setFilmStrip(noteCollectedFilmStrip);
+                            note.setCollected(true);
+                            numNotes++;
+                            last_index = numPenguins - 1;
+                            objects.remove(penguins.get(last_index));
+                            penguins.get(last_index).setActive(false);
+                            penguins.get(last_index).setAwake(false);
+                            avatar.getPenguins().remove(last_index);
+                            avatar.setNumPenguins(numPenguins - 1);
+                        } else if (p.isThrowOut()){
+                            note.setFilmStrip(noteCollectedFilmStrip);
+                            note.setCollected(true);
+                            numNotes++;
+                            last_index = numPenguins ;
+                            objects.remove(penguins.get(last_index));
+                            penguins.get(last_index).setActive(false);
+                            penguins.get(last_index).setAwake(false);
+                            avatar.getPenguins().remove(last_index);
+                        }
 
-                    //avatar.resetPenguinIndex(avatar.getPenguins());
+                        //avatar.resetPenguinIndex(avatar.getPenguins());
+                    }
                 }
             }
         }

@@ -16,6 +16,8 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.util.ArrayList;
+
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
@@ -32,6 +34,8 @@ public class GameplayController extends WorldController implements ContactListen
     private Water water;
     /** Reference to the ice */
     private Ice ice;
+    /** Reference to the list of notes */
+    private ArrayList<Note> notesList;
     /** number of notes collected*/
     public static int notesCollected;
     /** Handle collision and physics (CONTROLLER CLASS) */
@@ -278,11 +282,13 @@ public class GameplayController extends WorldController implements ContactListen
         }
         JsonValue notes = constants.get("notes");
         JsonValue notespos = notes.get("pos");
+        notesList = new ArrayList<Note>();
         for (int i =0; i< notespos.size; i++) {
             Note note = new Note(notes, noteLeftStrip.getRegionWidth() / scale.x, noteLeftStrip.getRegionHeight() / scale.y, i );
             note.setFilmStrip(noteLeftStrip);
             note.setDrawScale(scale);
             addObject(note);
+            notesList.add(note);
         }
 
         JsonValue waters = constants.get("water");
@@ -381,12 +387,9 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController.processCollision(monster, icicle, objects);
         collisionController.processCollision(avatar.getPenguins(), icicle, objects);
         collisionController.processCollision(water, avatar);
-        for (Object o: objects){
-            if (o instanceof Note){
-                notesCollected = collisionController.processCollision(avatar.getPenguins(), (Note)o, noteCollectedStrip, notesCollected,
-                        objects, avatar.getNumPenguins(), avatar);
-            }
-        }
+
+        notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
+                objects, avatar.getNumPenguins(), avatar);
     }
 
     public void updateCamera(){
