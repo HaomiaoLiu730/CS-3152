@@ -11,16 +11,17 @@ import edu.cornell.gdiac.main.obstacle.BoxObstacle;
 import edu.cornell.gdiac.main.obstacle.ComplexObstacle;
 import edu.cornell.gdiac.main.obstacle.WheelObstacle;
 
-public class FloatingIce extends ComplexObstacle {
+public class MovingIce extends ComplexObstacle {
     /** The initializing data (to avoid magic numbers) */
     private final JsonValue data;
 
     /** The primary spinner obstacle */
     private BoxObstacle iceBar;
     private WheelObstacle pin;
-    private float momentum;
-    private int index;
-    private int coolDownCount;
+    private float speed;
+    private float distance;
+    private float initialX;
+    private int direction =1;
 
     /**
      * Creates a new spinner with the given physics data.
@@ -33,22 +34,21 @@ public class FloatingIce extends ComplexObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public FloatingIce(JsonValue data, int index, float width, float height) {
+    public MovingIce(JsonValue data, int index, float width, float height) {
         super(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1));
-        setName("floatingIce");
-
-        coolDownCount = 0;
-
-        this.index = index;
+        setName("movingIce");
 
         iceBar = new BoxObstacle(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),width,height);
-        iceBar.setName("floatingIceBar");
+        iceBar.setName("movingIceBar");
         iceBar.setDensity(data.getFloat("bar_density"));
         iceBar.setFriction(data.getFloat("friction"));
         iceBar.setRestitution(data.getFloat("restitution"));
         iceBar.setFixedRotation(true);
         iceBar.setAngularDamping(0.5f);
         iceBar.setMaster(this);
+        distance = data.getFloat("distance");
+        speed = data.getFloat("speed");
+        initialX = iceBar.getX();
         bodies.add(iceBar);
 
 
@@ -58,10 +58,10 @@ public class FloatingIce extends ComplexObstacle {
         pin.setBodyType(BodyDef.BodyType.StaticBody);
         pin.setRestitution(data.getFloat("restitution"));
 
+
         bodies.add(pin);
         this.data=data;
-//        System.out.println(bodies.size);
-//        this.body = iceBar.getBody();
+
     }
 
 
@@ -111,20 +111,10 @@ public class FloatingIce extends ComplexObstacle {
     @Override
     public void update(float delta) {
         super.update(delta);
-        pin.setPosition(pin.getX() - momentum, pin.getY());
-        momentum -= 0.0009;
-        if (Math.abs(momentum) < 0.001) {
-            momentum = 0;
+        pin.setPosition(pin.getX() - direction*speed, pin.getY());
+        if (Math.abs(initialX - pin.getX()) > distance) {
+            direction = (-1)*direction;
         }
-    }
-
-    public void hitByIcicle(float force){
-        if(momentum == 0)
-            momentum = force;
-    }
-
-    public void resetMomentum(){
-        momentum = 0;
     }
 }
 

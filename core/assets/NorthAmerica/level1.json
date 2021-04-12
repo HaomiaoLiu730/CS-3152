@@ -105,7 +105,23 @@
     "pin_density": 0,
     "friction": 2,
     "pin_radius": 0.1
-
-
+  },
+  "floatingIce":{
+    "pos": [[29.35,3.2]],
+    "restitution" : 0,
+    "bar_density": 3,
+    "pin_density": 0,
+    "friction": 2,
+    "pin_radius": 0.1
+  },
+  "movingIce":{
+    "pos": [[28.35,3.2]],
+    "restitution" : 0,
+    "bar_density": 3,
+    "pin_density": 0,
+    "friction": 2,
+    "pin_radius": 0.1,
+    "distance": 1,
+    "speed": 0.04
   }
 }

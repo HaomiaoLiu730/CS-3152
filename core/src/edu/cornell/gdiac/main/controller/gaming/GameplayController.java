@@ -306,17 +306,30 @@ public class GameplayController extends WorldController implements ContactListen
 //            addObject(ice);
 //        }
 
-        JsonValue ices = constants.get("ice");
-        JsonValue icepos = ices.get("pos");
+//        JsonValue fices = constants.get("floatingIce");
+//        JsonValue ficepos = fices.get("pos");
+//        dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
+//        dheight = iceTextureRegion.getRegionHeight()/scale.y;
+//        FloatingIce fIce;
+//        for (int i =0; i< ficepos.size; i++) {
+//            fIce = new FloatingIce(fices, i, dwidth, dheight);
+//            fIce.setDrawScale(scale);
+//            fIce.setTexture(iceTextureRegion);
+//            fIce.setRestitution(fices.getFloat("restitution"));
+//            addObject(fIce);
+//        }
+
+        JsonValue mices = constants.get("movingIce");
+        JsonValue micepos = mices.get("pos");
         dwidth  = iceTextureRegion.getRegionWidth()/scale.x;
         dheight = iceTextureRegion.getRegionHeight()/scale.y;
-        FloatingIce fIce;
-        for (int i =0; i< icepos.size; i++) {
-            fIce = new FloatingIce(ices, i, dwidth, dheight);
-            fIce.setDrawScale(scale);
-            fIce.setTexture(iceTextureRegion);
-            fIce.setRestitution(ices.getFloat("restitution"));
-            addObject(fIce);
+        MovingIce mIce;
+        for (int i =0; i< micepos.size; i++) {
+            mIce = new MovingIce(mices, i, dwidth, dheight);
+            mIce.setDrawScale(scale);
+            mIce.setTexture(iceTextureRegion);
+            mIce.setRestitution(mices.getFloat("restitution"));
+            addObject(mIce);
         }
     }
 
