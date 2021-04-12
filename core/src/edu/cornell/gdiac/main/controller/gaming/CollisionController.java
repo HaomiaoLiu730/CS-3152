@@ -62,18 +62,50 @@ public class CollisionController {
         }
     }
 
-    public void processCollision(Monster monster, PolygonObstacle icicle, PooledList<Obstacle> objects){
-        if (icicle.getPosition().dst(monster.getPosition()) <= 1){
-            objects.remove(monster);
-            monster.setActive(false);
-            monster.setAwake(false);
+    public void processCollision(Monster monster, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
+        for (PolygonObstacle icicle: icicles){
+            if (icicle.getPosition().dst(monster.getPosition()) <= 1){
+                objects.remove(monster);
+                monster.setActive(false);
+                monster.setAwake(false);
+            }
         }
     }
 
-    public void processCollision(List<Penguin> penguins, PolygonObstacle icicle, PooledList<Obstacle> objects){
+    public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip, int numNotes,
+                                 PooledList<Obstacle> objects, int numPenguins, Player avatar){
+        for (Note note: notes){
+            if (!note.isCollected()){
+                for (Penguin p: penguins){
+                    if (p.getPosition().dst(note.getPosition()) <= 1) {
+                        if(!p.isThrowOut()){
+                            Penguin temp = avatar.deleteOnePenguin();
+                            objects.remove(temp);
+                            avatar.setNumPenguins(numPenguins - 1);
+                        }else{
+                            p.setActive(false);
+                            p.setAwake(false);
+                            objects.remove(p);
+                        }
+                        note.setFilmStrip(noteCollectedFilmStrip);
+                        note.setCollected(true);
+                        numNotes++;
+                        break;
+                    }
+                }
+            }
+        }
+        return numNotes;
+    }
+
+
+    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
         for (Penguin p: penguins){
-            if (p.getPosition().dst(icicle.getPosition()) < 2){
-                icicle.setBodyType(BodyDef.BodyType.DynamicBody);
+            for (PolygonObstacle icicle: icicles){
+                if (p.getPosition().dst(icicle.getPosition()) < 2){
+                    icicle.setBodyType(BodyDef.BodyType.DynamicBody);
+                    icicle.setFixedRotation(true);
+                }
             }
         }
     }
