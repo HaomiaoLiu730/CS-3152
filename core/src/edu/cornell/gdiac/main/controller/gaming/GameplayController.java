@@ -295,12 +295,11 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(water);
         }
 
-        //Common other kinds of ice out to test a specific kind of ice
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
         for (int i =0; i< icepos.size; i++) {
-            int w = ices.get("width").getInt(i);
-            int h = ices.get("height").getInt(i);
+            int w = ices.get("layout").get(i).getInt(0);
+            int h = ices.get("layout").get(i).getInt(1);
             ice = new Ice(ices, i, w/scale.x, h/scale.y);
             iceTextureRegion.setRegionWidth(w);
             iceTextureRegion.setRegionHeight(h);
@@ -309,42 +308,40 @@ public class GameplayController extends WorldController implements ContactListen
             ice.setRestitution(ices.getFloat("restitution"));
             addObject(ice);
         }
-        //end of the region for normal ice
 
-        //beginning of the regoin for floating ice which would be push if hit by icicle
-        //common other kinds of ice out for testing
-        JsonValue fices = constants.get("floatingIce");
-        JsonValue ficepos = fices.get("pos");
-        FloatingIce fIce;
-        for (int i =0; i< ficepos.size; i++) {
-            int w = fices.get("width").getInt(i);
-            int h = fices.get("height").getInt(i);
-            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
-            iceTextureRegion.setRegionWidth(w);
-            iceTextureRegion.setRegionHeight(h);
-            fIce.setDrawScale(scale);
-            fIce.setTexture(iceTextureRegion);
-            fIce.setRestitution(fices.getFloat("restitution"));
-            addObject(fIce);
-        }
-        //end of floating ice
 
-        //beginning of moving ice which moves itself
-        JsonValue mices = constants.get("movingIce");
-        JsonValue micepos = mices.get("pos");
-        MovingIce mIce;
-        for (int i =0; i< micepos.size; i++) {
-            int w = mices.get("width").getInt(i);
-            int h = mices.get("height").getInt(i);
-            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
-            iceTextureRegion.setRegionWidth(w);
-            iceTextureRegion.setRegionHeight(h);
-            mIce.setDrawScale(scale);
-            mIce.setTexture(iceTextureRegion);
-            mIce.setRestitution(mices.getFloat("restitution"));
-            addObject(mIce);
-        }
-        //end of moving ice region
+//        JsonValue fices = constants.get("floatingIce");
+//        JsonValue ficepos = fices.get("pos");
+//        FloatingIce fIce;
+//        for (int i =0; i< ficepos.size; i++) {
+//        int w = fices.get("layout").get(i).getInt(0);
+//        int h = fices.get("layout").get(i).getInt(1);
+//            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
+//            iceTextureRegion.setRegionWidth(w);
+//            iceTextureRegion.setRegionHeight(h);
+//            fIce.setDrawScale(scale);
+//            fIce.setTexture(iceTextureRegion);
+//            fIce.setRestitution(fices.getFloat("restitution"));
+//            addObject(fIce);
+//        }
+//
+//
+//        JsonValue mices = constants.get("movingIce");
+//        JsonValue micepos = mices.get("pos");
+//        MovingIce mIce;
+//        for (int i =0; i< micepos.size; i++) {
+//        int w = mices.get("layout").get(i).getInt(0);
+//        int h = mices.get("layout").get(i).getInt(1);
+//            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
+//            iceTextureRegion.setRegionWidth(w);
+//            iceTextureRegion.setRegionHeight(h);
+//            mIce.setDrawScale(scale);
+//            mIce.setTexture(iceTextureRegion);
+//            mIce.setRestitution(mices.getFloat("restitution"));
+//            addObject(mIce);
+//        }
+
+
     }
 
     /**
