@@ -74,22 +74,36 @@ public class CollisionController {
                                  PooledList<Obstacle> objects, int numPenguins, Player avatar){
         if (!note.isCollected()){
             for (Penguin p: penguins){
-                if (p.getPosition().dst(note.getPosition()) <= 1){
-                    note.setFilmStrip(noteCollectedFilmStrip);
-                    note.setCollected(true);
-                    numNotes ++;
-                    objects.remove(p);
-                    p.setActive(false);
-                    p.setAwake(false);
-                    avatar.getPenguins().remove(p.getIndex());
-                    if (!p.isThrowOut())avatar.setNumPenguins(numPenguins - 1);
-                    avatar.resetPenguinIndex(avatar.getPenguins());
+                if (p.getPosition().dst(note.getPosition()) <= 1) {
+                    int last_index;
+                    if (p.getIndex() == 0 && (!p.isThrowOut())){
+                        note.setFilmStrip(noteCollectedFilmStrip);
+                        note.setCollected(true);
+                        numNotes++;
+                        last_index = numPenguins - 1;
+                        objects.remove(penguins.get(last_index));
+                        penguins.get(last_index).setActive(false);
+                        penguins.get(last_index).setAwake(false);
+                        avatar.getPenguins().remove(last_index);
+                        avatar.setNumPenguins(numPenguins - 1);
+                    } else if (p.isThrowOut()){
+                        note.setFilmStrip(noteCollectedFilmStrip);
+                        note.setCollected(true);
+                        numNotes++;
+                        last_index = numPenguins ;
+                        objects.remove(penguins.get(last_index));
+                        penguins.get(last_index).setActive(false);
+                        penguins.get(last_index).setAwake(false);
+                        avatar.getPenguins().remove(last_index);
+                    }
+
+                    //avatar.resetPenguinIndex(avatar.getPenguins());
                 }
             }
         }
         return numNotes;
     }
-    
+
 
     public void processCollision(List<Penguin> penguins, PolygonObstacle icicle, PooledList<Obstacle> objects){
         for (Penguin p: penguins){
