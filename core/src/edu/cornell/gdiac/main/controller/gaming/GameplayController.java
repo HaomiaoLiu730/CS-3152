@@ -309,7 +309,10 @@ public class GameplayController extends WorldController implements ContactListen
             ice.setRestitution(ices.getFloat("restitution"));
             addObject(ice);
         }
+        //end of the region for normal ice
 
+        //beginning of the regoin for floating ice which would be push if hit by icicle
+        //common other kinds of ice out for testing
         JsonValue fices = constants.get("floatingIce");
         JsonValue ficepos = fices.get("pos");
         FloatingIce fIce;
@@ -324,7 +327,9 @@ public class GameplayController extends WorldController implements ContactListen
             fIce.setRestitution(fices.getFloat("restitution"));
             addObject(fIce);
         }
+        //end of floating ice
 
+        //beginning of moving ice which moves itself
         JsonValue mices = constants.get("movingIce");
         JsonValue micepos = mices.get("pos");
         MovingIce mIce;
@@ -339,6 +344,7 @@ public class GameplayController extends WorldController implements ContactListen
             mIce.setRestitution(mices.getFloat("restitution"));
             addObject(mIce);
         }
+        //end of moving ice region
     }
 
     /**
