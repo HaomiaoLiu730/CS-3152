@@ -82,6 +82,8 @@ public class CollisionController {
                             Penguin temp = avatar.deleteOnePenguin();
                             objects.remove(temp);
                             avatar.setNumPenguins(numPenguins - 1);
+                        }else{
+                            objects.remove(p);
                         }
                         note.setFilmStrip(noteCollectedFilmStrip);
                         note.setCollected(true);
