@@ -2,6 +2,7 @@ package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -17,6 +18,7 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
@@ -39,6 +41,8 @@ public class GameplayController extends WorldController implements ContactListen
     private ArrayList<Note> notesList;
     /** Reference to the list of waters */
     private ArrayList<Water> waterList;
+
+    private boolean isEditingView;
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -112,6 +116,7 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
+        this.isEditingView = isEditingView;
     }
 
     public void setJsonValue(JsonValue jsonValue){
@@ -406,6 +411,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        backToEdit();
         updateCamera();
         updatePlayer();
 
@@ -449,6 +455,17 @@ public class GameplayController extends WorldController implements ContactListen
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
                 objects, avatar.getNumPenguins(), avatar);
+
+    }
+
+    public void backToEdit(){
+        if(isEditingView && (InputController.getInstance().getClickX() > 1200 &&
+                InputController.getInstance().getClickX() < 1260 &&
+                InputController.getInstance().getClickY() < 60 &&
+                InputController.getInstance().getClickY() > 20) &&
+                InputController.getInstance().touchUp()){
+            this.listener.updateScreen(this, 512);
+        }
     }
 
 
@@ -506,6 +523,10 @@ public class GameplayController extends WorldController implements ContactListen
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+num_penguins;
         canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
+        if(isEditingView){
+            canvas.drawSquare(Color.BLACK,1200,660,60,40);
+            canvas.drawText(gameFont, "Edit", 1200,700);
+        }
         canvas.end();
 
         if (isDebug()) {

@@ -355,11 +355,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                         objects.add(new GenericComponent(currentStrip, Component.Note));
                         break;
                     case Ice:
-                        System.out.println("ice");
                         objects.add(new GenericComponent(currentStrip, Component.Ice));
                         break;
                     case FloatingIce:
-                        System.out.println("floaing");
                         objects.add(new GenericComponent(currentStrip, Component.FloatingIce));
                         break;
                     case MovingIce:
@@ -436,7 +434,6 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                 currentWidth = iceStrip.getRegionWidth();
                 currentHeight = iceStrip.getRegionHeight();
             }else if(grid == 3 || grid == 4){
-                System.out.println("floating ice");
                 currentComponent = Component.FloatingIce;
                 currentStrip = iceStrip.copy();
                 currentWidth = iceStrip.getRegionWidth();
@@ -674,7 +671,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             float[] newPos;
             switch (obj.component){
                 case Note:
-                    notePos.add(pos);
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
+                    notePos.add(newPos);
                     break;
                 case Icicle:
                     for(int i = 0; i < obj.polygonRegion.getVertices().length; i++){
@@ -699,7 +697,6 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                     iceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
                     break;
                 case FloatingIce:
-                    System.out.println("floating");
                     newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
                     floatingIcePos.add(newPos);
                     floatingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
@@ -715,6 +712,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             }
         }
         this.levelJson.notes.pos = arrayListToArr2(notePos);
+        this.levelJson.defaults.num_notes = notePos.size();
+        this.levelJson.defaults.num_penguins = notePos.size();
         this.levelJson.ice.pos = arrayListToArr2(icePos);
         this.levelJson.ice.layout = arrayListToArr2(iceLayout);
         this.levelJson.floatingIce.pos = arrayListToArr2(floatingIcePos);
