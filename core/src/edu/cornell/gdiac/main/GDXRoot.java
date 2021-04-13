@@ -14,6 +14,8 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 public class GDXRoot extends Game implements ScreenListener {
 
+	public static final int GAMEPLAY_MENU = 150;
+
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
 
@@ -124,9 +126,16 @@ public class GDXRoot extends Game implements ScreenListener {
 			levelEditorGameplayController.reset();
 			levelEditorGameplayController.setScreenListener(this);
 			setScreen(levelEditorGameplayController);
-		}else if(screen instanceof GameplayController){
-			levelEditorGameplayController.setScreenListener(this);
-			setScreen(levelEditor);
+		} else if(screen instanceof GameplayController){
+      		if (exitCode == GAMEPLAY_MENU) {
+				controllers[current].dispose();
+				menuController = new MenuController(canvas);
+				menuController.setScreenListener(this);
+				setScreen(menuController);
+			} else {
+				levelEditorGameplayController.setScreenListener(this);
+				setScreen(levelEditor);
+			}
 		}
 	}
 }
