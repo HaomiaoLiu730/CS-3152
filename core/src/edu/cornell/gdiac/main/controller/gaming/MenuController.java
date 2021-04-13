@@ -12,9 +12,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
+
+import java.util.ArrayList;
 
 public class MenuController extends ClickListener implements Screen, InputProcessor, ControllerListener, Loading {
     /** Listener that will update the player mode when we are done */
@@ -58,6 +61,8 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private Texture oceania;
     private Texture antarctica;
 
+    private ArrayList<Continent> unlockedContinents = new ArrayList<>();
+
     private BitmapFont gameFont;
 
     private JsonValue finishedLevels;
@@ -88,12 +93,13 @@ public class MenuController extends ClickListener implements Screen, InputProces
         finishedLevels = levelProgress.get("finished");
         NAfinishedLevels = finishedLevels.get("NorthAmerica").asIntArray();
 
-
         active  = true;
-        zoomIn = true;
+        zoomIn = false;
         currentContinent = Continent.NorthAmerica;
         camera = canvas.getCamera();
         this.canvas = canvas;
+
+        unlockedContinents.add(Continent.NorthAmerica);
     }
 
     private void zoomInto(float viewportWidth, float viewportHeight, float cameraPosX, float cameraPosY){
@@ -122,14 +128,46 @@ public class MenuController extends ClickListener implements Screen, InputProces
     }
 
     public void update(float delta) {
-        if(zoomIn){
+        zoomInEffect();
+        selectContinent();
+        InputController.getInstance().readInput();
+
+        if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
+            isReady = true;
+        }
+        prevTouched = Gdx.input.isTouched();
+        if(InputController.getInstance().touchUp()){
+            zoomIn = true;
+        }
+    }
+
+    public void selectContinent(){
+        float x = Gdx.input.getX();
+        float y = Gdx.input.getY();
+        if(x>760 && x < 1280 && y > 70 && y < 370){
+            currentContinent = Continent.NorthAmerica;
+        }else if(x>1000 && x < 1280 && y > 370 && y < 620){
+            currentContinent = Continent.SouthAmerica;
+        }else if(x>340 && x < 740 && y > 120 && y < 376){
+            currentContinent = Continent.Asia;
+        }else if(x>60 && x < 340 && y > 150 && y <280){
+            currentContinent = Continent.Europe;
+        }else if(x>30 && x < 250 && y > 300 && y < 530){
+            currentContinent = Continent.Africa;
+        }else if(x>480 && x < 630 && y > 430 && y < 540){
+            currentContinent = Continent.Oceania;
+        }else if(x>0 && x < 690 && y > 650 && y < 720){
+            currentContinent = Continent.Antarctica;
+        }
+    }
+
+    public void zoomInEffect(){
+        if(zoomIn && unlockedContinents.contains(currentContinent)){
             switch (currentContinent){
                 case NorthAmerica:
-                    // -620 -370 360 120 per 120
                     zoomInto(660f, 350f, 1000f, 480f);
                     break;
                 case SouthAmerica:
-                    // -620 -370 360 120 per 120
                     zoomInto(560f, 300f, 1180f, 220f);
                     break;
                 case Asia:
@@ -151,6 +189,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
                     break;
             }
         }
+    }
+
+    public void drawLevels(){
         if(drawPoints){
             switch (currentContinent){
                 case NorthAmerica:
@@ -164,23 +205,18 @@ public class MenuController extends ClickListener implements Screen, InputProces
                     break;
             }
         }
-
-        if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
-            isReady = true;
-        }
-        prevTouched = Gdx.input.isTouched();
     }
 
     public void draw() {
         canvas.begin();
         canvas.drawOverlay(background,true);
-        canvas.drawOverlay(northAmerica, currentContinent == Continent.NorthAmerica ? Color.WHITE : grey, 0, 0);
-        canvas.drawOverlay(southAmerica, currentContinent == Continent.SouthAmerica ? Color.WHITE : grey,0,0);
-        canvas.drawOverlay(oceania, currentContinent == Continent.Oceania ? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(asia, currentContinent == Continent.Asia ? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(europe, currentContinent == Continent.Europe ? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(africa, currentContinent == Continent.Africa ? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(antarctica, currentContinent == Continent.Antarctica ? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(northAmerica, unlockedContinents.contains(Continent.NorthAmerica)? Color.WHITE : grey, 0, 0);
+        canvas.drawOverlay(southAmerica, unlockedContinents.contains(Continent.SouthAmerica)? Color.WHITE : grey,0,0);
+        canvas.drawOverlay(oceania, unlockedContinents.contains(Continent.Oceania)? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(asia, unlockedContinents.contains(Continent.Asia)? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,0, 0);
         if(drawPoints){
             switch (currentContinent){
                 case NorthAmerica:
