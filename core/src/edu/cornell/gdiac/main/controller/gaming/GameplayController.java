@@ -2,11 +2,13 @@ package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
@@ -16,6 +18,7 @@ import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
@@ -38,6 +41,8 @@ public class GameplayController extends WorldController implements ContactListen
     private ArrayList<Note> notesList;
     /** Reference to the list of waters */
     private ArrayList<Water> waterList;
+
+    private boolean isEditingView;
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -89,7 +94,7 @@ public class GameplayController extends WorldController implements ContactListen
      * @param width  The width of the game window
      * @param height The height of the game window
      */
-    public GameplayController(float width, float height) {
+    public GameplayController(float width, float height, boolean isEditingView) {
         super(width,height,DEFAULT_GRAVITY);
 
         scale = super.scale;
@@ -98,7 +103,7 @@ public class GameplayController extends WorldController implements ContactListen
         setFailure(false);
         world.setContactListener(this);
 
-        internal = new AssetDirectory("NorthAmerica/northAmericaMain.json");
+        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :"NorthAmerica/northAmericaMain.json");
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
@@ -111,12 +116,19 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
+        this.isEditingView = isEditingView;
+    }
 
+    public void setJsonValue(JsonValue jsonValue){
 
     }
 
     public GameplayController(){
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, false);
+    }
+
+    public GameplayController(boolean isEditorView){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, isEditorView);
     }
 
     /**
@@ -219,13 +231,15 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setName(sname+ii);
             addObject(obj);
         }
+
         JsonValue icicles = constants.get("icicles");
-        JsonValue iciclepos=icicles.get("pos");
+        JsonValue iciclepos = icicles.get("pos");
 
         iciclesList = new ArrayList<PolygonObstacle>();
-        for (int i = 0; i < icicles.get("layout").size; i ++){
+        for (int i = 0; i < icicles.get("pos").size; i ++){
             PolygonObstacle icicle;
-            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            icicle.setBodyType(BodyDef.BodyType.StaticBody);
+            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            
+            icicle.setBodyType(BodyDef.BodyType.StaticBody);
             icicle.setDensity(icicles.getFloat("density"));
             icicle.setFriction(icicles.getFloat("friction"));
             icicle.setRestitution(icicles.getFloat("restitution"));
@@ -316,8 +330,6 @@ public class GameplayController extends WorldController implements ContactListen
             waterList.add(water);
             addObject(water);
             water.setActive(false);
-
-
         }
 
         JsonValue ices = constants.get("ice");
@@ -334,39 +346,35 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(ice);
         }
 
+        JsonValue fices = constants.get("floatingIce");
+        JsonValue ficepos = fices.get("pos");
+        FloatingIce fIce;
+        for (int i =0; i< ficepos.size; i++) {
+        int w = fices.get("layout").get(i).getInt(0);
+        int h = fices.get("layout").get(i).getInt(1);
+            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
+            iceTextureRegion.setRegionWidth(w);
+            iceTextureRegion.setRegionHeight(h);
+            fIce.setDrawScale(scale);
+            fIce.setTexture(iceTextureRegion);
+            fIce.setRestitution(fices.getFloat("restitution"));
+            addObject(fIce);
+        }
 
-//        JsonValue fices = constants.get("floatingIce");
-//        JsonValue ficepos = fices.get("pos");
-//        FloatingIce fIce;
-//        for (int i =0; i< ficepos.size; i++) {
-//        int w = fices.get("layout").get(i).getInt(0);
-//        int h = fices.get("layout").get(i).getInt(1);
-//            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
-//            iceTextureRegion.setRegionWidth(w);
-//            iceTextureRegion.setRegionHeight(h);
-//            fIce.setDrawScale(scale);
-//            fIce.setTexture(iceTextureRegion);
-//            fIce.setRestitution(fices.getFloat("restitution"));
-//            addObject(fIce);
-//        }
-//
-//
-//        JsonValue mices = constants.get("movingIce");
-//        JsonValue micepos = mices.get("pos");
-//        MovingIce mIce;
-//        for (int i =0; i< micepos.size; i++) {
-//        int w = mices.get("layout").get(i).getInt(0);
-//        int h = mices.get("layout").get(i).getInt(1);
-//            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
-//            iceTextureRegion.setRegionWidth(w);
-//            iceTextureRegion.setRegionHeight(h);
-//            mIce.setDrawScale(scale);
-//            mIce.setTexture(iceTextureRegion);
-//            mIce.setRestitution(mices.getFloat("restitution"));
-//            addObject(mIce);
-//        }
-
-
+        JsonValue mices = constants.get("movingIce");
+        JsonValue micepos = mices.get("pos");
+        MovingIce mIce;
+        for (int i =0; i< micepos.size; i++) {
+        int w = mices.get("layout").get(i).getInt(0);
+        int h = mices.get("layout").get(i).getInt(1);
+            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
+            iceTextureRegion.setRegionWidth(w);
+            iceTextureRegion.setRegionHeight(h);
+            mIce.setDrawScale(scale);
+            mIce.setTexture(iceTextureRegion);
+            mIce.setRestitution(mices.getFloat("restitution"));
+            addObject(mIce);
+        }
     }
 
     /**
@@ -403,6 +411,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        backToEdit();
         updateCamera();
         updatePlayer();
 
@@ -446,6 +455,17 @@ public class GameplayController extends WorldController implements ContactListen
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
                 objects, avatar.getNumPenguins(), avatar);
+
+    }
+
+    public void backToEdit(){
+        if(isEditingView && (InputController.getInstance().getClickX() > 1200 &&
+                InputController.getInstance().getClickX() < 1260 &&
+                InputController.getInstance().getClickY() < 60 &&
+                InputController.getInstance().getClickY() > 20) &&
+                InputController.getInstance().touchUp()){
+            this.listener.updateScreen(this, 512);
+        }
     }
 
 
@@ -503,6 +523,10 @@ public class GameplayController extends WorldController implements ContactListen
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+num_penguins;
         canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
+        if(isEditingView){
+            canvas.drawSquare(Color.BLACK,1200,660,60,40);
+            canvas.drawText(gameFont, "Edit", 1200,700);
+        }
         canvas.end();
 
         if (isDebug()) {
