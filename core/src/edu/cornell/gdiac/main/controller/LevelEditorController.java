@@ -679,16 +679,17 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                     monsterDir.add(false);
                     break;
                 case Ice:
-                    icePos.add(pos);
-                    iceLayout.add(new float[]{obj.filmStrip.getRegionWidth()/40f, obj.filmStrip.getRegionHeight()/40f});
+                    float[] newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()/80f};
+                    icePos.add(newPos);
+                    iceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
                     break;
                 case FloatingIce:
                     floatingIcePos.add(pos);
-                    floatingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth()/40f, obj.filmStrip.getRegionHeight()/40f});
+                    floatingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
                     break;
                 case MovingIce:
                     movingIcePos.add(pos);
-                    movingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth()/40f, obj.filmStrip.getRegionHeight()/40f});
+                    movingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
                     break;
             }
         }

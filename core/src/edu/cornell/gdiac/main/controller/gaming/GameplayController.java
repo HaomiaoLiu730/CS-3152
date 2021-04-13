@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
@@ -111,7 +112,9 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
+    }
 
+    public void setJsonValue(JsonValue jsonValue){
 
     }
 
@@ -211,12 +214,8 @@ public class GameplayController extends WorldController implements ContactListen
         float dwidth, dheight;
         JsonValue defaults = constants.get("defaults");
         String sname = "snow";
-        System.out.println(defaults);
-        System.out.println("len"+defaults.get("snow").size);
         for (int ii = 0; ii < defaults.get("snow").size; ii++) {
             PolygonObstacle obj;
-            System.out.println("i: "+ii);
-            System.out.println(defaults.get("snow").get(ii));
             obj = new PolygonObstacle(defaults.get("snow").get(ii).asFloatArray(), 0, 0);
             obj.setBodyType(BodyDef.BodyType.StaticBody);
             obj.setDensity(defaults.getFloat("density", 0));
@@ -326,14 +325,10 @@ public class GameplayController extends WorldController implements ContactListen
             waterList.add(water);
             addObject(water);
             water.setActive(false);
-
-
         }
 
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
-        System.out.println("ice size: "+icepos.size);
-        System.out.println(ices);
         for (int i =0; i< icepos.size; i++) {
             int w = ices.get("layout").get(i).getInt(0);
             int h = ices.get("layout").get(i).getInt(1);
