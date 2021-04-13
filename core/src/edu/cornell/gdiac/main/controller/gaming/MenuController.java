@@ -5,11 +5,13 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
@@ -18,6 +20,7 @@ import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MenuController extends ClickListener implements Screen, InputProcessor, ControllerListener, Loading {
     /** Listener that will update the player mode when we are done */
@@ -46,6 +49,11 @@ public class MenuController extends ClickListener implements Screen, InputProces
         Oceania
     }
 
+    private static HashMap<Continent, ArrayList> finished = new HashMap<>();
+    private static HashMap<Continent, Integer> numOfLevels = new HashMap<>();
+
+    private static JsonValue value;
+
     private float[] NORTH_AMERICA_LEVELS = new float[]{
             1100f, 600f, 1000f, 610f, 300f, 470f, 600f, 440f, 520f, 300f, 670f, 270f
     };
@@ -61,12 +69,10 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private Texture oceania;
     private Texture antarctica;
 
-    private ArrayList<Continent> unlockedContinents = new ArrayList<>();
+    private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
 
     private BitmapFont gameFont;
 
-    private JsonValue finishedLevels;
-    private int[] NAfinishedLevels;
     /**
      * Creates a new game with a playing field of the given size.
      * <p>
@@ -79,6 +85,10 @@ public class MenuController extends ClickListener implements Screen, InputProces
         internal.loadAssets();
         internal.finishLoading();
 
+        FileHandle file = Gdx.files.local("menu/levelProgress.json");
+        JsonReader jsonReader = new JsonReader();
+        value = jsonReader.parse(file);
+
         background = internal.getEntry("background", Texture.class);
         northAmerica = internal.getEntry("NorthAmerica", Texture.class);
         southAmerica = internal.getEntry("SouthAmerica", Texture.class);
@@ -89,17 +99,42 @@ public class MenuController extends ClickListener implements Screen, InputProces
         oceania = internal.getEntry("Oceania", Texture.class);
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
 
-        JsonValue levelProgress = internal.getEntry("finishedLevels", JsonValue.class);
-        finishedLevels = levelProgress.get("finished");
-        NAfinishedLevels = finishedLevels.get("NorthAmerica").asIntArray();
-
         active  = true;
         zoomIn = false;
         currentContinent = Continent.NorthAmerica;
         camera = canvas.getCamera();
         this.canvas = canvas;
 
-        unlockedContinents.add(Continent.NorthAmerica);
+        refreshMenu();
+    }
+
+    public static ArrayList<Integer> arrToArrList(int[] arr){
+        ArrayList<Integer> ret = new ArrayList<Integer>(arr.length);
+        for (int i : arr)
+            ret.add(i);
+        return ret;
+    }
+
+    public static void refreshMenu(){
+        finished.put(Continent.NorthAmerica,arrToArrList(value.get("finished").get("NorthAmerica").asIntArray()));
+        finished.put(Continent.SouthAmerica,arrToArrList(value.get("finished").get("SouthAmerica").asIntArray()));
+        finished.put(Continent.Asia,arrToArrList(value.get("finished").get("Asia").asIntArray()));
+        finished.put(Continent.Europe,arrToArrList(value.get("finished").get("Europe").asIntArray()));
+        finished.put(Continent.Antarctica,arrToArrList(value.get("finished").get("Antarctica").asIntArray()));
+        finished.put(Continent.Africa,arrToArrList(value.get("finished").get("Africa").asIntArray()));
+        finished.put(Continent.Oceania,arrToArrList(value.get("finished").get("Oceania").asIntArray()));
+        numOfLevels.put(Continent.NorthAmerica, value.get("numOfLevels").getInt("NorthAmerica"));
+        numOfLevels.put(Continent.SouthAmerica, value.get("numOfLevels").getInt("SouthAmerica"));
+        numOfLevels.put(Continent.Asia, value.get("numOfLevels").getInt("Asia"));
+        numOfLevels.put(Continent.Europe, value.get("numOfLevels").getInt("Europe"));
+        numOfLevels.put(Continent.Antarctica, value.get("numOfLevels").getInt("Antarctica"));
+        numOfLevels.put(Continent.Africa, value.get("numOfLevels").getInt("Africa"));
+        numOfLevels.put(Continent.Oceania, value.get("numOfLevels").getInt("Oceania"));
+        for(Continent continent: finished.keySet()){
+            if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
+                unlockedContinents.add(continent);
+            }
+        }
     }
 
     private void zoomInto(float viewportWidth, float viewportHeight, float cameraPosX, float cameraPosY){
