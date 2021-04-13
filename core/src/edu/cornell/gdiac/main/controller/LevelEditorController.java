@@ -39,6 +39,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private static final int WIDTH = 320;
     private static final int HEIGHT = 18;
 
+    private static final float EXIT_X = 500;
     private static final float MONSTER_X = 360;
     private static final float ICICLE_X = 260;
     private static final float ICE_X = 80;
@@ -135,7 +136,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         MovingIce,
         Icicle,
         MonsterHori,
-        MonsterVer
+        MonsterVer,
+        Exit,
     }
 
     public LevelEditorController(GameCanvas canvas){
@@ -177,6 +179,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         TEXTURE_COMPONENTS.add(Component.Ice);
         TEXTURE_COMPONENTS.add(Component.FloatingIce);
         TEXTURE_COMPONENTS.add(Component.MovingIce);
+        TEXTURE_COMPONENTS.add(Component.Exit);
         TEXTURE_COMPONENTS.add(Component.MonsterHori);
         TEXTURE_COMPONENTS.add(Component.MonsterVer);
         POLYGON_COMPONENTS.add(Component.Icicle);
@@ -352,9 +355,11 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                         objects.add(new GenericComponent(currentStrip, Component.Note));
                         break;
                     case Ice:
+                        System.out.println("ice");
                         objects.add(new GenericComponent(currentStrip, Component.Ice));
                         break;
                     case FloatingIce:
+                        System.out.println("floaing");
                         objects.add(new GenericComponent(currentStrip, Component.FloatingIce));
                         break;
                     case MovingIce:
@@ -368,6 +373,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                         break;
                     case MonsterVer:
                         objects.add(new GenericComponent(currentStrip, Component.MonsterVer));
+                        break;
+                    case Exit:
+                        objects.add(new GenericComponent(currentStrip, Component.Exit));
                         break;
                 }
                 currentComponent = null;
@@ -428,6 +436,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                 currentWidth = iceStrip.getRegionWidth();
                 currentHeight = iceStrip.getRegionHeight();
             }else if(grid == 3 || grid == 4){
+                System.out.println("floating ice");
                 currentComponent = Component.FloatingIce;
                 currentStrip = iceStrip.copy();
                 currentWidth = iceStrip.getRegionWidth();
@@ -453,6 +462,11 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                 currentStrip = monsterVerStrip.copy();
                 currentWidth = monsterVerStrip.getRegionWidth();
                 currentHeight = monsterVerStrip.getRegionHeight();
+            }else if(grid == 12){
+                currentComponent = Component.Exit;
+                currentStrip = exitStrip.copy();
+                currentWidth = exitStrip.getRegionWidth();
+                currentHeight = exitStrip.getRegionHeight();
             }
         }
     }
@@ -492,7 +506,6 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             currentStrip.setRegionWidth(currentWidth);
             currentStrip.setRegionHeight(currentHeight);
             canvas.drawFixed(currentStrip, TARGET_X, TARGET_Y);
-
         }else if(currentComponent != null && POLYGON_COMPONENTS.contains(currentComponent)){
             currentPolygonRegion.getVertices()[0] = -currentWidth/2f;
             currentPolygonRegion.getVertices()[2] = currentWidth/2f;
@@ -537,6 +550,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         drawScaledChoice(icicleRegion, ICICLE_X, 640, 0.5f, 0.5f);
         drawScaledChoice(monsterStrip, MONSTER_X, 680, 0.5f, 0.5f,0f);
         drawScaledChoice(monsterVerStrip, MONSTER_X+80, 680, 0.5f, 0.5f,0f);
+        drawScaledChoice(exitStrip, EXIT_X, 680, 0.5f, 0.5f,0f);
         canvas.drawText(displayFont, "ice", ICE_X, 680);
         canvas.drawText(displayFont, "floating", FLOATING_ICE_X-20, 680);
         canvas.drawText(displayFont, "moving", MOVING_ICE_X-20, 680);
@@ -657,6 +671,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             float[] pos = new float[2];
             pos[0] = obj.position.x/40f;
             pos[1] = obj.position.y/40f;
+            float[] newPos;
             switch (obj.component){
                 case Note:
                     notePos.add(pos);
@@ -679,18 +694,24 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                     monsterDir.add(false);
                     break;
                 case Ice:
-                    float[] newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()/80f};
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
                     icePos.add(newPos);
                     iceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
                     break;
                 case FloatingIce:
-                    floatingIcePos.add(pos);
+                    System.out.println("floating");
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
+                    floatingIcePos.add(newPos);
                     floatingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
                     break;
                 case MovingIce:
-                    movingIcePos.add(pos);
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
+                    movingIcePos.add(newPos);
                     movingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
                     break;
+                case Exit:
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()/80f};
+                    this.levelJson.goal.pos = newPos;
             }
         }
         this.levelJson.notes.pos = arrayListToArr2(notePos);
