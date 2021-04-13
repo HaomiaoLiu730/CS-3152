@@ -838,7 +838,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public float damping = 10.0f;
         public float density = 1f;
         public float friction = 0.0f;
-        public float maxspeed = 4f;
+        public float max_speed = 4f;
         public float restitution = 0f;
         public float player_jump = 26f;
         public float jump_cooldown = 30f;
@@ -848,12 +848,12 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public float punch_time = 30;
         public float punch_cooldown = 0f;
         public float max_throw_force = 300;
-        public float sensorheight = 0.05f;
-        public String sensorname = "PlayerGroundSensor";
+        public float sensor_height = 0.05f;
+        public String sensor_name = "PlayerGroundSensor";
         public float vshrink = 0.25f;
         public float hshrink = 0.25f;
         public float sshrink = 0.6f;
-        public float timecount = 0f;
+        public float time_count = 0f;
     }
 
     private class Penguin{
@@ -864,9 +864,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public float damping = 2f;
         public float density = 1f;
         public float friction = 0.0f;
-        public float maxspeed = 3f;
-        public float sensorheight = 0.05f;
-        public String sensorname = "PenguinGroundSensor";
+        public float max_speed = 3f;
+        public float sensor_height = 0.05f;
+        public String sensor_name = "PenguinGroundSensor";
         public float vshrink = 0.75f;
         public float hshrink = 0.75f;
         public float sshrink = 0.6f;
@@ -888,9 +888,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public float damping = 10f;
         public float density = 1f;
         public float friction = 5f;
-        public float maxspeed = 5f;
-        public float sensorheight = 0.05f;
-        public String sensorname = "MonsterGroundSensor";
+        public float max_speed = 5f;
+        public float sensor_height = 0.05f;
+        public String sensor_name = "MonsterGroundSensor";
         public float vshrink = 0.25f;
         public float hshrink = 0.25f;
         public float sshrink = 0.6f;
