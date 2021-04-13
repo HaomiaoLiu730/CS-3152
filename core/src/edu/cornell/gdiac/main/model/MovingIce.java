@@ -14,6 +14,8 @@ import edu.cornell.gdiac.main.obstacle.ComplexObstacle;
 import edu.cornell.gdiac.main.obstacle.WheelObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 
+import java.util.LinkedList;
+
 public class MovingIce extends ComplexObstacle {
     /** The initializing data (to avoid magic numbers) */
     private final JsonValue data;
@@ -25,6 +27,9 @@ public class MovingIce extends ComplexObstacle {
     private float distance;
     private float initialX;
     private int direction =1;
+
+    private LinkedList<Monster> monsters;
+    private Player bear;
 
     /**
      * Creates a new spinner with the given physics data.
@@ -65,6 +70,9 @@ public class MovingIce extends ComplexObstacle {
 
         bodies.add(pin);
         this.data=data;
+
+        monsters  = new LinkedList<>();
+        bear = null;
 
     }
 
@@ -115,10 +123,36 @@ public class MovingIce extends ComplexObstacle {
     @Override
     public void update(float delta) {
         super.update(delta);
-        pin.setPosition(pin.getX() - direction*speed, pin.getY());
         if (Math.abs(initialX - pin.getX()) > distance) {
             direction = (-1)*direction;
         }
+
+        pin.setPosition(pin.getX() - direction*speed, pin.getY());
+        if(monsters.size()>0){
+            for(int i= 0 ; i<monsters.size();i++) {
+                monsters.get(i).setMovingIceoffset(direction*speed);
+            }
+
+        }
+        if(bear!=null)
+            bear.setMovingIceoffset(direction*speed);
+
+    }
+
+    public void addMonster(Monster m){
+        if (!monsters.contains(m))
+            monsters.add(m);
+    }
+
+    public void removeMonster(Monster m ){
+        monsters.remove(m);
+    }
+
+    public void addPlayer(Player p){
+        bear = p;
+    }
+    public void removePlyaer(){
+        bear = null;
     }
 }
 
