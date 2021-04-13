@@ -719,10 +719,11 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                     notePos.add(newPos);
                     break;
                 case Icicle:
+                    float[] layout = new float[obj.polygonRegion.getVertices().length];
                     for(int i = 0; i < obj.polygonRegion.getVertices().length; i++){
-                        obj.polygonRegion.getVertices()[i] /= 40;
+                        layout[i] = obj.polygonRegion.getVertices()[i] /40;
                     }
-                    icicleLayout.add(obj.polygonRegion.getVertices());
+                    icicleLayout.add(layout);
                     iciclePos.add(pos);
                     break;
                 case MonsterHori:
@@ -905,7 +906,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public float friction = 0.0f;
         public float max_speed = 4f;
         public float restitution = 0f;
-        public float player_jump = 26f;
+        public float player_jump = 7f;
         public float jump_cooldown = 30f;
         public float throw_cooldown = 30f;
         public float shoot_cooldown = 40f;
