@@ -119,6 +119,11 @@
       "file": "images/shared/snow.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "waves": {
+      "file":"images/shared/waves.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {

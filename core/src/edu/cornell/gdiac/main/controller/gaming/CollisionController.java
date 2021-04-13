@@ -121,15 +121,17 @@ public class CollisionController {
         }
     }
 
-    public void processCollision(Water water, Player avatar){
-        water.setActive(false);
-        float leftX = water.getX()-((Water) water).getWidth()/2;
-        float rightX = water.getX()+((Water) water).getWidth()/2;
-        float downY = water.getY()-((Water) water).getHeight()/2;
-        float upY = water.getY()+((Water) water).getHeight()/2;
-        if (avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.getY() >= downY && avatar.getY() <= upY) {
-            GameplayController.hitWater(true);
+    public void processCollision(List<Water> waters, Player avatar){
+        for (Water water: waters){
+            water.setActive(false);
+            float leftX = water.getX()-((Water) water).getWidth()/2;
+            float rightX = water.getX()+((Water) water).getWidth()/2;
+            float downY = water.getY()-((Water) water).getHeight()/2;
+            float upY = water.getY()+((Water) water).getHeight()/2;
+            if (avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.getY() >= downY && avatar.getY() <= upY) {
+                GameplayController.hitWater(true);
         }
     }
+}
 
 }
