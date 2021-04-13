@@ -71,6 +71,8 @@ public abstract class WorldController implements Screen {
     protected FilmStrip penguinRollingStrip;
     /** The texture for the monster */
     protected FilmStrip monsterStrip;
+    /** The texture for the waves */
+    protected FilmStrip wavesStrip;
     /** The texture for the water */
     protected FilmStrip waterStrip;
     /** The texture for the ice */
@@ -167,10 +169,8 @@ public abstract class WorldController implements Screen {
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
         snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
         iceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
-        Texture waterTexture = directory.getEntry("waves", Texture.class);
-        waterTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge);
-
-        waterStrip = new FilmStrip(waterTexture, 1, 4);
+        waterStrip =new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
+        wavesStrip = new FilmStrip(directory.getEntry("waves", Texture.class), 1, 4);
 
     }
 
