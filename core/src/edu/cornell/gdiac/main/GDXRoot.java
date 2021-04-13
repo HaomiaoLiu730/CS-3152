@@ -118,8 +118,6 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		} else if(screen instanceof MenuController){
 			current = exitCode;
-			menuController.dispose();
-			menuController = null;
 			controllers[current].reset();
 			controllers[current].setScreenListener(this);
 			setScreen(controllers[current]);
@@ -134,8 +132,9 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		}else if(screen instanceof GameplayController){
 			if (exitCode == GAMEPLAY_MENU) {
-				controllers[current].dispose();
-				menuController = new MenuController(canvas);
+//				controllers[current].dispose();
+//				menuController = new MenuController(canvas);
+				menuController.reset();
 				menuController.setScreenListener(this);
 				setScreen(menuController);
 			}else if(exitCode == GAMEPLAY_EDITOR){

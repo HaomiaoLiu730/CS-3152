@@ -110,6 +110,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         refreshMenu();
     }
 
+
     public static ArrayList<Integer> arrToArrList(int[] arr){
         ArrayList<Integer> ret = new ArrayList<Integer>(arr.length);
         for (int i : arr)
@@ -300,6 +301,15 @@ public class MenuController extends ClickListener implements Screen, InputProces
                 listener.updateScreen(this, 0);
             }
         }
+    }
+
+    public void reset(){
+        zoomIn = false;
+        drawPoints = false;
+        FileHandle file = Gdx.files.local("menu/levelProgress.json");
+        JsonReader jsonReader = new JsonReader();
+        value = jsonReader.parse(file);
+        isReady = false;
     }
 
     @Override

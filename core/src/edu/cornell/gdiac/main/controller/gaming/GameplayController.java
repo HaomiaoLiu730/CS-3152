@@ -442,12 +442,10 @@ public class GameplayController extends WorldController implements ContactListen
                 return;
             }
         }
-        if (Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
-            if (Gdx.input.isTouched()) {
-                listener.updateScreen(this, GDXRoot.GAMEPLAY_MENU);
-                quitClick = true;
-                return;
-            }
+        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+            listener.updateScreen(this, GDXRoot.GAMEPLAY_MENU);
+            quitClick = true;
+            return;
         }
       
         backToEdit();
