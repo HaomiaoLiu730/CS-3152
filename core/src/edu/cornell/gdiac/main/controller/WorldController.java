@@ -164,10 +164,11 @@ public abstract class WorldController implements Screen {
         throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
-        waterStrip= new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
         snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
         iceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+        waterStrip = new FilmStrip(directory.getEntry("waves", Texture.class), 1, 4);
+
     }
 
     /**

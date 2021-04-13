@@ -36,6 +36,9 @@ public class GameplayController extends WorldController implements ContactListen
     private Ice ice;
     /** Reference to the list of notes */
     private ArrayList<Note> notesList;
+    /** Reference to the list of waters */
+    private ArrayList<Water> waterList;
+
     /** number of notes collected*/
     public static int notesCollected;
     /** Handle collision and physics (CONTROLLER CLASS) */
@@ -222,8 +225,7 @@ public class GameplayController extends WorldController implements ContactListen
         iciclesList = new ArrayList<PolygonObstacle>();
         for (int i = 0; i < icicles.get("layout").size; i ++){
             PolygonObstacle icicle;
-            icicle = new PolygonObstacle(icicles.get("layout").get(0).asFloatArray(), iciclepos.getFloat(0), iciclepos.getFloat(1));
-            icicle.setBodyType(BodyDef.BodyType.StaticBody);
+            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            icicle.setBodyType(BodyDef.BodyType.StaticBody);
             icicle.setDensity(icicles.getFloat("density"));
             icicle.setFriction(icicles.getFloat("friction"));
             icicle.setRestitution(icicles.getFloat("restitution"));
@@ -305,13 +307,17 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         JsonValue waters = constants.get("water");
-        JsonValue waterpos = waters.get("pos");
-        for (int i =0; i< waterpos.size; i++) {
-            water = new Water(waters, waterStrip.getRegionWidth() / scale.x, waterStrip.getRegionHeight() / scale.y, "water",i);
-            water.setActive(false);
+        JsonValue water_layout = waters.get("layout");
+        waterList= new ArrayList<Water>();
+        for (int i =0; i< water_layout.size; i++) {
+            water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
             water.setFilmStrip(waterStrip);
             water.setDrawScale(scale);
+            waterList.add(water);
             addObject(water);
+            water.setActive(false);
+
+
         }
 
         JsonValue ices = constants.get("ice");
@@ -436,11 +442,12 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController.processCollision(monsters, attackStrip, avatar.getPenguins());
         collisionController.processCollision(monsters, iciclesList, objects);
         collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
-        collisionController.processCollision(water, avatar);
+        collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
                 objects, avatar.getNumPenguins(), avatar);
     }
+
 
     public void updateCamera(){
         // camera
@@ -638,6 +645,7 @@ public class GameplayController extends WorldController implements ContactListen
             if (playerGround == 0) {
                 avatar.setGrounded(false);
             }
+
         }
 
         for(Penguin p: avatar.getPenguins()){

@@ -205,9 +205,9 @@ public class Penguin extends CapsuleObstacle {
         PENGUIN_FRICTION=data.getFloat("friction");
         PENGUIN_FORCE=data.getFloat("force");
         PENGUIN_DAMPING=data.getFloat("damping");
-        PENGUIN_MAXSPEED= data.getFloat("maxspeed");
-        SENSOR_HEIGHT=data.getFloat("sensorheight");
-        SENSOR_NAME= data.getString("sensorname");
+        PENGUIN_MAXSPEED= data.getFloat("max_speed");
+        SENSOR_HEIGHT=data.getFloat("sensor_height");
+        SENSOR_NAME= data.getString("sensor_name");
 
         setDensity(PENGUIN_DENSITY);
         setFriction(PENGUIN_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET

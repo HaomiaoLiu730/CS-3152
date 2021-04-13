@@ -20,6 +20,8 @@ public class Water extends CapsuleObstacle{
     private final float WATER_FRICTION;
     private FilmStrip filmStrip;
     private float timeCounter;
+    private float width;
+    private float height;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
     /**
@@ -48,6 +50,8 @@ public class Water extends CapsuleObstacle{
         WATER_DENSITY=data.getFloat("density");
         WATER_FORCE=data.getFloat("force");
         WATER_FRICTION=data.getFloat("friction");
+        this.width=width;
+        this.height=height;
         this.data=data;
 
         setDensity(WATER_DENSITY);
@@ -56,7 +60,7 @@ public class Water extends CapsuleObstacle{
         setFixedRotation(true);
         setActive(false);
         setAwake(false);
-        setName(name);
+        setName(name+index);
     }
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
@@ -86,9 +90,10 @@ public class Water extends CapsuleObstacle{
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+
         // Apply cooldowns
         timeCounter += dt;
-        if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
+        if(timeCounter >= 0.175) {
             timeCounter = 0;
             filmStrip.nextFrame();
         }
@@ -100,6 +105,6 @@ public class Water extends CapsuleObstacle{
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(filmStrip,new Color(255,255,255,0.5f),origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1f, 1f);
+        canvas.draw(filmStrip,new Color(255,255,255,0.5f),origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),width/6.22f, height/6f);
     }
 }
