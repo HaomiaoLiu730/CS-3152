@@ -195,7 +195,7 @@ public class GameplayController extends WorldController implements ContactListen
         setComplete(false);
         setFailure(false);
         populateLevel();
-        resetCountDown = 30;
+        resetCountDown = 50;
 
         canvas.getCamera().viewportWidth = 1280;
         canvas.getCamera().viewportHeight = 720;
@@ -425,6 +425,9 @@ public class GameplayController extends WorldController implements ContactListen
         if(resetCountDown < 0 && failed){
             reset();
         }
+        if(resetCountDown < 0 && !failed){
+            this.listener.updateScreen(this, currentLevelNum);
+        }
 
         // debug mode
         if(InputController.getInstance().didDebug()){
@@ -546,7 +549,6 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.begin(); // DO NOT SCALE
             canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
             canvas.end();
-            this.listener.updateScreen(this, currentLevelNum);
         } else if (failed) {
             canvas.begin(); // DO NOT SCALE
             canvas.drawTextCentered("FAILURE!", gameFont, 0.0f);
