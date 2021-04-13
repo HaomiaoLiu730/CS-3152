@@ -174,25 +174,28 @@ public class MenuController extends ClickListener implements Screen, InputProces
         if(InputController.getInstance().touchUp()){
             zoomIn = true;
         }
+        updateNextLevel();
     }
 
     public void selectContinent(){
-        float x = Gdx.input.getX();
-        float y = Gdx.input.getY();
-        if(x>760 && x < 1280 && y > 70 && y < 370){
-            currentContinent = Continent.NorthAmerica;
-        }else if(x>1000 && x < 1280 && y > 370 && y < 620){
-            currentContinent = Continent.SouthAmerica;
-        }else if(x>340 && x < 740 && y > 120 && y < 376){
-            currentContinent = Continent.Asia;
-        }else if(x>60 && x < 340 && y > 150 && y <280){
-            currentContinent = Continent.Europe;
-        }else if(x>30 && x < 250 && y > 300 && y < 530){
-            currentContinent = Continent.Africa;
-        }else if(x>480 && x < 630 && y > 430 && y < 540){
-            currentContinent = Continent.Oceania;
-        }else if(x>0 && x < 690 && y > 650 && y < 720){
-            currentContinent = Continent.Antarctica;
+        if(!zoomIn && !drawPoints){
+            float x = Gdx.input.getX();
+            float y = Gdx.input.getY();
+            if(x>760 && x < 1280 && y > 70 && y < 370){
+                currentContinent = Continent.NorthAmerica;
+            }else if(x>1000 && x < 1280 && y > 370 && y < 620){
+                currentContinent = Continent.SouthAmerica;
+            }else if(x>340 && x < 740 && y > 120 && y < 376){
+                currentContinent = Continent.Asia;
+            }else if(x>60 && x < 340 && y > 150 && y <280){
+                currentContinent = Continent.Europe;
+            }else if(x>30 && x < 250 && y > 300 && y < 530){
+                currentContinent = Continent.Africa;
+            }else if(x>480 && x < 630 && y > 430 && y < 540){
+                currentContinent = Continent.Oceania;
+            }else if(x>0 && x < 690 && y > 650 && y < 720){
+                currentContinent = Continent.Antarctica;
+            }
         }
     }
 
@@ -226,7 +229,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         }
     }
 
-    public void drawLevels(){
+    public void updateNextLevel(){
         if(drawPoints){
             switch (currentContinent){
                 case NorthAmerica:
@@ -255,7 +258,10 @@ public class MenuController extends ClickListener implements Screen, InputProces
         if(drawPoints){
             switch (currentContinent){
                 case NorthAmerica:
-                    for(int i = 0; i< NORTH_AMERICA_LEVELS.length; i+=2){
+                    for(int i = 0; i< finished.get(currentContinent).size()*2; i+=2){
+                        canvas.drawCircle(Color.BLACK, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
+                    }
+                    for(int i = finished.get(currentContinent).size()*2; i< NORTH_AMERICA_LEVELS.length; i+=2){
                         canvas.drawCircle(Color.LIGHT_GRAY, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
                     }
                     break;
