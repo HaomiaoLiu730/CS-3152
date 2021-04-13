@@ -47,7 +47,7 @@ public class CollisionController {
         }
     }
 
-    public void processCollision(ArrayList<Monster> monsters, FilmStrip attackStrip, List<Penguin> penguins){
+    public boolean processCollision(ArrayList<Monster> monsters, FilmStrip attackStrip, List<Penguin> penguins){
         for (int i = 0; i < monsters.size(); i++) {
             if (monsters.get(i).isActive()) {
                 boolean moveMon = true;
@@ -58,8 +58,7 @@ public class CollisionController {
                         if (p.getPosition().x < monsters.get(i).getPosition().x) {
                             monsters.get(i).setFacingRight(-1);
                         }
-                        moveMon = false;
-                        GameplayController.resetCountDown -= 1;
+                        return true;
                     }
                 }
                 if (moveMon) {
@@ -67,6 +66,7 @@ public class CollisionController {
                 }
             }
         }
+        return false;
     }
 
     public void processCollision(ArrayList<Monster> monsters, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){

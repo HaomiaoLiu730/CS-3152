@@ -102,11 +102,11 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void updateScreen(Screen screen, int exitCode) {
 		if (screen instanceof OnboardingController) {
 			if(exitCode == 0){
-				for(int ii = 0; ii < controllers.length; ii++) {
-					controllers[ii].loadContent(directory);
-					controllers[ii].setScreenListener(this);
-					controllers[ii].setCanvas(canvas);
-				}
+//				for(int ii = 0; ii < controllers.length; ii++) {
+//					controllers[ii].loadContent(directory);
+//					controllers[ii].setScreenListener(this);
+//					controllers[ii].setCanvas(canvas);
+//				}
 				loading.dispose();
 				loading = null;
 				menuController.setScreenListener(this);
@@ -118,12 +118,14 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		} else if(screen instanceof MenuController){
 			current = exitCode;
-			controllers[current].reset();
+			controllers[current].loadContent(directory);
 			controllers[current].setScreenListener(this);
+			controllers[current].setCanvas(canvas);
+			controllers[current].reset();
 			setScreen(controllers[current]);
 		} else if(screen instanceof LevelEditorController){
 			if(exitCode == EDITOR_GAMEPLAY){
-				levelEditorGameplayController = new GameplayController(true, "levelEditor.json",-1);
+				levelEditorGameplayController = new GameplayController(true, "levelEditor.json",0);
 				levelEditorGameplayController.loadContent(directory);
 				levelEditorGameplayController.setCanvas(canvas);
 				levelEditorGameplayController.reset();
@@ -132,8 +134,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		}else if(screen instanceof GameplayController){
 			if (exitCode == GAMEPLAY_MENU) {
-//				controllers[current].dispose();
-//				menuController = new MenuController(canvas);
+				controllers[current].dispose();
 				menuController.reset();
 				menuController.setScreenListener(this);
 				setScreen(menuController);
@@ -143,6 +144,9 @@ public class GDXRoot extends Game implements ScreenListener {
 			}else{
 				controllers[current].dispose();
 				current++;
+				controllers[current].loadContent(directory);
+				controllers[current].setScreenListener(this);
+				controllers[current].setCanvas(canvas);
 				controllers[current].reset();
 				setScreen(controllers[current]);
 			}

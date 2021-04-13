@@ -310,6 +310,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         JsonReader jsonReader = new JsonReader();
         value = jsonReader.parse(file);
         isReady = false;
+        nextLevel = -1;
     }
 
     @Override

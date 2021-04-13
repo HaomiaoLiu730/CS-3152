@@ -86,6 +86,8 @@ public class GameplayController extends WorldController implements ContactListen
     /** resetCountdown */
     public static int resetCountDown = 30;
 
+    private String jsonFile;
+
     /** The initial position of the player */
     private static Vector2 PLAYER_POS ;
 
@@ -120,6 +122,8 @@ public class GameplayController extends WorldController implements ContactListen
         setComplete(false);
         setFailure(false);
         world.setContactListener(this);
+
+        this.jsonFile = jsonFile;
 
         internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
         internal.loadAssets();
@@ -230,6 +234,21 @@ public class GameplayController extends WorldController implements ContactListen
             cameraX = canvas.getCamera().position.x;
         }
         canvas.getCamera().update();
+        collisionController = new CollisionController(1280, 720);
+
+        sensorFixtures = new ObjectSet<Fixture>();
+        internal = new AssetDirectory(isEditingView ? "levelEditor.json" : this.jsonFile);
+        internal.loadAssets();
+        internal.finishLoading();
+        background = internal.getEntry("background", Texture.class);
+        gameFont = internal.getEntry("gameFont", BitmapFont.class);
+
+
+        constants = internal.getEntry( "level"+(this.currentLevelNum+1), JsonValue.class );
+        JsonValue defaults = constants.get("defaults");
+        num_penguins = defaults.getInt("num_penguins",0);
+        num_notes = defaults.getInt("num_notes",0);
+
     }
 
     /**
@@ -427,8 +446,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void dispose() {
-        internal.unloadAssets();
         internal.dispose();
+        internal = null;
         collisionController = null;
         canvas = null;
     }
@@ -458,8 +477,14 @@ public class GameplayController extends WorldController implements ContactListen
         if(resetCountDown < 0 && failed){
             reset();
         }
+
         if(resetCountDown < 0 && !failed){
-            this.listener.updateScreen(this, currentLevelNum);
+            if(!isEditingView){
+                this.listener.updateScreen(this, currentLevelNum);
+                return;
+            }else{
+                reset();
+            }
         }
 
         // debug mode
@@ -481,14 +506,17 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Losing condition
-        if(hitWater || resetCountDown <=0){
+        if(hitWater){
             setFailure(true);
             setComplete(true);
         }
 
         // Monster moving and attacking
         collisionController.processCollision(monsters, avatar, objects);
-        collisionController.processCollision(monsters, attackStrip, avatar.getPenguins());
+        if(collisionController.processCollision(monsters, attackStrip, avatar.getPenguins())){
+            setFailure(true);
+            setComplete(true);
+        }
         collisionController.processCollision(monsters, iciclesList, objects);
         collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
         collisionController.processCollision(waterList, avatar);
@@ -501,8 +529,8 @@ public class GameplayController extends WorldController implements ContactListen
     public void backToEdit(){
         if(isEditingView && (InputController.getInstance().getClickX() > 1200 &&
                 InputController.getInstance().getClickX() < 1260 &&
-                InputController.getInstance().getClickY() < 60 &&
-                InputController.getInstance().getClickY() > 20) &&
+                InputController.getInstance().getClickY() < 160 &&
+                InputController.getInstance().getClickY() > 120) &&
                 InputController.getInstance().touchUp()){
             this.listener.updateScreen(this, GDXRoot.GAMEPLAY_EDITOR);
         }
@@ -552,6 +580,10 @@ public class GameplayController extends WorldController implements ContactListen
      */
     public void draw(float dt) {
         if (quitClick) return;
+        // TODO: fix this
+        if(canvas==null){
+            return;
+        }
         canvas.clear();
 
         canvas.begin();
@@ -565,13 +597,14 @@ public class GameplayController extends WorldController implements ContactListen
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+num_penguins;
         canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
-        canvas.drawCircle(Color.FIREBRICK, quitPos.x, quitPos.y, buttonR);
-        canvas.drawText( gameFont, "Quit", quitPos.x-15f, quitPos.y-30f);
-        canvas.drawCircle(Color.TEAL, resetPos.x, resetPos.y, buttonR);
-        canvas.drawText( gameFont, "Reset",resetPos.x-25f, resetPos.y-30f);
         if(isEditingView){
-            canvas.drawSquare(Color.BLACK,1200,660,60,40);
-            canvas.drawText(gameFont, "Edit", 1200,700);
+            canvas.drawSquare(Color.BLACK,1200,560,60,40);
+            canvas.drawText(gameFont, "Edit", 1200,600);
+        }else{
+            canvas.drawCircle(Color.FIREBRICK, quitPos.x, quitPos.y, buttonR);
+            canvas.drawText( gameFont, "Quit", quitPos.x-15f, quitPos.y-30f);
+            canvas.drawCircle(Color.TEAL, resetPos.x, resetPos.y, buttonR);
+            canvas.drawText( gameFont, "Reset",resetPos.x-25f, resetPos.y-30f);
         }
         canvas.end();
 
