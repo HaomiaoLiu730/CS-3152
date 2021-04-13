@@ -62,7 +62,7 @@ public class Ice extends ComplexObstacle {
         pin.setBodyType(BodyDef.BodyType.StaticBody);
         pin.setRestitution(data.getFloat("restitution"));
 
-        
+
         bodies.add(pin);
         this.data=data;
     }

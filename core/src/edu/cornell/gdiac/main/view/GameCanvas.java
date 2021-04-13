@@ -597,6 +597,20 @@ public class GameCanvas {
         spriteBatch.draw(region, x+camera.position.x-640,  y);
     }
 
+    public void drawFixed(PolygonRegion region, Color tint, float ox, float oy,
+                     float x, float y, float angle, float sx, float sy) {
+        if (active != DrawPass.STANDARD) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+
+        TextureRegion bounds = region.getRegion();
+        spriteBatch.setColor(tint);
+        spriteBatch.draw(region, x+camera.position.x-640, y, ox, oy,
+                bounds.getRegionWidth(), bounds.getRegionHeight(),
+                sx, sy, 180.0f*angle/(float)Math.PI);
+    }
+
 
 
     /**

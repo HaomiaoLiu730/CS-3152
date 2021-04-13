@@ -6,12 +6,14 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.*;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -20,6 +22,8 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.StreamSupport;
 
 public class LevelEditorController implements Screen, InputProcessor, ControllerListener, Loading {
 
@@ -34,9 +38,12 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private static final int WIDTH = 320;
     private static final int HEIGHT = 18;
 
-    private static final float MONSTER_X = 460;
-    private static final float ICICLE_X = 340;
-    private static final float ICEBAR_X = 80;
+    private static final float EXIT_X = 500;
+    private static final float MONSTER_X = 360;
+    private static final float ICICLE_X = 260;
+    private static final float ICE_X = 80;
+    private static final float FLOATING_ICE_X = 160;
+    private static final float MOVING_ICE_X = 240;
     private static final float NOTE_X = 20;
     private static float target_x = 680f;
     private static final float TARGET_X = 680f;
@@ -62,6 +69,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     protected FilmStrip penguinRollingStrip;
     /** The texture for the monster */
     protected FilmStrip monsterStrip;
+    protected FilmStrip monsterVerStrip;
     /** The texture for the water */
     protected FilmStrip water;
     /** The texture for the ice */
@@ -97,8 +105,10 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     private ArrayList<GenericComponent> objects = new ArrayList<>();
 
-    private Tile[] tiles= new Tile[WIDTH*10];
-    private int[] height = new int[WIDTH*10];
+    private Tile[] tilesBottom = new Tile[WIDTH*10];
+    private Tile[] tilesTop = new Tile[WIDTH*10];
+    private int[] heightBottom = new int[WIDTH*10];
+    private int[] heightTop = new int[WIDTH*10];
     private Component currentComponent;
     private GenericComponent draggingComponent;
     private Vector2 posCache = new Vector2();
@@ -110,6 +120,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     private Vector2 posCache3 = new Vector2();
     private Vector2 posCache4 = new Vector2();
 
+    private LevelJson levelJson = new LevelJson();
+
     private float cameraOffset;
 
     private enum Tile{
@@ -120,9 +132,13 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     private enum Component{
         Note,
-        IceBar,
+        Ice,
+        FloatingIce,
+        MovingIce,
         Icicle,
-        Monster,
+        MonsterHori,
+        MonsterVer,
+        Exit,
     }
 
     public LevelEditorController(GameCanvas canvas){
@@ -137,6 +153,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         penguinWalkingStrip = new FilmStrip(internal.getEntry("penguinWalking", Texture.class), 1, 29);
         penguinRollingStrip = new FilmStrip(internal.getEntry("penguinRolling", Texture.class), 1, 1);
         monsterStrip = new FilmStrip(internal.getEntry("monsterScaled", Texture.class), 1, 1);
+        monsterVerStrip = new FilmStrip(internal.getEntry("monsterScaledVer", Texture.class), 1, 1);
         attackStrip = new FilmStrip(internal.getEntry("monsterAttacking", Texture.class), 1, 5);
         exitStrip = new FilmStrip(internal.getEntry("exit", Texture.class), 1, 1);
         arrowTexture = internal.getEntry("arrow", Texture.class);
@@ -156,13 +173,19 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         iceStrip.setRegionWidth(200);
         iceStrip.setRegionHeight(40);
         displayFont =  internal.getEntry("gameFont", BitmapFont.class);
-        Arrays.fill(tiles, Tile.Air);
-        Arrays.fill(height, -1);
-
+        Arrays.fill(tilesBottom, Tile.Air);
+        Arrays.fill(heightBottom, -1);
+        Arrays.fill(tilesTop, Tile.Air);
+        Arrays.fill(heightTop, -1);
         TEXTURE_COMPONENTS.add(Component.Note);
-        TEXTURE_COMPONENTS.add(Component.IceBar);
-        TEXTURE_COMPONENTS.add(Component.Monster);
+        TEXTURE_COMPONENTS.add(Component.Ice);
+        TEXTURE_COMPONENTS.add(Component.FloatingIce);
+        TEXTURE_COMPONENTS.add(Component.MovingIce);
+        TEXTURE_COMPONENTS.add(Component.Exit);
+        TEXTURE_COMPONENTS.add(Component.MonsterHori);
+        TEXTURE_COMPONENTS.add(Component.MonsterVer);
         POLYGON_COMPONENTS.add(Component.Icicle);
+
     }
 
 
@@ -235,6 +258,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         createComponents(x,y);
         positionComponents(x,y);
         deleteComponent(x,y);
+        finishLevel(x,y);
         moveCamera();
     }
 
@@ -293,15 +317,16 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     public void createComponents(float x, float y){
         if(inputController.didTouchUp() && !isDragging){
-            if(y > 320){
-                formTile(x,y);
+            if(y > 360){
+                formTileBottom(x,y);
+            }else if(y > 80 && x < 1040){
+                formTileTop(x,y);
             }else{
                 updateCurrentComponent(x,y);
                 updateSize(x, y);
                 addComponent(x,y);
             }
         }
-
     }
 
     public static float sign (Vector2 p1, Vector2 p2, Vector2 p3)
@@ -332,14 +357,26 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                     case Note:
                         objects.add(new GenericComponent(currentStrip, Component.Note));
                         break;
-                    case IceBar:
-                        objects.add(new GenericComponent(currentStrip, Component.IceBar));
+                    case Ice:
+                        objects.add(new GenericComponent(currentStrip, Component.Ice));
+                        break;
+                    case FloatingIce:
+                        objects.add(new GenericComponent(currentStrip, Component.FloatingIce));
+                        break;
+                    case MovingIce:
+                        objects.add(new GenericComponent(currentStrip, Component.MovingIce));
                         break;
                     case Icicle:
                         objects.add(new GenericComponent(currentPolygonRegion, Component.Icicle));
                         break;
-                    case Monster:
-                        objects.add(new GenericComponent(currentStrip, Component.Monster));
+                    case MonsterHori:
+                        objects.add(new GenericComponent(currentStrip, Component.MonsterHori));
+                        break;
+                    case MonsterVer:
+                        objects.add(new GenericComponent(currentStrip, Component.MonsterVer));
+                        break;
+                    case Exit:
+                        objects.add(new GenericComponent(currentStrip, Component.Exit));
                         break;
                 }
                 currentComponent = null;
@@ -356,15 +393,33 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         }
     }
 
-    public void formTile(float x, float y){
+    public void finishLevel(float x, float y){
+        if(x > 1160 && x < 1220 && y > 130 && y < 160 && inputController.didTouchUp()){
+            generateJson();
+        }
+    }
+
+    public void formTileBottom(float x, float y){
         x += cameraOffset;
         int i = (int)(x/40f);
         int j = (int)((720 - y)/40f);
-        if(height[i] == j){
-            tiles[i] = tiles[i] == Tile.Air ? Tile.Snow:(tiles[i] == Tile.Snow ? Tile.Water : Tile.Air);
+        if(heightBottom[i] == j){
+            tilesBottom[i] = tilesBottom[i] == Tile.Air ? Tile.Snow:(tilesBottom[i] == Tile.Snow ? Tile.Water : Tile.Air);
         }else{
-            height[i] = j;
-            tiles[i] = Tile.Snow;
+            heightBottom[i] = j;
+            tilesBottom[i] = Tile.Snow;
+        }
+    }
+
+    public void formTileTop(float x, float y){
+        x += cameraOffset;
+        int i = (int)(x/40f);
+        int j = (int)(y/40f);
+        if(heightTop[i] == j+1){
+            tilesTop[i] = tilesTop[i] == Tile.Air ? Tile.Snow:Tile.Air;
+        }else{
+            heightTop[i] = j+1;
+            tilesTop[i] = Tile.Snow;
         }
     }
 
@@ -381,27 +436,49 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     public void updateCurrentComponent(float x, float y){
-        if(y < 320){
-            if(x - NOTE_X <= 40){
+        if(y <80){
+            int grid = (int) (x/40);
+            if(grid == 0){
                 currentComponent = Component.Note;
                 currentStrip = noteLeftStrip.copy();
                 currentWidth = noteLeftStrip.getRegionWidth();
                 currentHeight = noteLeftStrip.getRegionHeight();
-            }else if(x - ICEBAR_X <= iceBarWidth){
-                currentComponent = Component.IceBar;
+            }else if(grid == 1 || grid == 2){
+                currentComponent = Component.Ice;
                 currentStrip = iceStrip.copy();
                 currentWidth = iceStrip.getRegionWidth();
                 currentHeight = iceStrip.getRegionHeight();
-            }else if(x - ICICLE_X <= icicleWidth){
+            }else if(grid == 3 || grid == 4){
+                currentComponent = Component.FloatingIce;
+                currentStrip = iceStrip.copy();
+                currentWidth = iceStrip.getRegionWidth();
+                currentHeight = iceStrip.getRegionHeight();
+            }else if(grid == 5 || grid == 6){
+                currentComponent = Component.MovingIce;
+                currentStrip = iceStrip.copy();
+                currentWidth = iceStrip.getRegionWidth();
+                currentHeight = iceStrip.getRegionHeight();
+            }
+            else if(grid == 7){
                 currentComponent = Component.Icicle;
                 currentPolygonRegion = new PolygonRegion(icicleStrip, icicleRegion.getVertices().clone(), icicleRegion.getTriangles());
                 currentWidth = 80;
                 currentHeight = 80;
-            }else if(x - MONSTER_X <= monsterStrip.getRegionWidth()){
-                currentComponent = Component.Monster;
+            }else if(grid == 8 || grid == 9){
+                currentComponent = Component.MonsterHori;
                 currentStrip = monsterStrip.copy();
                 currentWidth = monsterStrip.getRegionWidth();
                 currentHeight = monsterStrip.getRegionHeight();
+            } else if(grid == 10 || grid == 11){
+                currentComponent = Component.MonsterVer;
+                currentStrip = monsterVerStrip.copy();
+                currentWidth = monsterVerStrip.getRegionWidth();
+                currentHeight = monsterVerStrip.getRegionHeight();
+            }else if(grid == 12){
+                currentComponent = Component.Exit;
+                currentStrip = exitStrip.copy();
+                currentWidth = exitStrip.getRegionWidth();
+                currentHeight = exitStrip.getRegionHeight();
             }
         }
     }
@@ -461,19 +538,41 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             canvas.drawLine(Color.WHITE,0, y, 12800, y, 1);
         }
         for(int i = 0; i<WIDTH; i++){
-            for(int j = 0; j<=height[i]; j++){
-                if(tiles[i] != Tile.Air){
-                    canvas.draw(tiles[i] == Tile.Snow? snow:water,40f*i,40f*j);
+            for(int j = 0; j<= heightBottom[i]; j++){
+                if(tilesBottom[i] != Tile.Air){
+                    canvas.draw(tilesBottom[i] == Tile.Snow? snow:water,40f*i,40f*j);
+                }
+            }
+        }
+        for(int i = 0; i<WIDTH; i++){
+            for(int j = 0; j<= heightTop[i]; j++){
+                if(tilesTop[i] != Tile.Air){
+                    canvas.draw(snow,40f*i,40f*(18-j));
                 }
             }
         }
     }
 
+    public void drawScaledChoice(TextureRegion texture, float x, float y,float scaleX, float scaleY, float angle){
+        canvas.drawFixed(texture, Color.WHITE, texture.getRegionWidth()/2,texture.getRegionHeight()/2, x,y, angle, scaleX, scaleY);
+    }
+
+    public void drawScaledChoice(PolygonRegion region , float x, float y,float scaleX, float scaleY){
+        canvas.drawFixed(region, Color.WHITE, region.getRegion().getRegionWidth()/2f,  region.getRegion().getRegionWidth()/2f, x,y, 0, scaleX, scaleY);
+    }
+
     public void drawPanel(){
-        canvas.drawFixed(noteLeftStrip,NOTE_X,640);
-        canvas.drawFixed(iceStrip,ICEBAR_X,640);
-        canvas.drawFixed(icicleRegion,ICICLE_X,640);
-        canvas.drawFixed(monsterStrip,MONSTER_X,640);
+        drawScaledChoice(noteLeftStrip, NOTE_X, 680, 0.5f, 0.5f, 0f);
+        drawScaledChoice(iceStrip, ICE_X, 680, 0.3f, 0.5f,0f);
+        drawScaledChoice(iceStrip, FLOATING_ICE_X, 680, 0.3f, 0.5f,0f);
+        drawScaledChoice(iceStrip, MOVING_ICE_X, 680, 0.3f, 0.5f,0f);
+        drawScaledChoice(icicleRegion, ICICLE_X, 640, 0.5f, 0.5f);
+        drawScaledChoice(monsterStrip, MONSTER_X, 680, 0.5f, 0.5f,0f);
+        drawScaledChoice(monsterVerStrip, MONSTER_X+80, 680, 0.5f, 0.5f,0f);
+        drawScaledChoice(exitStrip, EXIT_X, 680, 0.5f, 0.5f,0f);
+        canvas.drawText(displayFont, "ice", ICE_X, 680);
+        canvas.drawText(displayFont, "floating", FLOATING_ICE_X-20, 680);
+        canvas.drawText(displayFont, "moving", MOVING_ICE_X-20, 680);
         canvas.drawText(displayFont, "width", 1040, 660);
         canvas.drawText(displayFont, "height", 1100, 660);
         canvas.drawCircle(Color.BLACK, 1060, 680, 6);
@@ -485,6 +584,213 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         canvas.drawText(displayFont, "add", 1180, 660);
         canvas.drawSquare(Color.BLACK, 1160, 600, 60, 30);
         canvas.drawText(displayFont, "delete", 1180, 620);
+        canvas.drawSquare(Color.BLACK, 1160, 560, 60, 30);
+        canvas.drawText(displayFont, "finish", 1180, 580);
+    }
+
+    public void generateJson() {
+        generatePlatformWater();
+        generateObjects();
+        writeToFile("sampleLevel.json");
+        listener.updateScreen(this, 512);
+    }
+
+    public void generatePlatformWater(){
+        Tile prevTileBottom = Tile.Snow;
+        Tile prevTileTop = Tile.Air;
+        ArrayList<ArrayList<Float>> retSnow = new ArrayList<>();
+        ArrayList<ArrayList<Float>> retWaterPos = new ArrayList<>();
+        ArrayList<ArrayList<Float>> retWaterLayout = new ArrayList<>();
+        ArrayList<Float> snowBottom = new ArrayList<>();
+        ArrayList<Float> snowTop = new ArrayList<>();
+        ArrayList<Float> waterPos = new ArrayList<>();
+        ArrayList<Float> waterLayout = new ArrayList<>();
+        snowBottom.add(0f);
+        snowBottom.add(0f);
+        snowBottom.add(0f);
+        snowBottom.add(this.heightBottom[0]+1f);
+        int waterStart = -1;
+        for(int i = 0; i< tilesBottom.length; i++){
+            if(tilesBottom[i] == Tile.Snow && prevTileBottom == Tile.Snow){
+                if(snowBottom.get(snowBottom.size()-1) != this.heightBottom[i]+1){
+                    snowBottom.add((float)i);
+                    snowBottom.add(this.heightBottom[i]+1f);
+                }
+                snowBottom.add(i+1f);
+                snowBottom.add(this.heightBottom[i]+1f);
+            }else if(tilesBottom[i] == Tile.Snow && prevTileBottom == Tile.Water){
+                waterPos.add((waterStart+i)/2f);
+                waterPos.add((this.heightBottom[i-1]+1)/2f);
+                waterLayout.add((float)i-waterStart);
+                waterLayout.add(this.heightBottom[i-1]+1f);
+                retWaterPos.add((ArrayList) waterPos.clone());
+                retWaterLayout.add((ArrayList) waterLayout.clone());
+                waterPos.clear();
+                waterLayout.clear();
+                snowBottom.add((float)i);
+                snowBottom.add(0f);
+                snowBottom.add((float)i);
+                snowBottom.add(this.heightBottom[i]+1f);
+                snowBottom.add(i+1f);
+                snowBottom.add(this.heightBottom[i]+1f);
+            }else if(tilesBottom[i] == Tile.Water && prevTileBottom == Tile.Snow){
+                snowBottom.add((float)i);
+                snowBottom.add(0f);
+                retSnow.add((ArrayList) snowBottom.clone());
+                snowBottom.clear();
+                waterStart = i;
+            }else if(tilesBottom[i] == Tile.Air){
+                snowBottom.add((float)i);
+                snowBottom.add(0f);
+                retSnow.add((ArrayList) snowBottom.clone());
+                break;
+            }
+            prevTileBottom = tilesBottom[i];
+        }
+        for(int i = 0; i < heightTop.length; i++){
+            if(tilesTop[i] == Tile.Snow && prevTileTop == Tile.Air){
+                snowTop.add((float)i);
+                snowTop.add(18f);
+                snowTop.add((float)i);
+                snowTop.add(18f-heightTop[i]);
+                snowTop.add(i+1f);
+                snowTop.add(18f-heightTop[i]);
+            }else if(tilesTop[i] == Tile.Snow && prevTileTop == Tile.Snow){
+                snowTop.add((float)i+1);
+                snowTop.add(18f-heightTop[i]);
+            }else if(tilesTop[i] == Tile.Air && prevTileTop == Tile.Snow){
+                snowTop.add((float)i);
+                snowTop.add(18f);
+                retSnow.add((ArrayList) snowTop.clone());
+                snowTop.clear();
+            }
+            prevTileTop = tilesTop[i];
+        }
+        ArrayList<Float> bottom = new ArrayList<Float>(Arrays.asList(0f,-2f,0f,0f,320f,0f, 320f, -2f));
+        retSnow.add(bottom);
+        this.levelJson.defaults.snow = arrayListToArr(retSnow);
+        this.levelJson.water.pos = arrayListToArr(retWaterPos);
+        this.levelJson.water.layout = arrayListToArr(retWaterLayout);
+    }
+
+    public float[][] arrayListToArr(ArrayList<ArrayList<Float>> arr){
+        float[][] ret = new float[arr.size()][];
+        for (int i = 0; i < arr.size(); i++) {
+            List<Float> innerList = arr.get(i);
+            float[] temp = new float[innerList.size()];
+            for (int k = 0; k < temp.length; k++) {
+                temp[k] = innerList.get(k);
+            }
+            ret[i] = temp;
+        }
+        return ret;
+    }
+
+    public void writeToFile(String filename){
+        Json json = new Json();
+        String text = json.toJson(this.levelJson);
+        FileHandle file = Gdx.files.local(filename);
+        file.writeString(text, false);
+    }
+
+    public void generateObjects(){
+        ArrayList<float[]> notePos = new ArrayList<>();
+        ArrayList<float[]> icePos = new ArrayList<>();
+        ArrayList<float[]> iceLayout = new ArrayList();
+        ArrayList<float[]> floatingIcePos = new ArrayList<>();
+        ArrayList<float[]> floatingIceLayout = new ArrayList();
+        ArrayList<float[]> movingIcePos = new ArrayList<>();
+        ArrayList<float[]> movingIceLayout = new ArrayList();
+        ArrayList<float[]> iciclePos = new ArrayList<>();
+        ArrayList<float[]> icicleLayout = new ArrayList();
+        ArrayList<float[]> monsterPos = new ArrayList();
+        ArrayList<Float> monsterRanges = new ArrayList();
+        ArrayList<Boolean> monsterDir = new ArrayList();
+
+        for(GenericComponent obj: objects){
+            float[] pos = new float[2];
+            pos[0] = obj.position.x/40f;
+            pos[1] = obj.position.y/40f;
+            float[] newPos;
+            switch (obj.component){
+                case Note:
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
+                    notePos.add(newPos);
+                    break;
+                case Icicle:
+                    for(int i = 0; i < obj.polygonRegion.getVertices().length; i++){
+                        obj.polygonRegion.getVertices()[i] /= 40;
+                    }
+                    icicleLayout.add(obj.polygonRegion.getVertices());
+                    iciclePos.add(pos);
+                    break;
+                case MonsterHori:
+                    monsterPos.add(pos);
+                    monsterRanges.add(90f);
+                    monsterDir.add(true);
+                    break;
+                case MonsterVer:
+                    monsterPos.add(pos);
+                    monsterRanges.add(50f);
+                    monsterDir.add(false);
+                    break;
+                case Ice:
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
+                    icePos.add(newPos);
+                    iceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
+                    break;
+                case FloatingIce:
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
+                    floatingIcePos.add(newPos);
+                    floatingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
+                    break;
+                case MovingIce:
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()*7f/320f};
+                    movingIcePos.add(newPos);
+                    movingIceLayout.add(new float[]{obj.filmStrip.getRegionWidth(), obj.filmStrip.getRegionHeight()});
+                    break;
+                case Exit:
+                    newPos = new float[]{pos[0]+obj.filmStrip.getRegionWidth()/80f, pos[1]+obj.filmStrip.getRegionHeight()/80f};
+                    this.levelJson.goal.pos = newPos;
+            }
+        }
+        this.levelJson.notes.pos = arrayListToArr2(notePos);
+        this.levelJson.defaults.num_notes = notePos.size();
+        this.levelJson.defaults.num_penguins = notePos.size();
+        this.levelJson.ice.pos = arrayListToArr2(icePos);
+        this.levelJson.ice.layout = arrayListToArr2(iceLayout);
+        this.levelJson.floatingIce.pos = arrayListToArr2(floatingIcePos);
+        this.levelJson.floatingIce.layout = arrayListToArr2(floatingIceLayout);
+        this.levelJson.movingIce.pos = arrayListToArr2(movingIcePos);
+        this.levelJson.movingIce.layout = arrayListToArr2(movingIceLayout);
+        this.levelJson.icicles.pos = arrayListToArr2(iciclePos);
+        this.levelJson.icicles.layout = arrayListToArr2(icicleLayout);
+        this.levelJson.enemy.range = arrayListToArr1dFloat(monsterRanges);
+        this.levelJson.enemy.pos = arrayListToArr2(monsterPos);
+        this.levelJson.enemy.is_hor = arrayListToArr1dBoolean(monsterDir);
+    }
+
+    public float[] arrayListToArr1dFloat(ArrayList<Float> arr){
+        float[] ret = new float[arr.size()];
+        for(int i = 0; i<arr.size(); i++){
+            ret[i] = arr.get(i);
+        }
+        return ret;
+    }
+    public boolean[] arrayListToArr1dBoolean(ArrayList<Boolean> arr){
+        boolean[] ret = new boolean[arr.size()];
+        for(int i = 0; i<arr.size(); i++){
+            ret[i] = arr.get(i);
+        }
+        return ret;
+    }
+
+    public float[][] arrayListToArr2(ArrayList<float[]> arr){
+        float[][] ret = new float[arr.size()][];
+        for(int i = 0; i < arr.size(); i++){
+            ret[i] = arr.get(i);
+        }
+        return ret;
     }
 
     @Override
@@ -538,7 +844,6 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         return false;
     }
 
-
     protected class GenericComponent{
         public Vector2 position;
         public FilmStrip filmStrip;
@@ -555,5 +860,153 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             this.position = new Vector2(target_x, TARGET_Y);
             this.component = component;
         }
+    }
+
+    private class LevelJson{
+        public Defaults defaults = new Defaults();
+        public Goal goal = new Goal();
+        public Player player = new Player();
+        public Penguin penguins = new Penguin();
+        public Icicle icicles = new Icicle();
+        public Enemy enemy = new Enemy();
+        public Note notes = new Note();
+        public Water water = new Water();
+        public Ice ice = new Ice();
+        public FloatingIce floatingIce = new FloatingIce();
+        public MovingIce movingIce = new MovingIce();
+    }
+
+    private class Defaults{
+        public float gravity = -9.8f;
+        public float friction = 0.3f;
+        public float density = 2.65f;
+        public float restitution = 0.1f;
+        public int num_penguins = 2;
+        public int num_notes= 2;
+        public float[][] snow = new float[][]{};
+    }
+
+    private class Goal{
+        public float[] pos = new float[]{48f, 1.9f};
+        public float friction = 0.3f;
+        public float density = 2.65f;
+        public float restitution = 0.1f;
+        public float width = 2f;
+        public float height = 2f;
+    }
+
+    private class Player{
+        public float[] pos = new float[]{16f,5f};
+        public float[] shrink = new float[]{0.95f, 0.7f};
+        public float force = 12f;
+        public float damping = 10.0f;
+        public float density = 1f;
+        public float friction = 0.0f;
+        public float max_speed = 4f;
+        public float restitution = 0f;
+        public float player_jump = 26f;
+        public float jump_cooldown = 30f;
+        public float throw_cooldown = 30f;
+        public float shoot_cooldown = 40f;
+        public float punch_cool = 100f;
+        public float punch_time = 30;
+        public float punch_cooldown = 0f;
+        public float max_throw_force = 300;
+        public float sensor_height = 0.05f;
+        public String sensor_name = "PlayerGroundSensor";
+        public float vshrink = 0.25f;
+        public float hshrink = 0.25f;
+        public float sshrink = 0.6f;
+        public float time_count = 0f;
+    }
+
+    private class Penguin{
+        public float[] pos = new float[]{16f,5f};
+        public float width = 1.3f;
+        public float height = 2f;
+        public float force = 20f;
+        public float damping = 2f;
+        public float density = 1f;
+        public float friction = 0.0f;
+        public float max_speed = 3f;
+        public float sensor_height = 0.05f;
+        public String sensor_name = "PenguinGroundSensor";
+        public float vshrink = 0.75f;
+        public float hshrink = 0.75f;
+        public float sshrink = 0.6f;
+    }
+
+    private class  Icicle{
+        public float[][] pos = new float[][]{};
+        public float[][] layout = new float[][]{};
+        public float density = 30f;
+        public float friction = 0.5f;
+        public float restitution = 0.2f;
+    }
+
+    private class Enemy{
+        public float[][] pos = new float[][]{};
+        public float[] range = new float[]{};
+        public float width = 1.3f;
+        public float height = 2f;
+        public float damping = 10f;
+        public float density = 1f;
+        public float friction = 5f;
+        public float max_speed = 5f;
+        public float sensor_height = 0.05f;
+        public String sensor_name = "MonsterGroundSensor";
+        public float vshrink = 0.25f;
+        public float hshrink = 0.25f;
+        public float sshrink = 0.6f;
+        public float restitution = 0.0f;
+        public float force = 20f;
+        public boolean[] is_hor = new boolean[]{};
+    }
+
+    private class Note{
+        public float[][] pos = new float[][]{};
+        public float vshrink = 0.8f;
+        public float hshrink = 0.95f;
+    }
+
+    private class Water{
+        public float[][] pos = new float[][]{};
+        public float[][] layout = new float[][]{};
+        public float density = 1f;
+        public float friction = 0.5f;
+        public float restitution = 0.2f;
+        public float force = 20f;
+    }
+
+    private class Ice{
+        public float[][] pos = new float[][]{};
+        public float[][] layout = new float[][]{};
+        public float friction = 2f;
+        public float restitution = 0.2f;
+        public float pin_radius = 0.1f;
+        public float bar_density = 3f;
+        public float pin_density = 0f;
+    }
+
+    private class MovingIce{
+        public float[][] pos = new float[][]{};
+        public float[][] layout = new float[][]{};
+        public float friction = 2f;
+        public float restitution = 0.2f;
+        public float pin_radius = 0.1f;
+        public float bar_density = 3f;
+        public float pin_density = 0f;
+        public float distance = 1;
+        public float speed = 0.04f;
+    }
+
+    private class FloatingIce{
+        public float[][] pos = new float[][]{};
+        public float[][] layout = new float[][]{};
+        public float friction = 2f;
+        public float restitution = 0.2f;
+        public float pin_radius = 0.1f;
+        public float bar_density = 3f;
+        public float pin_density = 0f;
     }
 }
