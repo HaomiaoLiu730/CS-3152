@@ -20,11 +20,10 @@ import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.StreamSupport;
 
 public class LevelEditorController implements Screen, InputProcessor, ControllerListener, Loading {
 
@@ -106,8 +105,10 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     private ArrayList<GenericComponent> objects = new ArrayList<>();
 
-    private Tile[] tiles= new Tile[WIDTH*10];
-    private int[] height = new int[WIDTH*10];
+    private Tile[] tilesBottom = new Tile[WIDTH*10];
+    private Tile[] tilesTop = new Tile[WIDTH*10];
+    private int[] heightBottom = new int[WIDTH*10];
+    private int[] heightTop = new int[WIDTH*10];
     private Component currentComponent;
     private GenericComponent draggingComponent;
     private Vector2 posCache = new Vector2();
@@ -172,9 +173,10 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         iceStrip.setRegionWidth(200);
         iceStrip.setRegionHeight(40);
         displayFont =  internal.getEntry("gameFont", BitmapFont.class);
-        Arrays.fill(tiles, Tile.Air);
-        Arrays.fill(height, -1);
-
+        Arrays.fill(tilesBottom, Tile.Air);
+        Arrays.fill(heightBottom, -1);
+        Arrays.fill(tilesTop, Tile.Air);
+        Arrays.fill(heightTop, -1);
         TEXTURE_COMPONENTS.add(Component.Note);
         TEXTURE_COMPONENTS.add(Component.Ice);
         TEXTURE_COMPONENTS.add(Component.FloatingIce);
@@ -315,15 +317,16 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     public void createComponents(float x, float y){
         if(inputController.didTouchUp() && !isDragging){
-            if(y > 320){
-                formTile(x,y);
+            if(y > 360){
+                formTileBottom(x,y);
+            }else if(y > 80 && x < 1040){
+                formTileTop(x,y);
             }else{
                 updateCurrentComponent(x,y);
                 updateSize(x, y);
                 addComponent(x,y);
             }
         }
-
     }
 
     public static float sign (Vector2 p1, Vector2 p2, Vector2 p3)
@@ -396,15 +399,27 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         }
     }
 
-    public void formTile(float x, float y){
+    public void formTileBottom(float x, float y){
         x += cameraOffset;
         int i = (int)(x/40f);
         int j = (int)((720 - y)/40f);
-        if(height[i] == j){
-            tiles[i] = tiles[i] == Tile.Air ? Tile.Snow:(tiles[i] == Tile.Snow ? Tile.Water : Tile.Air);
+        if(heightBottom[i] == j){
+            tilesBottom[i] = tilesBottom[i] == Tile.Air ? Tile.Snow:(tilesBottom[i] == Tile.Snow ? Tile.Water : Tile.Air);
         }else{
-            height[i] = j;
-            tiles[i] = Tile.Snow;
+            heightBottom[i] = j;
+            tilesBottom[i] = Tile.Snow;
+        }
+    }
+
+    public void formTileTop(float x, float y){
+        x += cameraOffset;
+        int i = (int)(x/40f);
+        int j = (int)(y/40f);
+        if(heightTop[i] == j+1){
+            tilesTop[i] = tilesTop[i] == Tile.Air ? Tile.Snow:Tile.Air;
+        }else{
+            heightTop[i] = j+1;
+            tilesTop[i] = Tile.Snow;
         }
     }
 
@@ -421,7 +436,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     public void updateCurrentComponent(float x, float y){
-        if(y < 320){
+        if(y <80){
             int grid = (int) (x/40);
             if(grid == 0){
                 currentComponent = Component.Note;
@@ -523,9 +538,16 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             canvas.drawLine(Color.WHITE,0, y, 12800, y, 1);
         }
         for(int i = 0; i<WIDTH; i++){
-            for(int j = 0; j<=height[i]; j++){
-                if(tiles[i] != Tile.Air){
-                    canvas.draw(tiles[i] == Tile.Snow? snow:water,40f*i,40f*j);
+            for(int j = 0; j<= heightBottom[i]; j++){
+                if(tilesBottom[i] != Tile.Air){
+                    canvas.draw(tilesBottom[i] == Tile.Snow? snow:water,40f*i,40f*j);
+                }
+            }
+        }
+        for(int i = 0; i<WIDTH; i++){
+            for(int j = 0; j<= heightTop[i]; j++){
+                if(tilesTop[i] != Tile.Air){
+                    canvas.draw(snow,40f*i,40f*(18-j));
                 }
             }
         }
@@ -574,54 +596,75 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     public void generatePlatformWater(){
-        Tile prevTile = Tile.Snow;
+        Tile prevTileBottom = Tile.Snow;
+        Tile prevTileTop = Tile.Air;
         ArrayList<ArrayList<Float>> retSnow = new ArrayList<>();
         ArrayList<ArrayList<Float>> retWaterPos = new ArrayList<>();
         ArrayList<ArrayList<Float>> retWaterLayout = new ArrayList<>();
-        ArrayList<Float> snow = new ArrayList<>();
+        ArrayList<Float> snowBottom = new ArrayList<>();
+        ArrayList<Float> snowTop = new ArrayList<>();
         ArrayList<Float> waterPos = new ArrayList<>();
         ArrayList<Float> waterLayout = new ArrayList<>();
-        snow.add(0f);
-        snow.add(0f);
-        snow.add(0f);
-        snow.add(this.height[0]+1f);
+        snowBottom.add(0f);
+        snowBottom.add(0f);
+        snowBottom.add(0f);
+        snowBottom.add(this.heightBottom[0]+1f);
         int waterStart = -1;
-        for(int i = 0; i<tiles.length; i++){
-            if(tiles[i] == Tile.Snow && prevTile == Tile.Snow){
-                if(snow.get(snow.size()-1) != this.height[i]+1){
-                    snow.add((float)i);
-                    snow.add(this.height[i]+1f);
+        for(int i = 0; i< tilesBottom.length; i++){
+            if(tilesBottom[i] == Tile.Snow && prevTileBottom == Tile.Snow){
+                if(snowBottom.get(snowBottom.size()-1) != this.heightBottom[i]+1){
+                    snowBottom.add((float)i);
+                    snowBottom.add(this.heightBottom[i]+1f);
                 }
-                snow.add(i+1f);
-                snow.add(this.height[i]+1f);
-            }else if(tiles[i] == Tile.Snow && prevTile == Tile.Water){
+                snowBottom.add(i+1f);
+                snowBottom.add(this.heightBottom[i]+1f);
+            }else if(tilesBottom[i] == Tile.Snow && prevTileBottom == Tile.Water){
                 waterPos.add((waterStart+i)/2f);
-                waterPos.add((this.height[i-1]+1)/2f);
+                waterPos.add((this.heightBottom[i-1]+1)/2f);
                 waterLayout.add((float)i-waterStart);
-                waterLayout.add(this.height[i-1]+1f);
+                waterLayout.add(this.heightBottom[i-1]+1f);
                 retWaterPos.add((ArrayList) waterPos.clone());
                 retWaterLayout.add((ArrayList) waterLayout.clone());
                 waterPos.clear();
                 waterLayout.clear();
-                snow.add((float)i);
-                snow.add(0f);
-                snow.add((float)i);
-                snow.add(this.height[i]+1f);
-                snow.add(i+1f);
-                snow.add(this.height[i]+1f);
-            }else if(tiles[i] == Tile.Water && prevTile == Tile.Snow){
-                snow.add((float)i);
-                snow.add(0f);
-                retSnow.add((ArrayList) snow.clone());
-                snow.clear();
+                snowBottom.add((float)i);
+                snowBottom.add(0f);
+                snowBottom.add((float)i);
+                snowBottom.add(this.heightBottom[i]+1f);
+                snowBottom.add(i+1f);
+                snowBottom.add(this.heightBottom[i]+1f);
+            }else if(tilesBottom[i] == Tile.Water && prevTileBottom == Tile.Snow){
+                snowBottom.add((float)i);
+                snowBottom.add(0f);
+                retSnow.add((ArrayList) snowBottom.clone());
+                snowBottom.clear();
                 waterStart = i;
-            }else if(tiles[i] == Tile.Air){
-                snow.add((float)i);
-                snow.add(0f);
-                retSnow.add((ArrayList) snow.clone());
+            }else if(tilesBottom[i] == Tile.Air){
+                snowBottom.add((float)i);
+                snowBottom.add(0f);
+                retSnow.add((ArrayList) snowBottom.clone());
                 break;
             }
-            prevTile = tiles[i];
+            prevTileBottom = tilesBottom[i];
+        }
+        for(int i = 0; i < heightTop.length; i++){
+            if(tilesTop[i] == Tile.Snow && prevTileTop == Tile.Air){
+                snowTop.add((float)i);
+                snowTop.add(18f);
+                snowTop.add((float)i);
+                snowTop.add(18f-heightTop[i]);
+                snowTop.add(i+1f);
+                snowTop.add(18f-heightTop[i]);
+            }else if(tilesTop[i] == Tile.Snow && prevTileTop == Tile.Snow){
+                snowTop.add((float)i+1);
+                snowTop.add(18f-heightTop[i]);
+            }else if(tilesTop[i] == Tile.Air && prevTileTop == Tile.Snow){
+                snowTop.add((float)i);
+                snowTop.add(18f);
+                retSnow.add((ArrayList) snowTop.clone());
+                snowTop.clear();
+            }
+            prevTileTop = tilesTop[i];
         }
         ArrayList<Float> bottom = new ArrayList<Float>(Arrays.asList(0f,-2f,0f,0f,320f,0f, 320f, -2f));
         retSnow.add(bottom);
