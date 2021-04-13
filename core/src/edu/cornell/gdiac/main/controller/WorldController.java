@@ -87,6 +87,10 @@ public abstract class WorldController implements Screen {
     protected TextureRegion snowTextureRegion;
     /** The texture region for the ice */
     protected TextureRegion iceTextureRegion;
+    /** The texture region for the floating ice */
+    protected TextureRegion ficeTextureRegion;
+    /** The texture region for the moving ice */
+    protected TextureRegion miceTextureRegion;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
     /** The texture for the notes not collected */
@@ -167,6 +171,8 @@ public abstract class WorldController implements Screen {
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
         snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
         iceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+        ficeTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+        miceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
         waterStrip = new FilmStrip(directory.getEntry("waves", Texture.class), 1, 4);
 
     }
