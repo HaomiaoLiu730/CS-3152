@@ -84,7 +84,7 @@ public class CollisionController {
     }
 
     public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip, int numNotes,
-                                 PooledList<Obstacle> objects, int numPenguins, Player avatar){
+                                        PooledList<Obstacle> objects, int numPenguins, Player avatar){
         for (Note note: notes){
             if (!note.isCollected()){
                 for (Penguin p: penguins){

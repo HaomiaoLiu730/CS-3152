@@ -269,3 +269,4 @@ public class Monster extends CapsuleObstacle {
         setPosition(getX()-x,getY());
     }
 }
+

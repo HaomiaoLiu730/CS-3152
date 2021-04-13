@@ -1,27 +1,33 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
+    private static final float MOUSE_TOL = 20f;
 
     private AssetDirectory internal;
     /** Reference to the character avatar */
@@ -38,6 +44,20 @@ public class GameplayController extends WorldController implements ContactListen
     private ArrayList<Note> notesList;
     /** Reference to the list of waters */
     private ArrayList<Water> waterList;
+    /** Position of Reset button */
+    private Vector2 resetPos;
+    /** Position of Quit button */
+    private Vector2 quitPos;
+    /** Radius of buttons */
+    private float buttonR;
+    /** Whether the quit button is clicked or not */
+    private boolean quitClick;
+    /** Whether the reset button is clicked or not */
+    private boolean resetClick;
+    /** Whether the player can throw or not */
+    private boolean canThrow;
+
+    private boolean isEditingView;
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -89,7 +109,7 @@ public class GameplayController extends WorldController implements ContactListen
      * @param width  The width of the game window
      * @param height The height of the game window
      */
-    public GameplayController(float width, float height) {
+    public GameplayController(float width, float height, boolean isEditingView) {
         super(width,height,DEFAULT_GRAVITY);
 
         scale = super.scale;
@@ -98,7 +118,7 @@ public class GameplayController extends WorldController implements ContactListen
         setFailure(false);
         world.setContactListener(this);
 
-        internal = new AssetDirectory("NorthAmerica/northAmericaMain.json");
+        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :"NorthAmerica/northAmericaMain.json");
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
@@ -111,12 +131,19 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
+        this.isEditingView = isEditingView;
+    }
 
+    public void setJsonValue(JsonValue jsonValue){
 
     }
 
     public GameplayController(){
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, false);
+    }
+
+    public GameplayController(boolean isEditorView){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, isEditorView);
     }
 
     /**
@@ -180,6 +207,9 @@ public class GameplayController extends WorldController implements ContactListen
         setFailure(false);
         populateLevel();
         resetCountDown = 30;
+        quitClick = false;
+        resetClick = false;
+        canThrow = false;
 
         canvas.getCamera().viewportWidth = 1280;
         canvas.getCamera().viewportHeight = 720;
@@ -203,6 +233,10 @@ public class GameplayController extends WorldController implements ContactListen
      * Lays out the game geography.
      */
     private void populateLevel() {
+        quitPos = new Vector2(canvas.getWidth()-60f, canvas.getHeight()-30.0f);
+        resetPos = new Vector2(canvas.getWidth()-120f, canvas.getHeight()-30.0f);
+        buttonR = 20;
+
         // Add level goal
         float dwidth, dheight;
         JsonValue defaults = constants.get("defaults");
@@ -219,13 +253,15 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setName(sname+ii);
             addObject(obj);
         }
+
         JsonValue icicles = constants.get("icicles");
-        JsonValue iciclepos=icicles.get("pos");
+        JsonValue iciclepos = icicles.get("pos");
 
         iciclesList = new ArrayList<PolygonObstacle>();
-        for (int i = 0; i < icicles.get("layout").size; i ++){
+        for (int i = 0; i < icicles.get("pos").size; i ++){
             PolygonObstacle icicle;
-            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            icicle.setBodyType(BodyDef.BodyType.StaticBody);
+            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            
+            icicle.setBodyType(BodyDef.BodyType.StaticBody);
             icicle.setDensity(icicles.getFloat("density"));
             icicle.setFriction(icicles.getFloat("friction"));
             icicle.setRestitution(icicles.getFloat("restitution"));
@@ -235,7 +271,6 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(icicle);
             iciclesList.add(icicle);
         }
-
 
         JsonValue goal = constants.get("goal");
         JsonValue goalpos=goal.get("pos");
@@ -316,8 +351,6 @@ public class GameplayController extends WorldController implements ContactListen
             waterList.add(water);
             addObject(water);
             water.setActive(false);
-
-
         }
 
 //        JsonValue ices = constants.get("ice");
@@ -333,6 +366,21 @@ public class GameplayController extends WorldController implements ContactListen
 //            ice.setRestitution(ices.getFloat("restitution"));
 //            addObject(ice);
 //        }
+
+        JsonValue fices = constants.get("floatingIce");
+        JsonValue ficepos = fices.get("pos");
+        FloatingIce fIce;
+        for (int i =0; i< ficepos.size; i++) {
+        int w = fices.get("layout").get(i).getInt(0);
+        int h = fices.get("layout").get(i).getInt(1);
+            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
+            iceTextureRegion.setRegionWidth(w);
+            iceTextureRegion.setRegionHeight(h);
+            fIce.setDrawScale(scale);
+            fIce.setTexture(iceTextureRegion);
+            fIce.setRestitution(fices.getFloat("restitution"));
+            addObject(fIce);
+        }
 
 
 //        JsonValue fices = constants.get("floatingIce");
@@ -351,21 +399,6 @@ public class GameplayController extends WorldController implements ContactListen
 //        }
 //
 //
-        JsonValue mices = constants.get("movingIce");
-        JsonValue micepos = mices.get("pos");
-        MovingIce mIce;
-        for (int i =0; i< micepos.size; i++) {
-        int w = mices.get("layout").get(i).getInt(0);
-        int h = mices.get("layout").get(i).getInt(1);
-            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
-            iceTextureRegion.setRegionWidth(w);
-            iceTextureRegion.setRegionHeight(h);
-            mIce.setDrawScale(scale);
-            mIce.setTexture(iceTextureRegion);
-            mIce.setRestitution(mices.getFloat("restitution"));
-            addObject(mIce);
-        }
-
 
     }
 
@@ -403,6 +436,22 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
+            if (Gdx.input.isTouched()) {
+                hitWater(true);
+                resetClick = true;
+                return;
+            }
+        }
+        if (Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+            if (Gdx.input.isTouched()) {
+                listener.updateScreen(this, GDXRoot.GAMEPLAY_MENU);
+                quitClick = true;
+                return;
+            }
+        }
+      
+        backToEdit();
         updateCamera();
         updatePlayer();
 
@@ -446,6 +495,17 @@ public class GameplayController extends WorldController implements ContactListen
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
                 objects, avatar.getNumPenguins(), avatar);
+
+    }
+
+    public void backToEdit(){
+        if(isEditingView && (InputController.getInstance().getClickX() > 1200 &&
+                InputController.getInstance().getClickX() < 1260 &&
+                InputController.getInstance().getClickY() < 60 &&
+                InputController.getInstance().getClickY() > 20) &&
+                InputController.getInstance().touchUp()){
+            this.listener.updateScreen(this, 512);
+        }
     }
 
 
@@ -477,8 +537,9 @@ public class GameplayController extends WorldController implements ContactListen
         }
         avatar.setThrowing(InputController.getInstance().getClickX(),
                 InputController.getInstance().getClickY(),
-                InputController.getInstance().touchUp(),
+                InputController.getInstance().touchUp() && !resetClick && canThrow,
                 InputController.getInstance().isTouching());
+        canThrow = true;
         avatar.pickUpPenguins();
     }
 
@@ -490,6 +551,7 @@ public class GameplayController extends WorldController implements ContactListen
      * @param dt Timing values from parent loop
      */
     public void draw(float dt) {
+        if (quitClick) return;
         canvas.clear();
 
         canvas.begin();
@@ -503,6 +565,14 @@ public class GameplayController extends WorldController implements ContactListen
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+num_penguins;
         canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
+        canvas.drawCircle(Color.FIREBRICK, quitPos.x, quitPos.y, buttonR);
+        canvas.drawText( gameFont, "Quit", quitPos.x-15f, quitPos.y-30f);
+        canvas.drawCircle(Color.TEAL, resetPos.x, resetPos.y, buttonR);
+        canvas.drawText( gameFont, "Reset",resetPos.x-25f, resetPos.y-30f);
+        if(isEditingView){
+            canvas.drawSquare(Color.BLACK,1200,660,60,40);
+            canvas.drawText(gameFont, "Edit", 1200,700);
+        }
         canvas.end();
 
         if (isDebug()) {
