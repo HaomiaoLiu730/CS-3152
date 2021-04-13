@@ -21,7 +21,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
 
-	private static final int NUMBER_OF_LEVELS = 2;
+	private static final int NUMBER_OF_LEVELS = 3;
 	private int current = 0;
 
 	/** Drawing context to display graphics (VIEW CLASS) */

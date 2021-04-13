@@ -15,7 +15,7 @@
     ]
   },
   "goal" : {
-    "pos": [12, 6],
+    "pos": [48, 1.9],
     "friction": 0.3,
     "density" : 2.65,
     "restitution": 0.1,
