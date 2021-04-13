@@ -1,7 +1,9 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,6 +24,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
+    private static final float MOUSE_TOL = 20f;
 
     private AssetDirectory internal;
     /** Reference to the character avatar */
@@ -38,6 +41,18 @@ public class GameplayController extends WorldController implements ContactListen
     private ArrayList<Note> notesList;
     /** Reference to the list of waters */
     private ArrayList<Water> waterList;
+    /** Position of Reset button */
+    private Vector2 resetPos;
+    /** Position of Quit button */
+    private Vector2 quitPos;
+    /** Radius of buttons */
+    private float buttonR;
+    /** Whether the quit button is clicked or not */
+    private boolean quitClick;
+    /** Whether the reset button is clicked or not */
+    private boolean resetClick;
+    /** Whether the player can throw or not */
+    private boolean canThrow;
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -111,8 +126,6 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
-
-
     }
 
     public GameplayController(){
@@ -180,6 +193,9 @@ public class GameplayController extends WorldController implements ContactListen
         setFailure(false);
         populateLevel();
         resetCountDown = 30;
+        quitClick = false;
+        resetClick = false;
+        canThrow = false;
 
         canvas.getCamera().viewportWidth = 1280;
         canvas.getCamera().viewportHeight = 720;
@@ -203,6 +219,10 @@ public class GameplayController extends WorldController implements ContactListen
      * Lays out the game geography.
      */
     private void populateLevel() {
+        quitPos = new Vector2(canvas.getWidth()-60f, canvas.getHeight()-30.0f);
+        resetPos = new Vector2(canvas.getWidth()-120f, canvas.getHeight()-30.0f);
+        buttonR = 20;
+
         // Add level goal
         float dwidth, dheight;
         JsonValue defaults = constants.get("defaults");
@@ -235,7 +255,6 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(icicle);
             iciclesList.add(icicle);
         }
-
 
         JsonValue goal = constants.get("goal");
         JsonValue goalpos=goal.get("pos");
@@ -316,8 +335,6 @@ public class GameplayController extends WorldController implements ContactListen
             waterList.add(water);
             addObject(water);
             water.setActive(false);
-
-
         }
 
         JsonValue ices = constants.get("ice");
@@ -334,7 +351,6 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(ice);
         }
 
-
 //        JsonValue fices = constants.get("floatingIce");
 //        JsonValue ficepos = fices.get("pos");
 //        FloatingIce fIce;
@@ -350,7 +366,6 @@ public class GameplayController extends WorldController implements ContactListen
 //            addObject(fIce);
 //        }
 //
-//
 //        JsonValue mices = constants.get("movingIce");
 //        JsonValue micepos = mices.get("pos");
 //        MovingIce mIce;
@@ -365,8 +380,6 @@ public class GameplayController extends WorldController implements ContactListen
 //            mIce.setRestitution(mices.getFloat("restitution"));
 //            addObject(mIce);
 //        }
-
-
     }
 
     /**
@@ -403,6 +416,21 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
+            if (Gdx.input.isTouched()) {
+                hitWater(true);
+                resetClick = true;
+                return;
+            }
+        }
+        if (Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+            if (Gdx.input.isTouched()) {
+                listener.updateScreen(this, 1);
+                quitClick = true;
+                return;
+            }
+        }
+
         updateCamera();
         updatePlayer();
 
@@ -477,8 +505,9 @@ public class GameplayController extends WorldController implements ContactListen
         }
         avatar.setThrowing(InputController.getInstance().getClickX(),
                 InputController.getInstance().getClickY(),
-                InputController.getInstance().touchUp(),
+                InputController.getInstance().touchUp() && !resetClick && canThrow,
                 InputController.getInstance().isTouching());
+        canThrow = true;
         avatar.pickUpPenguins();
     }
 
@@ -490,6 +519,7 @@ public class GameplayController extends WorldController implements ContactListen
      * @param dt Timing values from parent loop
      */
     public void draw(float dt) {
+        if (quitClick) return;
         canvas.clear();
 
         canvas.begin();
@@ -503,6 +533,10 @@ public class GameplayController extends WorldController implements ContactListen
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+num_penguins;
         canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
+        canvas.drawCircle(Color.FIREBRICK, quitPos.x, quitPos.y, buttonR);
+        canvas.drawText( gameFont, "Quit", quitPos.x-15f, quitPos.y-30f);
+        canvas.drawCircle(Color.TEAL, resetPos.x, resetPos.y, buttonR);
+        canvas.drawText( gameFont, "Reset",resetPos.x-25f, resetPos.y-30f);
         canvas.end();
 
         if (isDebug()) {
