@@ -114,19 +114,11 @@ public class Water extends CapsuleObstacle{
      *
      * @param canvas Drawing context
      */
-    public void draw(GameCanvas canvas) { //40 *40
-//        System.out.println(getWidth() + "," + getHeight() + "wid" + waterStrip.getRegionWidth() * .2f);
-
-        float wave_scale = height/10.9f;
-//        System.out.println("start:"+(pos_x - width / 2f)*drawScale.x);//918
-//        System.out.println("inc:"+waterStrip.getRegionWidth() * scale);//43.75
-//        System.out.println("width:"+width*drawScale.x);
-//        System.out.println("end:"+((pos_x + width / 2f)*drawScale.x-waterStrip.getRegionWidth()/2f*scale));
+    public void draw(GameCanvas canvas) {
         System.out.println(waterStrip.getRegionWidth());
             float s= 0.1377f;
             System.out.println(waterStrip.getRegionHeight() * s);
-//        for (float i = pos_x - width / 2f + (waterStrip.getRegionWidth() * scale / 2f); i <= pos_x + width / 2f -(waterStrip.getRegionWidth() * scale / 2f); i+= waterStrip.getRegionWidth() * scale) {
-        for (float i = (pos_x - width / 2f)*drawScale.x + waterStrip.getRegionWidth()/2f * wave_scale ; i < (pos_x + width / 2f)*drawScale.x ; i+= waterStrip.getRegionWidth() * wave_scale) {
+        for (float i = (pos_x - width / 2f)*drawScale.x + waterStrip.getRegionWidth()/2f * s ; i < (pos_x + width / 2f)*drawScale.x ; i+= waterStrip.getRegionWidth() * s) {
             canvas.draw(wavesStrip, new Color(255, 255, 255, 0.5f), origin.x, origin.y, i, (getY()* drawScale.y)+(waterStrip.getRegionHeight()/2 * height *s)+ (waterStrip.getRegionHeight()/2*s) , getAngle(), s, s);
             canvas.draw(waterStrip, new Color(255, 255, 255, 0.5f), origin.x, origin.y, i, getY() * drawScale.y, getAngle(), s, s*height );
         }
