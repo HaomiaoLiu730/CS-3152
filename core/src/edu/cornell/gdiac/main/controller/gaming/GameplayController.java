@@ -450,7 +450,7 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
         canvas.end();
 
-        if (isDebug()) {
+        if (true) {
             canvas.beginDebug();
             for(Obstacle obj : objects) {
                 obj.drawDebug(canvas);
