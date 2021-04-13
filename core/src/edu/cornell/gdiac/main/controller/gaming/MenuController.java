@@ -68,6 +68,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private Texture europe;
     private Texture oceania;
     private Texture antarctica;
+    private Texture antarcticaLine;
 
     private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
 
@@ -98,6 +99,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         africa = internal.getEntry("Africa", Texture.class);
         oceania = internal.getEntry("Oceania", Texture.class);
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
+        antarcticaLine = internal.getEntry("AntarcticaLine", Texture.class);
 
         active  = true;
         zoomIn = false;
@@ -171,7 +173,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
             isReady = true;
         }
         prevTouched = Gdx.input.isTouched();
-        if(InputController.getInstance().touchUp()){
+        if(InputController.getInstance().touchUp() && unlockedContinents.contains(currentContinent)){
             zoomIn = true;
         }
         updateNextLevel();
@@ -269,7 +271,17 @@ public class MenuController extends ClickListener implements Screen, InputProces
                     break;
             }
         }
+        drawCurrentContinent();
         canvas.end();
+    }
+
+    public void drawCurrentContinent(){
+        if(!zoomIn){
+            switch (currentContinent){
+                case Antarctica:
+                    canvas.drawOverlay(antarcticaLine,true);
+            }
+        }
     }
 
     @Override

@@ -517,6 +517,7 @@ public class GameplayController extends WorldController implements ContactListen
         if (complete && !failed) {
             canvas.begin(); // DO NOT SCALE
             canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
+            this.listener.updateScreen(this, 0);
             canvas.end();
         } else if (failed) {
             canvas.begin(); // DO NOT SCALE
