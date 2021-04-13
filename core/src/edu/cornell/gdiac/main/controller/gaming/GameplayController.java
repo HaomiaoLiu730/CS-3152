@@ -290,7 +290,7 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue waters = constants.get("water");
         JsonValue water_layout = waters.get("layout");
         for (int i =0; i< water_layout.size; i++) {
-            System.out.println(water_layout.get(i).getFloat(0)+","+water_layout.get(i).getFloat(1));
+
             water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
             water.setFilmStrip(waterStrip, wavesStrip);
             water.setDrawScale(scale);
@@ -450,7 +450,7 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
         canvas.end();
 
-        if (true) {
+        if (isDebug()) {
             canvas.beginDebug();
             for(Obstacle obj : objects) {
                 obj.drawDebug(canvas);

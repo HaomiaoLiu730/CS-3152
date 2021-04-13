@@ -24,6 +24,7 @@ public class Water extends CapsuleObstacle{
     private float pos_y;
     private float width;
     private float height;
+    private int index;
 
 
     private float timeCounter;
@@ -53,11 +54,11 @@ public class Water extends CapsuleObstacle{
      */
     public Water(JsonValue data, float width, float height, String name,int index) {
         super(data.get("pos").get(index).getFloat(0), data.get("pos").get(index).getFloat(1),width,height);
-        System.out.println(data.get("pos").get(index).getFloat(0)+","+ data.get("pos").get(index).getFloat(1));
         pos_x = data.get("pos").get(index).getFloat(0);
         pos_y = data.get("pos").get(index).getFloat(1);
         this.width=width;
         this.height=height;
+        this.index=index;
         WATER_DENSITY=data.getFloat("density");
         WATER_FORCE=data.getFloat("force");
         WATER_FRICTION=data.getFloat("friction");
@@ -102,12 +103,14 @@ public class Water extends CapsuleObstacle{
     public void update(float dt) {
 
         // Apply cooldowns
-        timeCounter += dt;
-        if(timeCounter >= 0.175) {
-            timeCounter = 0;
-            wavesStrip.nextFrame();
+        if (index == 0) {
+            this.timeCounter += dt;
+            if (this.timeCounter >= 0.175) {
+                this.timeCounter = 0;
+                this.wavesStrip.nextFrame();
+            }
+            super.update(dt);
         }
-        super.update(dt);
     }
     /**
      * Draws the physics object.
@@ -115,9 +118,7 @@ public class Water extends CapsuleObstacle{
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        System.out.println(waterStrip.getRegionWidth());
             float s= 0.1377f;
-            System.out.println(waterStrip.getRegionHeight() * s);
         for (float i = (pos_x - width / 2f)*drawScale.x + waterStrip.getRegionWidth()/2f * s ; i < (pos_x + width / 2f)*drawScale.x ; i+= waterStrip.getRegionWidth() * s) {
             canvas.draw(wavesStrip, new Color(255, 255, 255, 0.5f), origin.x, origin.y, i, (getY()* drawScale.y)+(waterStrip.getRegionHeight()/2 * height *s)+ (waterStrip.getRegionHeight()/2*s) , getAngle(), s, s);
             canvas.draw(waterStrip, new Color(255, 255, 255, 0.5f), origin.x, origin.y, i, getY() * drawScale.y, getAngle(), s, s*height );
