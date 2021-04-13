@@ -16,6 +16,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	public static final int EDITOR_GAMEPLAY = 128;
 	public static final int GAMEPLAY_EDITOR = 129;
+	public static final int GAMEPLAY_MENU = 150;
 
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
@@ -132,7 +133,12 @@ public class GDXRoot extends Game implements ScreenListener {
 				setScreen(levelEditorGameplayController);
 			}
 		}else if(screen instanceof GameplayController){
-			if(exitCode == GAMEPLAY_EDITOR){
+			if (exitCode == GAMEPLAY_MENU) {
+				controllers[current].dispose();
+				menuController = new MenuController(canvas);
+				menuController.setScreenListener(this);
+				setScreen(menuController);
+			}else if(exitCode == GAMEPLAY_EDITOR){
 				levelEditorGameplayController.setScreenListener(this);
 				setScreen(levelEditor);
 			}else{
