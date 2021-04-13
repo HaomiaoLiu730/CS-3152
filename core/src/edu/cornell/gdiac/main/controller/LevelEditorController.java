@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -592,7 +593,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         generatePlatformWater();
         generateObjects();
         writeToFile("sampleLevel.json");
-        listener.updateScreen(this, 512);
+        listener.updateScreen(this, GDXRoot.EDITOR_GAMEPLAY);
     }
 
     public void generatePlatformWater(){

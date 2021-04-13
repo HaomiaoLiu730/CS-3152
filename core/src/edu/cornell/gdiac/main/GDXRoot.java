@@ -14,10 +14,13 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 public class GDXRoot extends Game implements ScreenListener {
 
+	public static final int EDITOR_GAMEPLAY = 128;
+	public static final int GAMEPLAY_EDITOR = 129;
+
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
 
-	private static final int NUMBER_OF_LEVELS = 1;
+	private static final int NUMBER_OF_LEVELS = 2;
 	private int current = 0;
 
 	/** Drawing context to display graphics (VIEW CLASS) */
@@ -52,8 +55,10 @@ public class GDXRoot extends Game implements ScreenListener {
 		directory.loadAssets();
 		directory.finishLoading();
 		controllers = new WorldController[NUMBER_OF_LEVELS];
-		controllers[0] = new GameplayController();
-		controllers[0].setScreenListener(this);
+		for(int i = 0; i < NUMBER_OF_LEVELS; i++){
+			controllers[i] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
+			controllers[i].setScreenListener(this);
+		}
 		current = 0;
 		menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
@@ -118,15 +123,24 @@ public class GDXRoot extends Game implements ScreenListener {
 			controllers[current].setScreenListener(this);
 			setScreen(controllers[current]);
 		} else if(screen instanceof LevelEditorController){
-			levelEditorGameplayController = new GameplayController(true);
-			levelEditorGameplayController.loadContent(directory);
-			levelEditorGameplayController.setCanvas(canvas);
-			levelEditorGameplayController.reset();
-			levelEditorGameplayController.setScreenListener(this);
-			setScreen(levelEditorGameplayController);
+			if(exitCode == EDITOR_GAMEPLAY){
+				levelEditorGameplayController = new GameplayController(true, "levelEditor.json",-1);
+				levelEditorGameplayController.loadContent(directory);
+				levelEditorGameplayController.setCanvas(canvas);
+				levelEditorGameplayController.reset();
+				levelEditorGameplayController.setScreenListener(this);
+				setScreen(levelEditorGameplayController);
+			}
 		}else if(screen instanceof GameplayController){
-			levelEditorGameplayController.setScreenListener(this);
-			setScreen(levelEditor);
+			if(exitCode == GAMEPLAY_EDITOR){
+				levelEditorGameplayController.setScreenListener(this);
+				setScreen(levelEditor);
+			}else{
+				controllers[current].dispose();
+				current++;
+				controllers[current].reset();
+				setScreen(controllers[current]);
+			}
 		}
 	}
 }

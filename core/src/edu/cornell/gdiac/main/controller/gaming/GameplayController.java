@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
@@ -85,6 +86,8 @@ public class GameplayController extends WorldController implements ContactListen
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
+    private int currentLevelNum;
+
     /**
      * Creates a new game with a playing field of the given size.
      * <p>
@@ -94,16 +97,17 @@ public class GameplayController extends WorldController implements ContactListen
      * @param width  The width of the game window
      * @param height The height of the game window
      */
-    public GameplayController(float width, float height, boolean isEditingView) {
+    public GameplayController(float width, float height, boolean isEditingView, String jsonFile, int level) {
         super(width,height,DEFAULT_GRAVITY);
 
+        currentLevelNum = level;
         scale = super.scale;
         setDebug(false);
         setComplete(false);
         setFailure(false);
         world.setContactListener(this);
 
-        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :"NorthAmerica/northAmericaMain.json");
+        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
         internal.loadAssets();
         internal.finishLoading();
         background = internal.getEntry("background", Texture.class);
@@ -112,7 +116,7 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
 
-        constants = internal.getEntry( "level1", JsonValue.class );
+        constants = internal.getEntry( "level"+(level+1), JsonValue.class );
         JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
@@ -123,12 +127,12 @@ public class GameplayController extends WorldController implements ContactListen
 
     }
 
-    public GameplayController(){
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, false);
+    public GameplayController(String jsonFile, int level){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, false, jsonFile, level);
     }
 
-    public GameplayController(boolean isEditorView){
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, isEditorView);
+    public GameplayController(boolean isEditorView, String jsonFile, int level){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, isEditorView, jsonFile, level);
     }
 
     /**
@@ -464,7 +468,7 @@ public class GameplayController extends WorldController implements ContactListen
                 InputController.getInstance().getClickY() < 60 &&
                 InputController.getInstance().getClickY() > 20) &&
                 InputController.getInstance().touchUp()){
-            this.listener.updateScreen(this, 512);
+            this.listener.updateScreen(this, GDXRoot.GAMEPLAY_EDITOR);
         }
     }
 
@@ -541,8 +545,8 @@ public class GameplayController extends WorldController implements ContactListen
         if (complete && !failed) {
             canvas.begin(); // DO NOT SCALE
             canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
-            this.listener.updateScreen(this, 0);
             canvas.end();
+            this.listener.updateScreen(this, currentLevelNum);
         } else if (failed) {
             canvas.begin(); // DO NOT SCALE
             canvas.drawTextCentered("FAILURE!", gameFont, 0.0f);
