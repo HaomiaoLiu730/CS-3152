@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
@@ -440,7 +441,7 @@ public class GameplayController extends WorldController implements ContactListen
         }
         if (Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
             if (Gdx.input.isTouched()) {
-                listener.updateScreen(this, 1);
+                listener.updateScreen(this, GDXRoot.GAMEPLAY_MENU);
                 quitClick = true;
                 return;
             }
