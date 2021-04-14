@@ -16,35 +16,5 @@
     "Antarctica": 1,
     "Africa": 1,
     "Oceania": 1
-  },
-  "levelPosition": {
-    "NorthAmerica": [
-      [0,0],
-      [1,1]
-    ],
-    "SouthAmerica": [
-      [0,0],
-      [1,1]
-    ],
-    "Asia": [
-      [0,0],
-      [1,1]
-    ],
-    "Europe": [
-      [0,0],
-      [1,1]
-    ],
-    "Antarctica": [
-      [0,0],
-      [1,1]
-    ],
-    "Africa": [
-      [0,0],
-      [1,1]
-    ],
-    "Oceania": [
-      [0,0],
-      [1,1]
-    ]
   }
 }

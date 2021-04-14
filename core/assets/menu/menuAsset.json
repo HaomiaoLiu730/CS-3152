@@ -15,6 +15,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "AntarcticaLine": {
+      "file":     "images/menu/AntarcticaLine.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "Asia": {
       "file":     "images/menu/Asia.png",
       "minFilter": "linear",
