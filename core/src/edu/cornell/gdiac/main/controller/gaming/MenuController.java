@@ -5,16 +5,22 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MenuController extends ClickListener implements Screen, InputProcessor, ControllerListener, Loading {
     /** Listener that will update the player mode when we are done */
@@ -43,6 +49,11 @@ public class MenuController extends ClickListener implements Screen, InputProces
         Oceania
     }
 
+    private static HashMap<Continent, ArrayList> finished = new HashMap<>();
+    private static HashMap<Continent, Integer> numOfLevels = new HashMap<>();
+
+    private static JsonValue value;
+
     private float[] NORTH_AMERICA_LEVELS = new float[]{
             1100f, 600f, 1000f, 610f, 300f, 470f, 600f, 440f, 520f, 300f, 670f, 270f
     };
@@ -57,11 +68,12 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private Texture europe;
     private Texture oceania;
     private Texture antarctica;
+    private Texture antarcticaLine;
+
+    private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
 
     private BitmapFont gameFont;
 
-    private JsonValue finishedLevels;
-    private int[] NAfinishedLevels;
     /**
      * Creates a new game with a playing field of the given size.
      * <p>
@@ -74,6 +86,10 @@ public class MenuController extends ClickListener implements Screen, InputProces
         internal.loadAssets();
         internal.finishLoading();
 
+        FileHandle file = Gdx.files.local("menu/levelProgress.json");
+        JsonReader jsonReader = new JsonReader();
+        value = jsonReader.parse(file);
+
         background = internal.getEntry("background", Texture.class);
         northAmerica = internal.getEntry("NorthAmerica", Texture.class);
         southAmerica = internal.getEntry("SouthAmerica", Texture.class);
@@ -83,17 +99,45 @@ public class MenuController extends ClickListener implements Screen, InputProces
         africa = internal.getEntry("Africa", Texture.class);
         oceania = internal.getEntry("Oceania", Texture.class);
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
-
-        JsonValue levelProgress = internal.getEntry("finishedLevels", JsonValue.class);
-        finishedLevels = levelProgress.get("finished");
-        NAfinishedLevels = finishedLevels.get("NorthAmerica").asIntArray();
-
+        antarcticaLine = internal.getEntry("AntarcticaLine", Texture.class);
 
         active  = true;
-        zoomIn = true;
+        zoomIn = false;
         currentContinent = Continent.NorthAmerica;
         camera = canvas.getCamera();
         this.canvas = canvas;
+
+        refreshMenu();
+    }
+
+
+    public static ArrayList<Integer> arrToArrList(int[] arr){
+        ArrayList<Integer> ret = new ArrayList<Integer>(arr.length);
+        for (int i : arr)
+            ret.add(i);
+        return ret;
+    }
+
+    public static void refreshMenu(){
+        finished.put(Continent.NorthAmerica,arrToArrList(value.get("finished").get("NorthAmerica").asIntArray()));
+        finished.put(Continent.SouthAmerica,arrToArrList(value.get("finished").get("SouthAmerica").asIntArray()));
+        finished.put(Continent.Asia,arrToArrList(value.get("finished").get("Asia").asIntArray()));
+        finished.put(Continent.Europe,arrToArrList(value.get("finished").get("Europe").asIntArray()));
+        finished.put(Continent.Antarctica,arrToArrList(value.get("finished").get("Antarctica").asIntArray()));
+        finished.put(Continent.Africa,arrToArrList(value.get("finished").get("Africa").asIntArray()));
+        finished.put(Continent.Oceania,arrToArrList(value.get("finished").get("Oceania").asIntArray()));
+        numOfLevels.put(Continent.NorthAmerica, value.get("numOfLevels").getInt("NorthAmerica"));
+        numOfLevels.put(Continent.SouthAmerica, value.get("numOfLevels").getInt("SouthAmerica"));
+        numOfLevels.put(Continent.Asia, value.get("numOfLevels").getInt("Asia"));
+        numOfLevels.put(Continent.Europe, value.get("numOfLevels").getInt("Europe"));
+        numOfLevels.put(Continent.Antarctica, value.get("numOfLevels").getInt("Antarctica"));
+        numOfLevels.put(Continent.Africa, value.get("numOfLevels").getInt("Africa"));
+        numOfLevels.put(Continent.Oceania, value.get("numOfLevels").getInt("Oceania"));
+        for(Continent continent: finished.keySet()){
+            if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
+                unlockedContinents.add(continent);
+            }
+        }
     }
 
     private void zoomInto(float viewportWidth, float viewportHeight, float cameraPosX, float cameraPosY){
@@ -122,14 +166,49 @@ public class MenuController extends ClickListener implements Screen, InputProces
     }
 
     public void update(float delta) {
-        if(zoomIn){
+        zoomInEffect();
+        selectContinent();
+        InputController.getInstance().readInput();
+
+        if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
+            isReady = true;
+        }
+        prevTouched = Gdx.input.isTouched();
+        if(InputController.getInstance().touchUp() && unlockedContinents.contains(currentContinent)){
+            zoomIn = true;
+        }
+        updateNextLevel();
+    }
+
+    public void selectContinent(){
+        if(!zoomIn && !drawPoints){
+            float x = Gdx.input.getX();
+            float y = Gdx.input.getY();
+            if(x>760 && x < 1280 && y > 70 && y < 370){
+                currentContinent = Continent.NorthAmerica;
+            }else if(x>1000 && x < 1280 && y > 370 && y < 620){
+                currentContinent = Continent.SouthAmerica;
+            }else if(x>340 && x < 740 && y > 120 && y < 376){
+                currentContinent = Continent.Asia;
+            }else if(x>60 && x < 340 && y > 150 && y <280){
+                currentContinent = Continent.Europe;
+            }else if(x>30 && x < 250 && y > 300 && y < 530){
+                currentContinent = Continent.Africa;
+            }else if(x>480 && x < 630 && y > 430 && y < 540){
+                currentContinent = Continent.Oceania;
+            }else if(x>0 && x < 690 && y > 650 && y < 720){
+                currentContinent = Continent.Antarctica;
+            }
+        }
+    }
+
+    public void zoomInEffect(){
+        if(zoomIn && unlockedContinents.contains(currentContinent)){
             switch (currentContinent){
                 case NorthAmerica:
-                    // -620 -370 360 120 per 120
                     zoomInto(660f, 350f, 1000f, 480f);
                     break;
                 case SouthAmerica:
-                    // -620 -370 360 120 per 120
                     zoomInto(560f, 300f, 1180f, 220f);
                     break;
                 case Asia:
@@ -151,6 +230,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
                     break;
             }
         }
+    }
+
+    public void updateNextLevel(){
         if(drawPoints){
             switch (currentContinent){
                 case NorthAmerica:
@@ -164,27 +246,25 @@ public class MenuController extends ClickListener implements Screen, InputProces
                     break;
             }
         }
-
-        if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
-            isReady = true;
-        }
-        prevTouched = Gdx.input.isTouched();
     }
 
     public void draw() {
         canvas.begin();
         canvas.drawOverlay(background,true);
-        canvas.drawOverlay(northAmerica, currentContinent == Continent.NorthAmerica ? Color.WHITE : grey, 0, 0);
-        canvas.drawOverlay(southAmerica, currentContinent == Continent.SouthAmerica ? Color.WHITE : grey,0,0);
-        canvas.drawOverlay(oceania, currentContinent == Continent.Oceania ? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(asia, currentContinent == Continent.Asia ? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(europe, currentContinent == Continent.Europe ? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(africa, currentContinent == Continent.Africa ? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(antarctica, currentContinent == Continent.Antarctica ? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(northAmerica, unlockedContinents.contains(Continent.NorthAmerica)? Color.WHITE : grey, 0, 0);
+        canvas.drawOverlay(southAmerica, unlockedContinents.contains(Continent.SouthAmerica)? Color.WHITE : grey,0,0);
+        canvas.drawOverlay(oceania, unlockedContinents.contains(Continent.Oceania)? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(asia, unlockedContinents.contains(Continent.Asia)? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,0, 0);
+        canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,0, 0);
         if(drawPoints){
             switch (currentContinent){
                 case NorthAmerica:
-                    for(int i = 0; i< NORTH_AMERICA_LEVELS.length; i+=2){
+                    for(int i = 0; i< finished.get(currentContinent).size()*2; i+=2){
+                        canvas.drawCircle(Color.BLACK, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
+                    }
+                    for(int i = finished.get(currentContinent).size()*2; i< NORTH_AMERICA_LEVELS.length; i+=2){
                         canvas.drawCircle(Color.LIGHT_GRAY, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
                     }
                     break;
@@ -192,7 +272,17 @@ public class MenuController extends ClickListener implements Screen, InputProces
                     break;
             }
         }
+        drawCurrentContinent();
         canvas.end();
+    }
+
+    public void drawCurrentContinent(){
+        if(!zoomIn){
+            switch (currentContinent){
+                case Antarctica:
+                    canvas.drawOverlay(antarcticaLine,true);
+            }
+        }
     }
 
     @Override
@@ -211,6 +301,16 @@ public class MenuController extends ClickListener implements Screen, InputProces
                 listener.updateScreen(this, 0);
             }
         }
+    }
+
+    public void reset(){
+        zoomIn = false;
+        drawPoints = false;
+        FileHandle file = Gdx.files.local("menu/levelProgress.json");
+        JsonReader jsonReader = new JsonReader();
+        value = jsonReader.parse(file);
+        isReady = false;
+        nextLevel = -1;
     }
 
     @Override

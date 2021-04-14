@@ -14,12 +14,14 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 public class GDXRoot extends Game implements ScreenListener {
 
+	public static final int EDITOR_GAMEPLAY = 128;
+	public static final int GAMEPLAY_EDITOR = 129;
 	public static final int GAMEPLAY_MENU = 150;
 
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
 
-	private static final int NUMBER_OF_LEVELS = 1;
+	private static final int NUMBER_OF_LEVELS = 3;
 	private int current = 0;
 
 	/** Drawing context to display graphics (VIEW CLASS) */
@@ -54,8 +56,10 @@ public class GDXRoot extends Game implements ScreenListener {
 		directory.loadAssets();
 		directory.finishLoading();
 		controllers = new WorldController[NUMBER_OF_LEVELS];
-		controllers[0] = new GameplayController();
-		controllers[0].setScreenListener(this);
+		for(int i = 0; i < NUMBER_OF_LEVELS; i++){
+			controllers[i] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
+			controllers[i].setScreenListener(this);
+		}
 		current = 0;
 		menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
@@ -98,11 +102,11 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void updateScreen(Screen screen, int exitCode) {
 		if (screen instanceof OnboardingController) {
 			if(exitCode == 0){
-				for(int ii = 0; ii < controllers.length; ii++) {
-					controllers[ii].loadContent(directory);
-					controllers[ii].setScreenListener(this);
-					controllers[ii].setCanvas(canvas);
-				}
+//				for(int ii = 0; ii < controllers.length; ii++) {
+//					controllers[ii].loadContent(directory);
+//					controllers[ii].setScreenListener(this);
+//					controllers[ii].setCanvas(canvas);
+//				}
 				loading.dispose();
 				loading = null;
 				menuController.setScreenListener(this);
@@ -114,27 +118,37 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		} else if(screen instanceof MenuController){
 			current = exitCode;
-			menuController.dispose();
-			menuController = null;
-			controllers[current].reset();
+			controllers[current].loadContent(directory);
 			controllers[current].setScreenListener(this);
+			controllers[current].setCanvas(canvas);
+			controllers[current].reset();
 			setScreen(controllers[current]);
 		} else if(screen instanceof LevelEditorController){
-			levelEditorGameplayController = new GameplayController(true);
-			levelEditorGameplayController.loadContent(directory);
-			levelEditorGameplayController.setCanvas(canvas);
-			levelEditorGameplayController.reset();
-			levelEditorGameplayController.setScreenListener(this);
-			setScreen(levelEditorGameplayController);
-		} else if(screen instanceof GameplayController){
-      		if (exitCode == GAMEPLAY_MENU) {
+			if(exitCode == EDITOR_GAMEPLAY){
+				levelEditorGameplayController = new GameplayController(true, "levelEditor.json",0);
+				levelEditorGameplayController.loadContent(directory);
+				levelEditorGameplayController.setCanvas(canvas);
+				levelEditorGameplayController.reset();
+				levelEditorGameplayController.setScreenListener(this);
+				setScreen(levelEditorGameplayController);
+			}
+		}else if(screen instanceof GameplayController){
+			if (exitCode == GAMEPLAY_MENU) {
 				controllers[current].dispose();
-				menuController = new MenuController(canvas);
+				menuController.reset();
 				menuController.setScreenListener(this);
 				setScreen(menuController);
-			} else {
+			}else if(exitCode == GAMEPLAY_EDITOR){
 				levelEditorGameplayController.setScreenListener(this);
 				setScreen(levelEditor);
+			}else{
+				controllers[current].dispose();
+				current++;
+				controllers[current].loadContent(directory);
+				controllers[current].setScreenListener(this);
+				controllers[current].setCanvas(canvas);
+				controllers[current].reset();
+				setScreen(controllers[current]);
 			}
 		}
 	}
