@@ -58,6 +58,7 @@ public class GameplayController extends WorldController implements ContactListen
     private boolean canThrow;
 
     private boolean isEditingView;
+    private float[] grounded;
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -139,6 +140,8 @@ public class GameplayController extends WorldController implements ContactListen
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
         this.isEditingView = isEditingView;
+
+        grounded = defaults.get("grounded").asFloatArray();
     }
 
     public void setJsonValue(JsonValue jsonValue){

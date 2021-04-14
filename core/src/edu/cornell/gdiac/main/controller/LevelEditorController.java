@@ -611,6 +611,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         snowBottom.add(0f);
         snowBottom.add(this.heightBottom[0]+1f);
         int waterStart = -1;
+        ArrayList<Float> grounded = new ArrayList<>();
         for(int i = 0; i< tilesBottom.length; i++){
             if(tilesBottom[i] == Tile.Snow && prevTileBottom == Tile.Snow){
                 if(snowBottom.get(snowBottom.size()-1) != this.heightBottom[i]+1){
@@ -637,12 +638,14 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             }else if(tilesBottom[i] == Tile.Water && prevTileBottom == Tile.Snow){
                 snowBottom.add((float)i);
                 snowBottom.add(0f);
+                grounded.add((float)retSnow.size());
                 retSnow.add((ArrayList) snowBottom.clone());
                 snowBottom.clear();
                 waterStart = i;
             }else if(tilesBottom[i] == Tile.Air){
                 snowBottom.add((float)i);
                 snowBottom.add(0f);
+                grounded.add((float)retSnow.size());
                 retSnow.add((ArrayList) snowBottom.clone());
                 break;
             }
@@ -672,6 +675,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         this.levelJson.defaults.snow = arrayListToArr(retSnow);
         this.levelJson.water.pos = arrayListToArr(retWaterPos);
         this.levelJson.water.layout = arrayListToArr(retWaterLayout);
+        this.levelJson.defaults.grounded = arrayListToArr1dFloat(grounded);
     }
 
     public float[][] arrayListToArr(ArrayList<ArrayList<Float>> arr){
@@ -886,6 +890,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public int num_penguins = 2;
         public int num_notes= 2;
         public float[][] snow = new float[][]{};
+        public float[] grounded = new float[]{};
     }
 
     private class Goal{
