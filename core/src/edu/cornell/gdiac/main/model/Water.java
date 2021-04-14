@@ -93,7 +93,7 @@ public class Water extends CapsuleObstacle{
         this.waterStrip = waterStrip;
         this.wavesStrip=wavesStrip;
         waterStrip.setRegionWidth((int)width*40);
-        waterStrip.setRegionHeight((int)(height)*40);
+        waterStrip.setRegionHeight((int)(height-1)*40);
         origin.set(waterStrip.getRegionWidth()/2.0f, waterStrip.getRegionHeight()/2.0f);
     }
     /**
@@ -122,11 +122,12 @@ public class Water extends CapsuleObstacle{
      */
     public void draw(GameCanvas canvas) {
         float startX = (getX()-width/2f)*drawScale.x;
-        float y = (getY()+height/2f)*drawScale.y;
+        float y = (getY()+height/2f-1f)*drawScale.y;
         for (int i = 0; i<width; i++) {
             float x = startX+40*i;
             canvas.draw(wavesStrip,transparent,x, y, wavesStrip.getRegionWidth(), wavesStrip.getRegionHeight());
+
         }
-        canvas.draw(waterStrip,transparent,getX()*drawScale.x-waterStrip.getRegionWidth()/2f, getY()*drawScale.y- waterStrip.getRegionHeight()/2f, waterStrip.getRegionWidth(), waterStrip.getRegionHeight());
+        canvas.draw(waterStrip,transparent,getX()*drawScale.x-waterStrip.getRegionWidth()/2f, (getY()-0.5f)*drawScale.y- waterStrip.getRegionHeight()/2f, waterStrip.getRegionWidth(), waterStrip.getRegionHeight());
     }
 }
