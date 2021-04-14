@@ -26,6 +26,8 @@ public class Water extends CapsuleObstacle{
     private float height;
     private int index;
 
+    private Color transparent = new Color(255, 255, 255, 0.5f);
+
 
     private float timeCounter;
 
@@ -63,7 +65,6 @@ public class Water extends CapsuleObstacle{
         WATER_FORCE=data.getFloat("force");
         WATER_FRICTION=data.getFloat("friction");
         this.data=data;
-
         setDensity(WATER_DENSITY);
         setFriction(WATER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(data.getFloat("restitution"));
@@ -91,6 +92,8 @@ public class Water extends CapsuleObstacle{
     public void setFilmStrip(FilmStrip waterStrip, FilmStrip wavesStrip){
         this.waterStrip = waterStrip;
         this.wavesStrip=wavesStrip;
+        waterStrip.setRegionWidth((int)width*40);
+        waterStrip.setRegionHeight((int)(height)*40);
         origin.set(waterStrip.getRegionWidth()/2.0f, waterStrip.getRegionHeight()/2.0f);
     }
     /**
@@ -118,10 +121,12 @@ public class Water extends CapsuleObstacle{
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-            float s= 0.1377f;
-        for (float i = (pos_x - width / 2f)*drawScale.x + waterStrip.getRegionWidth()/2f * s ; i < (pos_x + width / 2f)*drawScale.x ; i+= waterStrip.getRegionWidth() * s) {
-            canvas.draw(wavesStrip, new Color(255, 255, 255, 0.5f), origin.x, origin.y, i, (getY()* drawScale.y)+(waterStrip.getRegionHeight()/2 * height *s)+ (waterStrip.getRegionHeight()/2*s) , getAngle(), s, s);
-            canvas.draw(waterStrip, new Color(255, 255, 255, 0.5f), origin.x, origin.y, i, getY() * drawScale.y, getAngle(), s, s*height );
+        float startX = (getX()-width/2f)*drawScale.x;
+        float y = (getY()+height/2f)*drawScale.y;
+        for (int i = 0; i<width; i++) {
+            float x = startX+40*i;
+            canvas.draw(wavesStrip,transparent,x, y, wavesStrip.getRegionWidth(), wavesStrip.getRegionHeight());
         }
+        canvas.draw(waterStrip,transparent,getX()*drawScale.x-waterStrip.getRegionWidth()/2f, getY()*drawScale.y- waterStrip.getRegionHeight()/2f, waterStrip.getRegionWidth(), waterStrip.getRegionHeight());
     }
 }
