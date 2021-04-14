@@ -36,6 +36,10 @@ public class GameplayController extends WorldController implements ContactListen
     private ArrayList<Monster> monsters = new ArrayList<>();
     /** Reference to the icicles */
     private ArrayList<PolygonObstacle> iciclesList;
+    /** Boolean representing whether the icicle is knocked down to the ground*/
+    private ArrayList<Boolean> icicles_ground = new ArrayList<>();
+    /** Boolean representing whether the icicle is hit by penguin*/
+    private ArrayList<Boolean> icicles_hit = new ArrayList<>();
     /** Reference to the water */
     private Water water;
     /** Reference to the ice */
@@ -127,7 +131,7 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
 
-        constants = internal.getEntry( "level1", JsonValue.class );
+        constants = internal.getEntry( "level3", JsonValue.class );
         JsonValue defaults = constants.get("defaults");
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
@@ -201,6 +205,9 @@ public class GameplayController extends WorldController implements ContactListen
         addQueue.clear();
         world.dispose();
 
+        icicles_ground.clear();
+        icicles_hit.clear();
+
         world = new World(gravity,false);
         world.setContactListener(this);
         setComplete(false);
@@ -270,6 +277,8 @@ public class GameplayController extends WorldController implements ContactListen
             icicle.setName("icicle" + i);
             addObject(icicle);
             iciclesList.add(icicle);
+            icicles_ground.add(false);
+            icicles_hit.add(false);
         }
 
         JsonValue goal = constants.get("goal");
@@ -467,6 +476,17 @@ public class GameplayController extends WorldController implements ContactListen
             setDebug(true);
         }
 
+        // deactivate icicle
+        for (int i = 0; i < iciclesList.size(); i ++ ){
+            if (icicles_ground.get(i)){
+                iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
+            } else if (icicles_hit.get(i)){
+                iciclesList.get(i).setBodyType(BodyDef.BodyType.DynamicBody);
+                iciclesList.get(i).setFixedRotation(true);
+            }
+        }
+
+
         // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             avatar.setFilmStrip(punchStrip);
@@ -490,7 +510,6 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController.processCollision(monsters, avatar, objects);
         collisionController.processCollision(monsters, attackStrip, avatar.getPenguins());
         collisionController.processCollision(monsters, iciclesList, objects);
-        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
         collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
@@ -633,6 +652,24 @@ public class GameplayController extends WorldController implements ContactListen
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
+            // check whether the icicle landed on ground
+            if ( bd2.getName().startsWith("icicle") && bd2.getBodyType() == BodyDef.BodyType.DynamicBody){
+                System.out.println(bd1.getName());
+                //icicles_ground.set(iciclesList.indexOf(bd2), true);
+            }
+            if (bd1.getName().startsWith("icicle") && bd1.getBodyType() == BodyDef.BodyType.DynamicBody){
+                System.out.println(bd2.getName());
+                //icicles_ground.set(iciclesList.indexOf(bd1), true);
+            }
+
+            // check whether the icicle is hit by penguin
+            if (bd1 instanceof Penguin && bd2.getName().startsWith("icicle")){
+                icicles_hit.set(iciclesList.indexOf(bd2), true);
+            }
+            if (bd2 instanceof Penguin && bd1.getName().startsWith("icicle")){
+                icicles_hit.set(iciclesList.indexOf(bd1), true);
+            }
+
             // check whether the penguin is grounded
             for(Penguin p: avatar.getPenguins()){
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
@@ -713,6 +750,8 @@ public class GameplayController extends WorldController implements ContactListen
                 }
 
             }
+
+
 
 
         } catch (Exception e) {

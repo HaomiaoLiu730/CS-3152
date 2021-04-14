@@ -110,16 +110,6 @@ public class CollisionController {
     }
 
 
-    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
-        for (Penguin p: penguins){
-            for (PolygonObstacle icicle: icicles){
-                if (p.getPosition().dst(icicle.getPosition()) < 2){
-                    icicle.setBodyType(BodyDef.BodyType.DynamicBody);
-                    icicle.setFixedRotation(true);
-                }
-            }
-        }
-    }
 
     public void processCollision(List<Water> waters, Player avatar){
         for (Water water: waters){
