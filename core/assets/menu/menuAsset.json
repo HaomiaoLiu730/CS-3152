@@ -10,6 +10,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "AfricaLine": {
+      "file":     "images/menu/AfricaLine.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "Antarctica": {
       "file":     "images/menu/Antarctica.png",
       "minFilter": "linear",
@@ -25,8 +30,18 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "AsiaLine": {
+      "file":     "images/menu/AsiaLine.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "Europe": {
       "file":     "images/menu/Europe.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "EuropeLine": {
+      "file":     "images/menu/EuropeLine.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
@@ -35,13 +50,28 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "OceaniaLine": {
+      "file":     "images/menu/OceaniaLine.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "SouthAmerica": {
       "file":     "images/menu/SouthAmerica.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "SouthAmericaLine": {
+      "file":     "images/menu/SouthAmericaLine.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "NorthAmerica": {
       "file":     "images/menu/NorthAmerica.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "NorthAmericaLine": {
+      "file":     "images/menu/NorthAmericaLine.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

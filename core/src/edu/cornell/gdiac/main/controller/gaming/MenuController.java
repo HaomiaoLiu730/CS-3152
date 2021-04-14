@@ -69,6 +69,13 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private Texture oceania;
     private Texture antarctica;
     private Texture antarcticaLine;
+    private Texture northAmericaLine;
+    private Texture southAmericaLine;
+    private Texture asiaLine;
+    private Texture africaLine;
+    private Texture europeLine;
+    private Texture oceaniaLine;
+
 
     private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
 
@@ -100,6 +107,12 @@ public class MenuController extends ClickListener implements Screen, InputProces
         oceania = internal.getEntry("Oceania", Texture.class);
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
         antarcticaLine = internal.getEntry("AntarcticaLine", Texture.class);
+        northAmericaLine = internal.getEntry("NorthAmericaLine", Texture.class);
+        southAmericaLine = internal.getEntry("SouthAmericaLine", Texture.class);
+        asiaLine = internal.getEntry("AsiaLine", Texture.class);
+        oceaniaLine = internal.getEntry("OceaniaLine", Texture.class);
+        europeLine = internal.getEntry("EuropeLine", Texture.class);
+        africaLine = internal.getEntry("AfricaLine", Texture.class);
 
         active  = true;
         zoomIn = false;
@@ -277,10 +290,29 @@ public class MenuController extends ClickListener implements Screen, InputProces
     }
 
     public void drawCurrentContinent(){
-        if(!zoomIn){
+        if(!zoomIn && !drawPoints){
             switch (currentContinent){
                 case Antarctica:
                     canvas.drawOverlay(antarcticaLine,true);
+                    break;
+                case Africa:
+                    canvas.drawOverlay(africaLine,true);
+                    break;
+                case Asia:
+                    canvas.drawOverlay(asiaLine,true);
+                    break;
+                case Oceania:
+                    canvas.drawOverlay(oceaniaLine,true);
+                    break;
+                case NorthAmerica:
+                    canvas.drawOverlay(northAmericaLine,true);
+                    break;
+                case SouthAmerica:
+                    canvas.drawOverlay(southAmericaLine,true);
+                    break;
+                case Europe:
+                    canvas.drawOverlay(europeLine,true);
+                    break;
             }
         }
     }
