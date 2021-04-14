@@ -696,6 +696,14 @@ public class GameplayController extends WorldController implements ContactListen
                     }
                 }
             }
+            if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
+                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
+                for(float i:grounded){
+                    if(index == i){
+                        staticBodies.add(bd1);
+                    }
+                }
+            }
 
             // set the ice bar tilt only for avatar
             if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") && bd2 == avatar) {
@@ -704,7 +712,6 @@ public class GameplayController extends WorldController implements ContactListen
             if (bd1 == avatar && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
-
 
             // Check for win condition
             if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||

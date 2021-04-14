@@ -670,6 +670,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             }
             prevTileTop = tilesTop[i];
         }
+        grounded.add((float)retSnow.size());
         ArrayList<Float> bottom = new ArrayList<Float>(Arrays.asList(0f,-2f,0f,0f,320f,0f, 320f, -2f));
         retSnow.add(bottom);
         this.levelJson.defaults.snow = arrayListToArr(retSnow);
