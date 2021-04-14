@@ -464,84 +464,79 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-        try{
-            for(Obstacle obj: staticBodies){
-                obj.setBodyType(BodyDef.BodyType.StaticBody);
-            }
-            staticBodies.clear();
-            if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
-                if (Gdx.input.isTouched()) {
-                    hitWater(true);
-                    resetClick = true;
-                    return;
-                }
-            }
-            if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
-                listener.updateScreen(this, GDXRoot.GAMEPLAY_MENU);
-                quitClick = true;
+        for(Obstacle obj: staticBodies){
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+        }
+        staticBodies.clear();
+        if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
+            if (Gdx.input.isTouched()) {
+                hitWater(true);
+                resetClick = true;
                 return;
             }
+        }
+        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+            listener.updateScreen(this, GDXRoot.GAMEPLAY_MENU);
+            quitClick = true;
+            return;
+        }
 
-            backToEdit();
-            updateCamera();
-            updatePlayer();
+        backToEdit();
+        updateCamera();
+        updatePlayer();
 
-            if(complete){
-                resetCountDown-=1;
-            }
-            if(resetCountDown < 0 && failed){
+        if(complete){
+            resetCountDown-=1;
+        }
+        if(resetCountDown < 0 && failed){
+            reset();
+        }
+
+        if(resetCountDown < 0 && !failed){
+            if(!isEditingView){
+                this.listener.updateScreen(this, currentLevelNum);
+                return;
+            }else{
                 reset();
             }
-
-            if(resetCountDown < 0 && !failed){
-                if(!isEditingView){
-                    this.listener.updateScreen(this, currentLevelNum);
-                    return;
-                }else{
-                    reset();
-                }
-            }
-
-            // debug mode
-            if(InputController.getInstance().didDebug()){
-                setDebug(true);
-            }
-
-            // Punching
-            if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
-                avatar.setFilmStrip(punchStrip);
-                avatar.setPunching(true);
-                punchCooldown = PUNCH_COOLDOWN;
-            } else {
-                punchCooldown -= 1;
-            }
-            if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
-                avatar.setFilmStrip(avatarStrip);
-                avatar.setPunching(false);
-            }
-
-            // Losing condition
-            if(hitWater){
-                setFailure(true);
-                setComplete(true);
-            }
-
-            // Monster moving and attacking
-            collisionController.processCollision(monsters, avatar, objects);
-            if(collisionController.processCollision(monsters, attackStrip, avatar.getPenguins())){
-                setFailure(true);
-                setComplete(true);
-            }
-            collisionController.processCollision(monsters, iciclesList, objects);
-            collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
-            collisionController.processCollision(waterList, avatar);
-
-            notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
-                    objects, avatar.getNumPenguins(), avatar);
-
-        }catch (Exception e){
-            e.printStackTrace();
         }
+
+        // debug mode
+        if(InputController.getInstance().didDebug()){
+            setDebug(true);
+        }
+
+        // Punching
+        if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
+            avatar.setFilmStrip(punchStrip);
+            avatar.setPunching(true);
+            punchCooldown = PUNCH_COOLDOWN;
+        } else {
+            punchCooldown -= 1;
+        }
+        if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
+            avatar.setFilmStrip(avatarStrip);
+            avatar.setPunching(false);
+        }
+
+        // Losing condition
+        if(hitWater){
+            setFailure(true);
+            setComplete(true);
+        }
+
+        // Monster moving and attacking
+        collisionController.processCollision(monsters, avatar, objects);
+        if(collisionController.processCollision(monsters, attackStrip, avatar.getPenguins())){
+            setFailure(true);
+            setComplete(true);
+        }
+        collisionController.processCollision(monsters, iciclesList, objects);
+        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
+        collisionController.processCollision(waterList, avatar);
+
+        notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
+                objects, avatar.getNumPenguins(), avatar);
 
     }
 

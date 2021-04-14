@@ -94,7 +94,7 @@
   },
   "water": {
     "pos":[[28.2,1.6]],
-    "layout": [[10.5,1.4]],
+    "layout": [[10,3]],
     "density": 1,
     "force": 20,
     "friction": 5,
