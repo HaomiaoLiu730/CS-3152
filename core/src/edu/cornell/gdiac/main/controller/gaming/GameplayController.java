@@ -58,6 +58,7 @@ public class GameplayController extends WorldController implements ContactListen
     private boolean canThrow;
 
     private boolean isEditingView;
+    private float[] grounded;
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -104,6 +105,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     private int currentLevelNum;
 
+    ArrayList<Obstacle> staticBodies = new ArrayList<>();
+
     /**
      * Creates a new game with a playing field of the given size.
      * <p>
@@ -139,6 +142,7 @@ public class GameplayController extends WorldController implements ContactListen
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
         this.isEditingView = isEditingView;
+        grounded = defaults.get("grounded").asFloatArray();
     }
 
     public void setJsonValue(JsonValue jsonValue){
@@ -459,6 +463,10 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        for(Obstacle obj: staticBodies){
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+        }
+        staticBodies.clear();
         if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
             if (Gdx.input.isTouched()) {
                 hitWater(true);
@@ -680,6 +688,23 @@ public class GameplayController extends WorldController implements ContactListen
                 }
             }
 
+            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("icicle")){
+                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
+                for(float i:grounded){
+                    if(index == i){
+                        staticBodies.add(bd2);
+                    }
+                }
+            }
+            if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
+                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
+                for(float i:grounded){
+                    if(index == i){
+                        staticBodies.add(bd1);
+                    }
+                }
+            }
+
             // set the ice bar tilt only for avatar
             if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") && bd2 == avatar) {
                 bd1.setFixedRotation(false);
@@ -687,7 +712,6 @@ public class GameplayController extends WorldController implements ContactListen
             if (bd1 == avatar && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
-
 
             // Check for win condition
             if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||
