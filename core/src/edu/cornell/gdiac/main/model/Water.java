@@ -90,11 +90,11 @@ public class Water extends CapsuleObstacle{
         return true;
     }
     public void setFilmStrip(FilmStrip waterStrip, FilmStrip wavesStrip){
-        this.waterStrip = waterStrip;
-        this.wavesStrip=wavesStrip;
-        waterStrip.setRegionWidth((int)width*40);
-        waterStrip.setRegionHeight((int)(height-1)*40);
-        origin.set(waterStrip.getRegionWidth()/2.0f, waterStrip.getRegionHeight()/2.0f);
+        this.waterStrip = waterStrip.copy();
+        this.wavesStrip = wavesStrip;
+        this.waterStrip.setRegionWidth((int)width*40);
+        this.waterStrip.setRegionHeight((int)(height-1)*40);
+        origin.set(this.waterStrip.getRegionWidth()/2.0f, this.waterStrip.getRegionHeight()/2.0f);
     }
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
@@ -128,6 +128,9 @@ public class Water extends CapsuleObstacle{
             canvas.draw(wavesStrip,transparent,x, y, wavesStrip.getRegionWidth(), wavesStrip.getRegionHeight());
 
         }
+//        System.out.println(getX()*drawScale.x);
+//        System.out.println(getX()*drawScale.x-waterStrip.getRegionWidth()/2f);
+//        System.out.println("width"+waterStrip.getRegionWidth());
         canvas.draw(waterStrip,transparent,getX()*drawScale.x-waterStrip.getRegionWidth()/2f, (getY()-0.5f)*drawScale.y- waterStrip.getRegionHeight()/2f, waterStrip.getRegionWidth(), waterStrip.getRegionHeight());
     }
 }
