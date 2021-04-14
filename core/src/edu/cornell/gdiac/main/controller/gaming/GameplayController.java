@@ -105,6 +105,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     private int currentLevelNum;
 
+    ArrayList<Obstacle> staticBodies = new ArrayList<>();
+
     /**
      * Creates a new game with a playing field of the given size.
      * <p>
@@ -140,7 +142,6 @@ public class GameplayController extends WorldController implements ContactListen
         num_penguins = defaults.getInt("num_penguins",0);
         num_notes = defaults.getInt("num_notes",0);
         this.isEditingView = isEditingView;
-
         grounded = defaults.get("grounded").asFloatArray();
     }
 
@@ -462,6 +463,10 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        for(Obstacle obj: staticBodies){
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+        }
+        staticBodies.clear();
         if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
             if (Gdx.input.isTouched()) {
                 hitWater(true);
@@ -680,6 +685,15 @@ public class GameplayController extends WorldController implements ContactListen
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
+                }
+            }
+
+            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("icicle")){
+                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
+                for(float i:grounded){
+                    if(index == i){
+                        staticBodies.add(bd2);
+                    }
                 }
             }
 
