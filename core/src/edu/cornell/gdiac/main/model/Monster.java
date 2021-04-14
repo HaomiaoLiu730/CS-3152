@@ -34,9 +34,11 @@ public class Monster extends CapsuleObstacle {
 
     /** Whether our feet are on the ground */
     private boolean isGrounded;
+    /** Whether the monster moves horizontally */
+    private boolean isHorizontal;
     /** The range of movements */
     private float moveRange;
-    /** Which direction is the character facing */
+    /** Which direction is the monster facing */
     private int faceRight;
 
     /** Ground sensor to represent our feet */
@@ -137,8 +139,8 @@ public class Monster extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Monster(JsonValue data, float width, float height, String name, float range, int index) {
-        super(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),width*data.getFloat("hshrink"),height*data.getFloat("vshrink"));
+    public Monster(JsonValue data, float x, float y, float width, float height, String name, float range, boolean isHor) {
+        super(x,y,width*data.getFloat("hshrink"),height*data.getFloat("vshrink"));
         MONSTER_DENSITY= data.getFloat("density");
         MONSTER_FORCE=data.getFloat("force");
         MONSTER_DAMPING=data.getFloat("damping");
@@ -151,11 +153,15 @@ public class Monster extends CapsuleObstacle {
         setFriction(MONSTER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(data.getFloat("restitution"));
         setFixedRotation(true);
+        if (!isHor) {
+            setAngle((float) Math.PI/2);
+        }
 
         // Gameplay attributes
         isGrounded = false;
         faceRight = -1;
         moveRange = range;
+        isHorizontal = isHor;
         setName(name);
     }
 
@@ -174,11 +180,6 @@ public class Monster extends CapsuleObstacle {
             return false;
         }
 
-        // Ground Sensor
-        // -------------
-        // To determine whether or not the dude is on the ground,
-        // we create a thin sensor under his feet, which reports
-        // collisions with the world but has no collision response.
         Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
         FixtureDef sensorDef = new FixtureDef();
         sensorDef.density = MONSTER_DENSITY;
@@ -205,12 +206,22 @@ public class Monster extends CapsuleObstacle {
             return;
         }
 
-        if (Math.abs(forceCache.x) >= Math.abs(faceRight*moveRange)) {
-            faceRight = -1*faceRight;
-            forceCache.set(faceRight*10,0);
+        if (isHorizontal) {
+            if (Math.abs(forceCache.x) >= Math.abs(faceRight*moveRange)) {
+                faceRight = -1*faceRight;
+                forceCache.set(faceRight*10,0);
+            } else {
+                float formerX = forceCache.x;
+                forceCache.set(formerX+faceRight*1f,0);
+            }
         } else {
-            float formerX = forceCache.x;
-            forceCache.set(formerX+faceRight*1f,0);
+            if (Math.abs(forceCache.y) >= Math.abs(faceRight*moveRange)) {
+                faceRight = -1*faceRight;
+                forceCache.set(0,faceRight*10);
+            } else {
+                float formerY = forceCache.y;
+                forceCache.set(0,formerY+faceRight*1f);
+            }
         }
         body.applyForce(forceCache,getPosition(),true);
     }
@@ -253,4 +264,9 @@ public class Monster extends CapsuleObstacle {
         super.drawDebug(canvas);
         canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
+
+    public void setMovingIceoffset(float x){
+        setPosition(getX()-x,getY());
+    }
 }
+

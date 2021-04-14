@@ -143,7 +143,7 @@ public class Player extends CapsuleObstacle {
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
     /** Cache for internal direction calculations */
-    private Vector2 direcctionCache = new Vector2();
+    private Vector2 directionCache = new Vector2();
     /** Cache for internal position calculations */
     private Vector2 position = new Vector2();
 
@@ -262,6 +262,24 @@ public class Player extends CapsuleObstacle {
     public int getNumPenguins(){return numPenguins; }
 
     /**
+     * Set the number of penguins following the avatar.
+     * @param i the number
+     */
+    public void setNumPenguins(int i){numPenguins = i; }
+
+    public Penguin deleteOnePenguin(){
+        for(Penguin p: penguins){
+            if(p.getIndex() == numPenguins-1){
+                p.setActive(false);
+                p.setAwake(false);
+                return p;
+            }
+        }
+        return null;
+    }
+
+
+    /**
      * Returns true if the dude is actively firing.
      *
      * @return true if the dude is actively firing.
@@ -323,12 +341,12 @@ public class Player extends CapsuleObstacle {
 
     public void calculateTrajectory(float force, float xDir, float yDir){
         float dt =  0.01643628f;
-        direcctionCache.set(xDir, yDir).nor();
-        float vx = force*direcctionCache.x*10 * dt / penguins.getFirst().getMass();
-        float vy = force*direcctionCache.y*10f * dt / penguins.getFirst().getMass();
+        directionCache.set(xDir, yDir).nor();
+        float vx = force*directionCache.x*10 * dt / penguins.getFirst().getMass();
+        float vy = force*directionCache.y*10f * dt / penguins.getFirst().getMass();
         for(int i = 0; i<10; i+=2){
             float t = i * 0.05f;
-            float x = (16 + t * vx) * 1280 / 32f;
+            float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
             float y = (getY()+2 + vy * t + 0.5f * (-17f) * t * t) * 720f/ 18f;
             trajectories[i] = x;
             trajectories[i+1] = y;
@@ -568,21 +586,16 @@ public class Player extends CapsuleObstacle {
         if (getMovement() == 0f) {
             forceCache.set(-getDamping()*getVX(),0);
             body.applyForce(forceCache,getPosition(),true);
-        }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
+            setVX(Math.signum(getMovement())*getMaxSpeed());
         }
 
         // Jump!
-
         if (isJumping()) {
-            forceCache.set(0, PLAYER_JUMP);
-            body.applyLinearImpulse(forceCache,getPosition(),true);
+            setVY(PLAYER_JUMP);
+        } else if (!isGrounded) {
+            forceCache.set(0, -9.8f);
+            body.applyForce(forceCache,getPosition(),true);
         }
     }
 
@@ -667,6 +680,7 @@ public class Player extends CapsuleObstacle {
         }
 
         super.update(dt);
+
     }
 
     /**
@@ -704,5 +718,9 @@ public class Player extends CapsuleObstacle {
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
         canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+    }
+
+    public void setMovingIceoffset(float x){
+        setPosition(getX()-x,getY());
     }
 }

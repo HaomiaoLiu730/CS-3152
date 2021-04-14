@@ -50,6 +50,16 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "monsterScaledVer": {
+      "file": "images/shared/monsterScaledVer.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "monsterScaled": {
+      "file": "images/shared/monsterScaled.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "monsterAttacking": {
       "file": "images/shared/monsterAttacking.png",
       "minFilter": "linear",
@@ -100,8 +110,13 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "snow":  {
-      "file":     "images/shared/snow.png",
+    "white": {
+      "file": "images/shared/white.jpeg",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "snow": {
+      "file": "images/shared/snow.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
@@ -114,7 +129,8 @@
   "fonts": {
     "gameFont": {
       "file": "fonts/MarkerFelt.ttf",
-      "size": 16
+      "size": 16,
+      "color": "black"
     }
   }
 }

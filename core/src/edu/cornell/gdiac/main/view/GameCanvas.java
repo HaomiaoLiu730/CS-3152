@@ -586,6 +586,33 @@ public class GameCanvas {
         spriteBatch.draw(region, x,  y);
     }
 
+    public void drawFixed(TextureRegion region, float x, float y) {
+        if (active != DrawPass.STANDARD) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+
+        // Unlike Lab 1, we can shortcut without a master drawing method
+        spriteBatch.setColor(Color.WHITE);
+        spriteBatch.draw(region, x+camera.position.x-640,  y);
+    }
+
+    public void drawFixed(PolygonRegion region, Color tint, float ox, float oy,
+                     float x, float y, float angle, float sx, float sy) {
+        if (active != DrawPass.STANDARD) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+
+        TextureRegion bounds = region.getRegion();
+        spriteBatch.setColor(tint);
+        spriteBatch.draw(region, x+camera.position.x-640, y, ox, oy,
+                bounds.getRegionWidth(), bounds.getRegionHeight(),
+                sx, sy, 180.0f*angle/(float)Math.PI);
+    }
+
+
+
     /**
      * Draws the tinted texture at the given position.
      *
@@ -747,6 +774,31 @@ public class GameCanvas {
         spriteBatch.draw(region, x,  y);
     }
 
+    public void drawFixed(PolygonRegion region, float x, float y) {
+        if (active != DrawPass.STANDARD) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+
+        // Unlike Lab 1, we can shortcut without a master drawing method
+        spriteBatch.setColor(Color.WHITE);
+        spriteBatch.draw(region, x+camera.position.x-640,  y);
+    }
+
+    public void drawFixed(TextureRegion region, Color tint, float ox, float oy,
+                     float x, float y, float angle, float sx, float sy) {
+        if (active != DrawPass.STANDARD) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+
+        // BUG: The draw command for texture regions does not work properly.
+        // There is a workaround, but it will break if the bug is fixed.
+        // For now, it is better to set the affine transform directly.
+        computeTransform(ox,oy,x+camera.position.x-640,y,angle,sx,sy);
+        spriteBatch.setColor(tint);
+        spriteBatch.draw(region, region.getRegionWidth(), region.getRegionHeight(), local);
+    }
     /**
      * Draws the polygonal region with the given transformations
      *
@@ -1303,6 +1355,16 @@ public class GameCanvas {
         Gdx.gl.glLineWidth(radius);
         shapeRenderer.setColor(color);
         shapeRenderer.circle(x, y, radius);
+        shapeRenderer.end();
+        spriteBatch.begin();
+    }
+
+    public void drawSquare(Color color, float x, float y, float width, float height){
+        spriteBatch.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        Gdx.gl.glLineWidth(1);
+        shapeRenderer.setColor(color);
+        shapeRenderer.rect(x,y,width,height);
         shapeRenderer.end();
         spriteBatch.begin();
     }

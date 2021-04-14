@@ -1,35 +1,26 @@
-/*
- * Spinner.java
- *
- * This class provides a spinning rectangle on a fixed pin.  We did not really need
- * a separate class for this, as it has no update.  However, ComplexObstacles always
- * make joint management easier.
- *
- * This is one of the files that you are expected to modify. Please limit changes to
- * the regions that say INSERT CODE HERE.
- *
- * Author: Walker M. White
- * Based on original PhysicsDemo Lab by Don Holden, 2007
- * Updated asset version, 2/6/2021
- */
 package edu.cornell.gdiac.main.model;
 
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.joints.*;
-
-import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Joint;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.JsonValue;
-import edu.cornell.gdiac.main.obstacle.*;
+import edu.cornell.gdiac.main.obstacle.BoxObstacle;
+import edu.cornell.gdiac.main.obstacle.ComplexObstacle;
+import edu.cornell.gdiac.main.obstacle.WheelObstacle;
 
-public class Ice extends ComplexObstacle {
+public class FloatingIce extends ComplexObstacle {
     /** The initializing data (to avoid magic numbers) */
     private final JsonValue data;
 
     /** The primary spinner obstacle */
     private BoxObstacle iceBar;
     private WheelObstacle pin;
+    private float momentum;
+    private int index;
+    private int coolDownCount;
 
     /**
      * Creates a new spinner with the given physics data.
@@ -42,17 +33,22 @@ public class Ice extends ComplexObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Ice(JsonValue data, int index, float width, float height) {
+    public FloatingIce(JsonValue data, int index, float width, float height) {
         super(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1));
-        setName("Ice");
+        setName("floatingIce");
+
+        coolDownCount = 0;
+
+        this.index = index;
 
         iceBar = new BoxObstacle(data.get("pos").get(index).getFloat(0),data.get("pos").get(index).getFloat(1),width,height);
-        iceBar.setName("iceBar");
+        iceBar.setName("floatingIceBar");
         iceBar.setDensity(data.getFloat("bar_density"));
         iceBar.setFriction(data.getFloat("friction"));
         iceBar.setRestitution(data.getFloat("restitution"));
         iceBar.setFixedRotation(true);
         iceBar.setAngularDamping(0.5f);
+        iceBar.setMaster(this);
         bodies.add(iceBar);
 
 
@@ -61,7 +57,6 @@ public class Ice extends ComplexObstacle {
         pin.setDensity(data.getFloat("pin_density"));
         pin.setBodyType(BodyDef.BodyType.StaticBody);
         pin.setRestitution(data.getFloat("restitution"));
-
 
         bodies.add(pin);
         this.data=data;
@@ -111,7 +106,23 @@ public class Ice extends ComplexObstacle {
         return iceBar.getTexture();
     }
 
-    public void setTilting(boolean tilt){
-        iceBar.setFixedRotation(!tilt);
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+        pin.setPosition(pin.getX() - momentum, pin.getY());
+        momentum -= 0.0009;
+        if (Math.abs(momentum) < 0.001) {
+            momentum = 0;
+        }
+    }
+
+    public void hitByIcicle(float force){
+        if(momentum == 0)
+            momentum = force;
+    }
+
+    public void resetMomentum(){
+        momentum = 0;
     }
 }
+

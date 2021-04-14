@@ -8,7 +8,6 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -88,7 +87,7 @@ public class GameSpecController implements Screen, InputProcessor, ControllerLis
 
     public void update(float delta) {
         inputController.readInput();
-        if(inputController.didThrowPengiun()){
+        if(inputController.didPressSpace()){
             isReady = true;
         }
     }

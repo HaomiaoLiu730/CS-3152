@@ -161,6 +161,10 @@ public class PolygonObstacle extends SimpleObstacle {
 		initBounds();
 	}
 
+	public PolygonRegion getPolygonRegion(){
+		return region;
+	}
+
 	/**
 	 * Initializes the bounding box (and drawing scale) for this polygon
 	 */

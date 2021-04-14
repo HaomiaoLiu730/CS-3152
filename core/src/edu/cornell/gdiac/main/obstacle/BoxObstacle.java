@@ -33,6 +33,8 @@ public class BoxObstacle extends SimpleObstacle {
 	private Fixture geometry;
 	/** Cache of the polygon vertices (for resizing) */
 	private float[] vertices;
+
+	private ComplexObstacle master;
 	
 	/** 
 	 * Returns the dimensions of this box
@@ -46,6 +48,10 @@ public class BoxObstacle extends SimpleObstacle {
 	public Vector2 getDimension() {
 		return sizeCache.set(dimension);
 	}
+
+	public void setMaster(ComplexObstacle m){master = m;}
+
+	public ComplexObstacle getMaster(){return master;}
 
 	/** 
 	 * Sets the dimensions of this box
