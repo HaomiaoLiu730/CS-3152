@@ -6,10 +6,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.main.obstacle.BoxObstacle;
 import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
-public class Water extends CapsuleObstacle{
+public class Water extends BoxObstacle {
     private final JsonValue data;
 
     /** The density of the character */
@@ -72,6 +73,7 @@ public class Water extends CapsuleObstacle{
         setActive(false);
         setAwake(false);
         setName(name+index);
+        setSensor(true);
     }
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
@@ -90,11 +92,11 @@ public class Water extends CapsuleObstacle{
         return true;
     }
     public void setFilmStrip(FilmStrip waterStrip, FilmStrip wavesStrip){
-        this.waterStrip = waterStrip;
-        this.wavesStrip=wavesStrip;
-        waterStrip.setRegionWidth((int)width*40);
-        waterStrip.setRegionHeight((int)(height-1)*40);
-        origin.set(waterStrip.getRegionWidth()/2.0f, waterStrip.getRegionHeight()/2.0f);
+        this.waterStrip = waterStrip.copy();
+        this.wavesStrip = wavesStrip;
+        this.waterStrip.setRegionWidth((int)width*40);
+        this.waterStrip.setRegionHeight((int)(height-1)*40);
+        origin.set(this.waterStrip.getRegionWidth()/2.0f, this.waterStrip.getRegionHeight()/2.0f);
     }
     /**
      * Updates the object's physics state (NOT GAME LOGIC).

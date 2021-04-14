@@ -378,6 +378,7 @@ public class GameplayController extends WorldController implements ContactListen
             waterList.add(water);
             addObject(water);
             water.setActive(false);
+            water.setAwake(false);
         }
 
         JsonValue ices = constants.get("ice");
@@ -479,7 +480,7 @@ public class GameplayController extends WorldController implements ContactListen
             quitClick = true;
             return;
         }
-      
+
         backToEdit();
         updateCamera();
         updatePlayer();
