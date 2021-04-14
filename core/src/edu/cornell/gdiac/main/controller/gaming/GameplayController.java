@@ -367,8 +367,9 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue water_layout = waters.get("layout");
         waterList= new ArrayList<Water>();
         for (int i =0; i< water_layout.size; i++) {
+
             water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
-            water.setFilmStrip(waterStrip);
+            water.setFilmStrip(waterStrip, wavesStrip);
             water.setDrawScale(scale);
             waterList.add(water);
             addObject(water);

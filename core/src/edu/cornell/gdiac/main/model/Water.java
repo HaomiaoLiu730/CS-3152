@@ -18,10 +18,19 @@ public class Water extends CapsuleObstacle{
     private final float WATER_FORCE;
     /** The dude is a slippery one */
     private final float WATER_FRICTION;
-    private FilmStrip filmStrip;
-    private float timeCounter;
+    private FilmStrip waterStrip;
+    private FilmStrip wavesStrip;
+    private float pos_x;
+    private float pos_y;
     private float width;
     private float height;
+    private int index;
+
+    private Color transparent = new Color(255, 255, 255, 0.5f);
+
+
+    private float timeCounter;
+
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
     /**
@@ -47,13 +56,15 @@ public class Water extends CapsuleObstacle{
      */
     public Water(JsonValue data, float width, float height, String name,int index) {
         super(data.get("pos").get(index).getFloat(0), data.get("pos").get(index).getFloat(1),width,height);
+        pos_x = data.get("pos").get(index).getFloat(0);
+        pos_y = data.get("pos").get(index).getFloat(1);
+        this.width=width;
+        this.height=height;
+        this.index=index;
         WATER_DENSITY=data.getFloat("density");
         WATER_FORCE=data.getFloat("force");
         WATER_FRICTION=data.getFloat("friction");
-        this.width=width;
-        this.height=height;
         this.data=data;
-
         setDensity(WATER_DENSITY);
         setFriction(WATER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(data.getFloat("restitution"));
@@ -78,9 +89,12 @@ public class Water extends CapsuleObstacle{
         }
         return true;
     }
-    public void setFilmStrip(FilmStrip strip){
-        this.filmStrip = strip;
-        origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
+    public void setFilmStrip(FilmStrip waterStrip, FilmStrip wavesStrip){
+        this.waterStrip = waterStrip;
+        this.wavesStrip=wavesStrip;
+        waterStrip.setRegionWidth((int)width*40);
+        waterStrip.setRegionHeight((int)(height-1)*40);
+        origin.set(waterStrip.getRegionWidth()/2.0f, waterStrip.getRegionHeight()/2.0f);
     }
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
@@ -92,12 +106,14 @@ public class Water extends CapsuleObstacle{
     public void update(float dt) {
 
         // Apply cooldowns
-        timeCounter += dt;
-        if(timeCounter >= 0.175) {
-            timeCounter = 0;
-            filmStrip.nextFrame();
+        if (index == 0) {
+            this.timeCounter += dt;
+            if (this.timeCounter >= 0.175) {
+                this.timeCounter = 0;
+                this.wavesStrip.nextFrame();
+            }
+            super.update(dt);
         }
-        super.update(dt);
     }
     /**
      * Draws the physics object.
@@ -105,6 +121,13 @@ public class Water extends CapsuleObstacle{
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        canvas.draw(filmStrip,new Color(255,255,255,0.5f),origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),width/6.22f, height/6f);
+        float startX = (getX()-width/2f)*drawScale.x;
+        float y = (getY()+height/2f-1f)*drawScale.y;
+        for (int i = 0; i<width; i++) {
+            float x = startX+40*i;
+            canvas.draw(wavesStrip,transparent,x, y, wavesStrip.getRegionWidth(), wavesStrip.getRegionHeight());
+
+        }
+        canvas.draw(waterStrip,transparent,getX()*drawScale.x-waterStrip.getRegionWidth()/2f, (getY()-0.5f)*drawScale.y- waterStrip.getRegionHeight()/2f, waterStrip.getRegionWidth(), waterStrip.getRegionHeight());
     }
 }
