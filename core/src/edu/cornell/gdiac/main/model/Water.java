@@ -6,10 +6,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.main.obstacle.BoxObstacle;
 import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
-public class Water extends CapsuleObstacle{
+public class Water extends BoxObstacle {
     private final JsonValue data;
 
     /** The density of the character */
@@ -72,6 +73,7 @@ public class Water extends CapsuleObstacle{
         setActive(false);
         setAwake(false);
         setName(name+index);
+        setSensor(true);
     }
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
@@ -128,9 +130,6 @@ public class Water extends CapsuleObstacle{
             canvas.draw(wavesStrip,transparent,x, y, wavesStrip.getRegionWidth(), wavesStrip.getRegionHeight());
 
         }
-//        System.out.println(getX()*drawScale.x);
-//        System.out.println(getX()*drawScale.x-waterStrip.getRegionWidth()/2f);
-//        System.out.println("width"+waterStrip.getRegionWidth());
         canvas.draw(waterStrip,transparent,getX()*drawScale.x-waterStrip.getRegionWidth()/2f, (getY()-0.5f)*drawScale.y- waterStrip.getRegionHeight()/2f, waterStrip.getRegionWidth(), waterStrip.getRegionHeight());
     }
 }
