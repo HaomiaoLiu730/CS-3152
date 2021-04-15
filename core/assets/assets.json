@@ -1,4 +1,14 @@
 {
+  "sounds": {
+    "hitIcicle": "sounds/hiticicle.ogg",
+    "punching": "sounds/Punch.ogg",
+    "jumping": "sounds/Jump.ogg",
+    "throwingP": "sounds/Throw sfx.ogg",
+    "collectingNote": "sounds/note things.ogg",
+    "bearLanding": "sounds/Land sfx.ogg",
+    "penguinLanding": "sounds/land 2.ogg",
+    "winning": "sounds/checkpoint.ogg"
+  },
   "textures": {
     "avatarWalking": {
       "file": "images/shared/avatarWalking.png",

@@ -1,6 +1,8 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import edu.cornell.gdiac.audio.SoundBuffer;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.Obstacle;
 import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
@@ -84,7 +86,7 @@ public class CollisionController {
     }
 
     public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip, int numNotes,
-                                        PooledList<Obstacle> objects, int numPenguins, Player avatar){
+                                        PooledList<Obstacle> objects, int numPenguins, Player avatar, Sound sound){
         for (Note note: notes){
             if (!note.isCollected()){
                 for (Penguin p: penguins){
@@ -101,6 +103,7 @@ public class CollisionController {
                         note.setFilmStrip(noteCollectedFilmStrip);
                         note.setCollected(true);
                         numNotes++;
+                        sound.play();
                         break;
                     }
                 }
@@ -110,12 +113,15 @@ public class CollisionController {
     }
 
 
-    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
+    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, PooledList<Obstacle> objects, Sound hitIcicel){
         for (Penguin p: penguins){
             for (PolygonObstacle icicle: icicles){
                 if (p.getPosition().dst(icicle.getPosition()) < 2){
+                    if(!icicle.isFixedRotation())
+                        hitIcicel.play();
                     icicle.setBodyType(BodyDef.BodyType.DynamicBody);
                     icicle.setFixedRotation(true);
+
                 }
             }
         }

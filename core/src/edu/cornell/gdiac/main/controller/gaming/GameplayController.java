@@ -510,6 +510,7 @@ public class GameplayController extends WorldController implements ContactListen
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             avatar.setFilmStrip(punchStrip);
             avatar.setPunching(true);
+            punching.play();
             punchCooldown = PUNCH_COOLDOWN;
         } else {
             punchCooldown -= 1;
@@ -532,11 +533,11 @@ public class GameplayController extends WorldController implements ContactListen
             setComplete(true);
         }
         collisionController.processCollision(monsters, iciclesList, objects);
-        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
+        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects,hitIcicle);
         collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
-                objects, avatar.getNumPenguins(), avatar);
+                objects, avatar.getNumPenguins(), avatar,collectingNote);
 
     }
 
@@ -576,11 +577,12 @@ public class GameplayController extends WorldController implements ContactListen
         if(avatar.isJumping()&&InputController.getInstance().didPrimary()){
             avatar.moveState = Player.animationState.jumpRising;
             avatar.setFilmStrip(jumpRisingStrip);
+            jumping.play();
         }
         avatar.setThrowing(InputController.getInstance().getClickX(),
                 InputController.getInstance().getClickY(),
                 InputController.getInstance().touchUp() && !resetClick && canThrow,
-                InputController.getInstance().isTouching());
+                InputController.getInstance().isTouching(),throwingP);
         canThrow = true;
         avatar.pickUpPenguins();
     }
@@ -676,6 +678,7 @@ public class GameplayController extends WorldController implements ContactListen
                 if(avatar.moveState == Player.animationState.jumpHanging){
                     avatar.moveState = Player.animationState.jumpLanding;
                     avatar.setFilmStrip(jumpLandingStrip);
+                    bearLanding.play();
                 }
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
@@ -685,7 +688,12 @@ public class GameplayController extends WorldController implements ContactListen
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
+                    if(p.isThrowOut() && p.isGrounded()){
+                        penguinLanding.play();
+                        System.out.println("penguin is thrown out and grounded ");
+                    }
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
+                    //penguinLanding.play();
                 }
             }
 
@@ -717,6 +725,7 @@ public class GameplayController extends WorldController implements ContactListen
             // Check for win condition
             if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||
                     (bd1 == avatar && bd2.getName() == "exit" && notesCollected == num_notes)) {
+                winning.play();
                 setComplete(true);
             }
 
