@@ -464,7 +464,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-        System.out.println(avatar.getPenguins().size());
         for(Obstacle obj: staticBodies){
             obj.setBodyType(BodyDef.BodyType.StaticBody);
         }
