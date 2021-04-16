@@ -39,7 +39,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private boolean drawPoints;
     private Camera camera;
     private boolean prevTouched;
-    private enum Continent{
+    public enum Continent{
         NorthAmerica,
         SouthAmerica,
         Asia,
@@ -55,8 +55,11 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private static JsonValue value;
 
     private float[] NORTH_AMERICA_LEVELS = new float[]{
-            1100f, 600f, 1000f, 610f, 300f, 470f, 600f, 440f, 520f, 300f, 670f, 270f
+            1100f, 600f, 1000f, 610f, 300f, 470f
     };
+//    new float[]{
+//        1100f, 600f, 1000f, 610f, 300f, 470f, 600f, 440f, 520f, 300f, 670f, 270f
+//    };
 
     private AssetDirectory internal;
 
@@ -146,6 +149,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         numOfLevels.put(Continent.Antarctica, value.get("numOfLevels").getInt("Antarctica"));
         numOfLevels.put(Continent.Africa, value.get("numOfLevels").getInt("Africa"));
         numOfLevels.put(Continent.Oceania, value.get("numOfLevels").getInt("Oceania"));
+        unlockedContinents.add(Continent.NorthAmerica);
         for(Continent continent: finished.keySet()){
             if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
                 unlockedContinents.add(continent);
@@ -251,7 +255,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
                 case NorthAmerica:
                     for(int i = 0; i< NORTH_AMERICA_LEVELS.length; i+=2){
                         if (Math.abs(Gdx.input.getX() - NORTH_AMERICA_LEVELS[i]) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - NORTH_AMERICA_LEVELS[i+1]) <= MOUSE_TOL){
-                            nextLevel = i;
+                            nextLevel = i/2;
                         }
                     }
                     break;
@@ -272,14 +276,19 @@ public class MenuController extends ClickListener implements Screen, InputProces
         canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,0, 0);
         canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,0, 0);
         if(drawPoints){
+            int finishedLevelNum = finished.get(currentContinent).size();
             switch (currentContinent){
                 case NorthAmerica:
-                    for(int i = 0; i< finished.get(currentContinent).size()*2; i+=2){
-                        canvas.drawCircle(Color.BLACK, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
+                    for(int i = 0; i < finishedLevelNum*2; i+=2){
+                        canvas.drawText(""+i, gameFont,NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1]);
+                        canvas.drawCircle(Color.BLACK, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i/2 ? 10f: 5f);
                     }
-                    for(int i = finished.get(currentContinent).size()*2; i< NORTH_AMERICA_LEVELS.length; i+=2){
-                        canvas.drawCircle(Color.LIGHT_GRAY, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
+                    if(finishedLevelNum != numOfLevels.get(currentContinent)){
+                        canvas.drawCircle(Color.LIGHT_GRAY, NORTH_AMERICA_LEVELS[finishedLevelNum*2], NORTH_AMERICA_LEVELS[finishedLevelNum*2+1], nextLevel == finishedLevelNum ? 10f: 5f);
                     }
+//                    for(int i = finished.get(currentContinent).size()*2; i< NORTH_AMERICA_LEVELS.length; i+=2){
+//                        canvas.drawCircle(Color.LIGHT_GRAY, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
+//                    }
                     break;
                 default:
                     break;
@@ -329,8 +338,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
             draw();
 
             // We are are ready, notify our listener
+            int hundred = currentContinent == Continent.NorthAmerica ? 1 : 0;
             if (isReady() && listener != null) {
-                listener.updateScreen(this, 0);
+                listener.updateScreen(this, hundred*10+nextLevel);
             }
         }
     }
@@ -344,6 +354,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         FileHandle file = Gdx.files.local("menu/levelProgress.json");
         JsonReader jsonReader = new JsonReader();
         value = jsonReader.parse(file);
+        refreshMenu();
         isReady = false;
         nextLevel = -1;
     }
