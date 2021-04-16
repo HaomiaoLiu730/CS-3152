@@ -219,7 +219,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         if(zoomIn && unlockedContinents.contains(currentContinent)){
             switch (currentContinent){
                 case NorthAmerica:
-                    zoomInto(660f, 350f, 1000f, 480f);
+                    zoomInto(560f, 350f, 1000f, 480f);
                     break;
                 case SouthAmerica:
                     zoomInto(560f, 300f, 1180f, 220f);
@@ -338,6 +338,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
     public void reset(){
         zoomIn = false;
         drawPoints = false;
+        canvas.getCamera().position.x = 640;
+        canvas.getCamera().position.y = 360;
+        canvas.getCamera().update();
         FileHandle file = Gdx.files.local("menu/levelProgress.json");
         JsonReader jsonReader = new JsonReader();
         value = jsonReader.parse(file);
