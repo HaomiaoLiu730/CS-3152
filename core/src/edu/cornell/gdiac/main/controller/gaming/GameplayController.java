@@ -217,7 +217,7 @@ public class GameplayController extends WorldController implements ContactListen
         setComplete(false);
         setFailure(false);
         populateLevel();
-        resetCountDown = 50;
+        resetCountDown = 30;
         quitClick = false;
         resetClick = false;
         canThrow = false;
@@ -440,6 +440,7 @@ public class GameplayController extends WorldController implements ContactListen
      * @param dt Number of seconds since last animation frame
      *
      * @return whether to process the update loop
+     *
      */
     public boolean preUpdate(float dt) {
         if (!super.preUpdate(dt)) {
@@ -604,6 +605,10 @@ public class GameplayController extends WorldController implements ContactListen
 
         canvas.begin();
         canvas.drawBackground(background,0, -100);
+        if(complete || failed){
+            canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
+        }
+
 
         for(Obstacle obj : objects) {
             obj.draw(canvas);
@@ -611,8 +616,10 @@ public class GameplayController extends WorldController implements ContactListen
 
         String noteMsg = "Notes collected: "+ notesCollected + "/"+num_notes;
         String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+num_penguins;
-        canvas.drawText( gameFont, noteMsg,5.0f, canvas.getHeight()-5.0f);
-        canvas.drawText( gameFont, penguinMsg,5.0f, canvas.getHeight()-40.0f);
+        if(!complete || failed) {
+            canvas.drawText(gameFont, noteMsg, 5.0f, canvas.getHeight() - 5.0f);
+            canvas.drawText(gameFont, penguinMsg, 5.0f, canvas.getHeight() - 40.0f);
+        }
         if(isEditingView){
             canvas.drawSquare(Color.BLACK,1200,560,60,40);
             canvas.drawText(gameFont, "Edit", 1200,600);
@@ -635,13 +642,20 @@ public class GameplayController extends WorldController implements ContactListen
         // Final message
         if (complete && !failed) {
             canvas.begin(); // DO NOT SCALE
+            winning.play();
+            gameFont.setColor(Color.WHITE);
             canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
+            gameFont.setColor(Color.BLACK);
             canvas.end();
         } else if (failed) {
             canvas.begin(); // DO NOT SCALE
+            losing.play();
+            gameFont.setColor(Color.WHITE);
             canvas.drawTextCentered("FAILURE!", gameFont, 0.0f);
+            gameFont.setColor(Color.BLACK);
             canvas.end();
         }
+
     }
 
     @Override
@@ -688,12 +702,10 @@ public class GameplayController extends WorldController implements ContactListen
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
-                    if(p.isThrowOut() && p.isGrounded()){
+                    if(p.isThrowOut() && p.getBodyType()== BodyDef.BodyType.DynamicBody){
                         penguinLanding.play();
-                        System.out.println("penguin is thrown out and grounded ");
                     }
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
-                    //penguinLanding.play();
                 }
             }
 
@@ -725,7 +737,6 @@ public class GameplayController extends WorldController implements ContactListen
             // Check for win condition
             if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||
                     (bd1 == avatar && bd2.getName() == "exit" && notesCollected == num_notes)) {
-                winning.play();
                 setComplete(true);
             }
 

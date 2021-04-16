@@ -98,6 +98,7 @@ public class CollisionController {
                         }else{
                             p.setActive(false);
                             p.setAwake(false);
+                            p.setThrownOut(false);
                             objects.remove(p);
                         }
                         note.setFilmStrip(noteCollectedFilmStrip);

@@ -87,6 +87,10 @@ public abstract class WorldController implements Screen {
     protected Texture energyBarTexture;
     /** The texture for the energy bar */
     protected Texture energyBarOutlineTexture;
+    /** The texture for the pure white*/
+    protected Texture whiteTexture;
+    /** The texture for the pure black*/
+    protected Texture blackTexture;
     /** The texture region for the snow */
     protected TextureRegion snowTextureRegion;
     /** The texture region for the ice */
@@ -126,6 +130,7 @@ public abstract class WorldController implements Screen {
     protected Sound bearLanding;
     protected Sound penguinLanding;
     protected Sound winning;
+    protected Sound losing;
 
 
 
@@ -194,6 +199,8 @@ public abstract class WorldController implements Screen {
         wavesStrip = new FilmStrip(directory.getEntry("waves", Texture.class), 1, 4);
         ficeTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
         miceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+        whiteTexture = directory.getEntry("white",Texture.class);
+        blackTexture = directory.getEntry("black",Texture.class);
 
         hitIcicle = directory.getEntry("hitIcicle", SoundBuffer.class);
         punching = directory.getEntry("punching", SoundBuffer.class);
@@ -204,6 +211,8 @@ public abstract class WorldController implements Screen {
         bearLanding = directory.getEntry("bearLanding", SoundBuffer.class);
         penguinLanding = directory.getEntry("penguinLanding", SoundBuffer.class);
         winning = directory.getEntry("winning", SoundBuffer.class);
+        losing = directory.getEntry("losing",SoundBuffer.class);
+
     }
 
     /**
