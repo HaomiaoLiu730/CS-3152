@@ -16,6 +16,7 @@
   "jsons": {
     "level1": "NorthAmerica/level1.json",
     "level2": "NorthAmerica/level2.json",
-    "level3": "NorthAmerica/level3.json"
+    "level3": "NorthAmerica/level3.json",
+    "level4": "NorthAmerica/level4.json"
   }
 }
