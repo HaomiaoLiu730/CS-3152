@@ -386,17 +386,18 @@ public class Player extends CapsuleObstacle {
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
                         p.setPosition(getX(), getY()+1.6f);
+                        p.setActive(true);
                         p.setMovement(throwingForce, xDir-getX(), yDir-getY());
                         numPenguins -=1;
                         isThrowing = true;
-                        break;
+                        throwingCount = 0;
+                        throwingForce = 0f;
+                        xDir = 0f;
+                        yDir = 0f;
+                        return;
                     }
                 }
             }
-            throwingCount = 0;
-            throwingForce = 0f;
-            xDir = 0f;
-            yDir = 0f;
         }
 
     }
