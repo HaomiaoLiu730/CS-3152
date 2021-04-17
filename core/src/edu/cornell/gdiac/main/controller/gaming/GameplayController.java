@@ -481,7 +481,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-        for(Obstacle obj: staticBodies){
+        for (Obstacle obj : staticBodies) {
             obj.setBodyType(BodyDef.BodyType.StaticBody);
         }
         staticBodies.clear();
@@ -497,11 +497,11 @@ public class GameplayController extends WorldController implements ContactListen
             quitClick = true;
             return;
         }
-        if(resetCountDown < 0 && !failed){
-            if(!isEditingView){
+        if (resetCountDown < 0 && !failed) {
+            if (!isEditingView) {
                 this.listener.updateScreen(this, currentLevelNum);
                 return;
-            }else{
+            } else {
                 reset();
             }
         }
@@ -510,15 +510,15 @@ public class GameplayController extends WorldController implements ContactListen
         updateCamera();
         updatePlayer();
 
-        if(complete){
-            resetCountDown-=1;
+        if (complete) {
+            resetCountDown -= 1;
         }
-        if(resetCountDown < 0 && failed){
+        if (resetCountDown < 0 && failed) {
             reset();
         }
 
         // debug mode
-        if(InputController.getInstance().didDebug()){
+        if (InputController.getInstance().didDebug()) {
             setDebug(!isDebug());
         }
 
@@ -537,24 +537,35 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Losing condition
-        if(hitWater){
+        if (hitWater) {
             setFailure(true);
             setComplete(true);
         }
 
         // Monster moving and attacking
         collisionController.processCollision(monsters, avatar, objects);
-        if(collisionController.processCollision(monsters, attackStrip, avatar.getPenguins())){
+        if (collisionController.processCollision(monsters, attackStrip, avatar.getPenguins())) {
             setFailure(true);
             setComplete(true);
         }
         collisionController.processCollision(monsters, iciclesList, objects);
-        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects,hitIcicle);
+        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects, hitIcicle);
         collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
-                objects, avatar.getNumPenguins(), avatar,collectingNote);
+                objects, avatar.getNumPenguins(), avatar, collectingNote);
+        if (avatar.getNumPenguins() > 1) {
+            for (Penguin pen : avatar.getPenguins()) {
+                pen.setOverlapFilmStrip(penguinOverlapStrip);
 
+            }
+        } else {
+            for (Penguin pen : avatar.getPenguins()) {
+                pen.setOverlapFilmStrip(penguinStrip);
+
+
+            }
+        }
     }
 
     public void backToEdit(){
