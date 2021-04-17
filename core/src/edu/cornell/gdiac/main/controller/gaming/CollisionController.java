@@ -133,9 +133,9 @@ public class CollisionController {
                     for (float f: grounded){
                         if(f == index){
                             PolygonObstacle icicle = iciclesList.get(i);
-                            System.out.println(pDistance(icicle.getX(), icicle.getY() - icicle.getHeight()/2, snow.getX(),
-                                    snow.getY() + snow.getHeight(), snow.getX() + snow.getWidth(), snow.getY() + snow.getHeight()));
-                            if (pDistance(icicle.getX(), icicle.getY() - icicle.getHeight()/2, snow.getX() - snow.getWidth()/2,
+                            System.out.println(pDistance(icicle.getX(), icicle.getY() - icicle.getHeight()*2/3, snow.getX() - snow.getWidth()/2,
+                                    snow.getY() + snow.getHeight()/2, snow.getX() + snow.getWidth()/2, snow.getY() + snow.getHeight()/2));
+                            if (pDistance(icicle.getX(), icicle.getY() - icicle.getHeight()*2/3, snow.getX() - snow.getWidth()/2,
                                     snow.getY() + snow.getHeight()/2, snow.getX() + snow.getWidth()/2, snow.getY() + snow.getHeight()/2)
                                     <= 0){
                                 icicle_ground.set(i, true);
