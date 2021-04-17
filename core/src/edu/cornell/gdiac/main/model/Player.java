@@ -267,16 +267,6 @@ public class Player extends CapsuleObstacle {
      */
     public void setNumPenguins(int i){numPenguins = i; }
 
-    public Penguin deleteOnePenguin(){
-        for(Penguin p: penguins){
-            if(p.getIndex() == numPenguins-1){
-                p.setActive(false);
-                p.setAwake(false);
-                return p;
-            }
-        }
-        return null;
-    }
 
 
     /**
