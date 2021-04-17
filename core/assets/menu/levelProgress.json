@@ -5,8 +5,8 @@
 	"Asia": [],
 	"Europe": [],
 	"Antarctica": [],
-	"Africa": [ ],
-	"Oceania": [ ]
+	"Africa": [ 1 ],
+	"Oceania": []
 },
 "numOfLevels": {
 	"NorthAmerica": 0,

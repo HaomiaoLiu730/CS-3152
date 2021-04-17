@@ -193,8 +193,6 @@ public class GDXRoot extends Game implements ScreenListener {
 				}else if(currentContinent == MenuController.Continent.Oceania){
 					addedVal = current - numOfLevels.get(MenuController.Continent.Africa);
 				}
-				System.out.println("finished "+finished[finished.length-1]+","+addedVal);
-
 				if(finished.length == 0 || finished[finished.length-1] < addedVal){
 					value.get("finished").get(currentContinent.name()).addChild(new JsonValue(addedVal));
 					FileHandle file = Gdx.files.local("menu/levelProgress.json");
