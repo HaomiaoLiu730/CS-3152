@@ -24,7 +24,7 @@ import edu.cornell.gdiac.util.ScreenListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MenuController extends ClickListener implements Screen, InputProcessor, ControllerListener, Loading {
+public class  MenuController extends ClickListener implements Screen, InputProcessor, ControllerListener, Loading {
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
     /** Reference to GameCanvas created by the root */

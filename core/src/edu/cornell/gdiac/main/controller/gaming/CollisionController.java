@@ -92,7 +92,7 @@ public class CollisionController {
     }
 
     public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip, int numNotes,
-                                        PooledList<Obstacle> objects, int numPenguins, Player avatar, Sound sound){
+                                        PooledList<Obstacle> objects, int numPenguins, Player avatar, Sound sound, FilmStrip penguinOverlap, FilmStrip penguinDefault){
         for (Note note: notes){
             if (!note.isCollected()){
                 for (Penguin p: penguins){
@@ -111,6 +111,18 @@ public class CollisionController {
                         objects.remove(penguins.get(last_index));
                         penguins.get(last_index).setActive(false);
                         penguins.get(last_index).setAwake(false);
+                        if (avatar.getNumPenguins() > 1) {
+                            for (Penguin pen : avatar.getPenguins()) {
+                                pen.setOverlapFilmStrip(penguinOverlap);
+
+                            }
+                        } else {
+                            for (Penguin pen : avatar.getPenguins()) {
+                                pen.setOverlapFilmStrip(penguinDefault);
+
+
+                            }
+                        }
                         penguins.remove(penguins.get(last_index));
                         note.setFilmStrip(noteCollectedFilmStrip);
                         note.setCollected(true);
