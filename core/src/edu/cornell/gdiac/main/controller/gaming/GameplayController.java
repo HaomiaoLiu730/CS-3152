@@ -367,6 +367,19 @@ public class GameplayController extends WorldController implements ContactListen
             notesList.add(note);
         }
 
+        JsonValue waters = constants.get("water");
+        JsonValue water_layout = waters.get("layout");
+        waterList= new ArrayList<Water>();
+        for (int i =0; i< water_layout.size; i++) {
+            water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
+            water.setFilmStrip(waterStrip, wavesStrip);
+            water.setDrawScale(scale);
+            waterList.add(water);
+            addObject(water);
+            water.setActive(false);
+            water.setAwake(false);
+        }
+
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
         for (int i =0; i< icepos.size; i++) {
@@ -396,7 +409,6 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(fIce);
         }
 
-
         JsonValue mices = constants.get("movingIce");
         JsonValue micepos = mices.get("pos");
         MovingIce mIce;
@@ -410,18 +422,6 @@ public class GameplayController extends WorldController implements ContactListen
             mIce.setTexture(miceTextureRegion);
             mIce.setRestitution(mices.getFloat("restitution"));
             addObject(mIce);
-        }
-        JsonValue waters = constants.get("water");
-        JsonValue water_layout = waters.get("layout");
-        waterList= new ArrayList<Water>();
-        for (int i =0; i< water_layout.size; i++) {
-            water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
-            water.setFilmStrip(waterStrip, wavesStrip);
-            water.setDrawScale(scale);
-            waterList.add(water);
-            addObject(water);
-            water.setActive(false);
-            water.setAwake(false);
         }
 
     }
