@@ -91,10 +91,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			controllers[i+prevLevels].setScreenListener(this);
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.Oceania);
-		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
-			controllers[i+prevLevels] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
-			controllers[i+prevLevels].setScreenListener(this);
-		}
+//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
+//			controllers[i+prevLevels] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
+//			controllers[i+prevLevels].setScreenListener(this);
+//		}
 		current = 0;
 		menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
@@ -206,7 +206,7 @@ public class GDXRoot extends Game implements ScreenListener {
 							MenuController.unlockContinents(MenuController.Continent.Oceania);
 							break;
 						case Oceania:
-							currentContinent = MenuController.Continent.Asia;
+//							currentContinent = MenuController.Continent.Asia;
 							break;
 						default:
 							break;

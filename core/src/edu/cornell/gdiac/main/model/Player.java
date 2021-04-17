@@ -321,10 +321,11 @@ public class Player extends CapsuleObstacle {
      */
     public void pickUpPenguins() {
             for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 2f && p.isThrowOut()){
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 1.5f && p.isThrowOut()){
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
+                    p.setY(getY()-1);
                     numPenguins += 1;
                 }
             }
@@ -333,12 +334,12 @@ public class Player extends CapsuleObstacle {
     public void calculateTrajectory(float force, float xDir, float yDir){
         float dt =  0.01643628f;
         directionCache.set(xDir, yDir).nor();
-        float vx = force*directionCache.x*10 * dt / penguins.getFirst().getMass();
-        float vy = force*directionCache.y*10f * dt / penguins.getFirst().getMass();
+        float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
+        float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
         for(int i = 0; i<10; i+=2){
             float t = i * 0.05f;
             float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
-            float y = (getY()+2 + vy * t + 0.5f * (-17f) * t * t) * 720f/ 18f;
+            float y = (getY()+2 + vy * t + 0.5f * (-26f) * t * t) * 720f/ 18f;
             trajectories[i] = x;
             trajectories[i+1] = y;
         }
@@ -373,7 +374,7 @@ public class Player extends CapsuleObstacle {
                         p.setGrounded(false);
                         moveState = animationState.throwing;
                         p.setThrownOut(true);
-                        p.setPosition(getX(), getY()+2);
+                        p.setPosition(getX(), getY()+1.6f);
                         p.setMovement(throwingForce, xDir-getX(), yDir-getY());
                         numPenguins -=1;
                         isThrowing = true;
@@ -500,7 +501,8 @@ public class Player extends CapsuleObstacle {
         SHOOT_COOLDOWN=data.getInt("shoot_cooldown");
         SENSOR_HEIGHT=data.getFloat("sensor_height");
         SENSOR_NAME=data.getString("sensor_name");
-        MAX_THROWING_FORCE=data.getFloat("max_throw_force");
+//        MAX_THROWING_FORCE=data.getFloat("max_throw_force");
+        MAX_THROWING_FORCE = 440;
         PENGUIN_WIDTH=p_data.getFloat("width");
         PENGUIN_HEIGHT=p_data.getFloat("height");
 
@@ -510,6 +512,7 @@ public class Player extends CapsuleObstacle {
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
         setRestitution(data.getFloat("restitution"));
+        fixture.filter.groupIndex = -8;
         // Gameplay attributes
         isGrounded = false;
         isShooting = false;
@@ -669,7 +672,7 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
-            if(Math.abs(p.getY()-getY()) > 4f && !p.isThrowOut()){
+            if(Math.abs(p.getY()-getY()) > 3f && !p.isThrowOut()){
                 p.setY(getY());
             }
             p.applyForce(0,0, 0);

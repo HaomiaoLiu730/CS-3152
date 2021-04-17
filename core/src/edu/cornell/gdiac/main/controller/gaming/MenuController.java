@@ -208,7 +208,6 @@ public class MenuController extends ClickListener implements Screen, InputProces
         zoomInEffect();
         selectContinent();
         InputController.getInstance().readInput();
-//        System.out.println(Gdx.input.getX()+","+Gdx.input.getY());
         if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
             isReady = true;
         }
@@ -403,7 +402,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
         nextLevel = -1;
         for(Continent continent: finished.keySet()){
             if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
-                unlockedContinents.add(continent);
+                if(continent != Continent.Asia){
+                    unlockedContinents.add(continent);
+                }
             }
         }
     }

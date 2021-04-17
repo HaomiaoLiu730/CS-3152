@@ -9,12 +9,12 @@
 	"Oceania": []
 },
 "numOfLevels": {
-	"NorthAmerica": 3,
-	"SouthAmerica": 1,
-	"Asia": 1,
-	"Europe": 1,
-	"Antarctica": 1,
+	"NorthAmerica": 0,
+	"SouthAmerica": 0,
+	"Asia": 0,
+	"Europe": 0,
+	"Antarctica": 0,
 	"Africa": 3,
-	"Oceania": 4
+	"Oceania": 3
 }
 }
