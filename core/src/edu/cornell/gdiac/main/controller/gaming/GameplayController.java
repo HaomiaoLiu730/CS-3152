@@ -503,7 +503,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         // debug mode
         if(InputController.getInstance().didDebug()){
-            setDebug(true);
+            setDebug(!isDebug());
         }
 
         // Punching
@@ -678,6 +678,10 @@ public class GameplayController extends WorldController implements ContactListen
                     avatar.setFilmStrip(jumpLandingStrip);
                 }
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
+            }
+
+            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("dude")){
+                avatar.setGrounded(true);
             }
 
             // check whether the penguin is grounded

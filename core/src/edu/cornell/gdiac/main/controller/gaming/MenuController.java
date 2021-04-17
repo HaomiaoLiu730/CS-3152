@@ -286,9 +286,6 @@ public class MenuController extends ClickListener implements Screen, InputProces
                     if(finishedLevelNum != numOfLevels.get(currentContinent)){
                         canvas.drawCircle(Color.LIGHT_GRAY, NORTH_AMERICA_LEVELS[finishedLevelNum*2], NORTH_AMERICA_LEVELS[finishedLevelNum*2+1], nextLevel == finishedLevelNum ? 10f: 5f);
                     }
-//                    for(int i = finished.get(currentContinent).size()*2; i< NORTH_AMERICA_LEVELS.length; i+=2){
-//                        canvas.drawCircle(Color.LIGHT_GRAY, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
-//                    }
                     break;
                 default:
                     break;

@@ -800,6 +800,12 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         return ret;
     }
 
+    public void reset(){
+        canvas.getCamera().position.x = 640;
+        canvas.getCamera().position.y = 360;
+        canvas.getCamera().update();
+    }
+
     @Override
     public void resize(int width, int height) {
 
