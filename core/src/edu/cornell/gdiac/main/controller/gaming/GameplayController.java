@@ -331,15 +331,23 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setThrowingStrip(throwingStrip);
         avatar.setPenguinWalkingStrip((penguinWalkingStrip));
         avatar.setPenguinRollingStrip(penguinRollingStrip);
+        avatar.setPenguinStrip(penguinStrip);
+        avatar.setPenguinOverlapStrip(penguinOverlapStrip);;
+
         addObject(avatar);
 
         for(int i = 0; i<num_penguins; i++){
             avatar.getPenguins().get(i).setDrawScale(scale);
             avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
+            avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
+//            avatar.getPenguins().get(i).setThrownStrip(penguinOverlapStrip);
             addObject(avatar.getPenguins().get(i));
             avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
+            avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
+//            avatar.getPenguins().get(i).setThrownStrip(penguinOverlapStrip);
+
         }
 
         JsonValue enemy = constants.get("enemy");

@@ -75,6 +75,11 @@ public class Player extends CapsuleObstacle {
     private FilmStrip throwingStrip;
     private FilmStrip penguinWalkingStrip;
     private FilmStrip penguinRollingStrip;
+    private FilmStrip penguinStrip;
+    private FilmStrip penguinOverlapStrip;
+
+
+
 
 
     /** The current horizontal movement of the character */
@@ -178,7 +183,12 @@ public class Player extends CapsuleObstacle {
     public void setThrowingStrip(FilmStrip strip){
         throwingStrip = strip;
     }
-
+    public void setPenguinStrip(FilmStrip strip){
+        this.penguinStrip=strip;
+    }
+    public void setPenguinOverlapStrip(FilmStrip strip){
+        this.penguinOverlapStrip=strip;
+    }
     public void setPenguinWalkingStrip(FilmStrip strip){
         this.penguinWalkingStrip = strip;
     }
@@ -320,14 +330,30 @@ public class Player extends CapsuleObstacle {
      *
      */
     public void pickUpPenguins() {
-            for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 2f && p.isThrowOut() && p.isGrounded()){
-                    p.setThrownOut(false);
-                    p.setFilmStrip(penguinWalkingStrip);
-                    p.setIndex(numPenguins);
-                    numPenguins += 1;
+        for (Penguin p : penguins) {
+            if (position.set(getPosition()).sub(p.getPosition()).len() < 2f && p.isThrowOut() && p.isGrounded()) {
+                p.setThrownOut(false);
+//                    p.setFilmStrip(penguinWalkingStrip);
+                p.setIndex(numPenguins);
+                numPenguins += 1;
+                System.out.println(numPenguins);
+                if (numPenguins > 1) {
+                    for (Penguin pen : penguins) {
+                        pen.setOverlapFilmStrip(penguinOverlapStrip);
+
+                    }
+                } else {
+                    System.out.println("SET SINGLE PICK");
+                    for (Penguin pen : penguins) {
+
+                        pen.setOverlapFilmStrip(penguinStrip);
+
+
+                    }
                 }
             }
+
+        }
     }
 
     public void calculateTrajectory(float force, float xDir, float yDir){
@@ -375,8 +401,16 @@ public class Player extends CapsuleObstacle {
                         p.setPosition(getX(), getY()+2);
                         p.setMovement(throwingForce, xDir-getX(), yDir-getY());
                         numPenguins -=1;
+                        System.out.println("THROWN"+ numPenguins);
+
                         break;
                     }
+                }
+            }
+            if (numPenguins==1){
+                System.out.println("Set single");
+                for (Penguin pen: penguins) {
+                   pen.setOverlapFilmStrip(penguinStrip);
                 }
             }
             throwingCount = 0;
@@ -437,7 +471,7 @@ public class Player extends CapsuleObstacle {
     /**
      * Returns ow hard the brakes are applied to get a dude to stop moving
      *
-     * @return ow hard the brakes are applied to get a dude to stop moving
+     * @return how hard the brakes are applied to get a dude to stop moving
      */
     public float getDamping() {
         return PLAYER_DAMPING;
