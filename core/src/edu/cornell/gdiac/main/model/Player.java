@@ -11,6 +11,7 @@ package edu.cornell.gdiac.main.model;
  * LibGDX version, 2/6/2015
  */
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
@@ -344,7 +345,7 @@ public class Player extends CapsuleObstacle {
         }
     }
 
-    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching) {
+    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching, Sound throwing) {
         isThrowing = isTouching;
         // setting throwing direction
         if(touchUp && throwingCount == 0){
@@ -368,6 +369,7 @@ public class Player extends CapsuleObstacle {
                         p.setBodyType(BodyDef.BodyType.DynamicBody);
                         p.setSensor(false);
                         setFilmStrip(throwingStrip);
+                        throwing.play();
                         p.setFilmStrip(penguinRollingStrip);
                         p.setGrounded(false);
                         moveState = animationState.throwing;
@@ -375,6 +377,7 @@ public class Player extends CapsuleObstacle {
                         p.setPosition(getX(), getY()+1.6f);
                         p.setMovement(throwingForce, xDir-getX(), yDir-getY());
                         numPenguins -=1;
+                        isThrowing = true;
                         break;
                     }
                 }
@@ -587,7 +590,7 @@ public class Player extends CapsuleObstacle {
         if (isJumping()) {
             setVY(PLAYER_JUMP);
         } else if (!isGrounded) {
-            forceCache.set(0, -9.8f);
+            forceCache.set(0, -25f);
             body.applyForce(forceCache,getPosition(),true);
         }
     }

@@ -1,6 +1,9 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import edu.cornell.gdiac.audio.SoundBuffer;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.Obstacle;
 import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
@@ -15,7 +18,7 @@ public class CollisionController {
     private float width;
     private float height;
 
-    private float distMonsterAvatar;
+    private Vector2 avatarPos;
 
     /**
      * Creates a CollisionController for the given screen dimensions.
@@ -33,14 +36,15 @@ public class CollisionController {
 
     public void processCollision(ArrayList<Monster> monsters, Player avatar, PooledList<Obstacle> objects ){
         // Monster moving and attacking
-        for (int i = 0; i < monsters.size(); i++) {
-            if (monsters.get(i).isActive()) {
-                distMonsterAvatar = avatar.getPosition().dst(monsters.get(i).getPosition());
+        for (Monster monster: monsters) {
+            if (monster.isActive()) {
+                avatarPos = avatar.getPosition();
+                float dist = avatar.getPosition().dst(monster.getPosition());
                 if (avatar.isPunching()) {
-                    if (distMonsterAvatar < 3) {
-                        monsters.get(i).setActive(false);
-                        monsters.get(i).setAwake(false);
-                        objects.remove(monsters.get(i));
+                    if (dist < 3) {
+                        monster.setActive(false);
+                        monster.setAwake(false);
+                        objects.remove(monster);
                     }
                 }
             }
@@ -48,35 +52,39 @@ public class CollisionController {
     }
 
     public boolean processCollision(ArrayList<Monster> monsters, FilmStrip attackStrip, List<Penguin> penguins){
-        for (int i = 0; i < monsters.size(); i++) {
-            if (monsters.get(i).isActive()) {
+        boolean fail = false;
+        for (Monster monster: monsters) {
+            if (monster.isActive()) {
                 boolean moveMon = true;
                 for(Penguin p: penguins){
-                    float dist2 = p.getPosition().dst(monsters.get(i).getPosition());
-                    if (dist2 < 3 && dist2 < distMonsterAvatar) {
-                        monsters.get(i).setFilmStrip(attackStrip);
-                        if (p.getPosition().x < monsters.get(i).getPosition().x) {
-                            monsters.get(i).setFacingRight(-1);
+                    boolean avatarBetweenX = (p.getPosition().x < avatarPos.x && avatarPos.x < monster.getPosition().x) ||
+                            (p.getPosition().x > avatarPos.x && avatarPos.x > monster.getPosition().x);
+                    float dist = p.getPosition().dst(monster.getPosition());
+                    if (dist < 3 && !avatarBetweenX) {
+                        monster.setFilmStrip(attackStrip);
+                        if (p.getPosition().x < monster.getPosition().x) {
+                            monster.setFacingRight(-1);
                         }
-                        return true;
+                        moveMon = false;
+                        fail = true;
                     }
                 }
                 if (moveMon) {
-                    monsters.get(i).applyForce();
+                    monster.applyForce();
                 }
             }
         }
-        return false;
+        return fail;
     }
 
     public void processCollision(ArrayList<Monster> monsters, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
-        for (int i = 0; i < monsters.size(); i++) {
-            if (monsters.get(i).isActive()) {
+        for (Monster monster: monsters) {
+            if (monster.isActive()) {
                 for (PolygonObstacle icicle: icicles){
-                    if (icicle.getPosition().dst(monsters.get(i).getPosition()) <= 1){
-                        objects.remove(monsters.get(i));
-                        monsters.get(i).setActive(false);
-                        monsters.get(i).setAwake(false);
+                    if (icicle.getPosition().dst(monster.getPosition()) <= 1){
+                        objects.remove(monster);
+                        monster.setActive(false);
+                        monster.setAwake(false);
                     }
                 }
             }
@@ -84,7 +92,7 @@ public class CollisionController {
     }
 
     public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip, int numNotes,
-                                        PooledList<Obstacle> objects, int numPenguins, Player avatar){
+                                        PooledList<Obstacle> objects, int numPenguins, Player avatar, Sound sound){
         for (Note note: notes){
             if (!note.isCollected()){
                 for (Penguin p: penguins){
@@ -94,15 +102,19 @@ public class CollisionController {
                             last_index = numPenguins - 1;
                             avatar.setNumPenguins(numPenguins - 1);
                         } else {
-                            last_index = numPenguins ;
+                            p.setActive(false);
+                            p.setAwake(false);
+                            p.setThrownOut(false);
+                            objects.remove(p);
+                            last_index = numPenguins;
                         }
                         objects.remove(penguins.get(last_index));
                         penguins.get(last_index).setActive(false);
                         penguins.get(last_index).setAwake(false);
-                        avatar.getPenguins().remove(last_index);
                         note.setFilmStrip(noteCollectedFilmStrip);
                         note.setCollected(true);
                         numNotes++;
+                        sound.play();
                         break;
                     }
                 }
@@ -112,12 +124,15 @@ public class CollisionController {
     }
 
 
-    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
+    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, PooledList<Obstacle> objects, Sound hitIcicel){
         for (Penguin p: penguins){
             for (PolygonObstacle icicle: icicles){
                 if (p.getPosition().dst(icicle.getPosition()) < 2){
+                    if(!icicle.isFixedRotation())
+                        hitIcicel.play();
                     icicle.setBodyType(BodyDef.BodyType.DynamicBody);
                     icicle.setFixedRotation(true);
+
                 }
             }
         }
@@ -135,7 +150,4 @@ public class CollisionController {
             }
         }
     }
-
-
-
 }
