@@ -106,6 +106,7 @@ public class GameplayController extends WorldController implements ContactListen
     private int currentLevelNum;
 
     ArrayList<Integer> staticBodies = new ArrayList<>();
+    ArrayList<Boolean> icicles_hit = new ArrayList<>();
 
     /**
      * Creates a new game with a playing field of the given size.
@@ -221,8 +222,10 @@ public class GameplayController extends WorldController implements ContactListen
         resetClick = false;
         canThrow = false;
         staticBodies.clear();
+        icicles_hit.clear();
         for (PolygonObstacle icicle: iciclesList) {
             staticBodies.add(0);
+            icicles_hit.add(false);
         }
 
         canvas.getCamera().viewportWidth = 1280;
@@ -464,10 +467,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-//        for(Obstacle obj: staticBodies){
-//            obj.setBodyType(BodyDef.BodyType.StaticBody);
-//        }
-//        staticBodies.clear();
         for (int i = 0; i < iciclesList.size(); i++) {
 
             if (staticBodies.get(i) == 1) {
@@ -540,7 +539,7 @@ public class GameplayController extends WorldController implements ContactListen
             setComplete(true);
         }
         collisionController.processCollision(monsters, iciclesList, objects);
-        collisionController.processCollision(avatar.getPenguins(), iciclesList, staticBodies, objects,hitIcicle);
+        collisionController.processCollision(iciclesList, icicles_hit, staticBodies, objects,hitIcicle);
         collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
@@ -722,6 +721,14 @@ public class GameplayController extends WorldController implements ContactListen
             if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
                 int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
                 staticBodies.set(index, staticBodies.get(index)+1);
+            }
+
+            if (bd1 instanceof Penguin && bd2.getName().startsWith("icicle")){
+                icicles_hit.set(iciclesList.indexOf(bd2),true);
+            }
+
+            if (bd2 instanceof Penguin && bd1.getName().startsWith("icicle")){
+                icicles_hit.set(iciclesList.indexOf(bd1),true);
             }
 
             // set the ice bar tilt only for avatar
