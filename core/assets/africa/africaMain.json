@@ -15,5 +15,7 @@
   },
   "jsons": {
     "level1": "africa/level1.json",
+    "level2": "africa/level2.json",
+    "level3": "africa/level3.json"
   }
 }
