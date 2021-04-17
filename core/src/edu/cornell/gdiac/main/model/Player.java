@@ -333,8 +333,8 @@ public class Player extends CapsuleObstacle {
     public void calculateTrajectory(float force, float xDir, float yDir){
         float dt =  0.01643628f;
         directionCache.set(xDir, yDir).nor();
-        float vx = force*directionCache.x*10 * dt / penguins.getFirst().getMass();
-        float vy = force*directionCache.y*10f * dt / penguins.getFirst().getMass();
+        float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
+        float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
         for(int i = 0; i<10; i+=2){
             float t = i * 0.05f;
             float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
@@ -669,7 +669,7 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
-            if(Math.abs(p.getY()-getY()) > 4f && !p.isThrowOut()){
+            if(Math.abs(p.getY()-getY()) > 3f && !p.isThrowOut()){
                 p.setY(getY());
             }
             p.applyForce(0,0, 0);
