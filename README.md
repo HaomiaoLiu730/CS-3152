@@ -10,5 +10,7 @@ W/UP KEY: jump
 F KEY: punch (the monster)  
 MOUSE CLICK: first click to determine the direction of the throw, then hold to determine the power  
 SPACE BAR: cancel the throw  
-*Penguins will be automatically picked back  
+*Collect notes by throwing penguins to them to pass the level  
+*Penguins will be automatically picked back within a short distance  
+*Once a note is hit by a penguin, the corresponding penguin disappears  
 *When using the level editor, start putting tiles from the left, make the ground continuous, and surround water with grounds
