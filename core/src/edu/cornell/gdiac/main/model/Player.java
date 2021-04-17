@@ -352,7 +352,7 @@ public class Player extends CapsuleObstacle {
             }
 
         }
-    }
+
 
     public void calculateTrajectory(float force, float xDir, float yDir){
         float dt =  0.01643628f;
