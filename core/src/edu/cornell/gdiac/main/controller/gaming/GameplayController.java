@@ -367,20 +367,6 @@ public class GameplayController extends WorldController implements ContactListen
             notesList.add(note);
         }
 
-        JsonValue waters = constants.get("water");
-        JsonValue water_layout = waters.get("layout");
-        waterList= new ArrayList<Water>();
-        for (int i =0; i< water_layout.size; i++) {
-
-            water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
-            water.setFilmStrip(waterStrip, wavesStrip);
-            water.setDrawScale(scale);
-            waterList.add(water);
-            addObject(water);
-            water.setActive(false);
-            water.setAwake(false);
-        }
-
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
         for (int i =0; i< icepos.size; i++) {
@@ -425,8 +411,18 @@ public class GameplayController extends WorldController implements ContactListen
             mIce.setRestitution(mices.getFloat("restitution"));
             addObject(mIce);
         }
-
-
+        JsonValue waters = constants.get("water");
+        JsonValue water_layout = waters.get("layout");
+        waterList= new ArrayList<Water>();
+        for (int i =0; i< water_layout.size; i++) {
+            water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
+            water.setFilmStrip(waterStrip, wavesStrip);
+            water.setDrawScale(scale);
+            waterList.add(water);
+            addObject(water);
+            water.setActive(false);
+            water.setAwake(false);
+        }
 
     }
 
@@ -480,6 +476,14 @@ public class GameplayController extends WorldController implements ContactListen
             quitClick = true;
             return;
         }
+        if(resetCountDown < 0 && !failed){
+            if(!isEditingView){
+                this.listener.updateScreen(this, currentLevelNum);
+                return;
+            }else{
+                reset();
+            }
+        }
 
         backToEdit();
         updateCamera();
@@ -490,15 +494,6 @@ public class GameplayController extends WorldController implements ContactListen
         }
         if(resetCountDown < 0 && failed){
             reset();
-        }
-
-        if(resetCountDown < 0 && !failed){
-            if(!isEditingView){
-                this.listener.updateScreen(this, currentLevelNum);
-                return;
-            }else{
-                reset();
-            }
         }
 
         // debug mode
@@ -680,7 +675,13 @@ public class GameplayController extends WorldController implements ContactListen
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
-            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("dude")){
+            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("dude") ||
+                    bd2.getName().startsWith("snow") && bd1.getName().startsWith("dude")){
+                avatar.setGrounded(true);
+            }
+
+            if(bd1.getName().startsWith("icicle") && bd1.getBodyType() == BodyDef.BodyType.StaticBody && bd2.getName().startsWith("dude") ||
+                    bd2.getName().startsWith("icicle") && bd2.getBodyType() == BodyDef.BodyType.StaticBody && bd1.getName().startsWith("dude")){
                 avatar.setGrounded(true);
             }
 
@@ -810,7 +811,6 @@ public class GameplayController extends WorldController implements ContactListen
             if (playerGround == 0) {
                 avatar.setGrounded(false);
             }
-
         }
 
         for(Penguin p: avatar.getPenguins()){

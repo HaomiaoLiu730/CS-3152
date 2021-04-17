@@ -1,0 +1,19 @@
+{
+  "textures": {
+    "background": {
+      "file": "images/africa/background1.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    }
+  },
+  "fonts": {
+    "gameFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 24,
+      "color": "black"
+    }
+  },
+  "jsons": {
+    "level1": "africa/level1.json",
+  }
+}

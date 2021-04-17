@@ -28,7 +28,6 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
 
-	private static final int NUM_LEVELS_NORTH_AMERICA = 3;
 	private int current = 0;
 
 	/** Drawing context to display graphics (VIEW CLASS) */
@@ -44,7 +43,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	private LevelEditorController levelEditor;
 	private static JsonValue value;
 	private static HashMap<MenuController.Continent, Integer> numOfLevels = new HashMap<>();
-	private MenuController.Continent currentContinent = MenuController.Continent.NorthAmerica;
+	private MenuController.Continent currentContinent = MenuController.Continent.Africa;
 	/**
 	 * Creates a new game application root
 	 */
@@ -80,15 +79,22 @@ public class GDXRoot extends Game implements ScreenListener {
 		for(MenuController.Continent continent: MenuController.Continent.values()){
 			totalLevels += numOfLevels.get(continent);
 		}
+		int prevLevels = 0;
 		controllers = new WorldController[totalLevels];
-		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
-			controllers[i] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
-			controllers[i].setScreenListener(this);
+		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Africa); i++){
+			controllers[i+prevLevels] = new GameplayController("africa/africaMain.json",i);
+			controllers[i+prevLevels].setScreenListener(this);
 		}
-//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.SouthAmerica); i++){
-//			controllersSouthAmerica[i] = new GameplayController("southAmerica/northAmericaMain.json",i);
-//			controllersSouthAmerica[i].setScreenListener(this);
-//		}
+		prevLevels += numOfLevels.get(MenuController.Continent.Africa);
+		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Oceania); i++){
+			controllers[i+prevLevels] = new GameplayController("oceania/oceaniaMain.json",i);
+			controllers[i+prevLevels].setScreenListener(this);
+		}
+		prevLevels += numOfLevels.get(MenuController.Continent.Oceania);
+		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
+			controllers[i+prevLevels] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
+			controllers[i+prevLevels].setScreenListener(this);
+		}
 		current = 0;
 		menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
@@ -143,9 +149,14 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if(screen instanceof MenuController){
 			int hundred = exitCode/10;
 			if(hundred == 1){
+				currentContinent = MenuController.Continent.Europe;
 				current = exitCode%10;
 			}else if(hundred == 2){
-				current = numOfLevels.get(MenuController.Continent.NorthAmerica)+(exitCode/10);
+				current = exitCode%10;
+				currentContinent = MenuController.Continent.Africa;
+			}else if(hundred == 3){
+				current = numOfLevels.get(MenuController.Continent.Africa)+(exitCode%10);
+				currentContinent = MenuController.Continent.Oceania;
 			}
 			controllers[current].loadContent(directory);
 			controllers[current].setScreenListener(this);
@@ -176,14 +187,27 @@ public class GDXRoot extends Game implements ScreenListener {
 				// write progress to json
 				current++;
 				int[] finished = value.get("finished").get(currentContinent.name()).asIntArray();
-				if(finished.length == 0 || finished[finished.length-1] < current){
-					value.get("finished").get(currentContinent.name()).addChild(new JsonValue(current));
-					FileHandle file = Gdx.files.local("menu/levelProgress.json");
-					file.writeString(value.prettyPrint(JsonWriter.OutputType.json,0), false);
-				}
+				int addedVal = 0;
 				if(current == numOfLevels.get(currentContinent)){
 					// switch to the second level
-					return;
+					switch (currentContinent){
+						case Africa:
+							currentContinent = MenuController.Continent.Oceania;
+							addedVal = current;
+							MenuController.unlockContinents(MenuController.Continent.Oceania);
+							break;
+						case Oceania:
+							currentContinent = MenuController.Continent.Asia;
+							addedVal = current - numOfLevels.get(MenuController.Continent.Africa);
+							break;
+						default:
+							break;
+					}
+				}
+				if(finished.length == 0 || finished[finished.length-1] < current){
+					value.get("finished").get(currentContinent.name()).addChild(new JsonValue(addedVal));
+					FileHandle file = Gdx.files.local("menu/levelProgress.json");
+					file.writeString(value.prettyPrint(JsonWriter.OutputType.json,0), false);
 				}
 				controllers[current].loadContent(directory);
 				controllers[current].setScreenListener(this);
