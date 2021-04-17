@@ -118,8 +118,8 @@ public class GameplayController extends WorldController implements ContactListen
      */
     public GameplayController(float width, float height, boolean isEditingView, String jsonFile, int level) {
         super(width,height,DEFAULT_GRAVITY);
-
         currentLevelNum = level;
+        System.out.println(level);
         scale = super.scale;
         setDebug(false);
         setComplete(false);

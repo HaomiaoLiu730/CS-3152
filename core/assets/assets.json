@@ -31,7 +31,7 @@
       "magFilter": "linear"
     },
     "penguin": {
-      "file": "images/shared/penguin.png",
+      "file": "images/shared/penguin_overlap.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

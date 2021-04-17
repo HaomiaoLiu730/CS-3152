@@ -11,6 +11,7 @@ package edu.cornell.gdiac.main.model;
  * LibGDX version, 2/6/2015
  */
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
@@ -486,6 +487,7 @@ public class Player extends CapsuleObstacle {
      */
     public Player(JsonValue data, JsonValue p_data, float width, float height, int numOfPenguins) {
         super(data.get("pos").getFloat(0),data.get("pos").getFloat(1),width* data.getFloat("hshrink"),height* data.getFloat("vshrink"));
+       System.out.println(data.name());
         PLAYER_DENSITY=data.getFloat("density");
         PLAYER_FRICTION=data.getFloat("friction");
         PLAYER_FORCE=data.getFloat("force");
@@ -691,7 +693,9 @@ public class Player extends CapsuleObstacle {
             canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
             canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
             for(int i = 0; i<trajectories.length; i+=2){
-                canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 2-i*0.1f);
+                canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
+                canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
+
             }
         }
 
