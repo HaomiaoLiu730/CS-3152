@@ -578,7 +578,7 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setThrowing(InputController.getInstance().getClickX(),
                 InputController.getInstance().getClickY(),
                 InputController.getInstance().touchUp() && !resetClick && canThrow,
-                InputController.getInstance().isTouching(),throwingP);
+                InputController.getInstance().isTouching(), InputController.getInstance().didSecondary(),throwingP);
         canThrow = true;
         avatar.pickUpPenguins();
     }
