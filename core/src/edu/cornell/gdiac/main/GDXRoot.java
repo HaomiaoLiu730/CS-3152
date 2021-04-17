@@ -193,7 +193,9 @@ public class GDXRoot extends Game implements ScreenListener {
 				}else if(currentContinent == MenuController.Continent.Oceania){
 					addedVal = current - numOfLevels.get(MenuController.Continent.Africa);
 				}
-				if(finished.length == 0 || finished[finished.length-1] < current){
+				System.out.println("finished "+finished[finished.length-1]+","+addedVal);
+
+				if(finished.length == 0 || finished[finished.length-1] < addedVal){
 					value.get("finished").get(currentContinent.name()).addChild(new JsonValue(addedVal));
 					FileHandle file = Gdx.files.local("menu/levelProgress.json");
 					file.writeString(value.prettyPrint(JsonWriter.OutputType.json,0), false);
@@ -212,11 +214,18 @@ public class GDXRoot extends Game implements ScreenListener {
 							break;
 					}
 				}
-				controllers[current].loadContent(directory);
-				controllers[current].setScreenListener(this);
-				controllers[current].setCanvas(canvas);
-				controllers[current].reset();
-				setScreen(controllers[current]);
+				if(current == 6){
+					menuController.reset();
+					menuController.setScreenListener(this);
+					setScreen(menuController);
+					return;
+				}else{
+					controllers[current].loadContent(directory);
+					controllers[current].setScreenListener(this);
+					controllers[current].setCanvas(canvas);
+					controllers[current].reset();
+					setScreen(controllers[current]);
+				}
 			}
 		}
 	}
