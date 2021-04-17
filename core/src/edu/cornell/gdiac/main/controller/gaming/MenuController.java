@@ -201,7 +201,6 @@ public class MenuController extends ClickListener implements Screen, InputProces
         zoomInEffect();
         selectContinent();
         InputController.getInstance().readInput();
-//        System.out.println(Gdx.input.getX()+","+Gdx.input.getY());
         if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
             isReady = true;
         }

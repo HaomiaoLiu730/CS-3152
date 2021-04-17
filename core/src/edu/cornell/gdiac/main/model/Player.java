@@ -507,6 +507,7 @@ public class Player extends CapsuleObstacle {
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
         setRestitution(data.getFloat("restitution"));
+        fixture.filter.groupIndex = -8;
         // Gameplay attributes
         isGrounded = false;
         isShooting = false;
