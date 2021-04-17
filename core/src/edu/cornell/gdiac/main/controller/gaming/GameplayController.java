@@ -74,6 +74,13 @@ public class GameplayController extends WorldController implements ContactListen
     /** number of notes */
     private int num_notes;
 
+    /** List of bools indicating if icicles have been hit */
+    private ArrayList<Boolean> icicles_hit = new ArrayList<>();
+    /** List of bools indicating if icicles have falled to the ground */
+    private ArrayList<Boolean> icicle_ground = new ArrayList<>();
+    /** List of snows */
+    private ArrayList<PolygonObstacle> snow_list = new ArrayList<>();
+
     private int playerGround = 0;
     private static boolean hitWater = false;
     private boolean complete = false;
@@ -203,6 +210,9 @@ public class GameplayController extends WorldController implements ContactListen
         notesCollected = 0;
         hitWater(false);
         Vector2 gravity = new Vector2(world.getGravity());
+        icicles_hit.clear();
+        icicle_ground.clear();
+        snow_list.clear();
 
         for(Obstacle obj : objects) {
             obj.deactivatePhysics(world);
@@ -278,6 +288,7 @@ public class GameplayController extends WorldController implements ContactListen
             obj.setTexture(snowTextureRegion);
             obj.setName(sname+ii);
             addObject(obj);
+            snow_list.add(obj);
         }
 
         JsonValue icicles = constants.get("icicles");
@@ -296,6 +307,8 @@ public class GameplayController extends WorldController implements ContactListen
             icicle.setName("icicle" + i);
             addObject(icicle);
             iciclesList.add(icicle);
+            icicles_hit.add(false);
+            icicle_ground.add(false);
         }
 
         JsonValue goal = constants.get("goal");
@@ -464,10 +477,22 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-        for(Obstacle obj: staticBodies){
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
+//        for(Obstacle obj: staticBodies){
+//            obj.setBodyType(BodyDef.BodyType.StaticBody);
+//        }
+//        staticBodies.clear();
+        icicle_ground = CollisionController.if_icicle_grounded(snow_list, iciclesList, icicle_ground, grounded);
+
+        System.out.println(icicle_ground);
+        for (int i = 0; i < iciclesList.size(); i++){
+            if (icicle_ground.get(i)){
+                iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
+            } else if (icicles_hit.get(i)){
+                iciclesList.get(i).setBodyType(BodyDef.BodyType.DynamicBody);
+                iciclesList.get(i).setFixedRotation(true);
+            }
         }
-        staticBodies.clear();
+
         if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
             if (Gdx.input.isTouched()) {
                 hitWater(true);
@@ -532,7 +557,7 @@ public class GameplayController extends WorldController implements ContactListen
             setComplete(true);
         }
         collisionController.processCollision(monsters, iciclesList, objects);
-        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
+        //collisionController.processCollision(avatar.getPenguins(), iciclesList, objects);
         collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
@@ -689,22 +714,31 @@ public class GameplayController extends WorldController implements ContactListen
                 }
             }
 
-            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("icicle")){
-                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
-                for(float i:grounded){
-                    if(index == i){
-                        staticBodies.add(bd2);
-                    }
-                }
+            // Check for icicle penguin collision
+            if (bd1 instanceof Penguin && bd2.getName().startsWith("icicle")){
+                icicles_hit.set(iciclesList.indexOf(bd2),true);
             }
-            if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
-                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
-                for(float i:grounded){
-                    if(index == i){
-                        staticBodies.add(bd1);
-                    }
-                }
+
+            if (bd2 instanceof Penguin && bd1.getName().startsWith("icicle")){
+                icicles_hit.set(iciclesList.indexOf(bd1),true);
             }
+
+//            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("icicle")){
+//                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
+//                for(float i:grounded){
+//                    if(index == i){
+//                        staticBodies.add(bd2);
+//                    }
+//                }
+//            }
+//            if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
+//                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
+//                for(float i:grounded){
+//                    if(index == i){
+//                        staticBodies.add(bd1);
+//                    }
+//                }
+//            }
 
             // set the ice bar tilt only for avatar
             if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") && bd2 == avatar) {
