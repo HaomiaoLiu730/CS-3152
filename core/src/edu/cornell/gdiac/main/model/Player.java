@@ -584,7 +584,7 @@ public class Player extends CapsuleObstacle {
         if (isJumping()) {
             setVY(PLAYER_JUMP);
         } else if (!isGrounded) {
-            forceCache.set(0, -9.8f);
+            forceCache.set(0, -25f);
             body.applyForce(forceCache,getPosition(),true);
         }
     }
