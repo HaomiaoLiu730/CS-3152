@@ -419,6 +419,11 @@ public class Player extends CapsuleObstacle {
                         throwingForce = 0f;
                         xDir = 0f;
                         yDir = 0f;
+                        if (numPenguins==1){
+                            for (Penguin pen: penguins) {
+                                pen.setOverlapFilmStrip(penguinStrip);
+                            }
+                        }
                         return;
                     }
                 }
