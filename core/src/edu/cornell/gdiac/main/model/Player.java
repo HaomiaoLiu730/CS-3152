@@ -320,7 +320,7 @@ public class Player extends CapsuleObstacle {
      */
     public void pickUpPenguins() {
             for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 2f && p.isThrowOut() && p.isGrounded()){
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 2f && p.isThrowOut()){
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
@@ -666,6 +666,9 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
+            if(Math.abs(p.getY()-getY()) > 4f && !p.isThrowOut()){
+                p.setY(getY());
+            }
             p.applyForce(0,0, 0);
         }
 
