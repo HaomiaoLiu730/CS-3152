@@ -49,13 +49,11 @@ public class Penguin extends CapsuleObstacle {
     private FilmStrip walkingStrip;
     private FilmStrip rollingStrip;
     private FilmStrip overlapStrip;
-    private FilmStrip defaultStrip;
 
     private float timeCounter = 0;
     private boolean isThrownOut;
     private float angle;
     public boolean updateWalking = false;
-    public boolean lastPenguin=false;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -254,10 +252,7 @@ public class Penguin extends CapsuleObstacle {
         return true;
     }
 
-    public void setThrownStrip(FilmStrip strip){
-        this.defaultStrip=strip;
 
-    }
     public void setWalkingStrip(FilmStrip strip){
         this.walkingStrip = strip;
         origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
@@ -325,7 +320,7 @@ public class Penguin extends CapsuleObstacle {
         if(isThrownOut){
             canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
         }else{
-            canvas.draw(overlapStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y-1,0,effect,1.0f);
+            canvas.draw(overlapStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,0,effect,1.0f);
         }
 
     }

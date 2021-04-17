@@ -336,16 +336,13 @@ public class Player extends CapsuleObstacle {
 //                    p.setFilmStrip(penguinWalkingStrip);
                 p.setIndex(numPenguins);
                 numPenguins += 1;
-                System.out.println(numPenguins);
                 if (numPenguins > 1) {
                     for (Penguin pen : penguins) {
                         pen.setOverlapFilmStrip(penguinOverlapStrip);
 
                     }
                 } else {
-                    System.out.println("SET SINGLE PICK");
                     for (Penguin pen : penguins) {
-
                         pen.setOverlapFilmStrip(penguinStrip);
 
 
@@ -401,14 +398,11 @@ public class Player extends CapsuleObstacle {
                         p.setPosition(getX(), getY()+2);
                         p.setMovement(throwingForce, xDir-getX(), yDir-getY());
                         numPenguins -=1;
-                        System.out.println("THROWN"+ numPenguins);
-
                         break;
                     }
                 }
             }
             if (numPenguins==1){
-                System.out.println("Set single");
                 for (Penguin pen: penguins) {
                    pen.setOverlapFilmStrip(penguinStrip);
                 }
@@ -521,7 +515,6 @@ public class Player extends CapsuleObstacle {
      */
     public Player(JsonValue data, JsonValue p_data, float width, float height, int numOfPenguins) {
         super(data.get("pos").getFloat(0),data.get("pos").getFloat(1),width* data.getFloat("hshrink"),height* data.getFloat("vshrink"));
-       System.out.println(data.name());
         PLAYER_DENSITY=data.getFloat("density");
         PLAYER_FRICTION=data.getFloat("friction");
         PLAYER_FORCE=data.getFloat("force");
@@ -727,6 +720,7 @@ public class Player extends CapsuleObstacle {
             canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
             canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
             for(int i = 0; i<trajectories.length; i+=2){
+                System.out.println(trajectories.length);
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
 

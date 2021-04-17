@@ -119,7 +119,6 @@ public class GameplayController extends WorldController implements ContactListen
     public GameplayController(float width, float height, boolean isEditingView, String jsonFile, int level) {
         super(width,height,DEFAULT_GRAVITY);
         currentLevelNum = level;
-        System.out.println(level);
         scale = super.scale;
         setDebug(false);
         setComplete(false);
@@ -332,21 +331,34 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setPenguinWalkingStrip((penguinWalkingStrip));
         avatar.setPenguinRollingStrip(penguinRollingStrip);
         avatar.setPenguinStrip(penguinStrip);
-        avatar.setPenguinOverlapStrip(penguinOverlapStrip);;
-
+        if (avatar.getNumPenguins()>=2) {
+            avatar.setPenguinOverlapStrip(penguinOverlapStrip);
+        }
+        else{
+            avatar.setPenguinOverlapStrip(penguinStrip);
+        }
         addObject(avatar);
 
         for(int i = 0; i<num_penguins; i++){
             avatar.getPenguins().get(i).setDrawScale(scale);
             avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
-            avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
-//            avatar.getPenguins().get(i).setThrownStrip(penguinOverlapStrip);
+            if (avatar.getNumPenguins()>=2) {
+                avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
+            }
+            else{
+                avatar.getPenguins().get(i).setOverlapFilmStrip(penguinStrip);
+            }
             addObject(avatar.getPenguins().get(i));
             avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
-//            avatar.getPenguins().get(i).setThrownStrip(penguinOverlapStrip);
+            if (avatar.getNumPenguins()>=2) {
+                avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
+            }
+            else{
+                avatar.getPenguins().get(i).setOverlapFilmStrip(penguinStrip);
+            }
 
         }
 
