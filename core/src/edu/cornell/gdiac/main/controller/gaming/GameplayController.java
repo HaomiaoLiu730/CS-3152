@@ -599,7 +599,7 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.clear();
 
         canvas.begin();
-        canvas.drawBackground(background,0, -100);
+        canvas.drawBackground(background,0, 0);
         if(complete || failed){
             canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
         }
