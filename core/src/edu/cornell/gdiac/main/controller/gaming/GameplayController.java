@@ -371,7 +371,6 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue water_layout = waters.get("layout");
         waterList= new ArrayList<Water>();
         for (int i =0; i< water_layout.size; i++) {
-
             water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
             water.setFilmStrip(waterStrip, wavesStrip);
             water.setDrawScale(scale);
@@ -410,7 +409,6 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(fIce);
         }
 
-
         JsonValue mices = constants.get("movingIce");
         JsonValue micepos = mices.get("pos");
         MovingIce mIce;
@@ -425,8 +423,6 @@ public class GameplayController extends WorldController implements ContactListen
             mIce.setRestitution(mices.getFloat("restitution"));
             addObject(mIce);
         }
-
-
 
     }
 
@@ -481,6 +477,14 @@ public class GameplayController extends WorldController implements ContactListen
             quitClick = true;
             return;
         }
+        if(resetCountDown < 0 && !failed){
+            if(!isEditingView){
+                this.listener.updateScreen(this, currentLevelNum);
+                return;
+            }else{
+                reset();
+            }
+        }
 
         backToEdit();
         updateCamera();
@@ -493,18 +497,9 @@ public class GameplayController extends WorldController implements ContactListen
             reset();
         }
 
-        if(resetCountDown < 0 && !failed){
-            if(!isEditingView){
-                this.listener.updateScreen(this, currentLevelNum);
-                return;
-            }else{
-                reset();
-            }
-        }
-
         // debug mode
         if(InputController.getInstance().didDebug()){
-            setDebug(true);
+            setDebug(!isDebug());
         }
 
         // Punching
@@ -697,6 +692,16 @@ public class GameplayController extends WorldController implements ContactListen
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
+            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("dude") ||
+                    bd2.getName().startsWith("snow") && bd1.getName().startsWith("dude")){
+                avatar.setGrounded(true);
+            }
+
+            if(bd1.getName().startsWith("icicle") && bd1.getBodyType() == BodyDef.BodyType.StaticBody && bd2.getName().startsWith("dude") ||
+                    bd2.getName().startsWith("icicle") && bd2.getBodyType() == BodyDef.BodyType.StaticBody && bd1.getName().startsWith("dude")){
+                avatar.setGrounded(true);
+            }
+
             // check whether the penguin is grounded
             for(Penguin p: avatar.getPenguins()){
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
@@ -826,7 +831,6 @@ public class GameplayController extends WorldController implements ContactListen
             if (playerGround == 0) {
                 avatar.setGrounded(false);
             }
-
         }
 
         for(Penguin p: avatar.getPenguins()){

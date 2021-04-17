@@ -128,7 +128,6 @@ public class Water extends BoxObstacle {
         for (int i = 0; i<width; i++) {
             float x = startX+40*i;
             canvas.draw(wavesStrip,transparent,x, y, wavesStrip.getRegionWidth(), wavesStrip.getRegionHeight());
-
         }
         canvas.draw(waterStrip,transparent,getX()*drawScale.x-waterStrip.getRegionWidth()/2f, (getY()-0.5f)*drawScale.y- waterStrip.getRegionHeight()/2f, waterStrip.getRegionWidth(), waterStrip.getRegionHeight());
     }

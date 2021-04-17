@@ -1,4 +1,12 @@
-{defaults: {gravity: -9.8,friction: 0.3,density: 2.65,restitution: 0.1,num_penguins: 2,num_notes: 2,snow: [
+{
+  "defaults":{
+    "gravity":-9.8,
+    "friction":0.3,
+    "density":2.65,
+    "restitution":0.1,
+    "num_penguins":2,
+    "num_notes":2,
+    "snow":[
       [
         0,
         0,
@@ -143,37 +151,85 @@
         320,
         -2
       ]
-    ],grounded: [
+    ],
+    "grounded":[
       0,
       1,
       2,
       4
     ]
-  },goal: {pos: [
+  },
+  "goal":{
+    "pos":[
       59.0125,
       7.8375
-    ],friction: 0.3,density: 2.65,restitution: 0.1,width: 2,height: 2
-  },player: {pos: [
+    ],
+    "friction":0.3,
+    "density":2.65,
+    "restitution":0.1,
+    "width":2,
+    "height":2
+  },
+  "player":{
+    "pos":[
       16,
       5
-    ],shrink: [
+    ],
+    "shrink":[
       0.95,
       0.7
-    ],force: 12,damping: 10,density: 1,friction: 0,max_speed: 4,restitution: 0,player_jump: 7,jump_cooldown: 30,throw_cooldown: 30,shoot_cooldown: 40,punch_cool: 100,punch_time: 30,punch_cooldown: 0,max_throw_force: 300,sensor_height: 0.05,sensor_name:PlayerGroundSensor,vshrink: 0.25,hshrink: 0.25,sshrink: 0.6,time_count: 0
-  },penguins: {pos: [
+    ],
+    "force":12,
+    "damping":10,
+    "density":1,
+    "friction":0,
+    "max_speed":4,
+    "restitution":0,
+    "player_jump":7,
+    "jump_cooldown":30,
+    "throw_cooldown":30,
+    "shoot_cooldown":40,
+    "punch_cool":100,
+    "punch_time":30,
+    "punch_cooldown":0,
+    "max_throw_force":300,
+    "sensor_height":0.05,
+    "sensor_name":"PlayerGroundSensor",
+    "vshrink":0.25,
+    "hshrink":0.25,
+    "sshrink":0.6,
+    "time_count":0
+  },
+  "penguins":{
+    "pos":[
       16,
       5
-    ],width: 1.3,height: 2,force: 20,damping: 2,density: 1,friction: 0,max_speed: 3,sensor_height: 0.05,sensor_name:PenguinGroundSensor,vshrink: 0.75,hshrink: 0.75,sshrink: 0.6
-  },icicles: {pos: [
+    ],
+    "width":1.3,
+    "height":2,
+    "force":20,
+    "damping":2,
+    "density":1,
+    "friction":0,
+    "max_speed":3,
+    "sensor_height":0.05,
+    "sensor_name":"PenguinGroundSensor",
+    "vshrink":0.75,
+    "hshrink":0.75,
+    "sshrink":0.6
+  },
+  "icicles":{
+    "pos":[
       [
         35.6,
         11
       ],
       [
-        40.6,
+        42.2,
         11
       ]
-    ],layout: [
+    ],
+    "layout":[
       [
         -1,
         1,
@@ -190,9 +246,40 @@
         0,
         -2
       ]
-    ],density: 30,friction: 0.5,restitution: 0.2
-  },enemy: {pos: [],range: [],width: 1.3,height: 2,damping: 10,density: 1,friction: 5,max_speed: 5,sensor_height: 0.05,sensor_name:MonsterGroundSensor,vshrink: 0.25,hshrink: 0.25,sshrink: 0.6,restitution: 0,force: 20,is_hor: []
-  },notes: {pos: [
+    ],
+    "density":30,
+    "friction":0.5,
+    "restitution":0.2
+  },
+  "enemy":{
+    "pos":[
+      [
+        25,
+        0.6
+      ]
+    ],
+    "range":[
+      50
+    ],
+    "width":1.3,
+    "height":2,
+    "damping":10,
+    "density":1,
+    "friction":5,
+    "max_speed":5,
+    "sensor_height":0.05,
+    "sensor_name":"MonsterGroundSensor",
+    "vshrink":0.25,
+    "hshrink":0.25,
+    "sshrink":0.6,
+    "restitution":0,
+    "force":20,
+    "is_hor":[
+      false
+    ]
+  },
+  "notes":{
+    "pos":[
       [
         27.95,
         3.340625
@@ -201,8 +288,12 @@
         53.149998,
         15.740625
       ]
-    ],vshrink: 0.8,hshrink: 0.95
-  },water: {pos: [
+    ],
+    "vshrink":0.8,
+    "hshrink":0.95
+  },
+  "water":{
+    "pos":[
       [
         31.5,
         1.5
@@ -211,7 +302,8 @@
         45.5,
         1.5
       ]
-    ],layout: [
+    ],
+    "layout":[
       [
         13,
         3
@@ -220,29 +312,63 @@
         11,
         3
       ]
-    ],density: 1,friction: 0.5,restitution: 0.2,force: 20
-  },ice: {pos: [
+    ],
+    "density":1,
+    "friction":0.5,
+    "restitution":0.2,
+    "force":20
+  },
+  "ice":{
+    "pos":[
       [
         45.75,
         3.475
       ]
-    ],layout: [
+    ],
+    "layout":[
       [
         396,
         40
       ]
-    ],friction: 2,restitution: 0.2,pin_radius: 0.1,bar_density: 3,pin_density: 0
-  },floatingIce: {pos: [
+    ],
+    "friction":2,
+    "restitution":0.2,
+    "pin_radius":0.1,
+    "bar_density":3,
+    "pin_density":0
+  },
+  "floatingIce":{
+    "pos":[
       [
         33.6,
         3.475
       ]
-    ],layout: [
+    ],
+    "layout":[
       [
         240,
         40
       ]
-    ],friction: 2,restitution: 0.2,pin_radius: 0.1,bar_density: 3,pin_density: 0
-  },movingIce: {pos: [],layout: [],friction: 2,restitution: 0.2,pin_radius: 0.1,bar_density: 3,pin_density: 0,distance: 1,speed: 0.04
+    ],
+    "friction":2,
+    "restitution":0.2,
+    "pin_radius":0.1,
+    "bar_density":3,
+    "pin_density":0
+  },
+  "movingIce":{
+    "pos":[
+
+    ],
+    "layout":[
+
+    ],
+    "friction":2,
+    "restitution":0.2,
+    "pin_radius":0.1,
+    "bar_density":3,
+    "pin_density":0,
+    "distance":1,
+    "speed":0.04
   }
 }
