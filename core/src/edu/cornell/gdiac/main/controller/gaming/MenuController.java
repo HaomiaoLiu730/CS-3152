@@ -3,6 +3,7 @@ package edu.cornell.gdiac.main.controller.gaming;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.files.FileHandle;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.audio.SoundBuffer;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -39,7 +41,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private boolean drawPoints;
     private Camera camera;
     private boolean prevTouched;
-    private enum Continent{
+    public enum Continent{
         NorthAmerica,
         SouthAmerica,
         Asia,
@@ -55,7 +57,13 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private static JsonValue value;
 
     private float[] NORTH_AMERICA_LEVELS = new float[]{
-            1100f, 600f, 1000f, 610f, 300f, 470f, 600f, 440f, 520f, 300f, 670f, 270f
+            1100f, 600f, 1000f, 610f, 300f, 470f
+    };
+    private float[] AFRICA_LEVELS = new float[]{
+            427f, 550f, 550, 540f, 680, 470f, 720, 350f, 700, 190
+    };
+    private float[] OCEANIA_LEVELS = new float[]{
+            367, 324, 463, 300, 640, 335, 470, 400, 622, 422,
     };
 
     private AssetDirectory internal;
@@ -75,6 +83,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private Texture africaLine;
     private Texture europeLine;
     private Texture oceaniaLine;
+
+    private Sound menuSellect;
+    private Sound menuScroll;
 
 
     private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
@@ -113,10 +124,12 @@ public class MenuController extends ClickListener implements Screen, InputProces
         oceaniaLine = internal.getEntry("OceaniaLine", Texture.class);
         europeLine = internal.getEntry("EuropeLine", Texture.class);
         africaLine = internal.getEntry("AfricaLine", Texture.class);
+        menuSellect = internal.getEntry("menuSellect", SoundBuffer.class);
+        menuScroll = internal.getEntry("menuScroll",SoundBuffer.class);
 
         active  = true;
         zoomIn = false;
-        currentContinent = Continent.NorthAmerica;
+        currentContinent = Continent.Africa;
         camera = canvas.getCamera();
         this.canvas = canvas;
 
@@ -146,11 +159,24 @@ public class MenuController extends ClickListener implements Screen, InputProces
         numOfLevels.put(Continent.Antarctica, value.get("numOfLevels").getInt("Antarctica"));
         numOfLevels.put(Continent.Africa, value.get("numOfLevels").getInt("Africa"));
         numOfLevels.put(Continent.Oceania, value.get("numOfLevels").getInt("Oceania"));
+        unlockedContinents.add(Continent.Africa);
         for(Continent continent: finished.keySet()){
             if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
                 unlockedContinents.add(continent);
+                switch (continent){
+                    case Africa:
+                        unlockContinents(Continent.Oceania);
+                        break;
+                }
+            }
+            if(finished.get(continent).size()!=0){
+                unlockedContinents.add(continent);
             }
         }
+    }
+
+    public static void unlockContinents(Continent continent){
+        unlockedContinents.add(continent);
     }
 
     private void zoomInto(float viewportWidth, float viewportHeight, float cameraPosX, float cameraPosY){
@@ -182,7 +208,6 @@ public class MenuController extends ClickListener implements Screen, InputProces
         zoomInEffect();
         selectContinent();
         InputController.getInstance().readInput();
-
         if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
             isReady = true;
         }
@@ -197,6 +222,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         if(!zoomIn && !drawPoints){
             float x = Gdx.input.getX();
             float y = Gdx.input.getY();
+            Continent previousContinent = currentContinent;
             if(x>760 && x < 1280 && y > 70 && y < 370){
                 currentContinent = Continent.NorthAmerica;
             }else if(x>1000 && x < 1280 && y > 370 && y < 620){
@@ -212,6 +238,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
             }else if(x>0 && x < 690 && y > 650 && y < 720){
                 currentContinent = Continent.Antarctica;
             }
+
+            if(currentContinent != previousContinent)
+                menuScroll.play();
         }
     }
 
@@ -219,7 +248,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         if(zoomIn && unlockedContinents.contains(currentContinent)){
             switch (currentContinent){
                 case NorthAmerica:
-                    zoomInto(660f, 350f, 1000f, 480f);
+                    zoomInto(560f, 350f, 1000f, 480f);
                     break;
                 case SouthAmerica:
                     zoomInto(560f, 300f, 1180f, 220f);
@@ -247,16 +276,25 @@ public class MenuController extends ClickListener implements Screen, InputProces
 
     public void updateNextLevel(){
         if(drawPoints){
+            int previousLevel = nextLevel;
             switch (currentContinent){
                 case NorthAmerica:
-                    for(int i = 0; i< NORTH_AMERICA_LEVELS.length; i+=2){
-                        if (Math.abs(Gdx.input.getX() - NORTH_AMERICA_LEVELS[i]) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - NORTH_AMERICA_LEVELS[i+1]) <= MOUSE_TOL){
-                            nextLevel = i;
-                        }
-                    }
+                    updateNextLevelHelper(NORTH_AMERICA_LEVELS);
                     break;
+                case Africa:
+                    updateNextLevelHelper(AFRICA_LEVELS);
+                case Oceania:
+                    updateNextLevelHelper(OCEANIA_LEVELS);
                 default:
                     break;
+            }
+        }
+    }
+
+    public void updateNextLevelHelper(float[] arr){
+        for(int i = 0; i< arr.length; i+=2){
+            if (Math.abs(Gdx.input.getX() - arr[i]) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - arr[i+1]) <= MOUSE_TOL){
+                nextLevel = i/2;
             }
         }
     }
@@ -272,14 +310,16 @@ public class MenuController extends ClickListener implements Screen, InputProces
         canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,0, 0);
         canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,0, 0);
         if(drawPoints){
+            int finishedLevelNum = finished.get(currentContinent).size();
             switch (currentContinent){
                 case NorthAmerica:
-                    for(int i = 0; i< finished.get(currentContinent).size()*2; i+=2){
-                        canvas.drawCircle(Color.BLACK, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
-                    }
-                    for(int i = finished.get(currentContinent).size()*2; i< NORTH_AMERICA_LEVELS.length; i+=2){
-                        canvas.drawCircle(Color.LIGHT_GRAY, NORTH_AMERICA_LEVELS[i], NORTH_AMERICA_LEVELS[i+1], nextLevel == i ? 10f: 5f);
-                    }
+                    drawPointsHelper(finishedLevelNum, NORTH_AMERICA_LEVELS);
+                    break;
+                case Africa:
+                    drawPointsHelper(finishedLevelNum, AFRICA_LEVELS);
+                    break;
+                case Oceania:
+                    drawPointsHelper(finishedLevelNum, OCEANIA_LEVELS);
                     break;
                 default:
                     break;
@@ -287,6 +327,15 @@ public class MenuController extends ClickListener implements Screen, InputProces
         }
         drawCurrentContinent();
         canvas.end();
+    }
+
+    public void drawPointsHelper(int finishedLevelNum, float[] arr){
+        for(int i = 0; i < finishedLevelNum*2; i+=2){
+            canvas.drawCircle(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 10f: 5f);
+        }
+        if(finishedLevelNum != numOfLevels.get(currentContinent)){
+            canvas.drawCircle(Color.LIGHT_GRAY, arr[finishedLevelNum*2], arr[finishedLevelNum*2+1], nextLevel == finishedLevelNum ? 10f: 5f);
+        }
     }
 
     public void drawCurrentContinent(){
@@ -329,8 +378,12 @@ public class MenuController extends ClickListener implements Screen, InputProces
             draw();
 
             // We are are ready, notify our listener
+            int hundred = 0;
+            if(currentContinent == Continent.Africa) hundred = 2;
+            if(currentContinent == Continent.Oceania) hundred = 3;
             if (isReady() && listener != null) {
-                listener.updateScreen(this, 0);
+                listener.updateScreen(this, hundred*10+nextLevel);
+                menuSellect.play();
             }
         }
     }
@@ -338,11 +391,22 @@ public class MenuController extends ClickListener implements Screen, InputProces
     public void reset(){
         zoomIn = false;
         drawPoints = false;
+        canvas.getCamera().position.x = 640;
+        canvas.getCamera().position.y = 360;
+        canvas.getCamera().update();
         FileHandle file = Gdx.files.local("menu/levelProgress.json");
         JsonReader jsonReader = new JsonReader();
         value = jsonReader.parse(file);
+        refreshMenu();
         isReady = false;
         nextLevel = -1;
+        for(Continent continent: finished.keySet()){
+            if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
+                if(continent != Continent.Asia){
+                    unlockedContinents.add(continent);
+                }
+            }
+        }
     }
 
     @Override

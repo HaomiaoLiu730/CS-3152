@@ -19,6 +19,7 @@ package edu.cornell.gdiac.main.controller;
 import java.util.Iterator;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.*;
@@ -26,6 +27,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.audio.SoundBuffer;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.main.obstacle.*;
@@ -85,6 +87,10 @@ public abstract class WorldController implements Screen {
     protected Texture energyBarTexture;
     /** The texture for the energy bar */
     protected Texture energyBarOutlineTexture;
+    /** The texture for the pure white*/
+    protected Texture whiteTexture;
+    /** The texture for the pure black*/
+    protected Texture blackTexture;
     /** The texture region for the snow */
     protected TextureRegion snowTextureRegion;
     /** The texture region for the ice */
@@ -114,6 +120,22 @@ public abstract class WorldController implements Screen {
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+
+    protected Sound hitIcicle;
+    protected Sound punching;
+    protected Sound jumping;
+    protected Sound throwingP;
+    protected Sound collectingNote;
+    protected Sound menuSellect;
+    protected Sound bearLanding;
+    protected Sound penguinLanding;
+    protected Sound winning;
+    protected Sound losing;
+
+
+
+
+
 
     /**
      * Preloads the assets for this controller.
@@ -177,6 +199,19 @@ public abstract class WorldController implements Screen {
         wavesStrip = new FilmStrip(directory.getEntry("waves", Texture.class), 1, 4);
         ficeTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
         miceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+        whiteTexture = directory.getEntry("white",Texture.class);
+        blackTexture = directory.getEntry("black",Texture.class);
+
+        hitIcicle = directory.getEntry("hitIcicle", SoundBuffer.class);
+        punching = directory.getEntry("punching", SoundBuffer.class);
+        jumping = directory.getEntry("jumping", SoundBuffer.class);
+        throwingP = directory.getEntry("throwingP", SoundBuffer.class);
+        collectingNote = directory.getEntry("collectingNote", SoundBuffer.class);
+        menuSellect = directory.getEntry("menuSellect", SoundBuffer.class);
+        bearLanding = directory.getEntry("bearLanding", SoundBuffer.class);
+        penguinLanding = directory.getEntry("penguinLanding", SoundBuffer.class);
+        winning = directory.getEntry("winning", SoundBuffer.class);
+        losing = directory.getEntry("losing",SoundBuffer.class);
 
     }
 

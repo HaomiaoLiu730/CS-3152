@@ -1,4 +1,15 @@
 {
+  "sounds": {
+    "hitIcicle": "sounds/hiticicle.ogg",
+    "punching": "sounds/Punch.ogg",
+    "jumping": "sounds/Jump.ogg",
+    "throwingP": "sounds/swing2.ogg",
+    "collectingNote": "sounds/note things.ogg",
+    "bearLanding": "sounds/Land sfx.ogg",
+    "penguinLanding": "sounds/land 2.ogg",
+    "winning": "sounds/checkpoint.ogg",
+    "losing": "sounds/death jingle.ogg"
+  },
   "textures": {
     "avatarWalking": {
       "file": "images/shared/avatarWalking.png",
@@ -115,6 +126,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "black": {
+      "file": "images/shared/black.jpeg",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "snow": {
       "file": "images/shared/snow.png",
       "minFilter": "linear",
@@ -129,8 +145,7 @@
   "fonts": {
     "gameFont": {
       "file": "fonts/MarkerFelt.ttf",
-      "size": 16,
-      "color": "black"
+      "size": 16
     }
   }
 }
