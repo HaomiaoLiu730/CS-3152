@@ -105,7 +105,6 @@ public class CollisionController {
                         objects.remove(penguins.get(last_index));
                         penguins.get(last_index).setActive(false);
                         penguins.get(last_index).setAwake(false);
-                        avatar.getPenguins().remove(last_index);
                         note.setFilmStrip(noteCollectedFilmStrip);
                         note.setCollected(true);
                         numNotes++;
