@@ -3,6 +3,7 @@ package edu.cornell.gdiac.main.controller.gaming;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.files.FileHandle;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.audio.SoundBuffer;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -82,6 +84,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
     private Texture europeLine;
     private Texture oceaniaLine;
 
+    private Sound menuSellect;
+    private Sound menuScroll;
+
 
     private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
 
@@ -119,6 +124,8 @@ public class MenuController extends ClickListener implements Screen, InputProces
         oceaniaLine = internal.getEntry("OceaniaLine", Texture.class);
         europeLine = internal.getEntry("EuropeLine", Texture.class);
         africaLine = internal.getEntry("AfricaLine", Texture.class);
+        menuSellect = internal.getEntry("menuSellect", SoundBuffer.class);
+        menuScroll = internal.getEntry("menuScroll",SoundBuffer.class);
 
         active  = true;
         zoomIn = false;
@@ -216,6 +223,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
         if(!zoomIn && !drawPoints){
             float x = Gdx.input.getX();
             float y = Gdx.input.getY();
+            Continent previousContinent = currentContinent;
             if(x>760 && x < 1280 && y > 70 && y < 370){
                 currentContinent = Continent.NorthAmerica;
             }else if(x>1000 && x < 1280 && y > 370 && y < 620){
@@ -231,6 +239,9 @@ public class MenuController extends ClickListener implements Screen, InputProces
             }else if(x>0 && x < 690 && y > 650 && y < 720){
                 currentContinent = Continent.Antarctica;
             }
+
+            if(currentContinent != previousContinent)
+                menuScroll.play();
         }
     }
 
@@ -266,6 +277,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
 
     public void updateNextLevel(){
         if(drawPoints){
+            int previousLevel = nextLevel;
             switch (currentContinent){
                 case NorthAmerica:
                     updateNextLevelHelper(NORTH_AMERICA_LEVELS);
@@ -372,6 +384,7 @@ public class MenuController extends ClickListener implements Screen, InputProces
             if(currentContinent == Continent.Oceania) hundred = 3;
             if (isReady() && listener != null) {
                 listener.updateScreen(this, hundred*10+nextLevel);
+                menuSellect.play();
             }
         }
     }
