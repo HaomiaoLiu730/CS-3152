@@ -123,6 +123,7 @@ public class CollisionController {
 
                             }
                         }
+                        penguins.remove(penguins.get(last_index));
                         note.setFilmStrip(noteCollectedFilmStrip);
                         note.setCollected(true);
                         numNotes++;

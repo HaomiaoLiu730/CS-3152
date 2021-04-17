@@ -674,7 +674,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
             gameFont.setColor(Color.BLACK);
             canvas.end();
-        } else if (failed) {
+        } else if (failed && !resetClick) {
             canvas.begin(); // DO NOT SCALE
             losing.play();
             gameFont.setColor(Color.WHITE);
