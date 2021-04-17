@@ -105,7 +105,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     private int currentLevelNum;
 
-    ArrayList<Obstacle> staticBodies = new ArrayList<>();
+    ArrayList<Integer> staticBodies = new ArrayList<>();
+    ArrayList<Boolean> icicles_hit = new ArrayList<>();
 
     /**
      * Creates a new game with a playing field of the given size.
@@ -165,7 +166,6 @@ public class GameplayController extends WorldController implements ContactListen
         this.listener = listener;
     }
 
-
     public void setComplete(boolean val){
         this.complete = val;
     }
@@ -220,6 +220,12 @@ public class GameplayController extends WorldController implements ContactListen
         quitClick = false;
         resetClick = false;
         canThrow = false;
+        staticBodies.clear();
+        icicles_hit.clear();
+        for (PolygonObstacle icicle: iciclesList) {
+            staticBodies.add(0);
+            icicles_hit.add(false);
+        }
 
         canvas.getCamera().viewportWidth = 1280;
         canvas.getCamera().viewportHeight = 720;
@@ -481,10 +487,14 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-        for (Obstacle obj : staticBodies) {
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
+        for (int i = 0; i < iciclesList.size(); i++) {
+
+            if (staticBodies.get(i) == 1) {
+                iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
+                staticBodies.set(i, 2);
+            }
         }
-        staticBodies.clear();
+
         if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
             if (Gdx.input.isTouched()) {
                 hitWater(true);
@@ -549,7 +559,7 @@ public class GameplayController extends WorldController implements ContactListen
             setComplete(true);
         }
         collisionController.processCollision(monsters, iciclesList, objects);
-        collisionController.processCollision(avatar.getPenguins(), iciclesList, objects, hitIcicle);
+        collisionController.processCollision(iciclesList, icicles_hit, staticBodies, objects,hitIcicle);
         collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
@@ -621,7 +631,7 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.clear();
 
         canvas.begin();
-        canvas.drawBackground(background,0, -100);
+        canvas.drawBackground(background,0, 0);
         if(complete || failed){
             canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
         }
@@ -714,16 +724,6 @@ public class GameplayController extends WorldController implements ContactListen
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
-            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("dude") ||
-                    bd2.getName().startsWith("snow") && bd1.getName().startsWith("dude")){
-                avatar.setGrounded(true);
-            }
-
-            if(bd1.getName().startsWith("icicle") && bd1.getBodyType() == BodyDef.BodyType.StaticBody && bd2.getName().startsWith("dude") ||
-                    bd2.getName().startsWith("icicle") && bd2.getBodyType() == BodyDef.BodyType.StaticBody && bd1.getName().startsWith("dude")){
-                avatar.setGrounded(true);
-            }
-
             // check whether the penguin is grounded
             for(Penguin p: avatar.getPenguins()){
                 if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
@@ -737,20 +737,20 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("icicle")){
-                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
-                for(float i:grounded){
-                    if(index == i){
-                        staticBodies.add(bd2);
-                    }
-                }
+                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
+                staticBodies.set(index, staticBodies.get(index)+1);
             }
             if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
-                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
-                for(float i:grounded){
-                    if(index == i){
-                        staticBodies.add(bd1);
-                    }
-                }
+                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
+                staticBodies.set(index, staticBodies.get(index)+1);
+            }
+
+            if (bd1 instanceof Penguin && bd2.getName().startsWith("icicle")){
+                icicles_hit.set(iciclesList.indexOf(bd2),true);
+            }
+
+            if (bd2 instanceof Penguin && bd1.getName().startsWith("icicle")){
+                icicles_hit.set(iciclesList.indexOf(bd1),true);
             }
 
             // set the ice bar tilt only for avatar
@@ -863,9 +863,20 @@ public class GameplayController extends WorldController implements ContactListen
             }
         }
 
+
+
         try {
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
+
+            if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("icicle")){
+                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
+                staticBodies.set(index, staticBodies.get(index)-1);
+            }
+            if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
+                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
+                staticBodies.set(index, staticBodies.get(index)-1);
+            }
 
         if(bd1.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd1).getMaster();

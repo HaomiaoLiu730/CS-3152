@@ -334,6 +334,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             canvas.drawCircle(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 10f: 5f);
         }
         if(finishedLevelNum != numOfLevels.get(currentContinent)){
+            System.out.println("finishedLevelNum"+finishedLevelNum+","+numOfLevels.get(currentContinent));
             canvas.drawCircle(Color.LIGHT_GRAY, arr[finishedLevelNum*2], arr[finishedLevelNum*2+1], nextLevel == finishedLevelNum ? 10f: 5f);
         }
     }
