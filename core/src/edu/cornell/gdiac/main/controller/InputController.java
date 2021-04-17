@@ -34,9 +34,12 @@ public class InputController {
     }
 
     // Fields to manage buttons
-    /** Whether the reset button was pressed. */
-    private boolean resetPressed;
-    private boolean resetPrevious;
+    /** Whether the A or left arrow button was pressed. */
+    private boolean leftPressed;
+    private boolean leftPrevious;
+    /** Whether the D or right arrow button was pressed. */
+    private boolean rightPressed;
+    private boolean rightPrevious;
     /** Whether the button to advanced worlds was pressed. */
     private boolean nextPressed;
     private boolean nextPrevious;
@@ -61,8 +64,10 @@ public class InputController {
     private boolean exitPressed;
     private boolean exitPrevious;
 
-    /** How much did we move horizontally? */
+    /** How much are we moving horizontally? */
     private float horizontal;
+    /** How much did we move horizontally? */
+    private float prevHorizontal;
     /** The crosshair position (for raddoll) */
     private Vector2 crosshair;
     /** The crosshair cache (for using as a return value) */
@@ -83,7 +88,6 @@ public class InputController {
     private boolean levelEditor = false;
     private boolean spacePressed = false;
     private boolean ePressed = false;
-    private boolean jump = false;
     private boolean punch = false;
 
     /**
@@ -159,15 +163,6 @@ public class InputController {
      */
     public boolean didTertiary() {
         return tertiaryPressed;
-    }
-
-    /**
-     * Returns true if the reset button was pressed.
-     *
-     * @return true if the reset button was pressed.
-     */
-    public boolean didReset() {
-        return resetPressed && !resetPrevious;
     }
 
     /**
@@ -292,12 +287,13 @@ public class InputController {
         // Helps us ignore buttocrosshairns that are held down
         primePrevious  = primePressed;
         secondPrevious = secondPressed;
-        resetPrevious  = resetPressed;
         debugPrevious  = debugPressed;
         exitPrevious = exitPressed;
         nextPrevious = nextPressed;
         prevPrevious = prevPressed;
         xPrevious = xPressed;
+        leftPrevious = leftPressed;
+        rightPrevious = rightPressed;
 
         // Check to see if a GamePad is connected
         readKeyboard(bounds, scale, false);
@@ -357,7 +353,6 @@ public class InputController {
      */
     private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
         // Give priority to gamepad results
-        resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Q));
         primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.UP)) || (Gdx.input.isKeyPressed(Input.Keys.W));
         secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
@@ -378,17 +373,18 @@ public class InputController {
         }
 
         // Directional controls
-        horizontal = (secondary ? horizontal : 0.0f);
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            horizontal += 1.0f;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            horizontal -= 1.0f;
-        }
-
-        if ((Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) &&
-                !Gdx.input.isKeyPressed(Input.Keys.DOWN) && !Gdx.input.isKeyPressed(Input.Keys.S)) {
-            jump = true;
+        prevHorizontal = horizontal;
+        horizontal = 0;
+        leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A);
+        rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D);
+        if (rightPressed && !rightPrevious) {
+            horizontal = 1.0f;
+        } else if (leftPressed && !leftPrevious) {
+            horizontal = -1.0f;
+        } else if (rightPressed && prevHorizontal > 0) {
+            horizontal = 1.0f;
+        } else if (leftPressed && prevHorizontal < 0) {
+            horizontal = -1.0f;
         }
 
         // Shooting
@@ -401,7 +397,7 @@ public class InputController {
         }
 
         // Punching
-        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.F)) {
             punch = true;
         } else {
             punch = false;

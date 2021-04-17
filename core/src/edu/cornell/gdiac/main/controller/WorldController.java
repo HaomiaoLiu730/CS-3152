@@ -71,6 +71,8 @@ public abstract class WorldController implements Screen {
     protected FilmStrip penguinRollingStrip;
     /** The texture for the monster */
     protected FilmStrip monsterStrip;
+    /** The texture for the waves */
+    protected FilmStrip wavesStrip;
     /** The texture for the water */
     protected FilmStrip waterStrip;
     /** The texture for the ice */
@@ -87,6 +89,10 @@ public abstract class WorldController implements Screen {
     protected TextureRegion snowTextureRegion;
     /** The texture region for the ice */
     protected TextureRegion iceTextureRegion;
+    /** The texture region for the floating ice */
+    protected TextureRegion ficeTextureRegion;
+    /** The texture region for the moving ice */
+    protected TextureRegion miceTextureRegion;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
     /** The texture for the notes not collected */
@@ -164,10 +170,14 @@ public abstract class WorldController implements Screen {
         throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
-        waterStrip= new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
         snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
         iceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+        waterStrip =new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
+        wavesStrip = new FilmStrip(directory.getEntry("waves", Texture.class), 1, 4);
+        ficeTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+        miceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+
     }
 
     /**
@@ -474,11 +484,6 @@ public abstract class WorldController implements Screen {
         // Toggle debug
         if (input.didDebug()) {
             debug = !debug;
-        }
-
-        // Handle resets
-        if (input.didReset()) {
-            reset();
         }
 
         // Now it is time to maybe switch screens.
