@@ -331,7 +331,7 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setPenguinWalkingStrip((penguinWalkingStrip));
         avatar.setPenguinRollingStrip(penguinRollingStrip);
         avatar.setPenguinStrip(penguinStrip);
-        if (avatar.getNumPenguins()>=2) {
+        if (avatar.getNumPenguins()>1) {
             avatar.setPenguinOverlapStrip(penguinOverlapStrip);
         }
         else{
@@ -343,7 +343,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).setDrawScale(scale);
             avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
-            if (avatar.getNumPenguins()>=2) {
+            if (avatar.getNumPenguins()>1) {
                 avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
             }
             else{
@@ -353,7 +353,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
-            if (avatar.getNumPenguins()>=2) {
+            if (avatar.getNumPenguins()>1) {
                 avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
             }
             else{
@@ -553,20 +553,11 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
-                objects, avatar.getNumPenguins(), avatar, collectingNote);
-        if (avatar.getNumPenguins() > 1) {
-            for (Penguin pen : avatar.getPenguins()) {
-                pen.setOverlapFilmStrip(penguinOverlapStrip);
+                objects, avatar.getNumPenguins(), avatar, collectingNote, penguinOverlapStrip, penguinStrip);
 
             }
-        } else {
-            for (Penguin pen : avatar.getPenguins()) {
-                pen.setOverlapFilmStrip(penguinStrip);
 
 
-            }
-        }
-    }
 
     public void backToEdit(){
         if(isEditingView && (InputController.getInstance().getClickX() > 1200 &&
