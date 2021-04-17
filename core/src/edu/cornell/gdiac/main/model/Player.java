@@ -343,7 +343,7 @@ public class Player extends CapsuleObstacle {
         }
     }
 
-    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching, boolean isInterrupted) {
+    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching, boolean isInterrupted, Sound throwing) {
         if(!isInterrupted && prevIsInterrupted){
             isThrowing = false;
             throwingCount = (throwingCount == 1 && isTouching) ? -1 : 0;
