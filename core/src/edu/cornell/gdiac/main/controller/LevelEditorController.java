@@ -800,6 +800,12 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         return ret;
     }
 
+    public void reset(){
+        canvas.getCamera().position.x = 640;
+        canvas.getCamera().position.y = 360;
+        canvas.getCamera().update();
+    }
+
     @Override
     public void resize(int width, int height) {
 
@@ -904,7 +910,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     private class Player{
-        public float[] pos = new float[]{16f,5f};
+        public float[] pos = new float[]{16f,9f};
         public float[] shrink = new float[]{0.95f, 0.7f};
         public float force = 12f;
         public float damping = 10.0f;

@@ -120,5 +120,9 @@
   },
   "jsons": {
     "finishedLevels": "menu/levelProgress.json"
+  },
+  "sounds": {
+    "menuSellect": "sounds/menu_select.ogg",
+    "menuScroll": "sounds/menu_scroll.ogg"
   }
 }

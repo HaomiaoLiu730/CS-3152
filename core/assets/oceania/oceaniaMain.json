@@ -1,0 +1,21 @@
+{
+  "textures": {
+    "background": {
+      "file": "images/oceania/background3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    }
+  },
+  "fonts": {
+    "gameFont": {
+      "file": "fonts/MarkerFelt.ttf",
+      "size": 24,
+      "color": "black"
+    }
+  },
+  "jsons": {
+    "level1": "oceania/level1.json",
+    "level2": "oceania/level2.json",
+    "level3": "oceania/level3.json",
+  }
+}

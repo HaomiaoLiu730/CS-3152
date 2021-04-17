@@ -7,7 +7,7 @@ hs_err_pid*
 *.nar
 .mtj.tmp/
 *.jar
-core/assets/sampleLevel.json
+sampleLevel.json
 
 ## Robovm
 /ios/robovm-build/

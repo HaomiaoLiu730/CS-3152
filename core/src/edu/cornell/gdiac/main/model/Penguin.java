@@ -214,6 +214,7 @@ public class Penguin extends CapsuleObstacle {
         setDensity(PENGUIN_DENSITY);
         setFriction(PENGUIN_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
+        fixture.filter.groupIndex = -8;
 
         // Gameplay attributes
         isGrounded = false;
@@ -241,7 +242,7 @@ public class Penguin extends CapsuleObstacle {
         FixtureDef sensorDef = new FixtureDef();
         sensorDef.density = PENGUIN_DENSITY;
         sensorDef.isSensor = true;
-        sensorDef.filter.groupIndex = -1;
+        sensorDef.filter.groupIndex = -8;
         sensorShape = new PolygonShape();
         sensorShape.setAsBox(data.getFloat("sshrink") *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
         sensorDef.shape = sensorShape;
