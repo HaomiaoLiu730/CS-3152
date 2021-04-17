@@ -124,15 +124,16 @@ public class CollisionController {
     }
 
 
-    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, PooledList<Obstacle> objects, Sound hitIcicel){
+    public void processCollision(List<Penguin> penguins, List<PolygonObstacle> icicles, ArrayList<Integer> flag, PooledList<Obstacle> objects, Sound hitIcicel){
         for (Penguin p: penguins){
-            for (PolygonObstacle icicle: icicles){
-                if (p.getPosition().dst(icicle.getPosition()) < 2){
-                    if(!icicle.isFixedRotation())
+            for (int i = 0; i < icicles.size(); i++){
+                if (p.getPosition().dst(icicles.get(i).getPosition()) < 2){
+                    if(!icicles.get(i).isFixedRotation())
                         hitIcicel.play();
-                    icicle.setBodyType(BodyDef.BodyType.DynamicBody);
-                    icicle.setFixedRotation(true);
-
+                    if (flag.get(i) == 0) {
+                        icicles.get(i).setBodyType(BodyDef.BodyType.DynamicBody);
+                        icicles.get(i).setFixedRotation(true);
+                    }
                 }
             }
         }
