@@ -41,8 +41,8 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "penguinOverlap": {
-      "file": "images/shared/penguin_overlap.png",
+    "penguin2": {
+      "file": "images/shared/penguin2.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

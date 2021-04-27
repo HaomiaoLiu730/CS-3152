@@ -16,6 +16,7 @@
  */
 package edu.cornell.gdiac.main.controller;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.badlogic.gdx.*;
@@ -71,10 +72,11 @@ public abstract class WorldController implements Screen {
     protected FilmStrip penguinWalkingStrip;
     /** The texture for the penguin rolling */
     protected FilmStrip penguinRollingStrip;
-    /** The texture for the penguin overlap */
-    protected FilmStrip penguinOverlapStrip;
-    /** The texture for the penguin  */
-    protected FilmStrip penguinStrip;
+//    /** The texture for the penguin  */
+//    protected FilmStrip penguinStrip1;
+//    /** The texture for the penguin overlap */
+//    protected FilmStrip penguinStrip2;
+    protected ArrayList<FilmStrip> penguins = new ArrayList<>();
     /** The texture for the monster */
     protected FilmStrip monsterStrip;
     /** The texture for the waves */
@@ -178,8 +180,8 @@ public abstract class WorldController implements Screen {
 
         // Allocate the tiles
         avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 1, 18);
-        penguinStrip= new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
-        penguinOverlapStrip = new FilmStrip(directory.getEntry("penguinOverlap", Texture.class), 1, 1);
+        penguins.add(new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1));
+        penguins.add(new FilmStrip(directory.getEntry("penguin2", Texture.class), 1, 1));
         penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
         penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
         monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);

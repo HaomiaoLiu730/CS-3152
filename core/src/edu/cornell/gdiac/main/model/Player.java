@@ -77,6 +77,7 @@ public class Player extends CapsuleObstacle {
     private FilmStrip penguinRollingStrip;
     private FilmStrip penguinStrip;
     private FilmStrip penguinOverlapStrip;
+    private ArrayList<FilmStrip> p_films;
 
 
 
@@ -336,18 +337,21 @@ public class Player extends CapsuleObstacle {
                     p.setIndex(numPenguins);
                     p.setY(getY()-1);
                     numPenguins += 1;
-                    if (numPenguins > 1) {
-                        for (Penguin pen : penguins) {
-                            pen.setOverlapFilmStrip(penguinOverlapStrip);
-    
-                        }
-                    } else {
-                        for (Penguin pen : penguins) {
-                            pen.setOverlapFilmStrip(penguinStrip);
-    
-    
-                        }
+                    for (Penguin pen : penguins){
+                            pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
                     }
+//                    if (numPenguins > 1) {
+//                        for (Penguin pen : penguins) {
+//                            pen.setOverlapFilmStrip(penguinOverlapStrip);
+//
+//                        }
+//                    } else {
+//                        for (Penguin pen : penguins) {
+//                            pen.setOverlapFilmStrip(penguinStrip);
+//
+//
+//                        }
+//                    }
                 }
             }
 
@@ -419,24 +423,25 @@ public class Player extends CapsuleObstacle {
                         throwingForce = 0f;
                         xDir = 0f;
                         yDir = 0f;
-                        if (numPenguins==1){
-                            for (Penguin pen: penguins) {
-                                pen.setOverlapFilmStrip(penguinStrip);
+                        if (numPenguins>0) {
+                            for (Penguin pen : penguins) {
+                                pen.setOverlapFilmStrip(p_films.get(numPenguins - 1));
                             }
                         }
                         return;
                     }
                 }
             }
-            if (numPenguins==1){
-                for (Penguin pen: penguins) {
-                   pen.setOverlapFilmStrip(penguinStrip);
+            if (numPenguins>0) {
+                for (Penguin pen : penguins) {
+                    pen.setOverlapFilmStrip(p_films.get(numPenguins - 1));
                 }
+            }
             }
 
         }
 
-    }
+
 
     /**
      * Returns true if the dude is on the ground.
@@ -536,7 +541,7 @@ public class Player extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Player(JsonValue data, JsonValue p_data, float width, float height, int numOfPenguins) {
+    public Player(JsonValue data, JsonValue p_data, float width, float height, int numOfPenguins, ArrayList<FilmStrip> p_films) {
         super(data.get("pos").getFloat(0),data.get("pos").getFloat(1),width* data.getFloat("hshrink"),height* data.getFloat("vshrink"));
         PLAYER_DENSITY=data.getFloat("density");
         PLAYER_FRICTION=data.getFloat("friction");
@@ -555,7 +560,7 @@ public class Player extends CapsuleObstacle {
         PENGUIN_HEIGHT=p_data.getFloat("height");
 
         this.data=data;
-
+        this.p_films=p_films;
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
