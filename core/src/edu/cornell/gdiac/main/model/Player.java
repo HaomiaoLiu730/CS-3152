@@ -378,6 +378,7 @@ public class Player extends CapsuleObstacle {
             throwingCount = (throwingCount == 1 && isTouching) ? -1 : 0;
             prevIsInterrupted = isInterrupted;
             throwingForce = 0f;
+            System.out.println("HERE");
             return;
         }
         if(throwingCount == -1 && touchUp){
@@ -760,6 +761,8 @@ public class Player extends CapsuleObstacle {
         }
         if(throwingAngle != 0 && throwingCount == 1){
             canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
+            canvas.draw(penguinStrip,Color.WHITE,penguinStrip.getRegionWidth()/2f, penguinStrip.getRegionHeight()/2f,getX()*drawScale.x,getY()*drawScale.y,0,effect * .75f,.75f);
+
         }
         if(throwingCount == 1  && isThrowing){
             canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);

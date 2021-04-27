@@ -324,7 +324,7 @@ public class GameplayController extends WorldController implements ContactListen
         PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool");
         PUNCH_TIME=constants.get("player").getInt("punch_time");
         punchCooldown=constants.get("player").getInt("punch_cooldown");
-        avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight, num_penguins, penguins);
+        avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);

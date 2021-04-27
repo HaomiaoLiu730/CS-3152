@@ -112,9 +112,11 @@ public class CollisionController {
                         objects.remove(penguins.get(last_index));
                         penguins.get(last_index).setActive(false);
                         penguins.get(last_index).setAwake(false);
+                        if (avatar.getNumPenguins()>0) {
                             for (Penguin pen : avatar.getPenguins()) {
                                 pen.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                             }
+                        }
                         penguins.remove(penguins.get(last_index));
                         note.setFilmStrip(noteCollectedFilmStrip);
                         note.setCollected(true);
