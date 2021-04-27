@@ -748,6 +748,8 @@ public class Player extends CapsuleObstacle {
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
         float throwingAngle = (float)(Math.asin((yDir-getY())/(positionCache.set((xDir-getX()), (yDir-getY()))).len()));
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
+
         if(xDir-getX()<0){
             throwingAngle = (float)(Math.PI/1f) - throwingAngle;
         }
@@ -757,6 +759,8 @@ public class Player extends CapsuleObstacle {
         if(throwingCount == 1  && isThrowing){
             canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
             canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
+            canvas.draw(penguinStrip,Color.WHITE,penguinStrip.getRegionWidth()/2f, penguinStrip.getRegionHeight()/2f,getX()*drawScale.x,getY()*drawScale.y,0,effect * .75f,.75f);
+
             for(int i = 0; i<trajectories.length; i+=2){
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
@@ -764,7 +768,6 @@ public class Player extends CapsuleObstacle {
             }
         }
 
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 
     /**
