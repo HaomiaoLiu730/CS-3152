@@ -691,8 +691,18 @@ public class Player extends CapsuleObstacle {
             }
         }else if(moveState == animationState.jumpHanging){
             // nothing here
-        }else if(moveState == animationState.jumpLanding || moveState == animationState.throwing){
+        }else if(moveState == animationState.jumpLanding ){
             if(timeCounter >= 0.2) {
+                timeCounter = 0;
+                filmStrip.nextFrame();
+                if (filmStrip.getFrame() == 0){
+                    setFilmStrip(walkingStrip);
+                    moveState = animationState.walking;
+                }
+            }
+        }
+        else if (moveState == animationState.throwing){
+            if(timeCounter >= 0.1) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
