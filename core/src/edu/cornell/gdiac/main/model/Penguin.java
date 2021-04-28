@@ -326,7 +326,7 @@ public class Penguin extends CapsuleObstacle {
         }
         float effect = faceRight ? 1.0f : -1.0f;
         if(isThrownOut){
-            canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
+            canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y-10f, getAngle(), 1f, 1f);
         }else if (!isLast){
                 canvas.draw(overlapStrip, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0, effect, 1.0f);
 

@@ -610,7 +610,7 @@ public class Player extends CapsuleObstacle {
         this.totalPenguins = numOfPenguins;
         this.numPenguins = totalPenguins;
         for(int i = 0; i < numOfPenguins; i++){
-            penguins.add(new Penguin(p_data, p_data.getFloat("width"), p_data.getFloat("height")-0.5f, i));
+            penguins.add(new Penguin(p_data, p_data.getFloat("width"), p_data.getFloat("height")-0.6f, i));
         }
 
         shootCooldown = data.getInt("shoot_cooldown");
