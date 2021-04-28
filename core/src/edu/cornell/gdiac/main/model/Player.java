@@ -338,9 +338,10 @@ public class Player extends CapsuleObstacle {
                     p.setY(getY()-1);
                     numPenguins += 1;
                     for (Penguin pen : penguins){
-                            pen.setPrevThrow(false);
                             pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
+                            pen.setIsLast(false);
                     }
+
 
 //                    if (numPenguins > 1) {
 //                        for (Penguin pen : penguins) {
@@ -385,7 +386,7 @@ public class Player extends CapsuleObstacle {
             throwingForce = 0f;
             for (Penguin pen : penguins) {
                 pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
-                pen.setPrevThrow(false);
+                pen.setIsLast(false);
             }
             System.out.println("HERE");
             return;
@@ -402,10 +403,16 @@ public class Player extends CapsuleObstacle {
             xDir = ((clickX+cameraX-640))/1280f*32;
             yDir = (720-clickY)/720f*18;
             throwingCount = 1;
+            if (numPenguins>1) {
                 for (Penguin pen : penguins) {
-                    pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
-                    pen.setPrevThrow(true);
+                    pen.setOverlapFilmStrip(p_films.get(numPenguins - 2));
                 }
+            }
+            else{
+                for (Penguin pen:penguins) {
+                    pen.setIsLast(true);
+                }
+            }
 
         }else if(throwingCount == 1 && isTouching){
             // setting force
@@ -416,10 +423,15 @@ public class Player extends CapsuleObstacle {
             }else if(throwingForce <= 0){
                 incr = true;
             }
+            if (numPenguins>1) {
                 for (Penguin pen : penguins) {
-                    pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
-                    pen.setPrevThrow(true);
-
+                    pen.setOverlapFilmStrip(p_films.get(numPenguins - 2));
+                }
+            }
+            else{
+                for (Penguin pen:penguins) {
+                    pen.setIsLast(true);
+                }
             }
 
             calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
@@ -447,8 +459,10 @@ public class Player extends CapsuleObstacle {
                         if (numPenguins>0) {
                             for (Penguin pen : penguins) {
                                 pen.setOverlapFilmStrip(p_films.get(numPenguins - 1));
+
                             }
                         }
+
                         return;
                     }
                 }
