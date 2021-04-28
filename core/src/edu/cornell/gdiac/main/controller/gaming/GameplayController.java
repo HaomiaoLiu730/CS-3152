@@ -607,10 +607,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.setFilmStrip(jumpRisingStrip);
             jumping.play();
         }
-        avatar.setThrowing(InputController.getInstance().getClickX(),
-                InputController.getInstance().getClickY(),
-                InputController.getInstance().touchUp() && !resetClick && canThrow,
-                InputController.getInstance().isTouching(), InputController.getInstance().didSecondary(),throwingP);
+        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP);
         canThrow = true;
         avatar.pickUpPenguins();
     }

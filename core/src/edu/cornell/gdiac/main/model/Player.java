@@ -11,12 +11,15 @@ package edu.cornell.gdiac.main.model;
  * LibGDX version, 2/6/2015
  */
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -328,7 +331,6 @@ public class Player extends CapsuleObstacle {
      *
      */
     public void pickUpPenguins() {
-  
             for(Penguin p: penguins){
                 if(position.set(getPosition()).sub(p.getPosition()).len() < 1.5f && p.isThrowOut()){
                     p.setThrownOut(false);
@@ -339,18 +341,14 @@ public class Player extends CapsuleObstacle {
                     if (numPenguins > 1) {
                         for (Penguin pen : penguins) {
                             pen.setOverlapFilmStrip(penguinOverlapStrip);
-    
                         }
                     } else {
                         for (Penguin pen : penguins) {
                             pen.setOverlapFilmStrip(penguinStrip);
-    
-    
                         }
                     }
                 }
             }
-
         }
 
 
@@ -367,29 +365,18 @@ public class Player extends CapsuleObstacle {
             trajectories[i+1] = y;
         }
     }
-
-    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching, boolean isInterrupted, Sound throwing) {
-        if(!isInterrupted && prevIsInterrupted){
-            isThrowing = false;
-            throwingCount = (throwingCount == 1 && isTouching) ? -1 : 0;
-            prevIsInterrupted = isInterrupted;
-            throwingForce = 0f;
-            return;
+    public void setThrowing(boolean touchUp,Sound throwing){
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+            throwingCount = -1;
         }
-        if(throwingCount == -1 && touchUp){
+        if(touchUp && throwingCount == -1){
             throwingCount = 0;
-            prevIsInterrupted = isInterrupted;
-            return;
-        }
-        prevIsInterrupted = isInterrupted;
-        isThrowing = isTouching;
-        // setting throwing direction
-        if(touchUp && throwingCount == 0 && !isInterrupted){
-            xDir = ((clickX+cameraX-640))/1280f*32;
-            yDir = (720-clickY)/720f*18;
-            throwingCount = 1;
-        }else if(throwingCount == 1 && isTouching){
-            // setting force
+            throwingForce = 0f;
+            xDir = 0f;
+            yDir = 0f;
+        }else if(Gdx.input.isTouched() && throwingCount == 0){
+            xDir = ((Gdx.input.getX() + cameraX-640))/1280f*32;
+            yDir = (720-Gdx.input.getY())/720f*18;
             throwingForce += incr ? 5f : -5f;
             throwingForce = Math.min(throwingForce, MAX_THROWING_FORCE);
             if(throwingForce >= MAX_THROWING_FORCE){
@@ -398,7 +385,7 @@ public class Player extends CapsuleObstacle {
                 incr = true;
             }
             calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
-        }else if(throwingCount == 1 && !isTouching && throwingForce != 0f){
+        }else if(touchUp && throwingCount == 0){
             if(numPenguins > 0){
                 for(Penguin p: penguins){
                     if(p.getIndex() == numPenguins-1){
@@ -430,12 +417,10 @@ public class Player extends CapsuleObstacle {
             }
             if (numPenguins==1){
                 for (Penguin pen: penguins) {
-                   pen.setOverlapFilmStrip(penguinStrip);
+                    pen.setOverlapFilmStrip(penguinStrip);
                 }
             }
-
         }
-
     }
 
     /**
@@ -737,23 +722,12 @@ public class Player extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        float throwingAngle = (float)(Math.asin((yDir-getY())/(positionCache.set((xDir-getX()), (yDir-getY()))).len()));
-        if(xDir-getX()<0){
-            throwingAngle = (float)(Math.PI/1f) - throwingAngle;
-        }
-        if(throwingAngle != 0 && throwingCount == 1){
-            canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
-        }
-        if(throwingCount == 1  && isThrowing){
-            canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
-            canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
+        if(Gdx.input.isTouched()&& throwingCount == 0){
             for(int i = 0; i<trajectories.length; i+=2){
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
-
             }
         }
-
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 
