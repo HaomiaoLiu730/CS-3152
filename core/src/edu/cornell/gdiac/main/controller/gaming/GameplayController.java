@@ -582,7 +582,9 @@ public class GameplayController extends WorldController implements ContactListen
 
     public void updateCamera(){
         // camera
-        if(avatar.getX()>16){
+        // leave this for ending  avatar.getX() < constants.get("goal").get("pos").getFloat(0)
+        float maxX = constants.get("goal").get("pos").getFloat(0) < 16 ? 320 : constants.get("goal").get("pos").getFloat(0);
+        if(avatar.getX()>16 && avatar.getX() < maxX){
             if(avatar.getX()/32*1280 > cameraX){
                 canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
                 canvas.getCamera().update();
