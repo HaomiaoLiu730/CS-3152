@@ -199,7 +199,17 @@ public class Player extends CapsuleObstacle {
     public void setCameraX(float val){
         this.cameraX = val;
     }
-
+    public boolean changeOverlap(int idx, boolean setLast, boolean lastOne){
+       if (numPenguins>idx-1) {
+           for (Penguin pen : penguins) {
+               pen.setOverlapFilmStrip(p_films.get(numPenguins - idx));
+               if (setLast)
+                   pen.setIsLast(lastOne);
+           }
+           return true;
+       }
+       return false;
+    }
     /**
      * Sets left/right movement of this character.
      *
@@ -329,7 +339,6 @@ public class Player extends CapsuleObstacle {
      *
      */
     public void pickUpPenguins() {
-  
             for(Penguin p: penguins){
                 if(position.set(getPosition()).sub(p.getPosition()).len() < 1.5f && p.isThrowOut()){
                     p.setThrownOut(false);
@@ -337,24 +346,7 @@ public class Player extends CapsuleObstacle {
                     p.setIndex(numPenguins);
                     p.setY(getY()-1);
                     numPenguins += 1;
-                    for (Penguin pen : penguins){
-                            pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
-                            pen.setIsLast(false);
-                    }
-
-
-//                    if (numPenguins > 1) {
-//                        for (Penguin pen : penguins) {
-//                            pen.setOverlapFilmStrip(penguinOverlapStrip);
-//
-//                        }
-//                    } else {
-//                        for (Penguin pen : penguins) {
-//                            pen.setOverlapFilmStrip(penguinStrip);
-//
-//
-//                        }
-//                    }
+                    changeOverlap(1,true,false);
                 }
             }
 
@@ -384,11 +376,7 @@ public class Player extends CapsuleObstacle {
             throwingCount = (throwingCount == 1 && isTouching) ? -1 : 0;
             prevIsInterrupted = isInterrupted;
             throwingForce = 0f;
-            for (Penguin pen : penguins) {
-                pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
-                pen.setIsLast(false);
-            }
-            System.out.println("HERE");
+            changeOverlap(1,true,false);
             return;
         }
         if(throwingCount == -1 && touchUp){
@@ -403,12 +391,7 @@ public class Player extends CapsuleObstacle {
             xDir = ((clickX+cameraX-640))/1280f*32;
             yDir = (720-clickY)/720f*18;
             throwingCount = 1;
-            if (numPenguins>1) {
-                for (Penguin pen : penguins) {
-                    pen.setOverlapFilmStrip(p_films.get(numPenguins - 2));
-                }
-            }
-            else{
+            if (!changeOverlap(2,false,false)){
                 for (Penguin pen:penguins) {
                     pen.setIsLast(true);
                 }
@@ -423,12 +406,7 @@ public class Player extends CapsuleObstacle {
             }else if(throwingForce <= 0){
                 incr = true;
             }
-            if (numPenguins>1) {
-                for (Penguin pen : penguins) {
-                    pen.setOverlapFilmStrip(p_films.get(numPenguins - 2));
-                }
-            }
-            else{
+            if (!changeOverlap(2,false,false)){
                 for (Penguin pen:penguins) {
                     pen.setIsLast(true);
                 }
@@ -456,20 +434,10 @@ public class Player extends CapsuleObstacle {
                         throwingForce = 0f;
                         xDir = 0f;
                         yDir = 0f;
-                        if (numPenguins>0) {
-                            for (Penguin pen : penguins) {
-                                pen.setOverlapFilmStrip(p_films.get(numPenguins - 1));
-
-                            }
-                        }
+                        changeOverlap(1,false,false);
 
                         return;
                     }
-                }
-            }
-            if (numPenguins>0) {
-                for (Penguin pen : penguins) {
-                    pen.setOverlapFilmStrip(p_films.get(numPenguins - 1));
                 }
             }
             }
