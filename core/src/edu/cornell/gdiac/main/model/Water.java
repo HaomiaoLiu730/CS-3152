@@ -110,7 +110,7 @@ public class Water extends BoxObstacle {
         // Apply cooldowns
         if (index == 0) {
             this.timeCounter += dt;
-            if (this.timeCounter >= 0.175) {
+            if (this.timeCounter >= 0.2) {
                 this.timeCounter = 0;
                 this.wavesStrip.nextFrame();
             }
