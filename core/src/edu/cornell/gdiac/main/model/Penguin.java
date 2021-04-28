@@ -9,6 +9,8 @@ import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.ArrayList;
+
 /**
  * Player avatar for the plaform game.
  *
@@ -49,11 +51,13 @@ public class Penguin extends CapsuleObstacle {
     private FilmStrip walkingStrip;
     private FilmStrip rollingStrip;
     private FilmStrip overlapStrip;
+    private ArrayList<FilmStrip> p_films;
 
     private float timeCounter = 0;
     private boolean isThrownOut;
     private float angle;
     public boolean updateWalking = false;
+    private boolean prevThrow=false;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -77,6 +81,9 @@ public class Penguin extends CapsuleObstacle {
             faceRight = true;
         }
         applyForce(force, xDir, yDir);
+    }
+    public void setPrevThrow(boolean thrown){
+        this.prevThrow=thrown;
     }
 
     /**
@@ -321,7 +328,7 @@ public class Penguin extends CapsuleObstacle {
         if(isThrownOut){
             canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
         }else{
-
+            if(!prevThrow )
             canvas.draw(overlapStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,0,effect,1.0f);
         }
 

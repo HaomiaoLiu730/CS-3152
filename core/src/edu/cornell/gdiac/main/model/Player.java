@@ -338,8 +338,10 @@ public class Player extends CapsuleObstacle {
                     p.setY(getY()-1);
                     numPenguins += 1;
                     for (Penguin pen : penguins){
+                            pen.setPrevThrow(false);
                             pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
                     }
+
 //                    if (numPenguins > 1) {
 //                        for (Penguin pen : penguins) {
 //                            pen.setOverlapFilmStrip(penguinOverlapStrip);
@@ -359,6 +361,9 @@ public class Player extends CapsuleObstacle {
 
 
     public void calculateTrajectory(float force, float xDir, float yDir){
+        if (penguins.isEmpty()){
+            return;
+        }
         float dt =  0.01643628f;
         directionCache.set(xDir, yDir).nor();
         float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
@@ -378,6 +383,10 @@ public class Player extends CapsuleObstacle {
             throwingCount = (throwingCount == 1 && isTouching) ? -1 : 0;
             prevIsInterrupted = isInterrupted;
             throwingForce = 0f;
+            for (Penguin pen : penguins) {
+                pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
+                pen.setPrevThrow(false);
+            }
             System.out.println("HERE");
             return;
         }
@@ -393,6 +402,11 @@ public class Player extends CapsuleObstacle {
             xDir = ((clickX+cameraX-640))/1280f*32;
             yDir = (720-clickY)/720f*18;
             throwingCount = 1;
+                for (Penguin pen : penguins) {
+                    pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
+                    pen.setPrevThrow(true);
+                }
+
         }else if(throwingCount == 1 && isTouching){
             // setting force
             throwingForce += incr ? 5f : -5f;
@@ -402,6 +416,12 @@ public class Player extends CapsuleObstacle {
             }else if(throwingForce <= 0){
                 incr = true;
             }
+                for (Penguin pen : penguins) {
+                    pen.setOverlapFilmStrip(p_films.get(numPenguins-1));
+                    pen.setPrevThrow(true);
+
+            }
+
             calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
         }else if(throwingCount == 1 && !isTouching && throwingForce != 0f){
             if(numPenguins > 0){
