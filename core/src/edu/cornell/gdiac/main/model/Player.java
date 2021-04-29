@@ -347,6 +347,7 @@ public class Player extends CapsuleObstacle {
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
+                    p.setBodyType(BodyDef.BodyType.DynamicBody);
                     p.setY(getY()-1);
                     numPenguins += 1;
                     changeOverlap(1,true,false);
