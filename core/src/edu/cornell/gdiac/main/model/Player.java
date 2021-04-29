@@ -623,7 +623,7 @@ public class Player extends CapsuleObstacle {
         // Don't want to be moving. Damp out player motion
         if (getMovement() == 0f) {
             setVX(0);
-            if (moveState == animationState.walking) {
+            if (moveState == animationState.walking && !isPunching) {
                 setFilmStrip(normalStrip);
             }
         } else {
