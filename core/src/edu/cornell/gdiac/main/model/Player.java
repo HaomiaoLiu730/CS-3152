@@ -382,11 +382,7 @@ public class Player extends CapsuleObstacle {
             throwingForce = 0f;
             xDir = 0f;
             yDir = 0f;
-            if (!changeOverlap(2,false,false)){
-                for (Penguin pen:penguins) {
-                    pen.setIsLast(true);
-                }
-            }
+
         }else if(Gdx.input.isTouched() && throwingCount == 0){
             xDir = ((Gdx.input.getX() + cameraX-640))/1280f*32;
             yDir = (720-Gdx.input.getY())/720f*18;
