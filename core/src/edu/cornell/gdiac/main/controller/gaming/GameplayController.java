@@ -716,7 +716,9 @@ public class GameplayController extends WorldController implements ContactListen
                     (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
                 avatar.setGrounded(true);
                 playerGround += 1;
-                if(avatar.moveState == Player.animationState.jumpHanging){
+
+                if(avatar.moveState == Player.animationState.jumpHanging ||
+                        avatar.moveState == Player.animationState.jumpRising){
                     avatar.moveState = Player.animationState.jumpLanding;
                     avatar.setFilmStrip(jumpLandingStrip);
                     bearLanding.play();
