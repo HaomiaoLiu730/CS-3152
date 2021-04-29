@@ -16,8 +16,11 @@ import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
+import javax.xml.soap.Text;
+import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
@@ -423,10 +426,11 @@ public class GameplayController extends WorldController implements ContactListen
             int w = ices.get("layout").get(i).getInt(0);
             int h = ices.get("layout").get(i).getInt(1);
             ice = new Ice(ices, i, w/scale.x, h/scale.y);
-            iceTextureRegion.setRegionWidth(w);
-            iceTextureRegion.setRegionHeight(h);
+            TextureRegion temp = new TextureRegion(iceTextureRegion);
+            temp.setRegionWidth(w);
+            temp.setRegionHeight(h);
             ice.setDrawScale(scale);
-            ice.setTexture(iceTextureRegion);
+            ice.setTexture(temp);
             ice.setRestitution(ices.getFloat("restitution"));
             addObject(ice);
         }
@@ -438,10 +442,11 @@ public class GameplayController extends WorldController implements ContactListen
         int w = fices.get("layout").get(i).getInt(0);
         int h = fices.get("layout").get(i).getInt(1);
             fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
-            ficeTextureRegion.setRegionWidth(w);
-            ficeTextureRegion.setRegionHeight(h);
+            TextureRegion temp = new TextureRegion(ficeTextureRegion);
+            temp.setRegionWidth(w);
+            temp.setRegionHeight(h);
             fIce.setDrawScale(scale);
-            fIce.setTexture(ficeTextureRegion);
+            fIce.setTexture(temp);
             fIce.setRestitution(fices.getFloat("restitution"));
             addObject(fIce);
         }
@@ -453,10 +458,12 @@ public class GameplayController extends WorldController implements ContactListen
             int w = mices.get("layout").get(i).getInt(0);
             int h = mices.get("layout").get(i).getInt(1);
             mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
-            miceTextureRegion.setRegionWidth(w);
-            miceTextureRegion.setRegionHeight(h);
+            TextureRegion temp = new TextureRegion(miceTextureRegion);
+            temp.setRegionWidth(w);
+            temp.setRegionHeight(h);
             mIce.setDrawScale(scale);
-            mIce.setTexture(miceTextureRegion);
+            mIce.setTexture(temp);
+
             mIce.setRestitution(mices.getFloat("restitution"));
             addObject(mIce);
         }
@@ -593,7 +600,9 @@ public class GameplayController extends WorldController implements ContactListen
 
     public void updateCamera(){
         // camera
-        if(avatar.getX()>16){
+        // leave this for ending  avatar.getX() < constants.get("goal").get("pos").getFloat(0)
+        float maxX = constants.get("goal").get("pos").getFloat(0) < 16 ? 320 : constants.get("goal").get("pos").getFloat(0);
+        if(avatar.getX()>16 && avatar.getX() < maxX){
             if(avatar.getX()/32*1280 > cameraX){
                 canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
                 canvas.getCamera().update();
@@ -618,10 +627,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.setFilmStrip(jumpRisingStrip);
             jumping.play();
         }
-        avatar.setThrowing(InputController.getInstance().getClickX(),
-                InputController.getInstance().getClickY(),
-                InputController.getInstance().touchUp() && !resetClick && canThrow,
-                InputController.getInstance().isTouching(), InputController.getInstance().didSecondary(),throwingP);
+        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP);
         canThrow = true;
         avatar.pickUpPenguins();
     }
