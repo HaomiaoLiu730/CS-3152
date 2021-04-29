@@ -67,6 +67,8 @@ public abstract class WorldController implements Screen {
 
     /** The texture for the player */
     protected FilmStrip avatarStrip;
+    /** The texture for the player */
+    protected FilmStrip avatarNormalStrip;
     /** The texture for the penguin */
     protected FilmStrip penguinWalkingStrip;
     /** The texture for the penguin rolling */
@@ -76,7 +78,9 @@ public abstract class WorldController implements Screen {
     /** The texture for the penguin  */
     protected FilmStrip penguinStrip;
     /** The texture for the monster */
-    protected FilmStrip monsterStrip;
+    protected FilmStrip sealionStrip;
+    /** The texture for the monster */
+    protected FilmStrip sealStrip;
     /** The texture for the waves */
     protected FilmStrip wavesStrip;
     /** The texture for the water */
@@ -137,10 +141,6 @@ public abstract class WorldController implements Screen {
     protected Sound losing;
 
 
-
-
-
-
     /**
      * Preloads the assets for this controller.
      *
@@ -178,11 +178,13 @@ public abstract class WorldController implements Screen {
 
         // Allocate the tiles
         avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 1, 18);
+        avatarNormalStrip = new FilmStrip(directory.getEntry("avatarNormal", Texture.class), 1, 1);
         penguinStrip= new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1);
         penguinOverlapStrip = new FilmStrip(directory.getEntry("penguinOverlap", Texture.class), 1, 1);
         penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
         penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
-        monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
+        sealionStrip = new FilmStrip(directory.getEntry("sealion", Texture.class), 1, 1);
+        sealStrip = new FilmStrip(directory.getEntry("seal", Texture.class), 1, 1);
         attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         exitStrip = new FilmStrip(directory.getEntry("exit", Texture.class), 1, 1);

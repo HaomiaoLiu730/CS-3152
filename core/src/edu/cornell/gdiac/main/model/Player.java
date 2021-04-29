@@ -77,10 +77,7 @@ public class Player extends CapsuleObstacle {
     private FilmStrip penguinRollingStrip;
     private FilmStrip penguinStrip;
     private FilmStrip penguinOverlapStrip;
-
-
-
-
+    private FilmStrip normalStrip;
 
     /** The current horizontal movement of the character */
     private float movement;
@@ -181,12 +178,19 @@ public class Player extends CapsuleObstacle {
     public void setThrowingStrip(FilmStrip strip){
         throwingStrip = strip;
     }
+
+    public void setNormalStrip(FilmStrip strip){
+        normalStrip = strip;
+    }
+
     public void setPenguinStrip(FilmStrip strip){
         this.penguinStrip=strip;
     }
+
     public void setPenguinOverlapStrip(FilmStrip strip){
         this.penguinOverlapStrip=strip;
     }
+
     public void setPenguinWalkingStrip(FilmStrip strip){
         this.penguinWalkingStrip = strip;
     }
@@ -628,10 +632,15 @@ public class Player extends CapsuleObstacle {
 
         // Don't want to be moving. Damp out player motion
         if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache,getPosition(),true);
+            setVX(0);
+            if (moveState == animationState.walking) {
+                setFilmStrip(normalStrip);
+            }
         } else {
             setVX(Math.signum(getMovement())*getMaxSpeed());
+            if (moveState == animationState.walking) {
+                setFilmStrip(walkingStrip);
+            }
         }
 
         // Jump!
@@ -681,7 +690,7 @@ public class Player extends CapsuleObstacle {
                 filmStrip.nextFrame();
             }
         }else if(moveState == animationState.jumpRising){
-            if(timeCounter >= 0.2) {
+            if(timeCounter >= 0.1) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
@@ -692,7 +701,7 @@ public class Player extends CapsuleObstacle {
         }else if(moveState == animationState.jumpHanging){
             // nothing here
         }else if(moveState == animationState.jumpLanding || moveState == animationState.throwing){
-            if(timeCounter >= 0.2) {
+            if(timeCounter >= 0.1) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){

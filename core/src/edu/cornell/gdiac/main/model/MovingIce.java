@@ -1,7 +1,5 @@
 package edu.cornell.gdiac.main.model;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -12,7 +10,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.main.obstacle.BoxObstacle;
 import edu.cornell.gdiac.main.obstacle.ComplexObstacle;
 import edu.cornell.gdiac.main.obstacle.WheelObstacle;
-import edu.cornell.gdiac.main.view.GameCanvas;
 
 import java.util.LinkedList;
 
@@ -28,7 +25,7 @@ public class MovingIce extends ComplexObstacle {
     private float initialX;
     private int direction =1;
 
-    private LinkedList<Monster> monsters;
+    private LinkedList<Sealion> sealions;
     private Player bear;
 
     /**
@@ -71,7 +68,7 @@ public class MovingIce extends ComplexObstacle {
         bodies.add(pin);
         this.data=data;
 
-        monsters  = new LinkedList<>();
+        sealions = new LinkedList<>();
         bear = null;
 
     }
@@ -128,9 +125,9 @@ public class MovingIce extends ComplexObstacle {
         }
 
         pin.setPosition(pin.getX() - direction*speed, pin.getY());
-        if(monsters.size()>0){
-            for(int i= 0 ; i<monsters.size();i++) {
-                monsters.get(i).setMovingIceoffset(direction*speed);
+        if(sealions.size()>0){
+            for(int i = 0; i< sealions.size(); i++) {
+                sealions.get(i).setMovingIceoffset(direction*speed);
             }
 
         }
@@ -139,13 +136,13 @@ public class MovingIce extends ComplexObstacle {
 
     }
 
-    public void addMonster(Monster m){
-        if (!monsters.contains(m))
-            monsters.add(m);
+    public void addMonster(Sealion m){
+        if (!sealions.contains(m))
+            sealions.add(m);
     }
 
-    public void removeMonster(Monster m ){
-        monsters.remove(m);
+    public void removeMonster(Sealion m ){
+        sealions.remove(m);
     }
 
     public void addPlayer(Player p){

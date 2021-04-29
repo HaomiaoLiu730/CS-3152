@@ -7,7 +7,7 @@ CONTROLS:
 A/LEFT KEY: move left  
 D/RIGHT KEY: move right  
 W/UP KEY: jump  
-F KEY: punch (the monster)  
+F KEY: punch (the seal)  
 MOUSE CLICK: first click to determine the direction of the throw, then hold to determine the power  
 SPACE BAR: cancel the throw  
 *Collect notes by throwing penguins to them to pass the level  
