@@ -193,6 +193,9 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         Json json = new Json();
         FileHandle file = Gdx.files.local("sampleLevel.json");
         JsonValue value = new JsonReader().parse(file);
+        if(value == null){
+            return;
+        }
         parseSnow(value);
         parseGoal(value);
         parseIcicles(value);

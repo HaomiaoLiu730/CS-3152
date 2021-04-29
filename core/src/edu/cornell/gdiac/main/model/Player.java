@@ -351,14 +351,18 @@ public class Player extends CapsuleObstacle {
     public void calculateTrajectory(float force, float xDir, float yDir){
         float dt =  0.01643628f;
         directionCache.set(xDir, yDir).nor();
-        float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
-        float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
-        for(int i = 0; i<10; i+=2){
-            float t = i * 0.05f;
-            float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
-            float y = (getY()+2 + vy * t + 0.5f * (-26f) * t * t) * 720f/ 18f;
-            trajectories[i] = x;
-            trajectories[i+1] = y;
+        try{
+            float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
+            float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
+            for(int i = 0; i<10; i+=2){
+                float t = i * 0.05f;
+                float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
+                float y = (getY()+2 + vy * t + 0.5f * (-26f) * t * t) * 720f/ 18f;
+                trajectories[i] = x;
+                trajectories[i+1] = y;
+            }
+        }catch (Exception e){
+            return;
         }
     }
     public void setThrowing(boolean touchUp,Sound throwing){
@@ -718,7 +722,7 @@ public class Player extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        if(Gdx.input.isTouched()&& throwingCount == 0){
+        if(Gdx.input.isTouched()&& throwingCount == 0 && numPenguins > 0){
             for(int i = 0; i<trajectories.length; i+=2){
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
