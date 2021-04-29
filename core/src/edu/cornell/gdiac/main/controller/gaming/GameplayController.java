@@ -753,6 +753,15 @@ public class GameplayController extends WorldController implements ContactListen
             if (bd1 == avatar && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
+//            if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") && bd2 instanceof Penguin) {
+//                bd1.setFixedRotation(true);
+//                System.out.println("reset");
+//            }
+//            if (bd1 instanceof Penguin && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
+//                bd2.setFixedRotation(true);
+//                System.out.println("reset2");
+//
+//            }
 
             // Check for win condition
             if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||

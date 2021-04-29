@@ -164,8 +164,12 @@ public class CollisionController {
                 float rightX = water.getX()+((Water) water).getWidth()/2;
                 float downY = water.getY()-((Water) water).getHeight()/2;
                 float upY = water.getY()+((Water) water).getHeight()/2;
-                if (p.getX() >= leftX && p.getX() <= rightX && p.getY() >= downY && p.getY() <= upY && p.isThrowOut()) {
+                if (p.getX() >= leftX && p.getX() <= rightX && p.getY() >= downY && p.getY() <= upY ) {
                     p.setBodyType(BodyDef.BodyType.StaticBody);
+                    p.setActive(false);
+                }
+                else{
+                    p.setActive(true);
                 }
 
             }
