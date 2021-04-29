@@ -234,13 +234,13 @@ public class Player extends CapsuleObstacle {
                         if(p.getX() - getX() < -PENGUIN_WIDTH){
                             fixPenguin = false;
                             p.setSensor(false);
-                            p.setBodyType(BodyDef.BodyType.DynamicBody);
+//                            p.setBodyType(BodyDef.BodyType.DynamicBody);
                         }
                     }else{
                         if(p.getX() - getX() > PENGUIN_WIDTH){
                             fixPenguin = false;
                             p.setSensor(false);
-                            p.setBodyType(BodyDef.BodyType.DynamicBody);
+//                            p.setBodyType(BodyDef.BodyType.DynamicBody);
                         }
                     }
                 }
@@ -333,6 +333,7 @@ public class Player extends CapsuleObstacle {
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     p.setY(getY()-1);
+                    p.setBodyType(BodyDef.BodyType.StaticBody);
                     numPenguins += 1;
                     if (numPenguins > 1) {
                         for (Penguin pen : penguins) {

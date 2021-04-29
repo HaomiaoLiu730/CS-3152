@@ -250,7 +250,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             float[] pos = value.get("notes").get("pos").get(i).asFloatArray();
             objects.add(new GenericComponent(noteLeftStrip, Component.Note,
                     pos[0]*40f-noteLeftStrip.getRegionWidth()/2f,
-                    pos[1]*40f-noteLeftStrip.getRegionHeight()/2f));
+                    pos[1]*40f-noteLeftStrip.getRegionHeight()));
         }
     }
 
