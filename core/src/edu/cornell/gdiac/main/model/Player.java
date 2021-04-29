@@ -388,7 +388,7 @@ public class Player extends CapsuleObstacle {
         }else if(touchUp && throwingCount == 0){
             if(numPenguins > 0){
                 for(Penguin p: penguins){
-                    if(p.getIndex() == numPenguins-1){
+                    if(p.getIndex() == numPenguins-1 && !p.isThrowOut()){
                         p.setBodyType(BodyDef.BodyType.DynamicBody);
                         p.setSensor(false);
                         setFilmStrip(throwingStrip);
@@ -728,6 +728,7 @@ public class Player extends CapsuleObstacle {
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
             }
         }
+        //canvas.draw();
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 

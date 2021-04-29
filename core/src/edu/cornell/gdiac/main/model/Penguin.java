@@ -33,6 +33,7 @@ public class Penguin extends CapsuleObstacle {
     private final float SENSOR_HEIGHT;
     /** Identifier to allow us to track the sensor in ContactListener */
     private final String SENSOR_NAME;
+    private boolean soundPlaying;
 
 
     private int index;
@@ -111,6 +112,15 @@ public class Penguin extends CapsuleObstacle {
 
     public void setThrownOut(boolean value){
         isThrownOut = value;
+        soundPlaying = value;
+    }
+
+    public void setSoundPlaying(boolean value){
+        soundPlaying = value;
+    }
+
+    public boolean getSoundPlaying(){
+        return soundPlaying;
     }
 
     public boolean isThrowOut(){
@@ -222,6 +232,7 @@ public class Penguin extends CapsuleObstacle {
         this.index = index;
         setName("penguin"+index);
         this.data=data;
+        soundPlaying = false;
     }
 
     /**
@@ -314,16 +325,9 @@ public class Penguin extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        if(index != 0 && !isThrowOut()){
-            return;
-        }
-        float effect = faceRight ? 1.0f : -1.0f;
         if(isThrownOut){
             canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
-        }else{
-            canvas.draw(overlapStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,0,effect,1.0f);
         }
-
     }
 
     /**

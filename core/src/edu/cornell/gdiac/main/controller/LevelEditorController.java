@@ -211,7 +211,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         for(int i = 0; i<value.get("movingIce").get("pos").size; i++){
             float[] pos = value.get("movingIce").get("pos").get(i).asFloatArray();
             float[] layout = value.get("movingIce").get("layout").get(i).asFloatArray();
-            objects.add(new GenericComponent(iceStrip.copy(),Component.MovingIce,pos[0]*40f, pos[1]*40f));
+            objects.add(new GenericComponent(iceStrip.copy(),Component.MovingIce,pos[0]*40f - layout[0]/2f, pos[1]*40f - layout[1]));
         }
     }
 
@@ -219,7 +219,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         for(int i = 0; i<value.get("floatingIce").get("pos").size; i++){
             float[] pos = value.get("floatingIce").get("pos").get(i).asFloatArray();
             float[] layout = value.get("floatingIce").get("layout").get(i).asFloatArray();
-            objects.add(new GenericComponent(iceStrip.copy(),Component.FloatingIce,pos[0]*40f, pos[1]*40f));
+            objects.add(new GenericComponent(iceStrip.copy(),Component.FloatingIce,pos[0]*40f - layout[0]/2f, pos[1]*40f - layout[1]));
         }
     }
 
@@ -227,7 +227,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         for(int i = 0; i<value.get("ice").get("pos").size; i++){
             float[] pos = value.get("ice").get("pos").get(i).asFloatArray();
             float[] layout = value.get("ice").get("layout").get(i).asFloatArray();
-            objects.add(new GenericComponent(iceStrip.copy(),Component.Ice,pos[0]*40f, pos[1]*40f));
+            objects.add(new GenericComponent(iceStrip.copy(),Component.Ice,pos[0]*40f - layout[0]/2f, pos[1]*40f - layout[1]));
         }
     }
 
@@ -239,7 +239,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             float end = pos[0]+layout[0]/2f;
             float height = layout[1];
             for(int j = (int) start; j < end; j++){
-                heightBottom[j] = (int) height;
+                heightBottom[j] = (int) height-1;
                 tilesBottom[j] = Tile.Water;
             }
         }
@@ -257,8 +257,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     public void parseEnemies(JsonValue value){
         for(int i = 0; i<value.get("enemy").get("pos").size; i++){
             float[] pos = value.get("enemy").get("pos").get(i).asFloatArray();
-            float[] range = value.get("enemy").get("range").get(i).asFloatArray();
-            boolean is_hor = value.get("enemy").get("is_hor").asBoolean();
+            boolean is_hor = value.get("enemy").get("is_hor").asBooleanArray()[i];
 
             objects.add(new GenericComponent(is_hor ? monsterStrip : monsterVerStrip,
                     is_hor ? Component.MonsterHori: Component.MonsterVer, pos[0]*40f, pos[1]*40f));
@@ -280,8 +279,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
 
     public void parseGoal(JsonValue value){
         float[] goalPos = value.get("goal").get("pos").asFloatArray();
-
-        objects.add(new GenericComponent(exitStrip, Component.Exit, goalPos[0]*40f, goalPos[1]*40f));
+        objects.add(new GenericComponent(exitStrip, Component.Exit, goalPos[0]*40f-exitStrip.getRegionWidth()/2f, goalPos[1]*40f-exitStrip.getRegionHeight()/2f));
     }
 
     public void parseSnow(JsonValue value){
@@ -292,7 +290,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
             if(block[1] == 0){
                 for(int j = 2; j < block.length-2; j+=2){
                     int x = (int) block[j];
-                    int y = (int) block[j+1];
+                    int y = (int) block[j+1]-1;
                     heightBottom[x] = y;
                     tilesBottom[x] = Tile.Snow;
                 }
