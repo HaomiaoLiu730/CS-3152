@@ -81,10 +81,6 @@ public class Player extends CapsuleObstacle {
     private FilmStrip penguinStrip;
     private FilmStrip penguinOverlapStrip;
 
-
-
-
-
     /** The current horizontal movement of the character */
     private float movement;
     /** Which direction is the character facing */
