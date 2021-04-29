@@ -554,6 +554,7 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController.processCollision(monsters, iciclesList, objects);
         collisionController.processCollision(iciclesList, icicles_hit, staticBodies, objects,hitIcicle);
         collisionController.processCollision(waterList, avatar);
+        collisionController.processCollision(waterList, avatar.getPenguins());
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
                 objects, avatar.getNumPenguins(), avatar, collectingNote, penguins);
