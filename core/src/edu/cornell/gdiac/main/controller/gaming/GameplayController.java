@@ -415,6 +415,8 @@ public class GameplayController extends WorldController implements ContactListen
             water.setFilmStrip(waterStrip, wavesStrip);
             water.setDrawScale(scale);
             waterList.add(water);
+//            water.setBodyType(BodyDef.BodyType.StaticBody);
+//            water.setSensor(true);
             addObject(water);
             water.setActive(false);
             water.setAwake(false);
@@ -747,7 +749,9 @@ public class GameplayController extends WorldController implements ContactListen
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
                     if(p.isThrowOut() && p.getBodyType()== BodyDef.BodyType.DynamicBody){
-                        penguinLanding.play();
+                        if(p.getSoundPlaying())
+                            penguinLanding.play();
+                        p.setSoundPlaying(false);
                     }
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }

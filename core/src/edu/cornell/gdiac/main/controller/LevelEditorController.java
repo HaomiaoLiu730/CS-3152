@@ -186,6 +186,125 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         TEXTURE_COMPONENTS.add(Component.MonsterHori);
         TEXTURE_COMPONENTS.add(Component.MonsterVer);
         POLYGON_COMPONENTS.add(Component.Icicle);
+        readFromJson();
+    }
+
+    public void readFromJson(){
+        Json json = new Json();
+        FileHandle file = Gdx.files.local("sampleLevel.json");
+        JsonValue value = new JsonReader().parse(file);
+        if(value == null){
+            return;
+        }
+        parseSnow(value);
+        parseGoal(value);
+        parseIcicles(value);
+        parseEnemies(value);
+        parseNotes(value);
+        parseWater(value);
+        parseIce(value);
+        parseFloatingIce(value);
+        parseMovingIce(value);
+    }
+
+    public void parseMovingIce(JsonValue value){
+        for(int i = 0; i<value.get("movingIce").get("pos").size; i++){
+            float[] pos = value.get("movingIce").get("pos").get(i).asFloatArray();
+            float[] layout = value.get("movingIce").get("layout").get(i).asFloatArray();
+            objects.add(new GenericComponent(iceStrip.copy(),Component.MovingIce,pos[0]*40f - layout[0]/2f, pos[1]*40f - layout[1]));
+        }
+    }
+
+    public void parseFloatingIce(JsonValue value){
+        for(int i = 0; i<value.get("floatingIce").get("pos").size; i++){
+            float[] pos = value.get("floatingIce").get("pos").get(i).asFloatArray();
+            float[] layout = value.get("floatingIce").get("layout").get(i).asFloatArray();
+            objects.add(new GenericComponent(iceStrip.copy(),Component.FloatingIce,pos[0]*40f - layout[0]/2f, pos[1]*40f - layout[1]));
+        }
+    }
+
+    public void parseIce(JsonValue value){
+        for(int i = 0; i<value.get("ice").get("pos").size; i++){
+            float[] pos = value.get("ice").get("pos").get(i).asFloatArray();
+            float[] layout = value.get("ice").get("layout").get(i).asFloatArray();
+            objects.add(new GenericComponent(iceStrip.copy(),Component.Ice,pos[0]*40f - layout[0]/2f, pos[1]*40f - layout[1]));
+        }
+    }
+
+    public void parseWater(JsonValue value){
+        for(int i = 0; i<value.get("water").get("pos").size; i++){
+            float[] pos = value.get("water").get("pos").get(i).asFloatArray();
+            float[] layout = value.get("water").get("layout").get(i).asFloatArray();
+            float start = pos[0]-layout[0]/2f;
+            float end = pos[0]+layout[0]/2f;
+            float height = layout[1];
+            for(int j = (int) start; j < end; j++){
+                heightBottom[j] = (int) height-1;
+                tilesBottom[j] = Tile.Water;
+            }
+        }
+    }
+
+    public void parseNotes(JsonValue value){
+        for(int i = 0; i<value.get("notes").get("pos").size; i++){
+            float[] pos = value.get("notes").get("pos").get(i).asFloatArray();
+            objects.add(new GenericComponent(noteLeftStrip, Component.Note,
+                    pos[0]*40f-noteLeftStrip.getRegionWidth()/2f,
+                    pos[1]*40f-noteLeftStrip.getRegionHeight()));
+        }
+    }
+
+    public void parseEnemies(JsonValue value){
+        for(int i = 0; i<value.get("enemy").get("pos").size; i++){
+            float[] pos = value.get("enemy").get("pos").get(i).asFloatArray();
+            boolean is_hor = value.get("enemy").get("is_hor").asBooleanArray()[i];
+
+            objects.add(new GenericComponent(is_hor ? monsterStrip : monsterVerStrip,
+                    is_hor ? Component.MonsterHori: Component.MonsterVer, pos[0]*40f, pos[1]*40f));
+        }
+    }
+
+    public void parseIcicles(JsonValue value){
+        short[] triangles = {0,1,2};
+        for(int i = 0; i<value.get("icicles").get("pos").size; i++){
+            float[] pos = value.get("icicles").get("pos").get(i).asFloatArray();
+            float[] layout = value.get("icicles").get("layout").get(i).asFloatArray();
+            for(int j = 0; j < layout.length; j++){
+                layout[j] = layout[j] * 40f;
+            }
+            PolygonRegion icicleRegion = new PolygonRegion(icicleStrip, layout, triangles);
+            objects.add(new GenericComponent(icicleRegion, Component.Icicle, pos[0]*40f, pos[1]*40f));
+        }
+    }
+
+    public void parseGoal(JsonValue value){
+        float[] goalPos = value.get("goal").get("pos").asFloatArray();
+        objects.add(new GenericComponent(exitStrip, Component.Exit, goalPos[0]*40f-exitStrip.getRegionWidth()/2f, goalPos[1]*40f-exitStrip.getRegionHeight()/2f));
+    }
+
+    public void parseSnow(JsonValue value){
+        // parse snow
+        for(int i = 0; i < value.get("defaults").get("snow").size-1; i++){
+            float[] block = value.get("defaults").get("snow").get(i).asFloatArray();
+            // bottom platform
+            if(block[1] == 0){
+                for(int j = 2; j < block.length-2; j+=2){
+                    int x = (int) block[j];
+                    int y = (int) block[j+1]-1;
+                    heightBottom[x] = y;
+                    tilesBottom[x] = Tile.Snow;
+                }
+            }
+            // top platform
+            else{
+                for(int j = 2; j < block.length-2; j+=2){
+                    int x = (int) block[j];
+                    int y = (int) block[j+1];
+                    heightTop[x] = 18-y;
+                    tilesTop[x] = Tile.Snow;
+                }
+            }
+        }
     }
 
     @Override
@@ -869,6 +988,16 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         public GenericComponent(PolygonRegion polygonRegion, Component component){
             this.polygonRegion = polygonRegion;
             this.position = new Vector2(target_x, TARGET_Y);
+            this.component = component;
+        }
+        public GenericComponent(FilmStrip filmStrip, Component component, float x, float y){
+            this.filmStrip = filmStrip;
+            this.position = new Vector2(x , y);
+            this.component = component;
+        }
+        public GenericComponent(PolygonRegion polygonRegion, Component component, float x, float y){
+            this.polygonRegion = polygonRegion;
+            this.position = new Vector2(x, y);
             this.component = component;
         }
     }
