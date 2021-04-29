@@ -11,12 +11,15 @@ package edu.cornell.gdiac.main.model;
  * LibGDX version, 2/6/2015
  */
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -77,10 +80,7 @@ public class Player extends CapsuleObstacle {
     private FilmStrip penguinRollingStrip;
     private FilmStrip penguinStrip;
     private FilmStrip penguinOverlapStrip;
-
-
-
-
+    private FilmStrip normalStrip;
 
     /** The current horizontal movement of the character */
     private float movement;
@@ -181,12 +181,19 @@ public class Player extends CapsuleObstacle {
     public void setThrowingStrip(FilmStrip strip){
         throwingStrip = strip;
     }
+
+    public void setNormalStrip(FilmStrip strip){
+        normalStrip = strip;
+    }
+
     public void setPenguinStrip(FilmStrip strip){
         this.penguinStrip=strip;
     }
+
     public void setPenguinOverlapStrip(FilmStrip strip){
         this.penguinOverlapStrip=strip;
     }
+
     public void setPenguinWalkingStrip(FilmStrip strip){
         this.penguinWalkingStrip = strip;
     }
@@ -235,13 +242,13 @@ public class Player extends CapsuleObstacle {
                         if(p.getX() - getX() < -PENGUIN_WIDTH){
                             fixPenguin = false;
                             p.setSensor(false);
-                            p.setBodyType(BodyDef.BodyType.DynamicBody);
+//                            p.setBodyType(BodyDef.BodyType.DynamicBody);
                         }
                     }else{
                         if(p.getX() - getX() > PENGUIN_WIDTH){
                             fixPenguin = false;
                             p.setSensor(false);
-                            p.setBodyType(BodyDef.BodyType.DynamicBody);
+//                            p.setBodyType(BodyDef.BodyType.DynamicBody);
                         }
                     }
                 }
@@ -328,68 +335,57 @@ public class Player extends CapsuleObstacle {
      *
      */
     public void pickUpPenguins() {
-  
             for(Penguin p: penguins){
                 if(position.set(getPosition()).sub(p.getPosition()).len() < 1.5f && p.isThrowOut()){
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     p.setY(getY()-1);
+                    p.setBodyType(BodyDef.BodyType.StaticBody);
                     numPenguins += 1;
                     if (numPenguins > 1) {
                         for (Penguin pen : penguins) {
                             pen.setOverlapFilmStrip(penguinOverlapStrip);
-    
                         }
                     } else {
                         for (Penguin pen : penguins) {
                             pen.setOverlapFilmStrip(penguinStrip);
-    
-    
                         }
                     }
                 }
             }
-
         }
 
 
     public void calculateTrajectory(float force, float xDir, float yDir){
         float dt =  0.01643628f;
         directionCache.set(xDir, yDir).nor();
-        float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
-        float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
-        for(int i = 0; i<10; i+=2){
-            float t = i * 0.05f;
-            float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
-            float y = (getY()+2 + vy * t + 0.5f * (-26f) * t * t) * 720f/ 18f;
-            trajectories[i] = x;
-            trajectories[i+1] = y;
+        try{
+            float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
+            float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
+            for(int i = 0; i<10; i+=2){
+                float t = i * 0.05f;
+                float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
+                float y = (getY()+2 + vy * t + 0.5f * (-26f) * t * t) * 720f/ 18f;
+                trajectories[i] = x;
+                trajectories[i+1] = y;
+            }
+        }catch (Exception e){
+            return;
         }
     }
-
-    public void setThrowing(float clickX, float clickY, boolean touchUp, boolean isTouching, boolean isInterrupted, Sound throwing) {
-        if(!isInterrupted && prevIsInterrupted){
-            isThrowing = false;
-            throwingCount = (throwingCount == 1 && isTouching) ? -1 : 0;
-            prevIsInterrupted = isInterrupted;
-            throwingForce = 0f;
-            return;
+    public void setThrowing(boolean touchUp,Sound throwing){
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+            throwingCount = -1;
         }
-        if(throwingCount == -1 && touchUp){
+        if(touchUp && throwingCount == -1){
             throwingCount = 0;
-            prevIsInterrupted = isInterrupted;
-            return;
-        }
-        prevIsInterrupted = isInterrupted;
-        isThrowing = isTouching;
-        // setting throwing direction
-        if(touchUp && throwingCount == 0 && !isInterrupted){
-            xDir = ((clickX+cameraX-640))/1280f*32;
-            yDir = (720-clickY)/720f*18;
-            throwingCount = 1;
-        }else if(throwingCount == 1 && isTouching){
-            // setting force
+            throwingForce = 0f;
+            xDir = 0f;
+            yDir = 0f;
+        }else if(Gdx.input.isTouched() && throwingCount == 0){
+            xDir = ((Gdx.input.getX() + cameraX-640))/1280f*32;
+            yDir = (720-Gdx.input.getY())/720f*18;
             throwingForce += incr ? 5f : -5f;
             throwingForce = Math.min(throwingForce, MAX_THROWING_FORCE);
             if(throwingForce >= MAX_THROWING_FORCE){
@@ -398,10 +394,10 @@ public class Player extends CapsuleObstacle {
                 incr = true;
             }
             calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
-        }else if(throwingCount == 1 && !isTouching && throwingForce != 0f){
+        }else if(touchUp && throwingCount == 0){
             if(numPenguins > 0){
                 for(Penguin p: penguins){
-                    if(p.getIndex() == numPenguins-1){
+                    if(p.getIndex() == numPenguins-1 && !p.isThrowOut()){
                         p.setBodyType(BodyDef.BodyType.DynamicBody);
                         p.setSensor(false);
                         setFilmStrip(throwingStrip);
@@ -430,12 +426,10 @@ public class Player extends CapsuleObstacle {
             }
             if (numPenguins==1){
                 for (Penguin pen: penguins) {
-                   pen.setOverlapFilmStrip(penguinStrip);
+                    pen.setOverlapFilmStrip(penguinStrip);
                 }
             }
-
         }
-
     }
 
     /**
@@ -628,10 +622,15 @@ public class Player extends CapsuleObstacle {
 
         // Don't want to be moving. Damp out player motion
         if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache,getPosition(),true);
+            setVX(0);
+            if (moveState == animationState.walking && !isPunching) {
+                setFilmStrip(normalStrip);
+            }
         } else {
             setVX(Math.signum(getMovement())*getMaxSpeed());
+            if (moveState == animationState.walking) {
+                setFilmStrip(walkingStrip);
+            }
         }
 
         // Jump!
@@ -681,7 +680,7 @@ public class Player extends CapsuleObstacle {
                 filmStrip.nextFrame();
             }
         }else if(moveState == animationState.jumpRising){
-            if(timeCounter >= 0.2) {
+            if(timeCounter >= 0.1) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
@@ -692,7 +691,7 @@ public class Player extends CapsuleObstacle {
         }else if(moveState == animationState.jumpHanging){
             // nothing here
         }else if(moveState == animationState.jumpLanding || moveState == animationState.throwing){
-            if(timeCounter >= 0.2) {
+            if(timeCounter >= 0.1) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
@@ -737,23 +736,13 @@ public class Player extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        float throwingAngle = (float)(Math.asin((yDir-getY())/(positionCache.set((xDir-getX()), (yDir-getY()))).len()));
-        if(xDir-getX()<0){
-            throwingAngle = (float)(Math.PI/1f) - throwingAngle;
-        }
-        if(throwingAngle != 0 && throwingCount == 1){
-            canvas.draw(arrowTexture, Color.BLACK, arrowTexture.getWidth()/2f, arrowTexture.getHeight()/2f, getX()*drawScale.x, getY()*drawScale.y+40, throwingAngle, 1f, 1f);
-        }
-        if(throwingCount == 1  && isThrowing){
-            canvas.draw(energyBar, Color.WHITE, energyBar.getWidth()/2f, 0, getX()*drawScale.x-30, getY()*drawScale.y, 0,1f, throwingForce/MAX_THROWING_FORCE);
-            canvas.draw(energyBarOutline, getX()*drawScale.x-40, getY()*drawScale.y);
+        if(Gdx.input.isTouched()&& throwingCount == 0 && numPenguins > 0){
             for(int i = 0; i<trajectories.length; i+=2){
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
-
             }
         }
-
+        //canvas.draw();
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 

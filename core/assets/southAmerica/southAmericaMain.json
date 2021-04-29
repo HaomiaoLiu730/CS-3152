@@ -1,7 +1,7 @@
 {
   "textures": {
     "background": {
-      "file": "images/northAmerica/Background2.png",
+      "file": "images/africa/background1.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }
@@ -14,7 +14,6 @@
     }
   },
   "jsons": {
-    "level1": "NorthAmerica/level1.json",
-    "level2": "NorthAmerica/level2.json"
+    "level1": "southAmerica/level1.json"
   }
 }

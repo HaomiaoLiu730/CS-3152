@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
@@ -18,8 +17,10 @@ import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.main.controller.WorldController;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
+//import javax.xml.soap.Text;
 import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
@@ -32,8 +33,10 @@ public class GameplayController extends WorldController implements ContactListen
     private AssetDirectory internal;
     /** Reference to the character avatar */
     private Player avatar;
-    /** Reference to the monster */
-    private ArrayList<Monster> monsters = new ArrayList<>();
+    /** Reference to the seal */
+    private ArrayList<Seal> seals = new ArrayList<>();
+    /** Reference to the sealion */
+    private ArrayList<Sealion> sealions = new ArrayList<>();
     /** Reference to the icicles */
     private ArrayList<PolygonObstacle> iciclesList;
     /** Reference to the water */
@@ -207,7 +210,8 @@ public class GameplayController extends WorldController implements ContactListen
             obj.deactivatePhysics(world);
         }
         objects.clear();
-        monsters.clear();
+        seals.clear();
+        sealions.clear();
         addQueue.clear();
         world.dispose();
 
@@ -334,6 +338,7 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setJumpRisingStrip(jumpRisingStrip);
         avatar.setWalkingStrip(avatarStrip);
         avatar.setThrowingStrip(throwingStrip);
+        avatar.setNormalStrip(avatarNormalStrip);
         avatar.setPenguinWalkingStrip((penguinWalkingStrip));
         avatar.setPenguinRollingStrip(penguinRollingStrip);
         avatar.setPenguinStrip(penguinStrip);
@@ -373,13 +378,23 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue enemyRange = enemy.get("range");
         JsonValue enemyDir = enemy.get("is_hor");
         for (int i=0; i < enemyPos.size; i++) { //multiple monsters
-            Monster monster = new Monster(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
-                    monsterStrip.getRegionWidth() / scale.x, monsterStrip.getRegionHeight() / scale.y,
-                    "monster", enemyRange.getInt(i), enemyDir.getBoolean(i));
-            monster.setFilmStrip(monsterStrip);
-            monster.setDrawScale(scale);
-            monsters.add(monster);
-            addObject(monster);
+            if (enemyDir.getBoolean(i)) {
+                Sealion sealion = new Sealion(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
+                        sealionStrip.getRegionWidth() / scale.x, sealionStrip.getRegionHeight() / scale.y,
+                        "sealion", enemyRange.getInt(i));
+                sealion.setFilmStrip(sealionStrip);
+                sealion.setDrawScale(scale);
+                sealions.add(sealion);
+                addObject(sealion);
+            } else {
+                Seal seal = new Seal(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
+                        sealStrip.getRegionWidth() / scale.x, sealStrip.getRegionHeight() / scale.y,
+                        "monster", enemyRange.getInt(i));
+                seal.setFilmStrip(sealStrip);
+                seal.setDrawScale(scale);
+                seals.add(seal);
+                addObject(seal);
+            }
         }
 
         JsonValue notes = constants.get("notes");
@@ -401,6 +416,8 @@ public class GameplayController extends WorldController implements ContactListen
             water.setFilmStrip(waterStrip, wavesStrip);
             water.setDrawScale(scale);
             waterList.add(water);
+//            water.setBodyType(BodyDef.BodyType.StaticBody);
+//            water.setSensor(true);
             addObject(water);
             water.setActive(false);
             water.setAwake(false);
@@ -412,10 +429,11 @@ public class GameplayController extends WorldController implements ContactListen
             int w = ices.get("layout").get(i).getInt(0);
             int h = ices.get("layout").get(i).getInt(1);
             ice = new Ice(ices, i, w/scale.x, h/scale.y);
-            iceTextureRegion.setRegionWidth(w);
-            iceTextureRegion.setRegionHeight(h);
+            TextureRegion temp = new TextureRegion(iceTextureRegion);
+            temp.setRegionWidth(w);
+            temp.setRegionHeight(h);
             ice.setDrawScale(scale);
-            ice.setTexture(iceTextureRegion);
+            ice.setTexture(temp);
             ice.setRestitution(ices.getFloat("restitution"));
             addObject(ice);
         }
@@ -427,10 +445,11 @@ public class GameplayController extends WorldController implements ContactListen
         int w = fices.get("layout").get(i).getInt(0);
         int h = fices.get("layout").get(i).getInt(1);
             fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
-            ficeTextureRegion.setRegionWidth(w);
-            ficeTextureRegion.setRegionHeight(h);
+            TextureRegion temp = new TextureRegion(ficeTextureRegion);
+            temp.setRegionWidth(w);
+            temp.setRegionHeight(h);
             fIce.setDrawScale(scale);
-            fIce.setTexture(ficeTextureRegion);
+            fIce.setTexture(temp);
             fIce.setRestitution(fices.getFloat("restitution"));
             addObject(fIce);
         }
@@ -442,10 +461,12 @@ public class GameplayController extends WorldController implements ContactListen
             int w = mices.get("layout").get(i).getInt(0);
             int h = mices.get("layout").get(i).getInt(1);
             mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
-            miceTextureRegion.setRegionWidth(w);
-            miceTextureRegion.setRegionHeight(h);
+            TextureRegion temp = new TextureRegion(miceTextureRegion);
+            temp.setRegionWidth(w);
+            temp.setRegionHeight(h);
             mIce.setDrawScale(scale);
-            mIce.setTexture(miceTextureRegion);
+            mIce.setTexture(temp);
+
             mIce.setRestitution(mices.getFloat("restitution"));
             addObject(mIce);
         }
@@ -553,19 +574,19 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Monster moving and attacking
-        collisionController.processCollision(monsters, avatar, objects);
-        if (collisionController.processCollision(monsters, attackStrip, avatar.getPenguins())) {
+        collisionController.processCollision(seals, sealions, avatar, objects);
+        if (collisionController.processCollision(seals, sealions, sealionStrip, avatar.getPenguins())) {
             setFailure(true);
             setComplete(true);
         }
-        collisionController.processCollision(monsters, iciclesList, objects);
+        collisionController.processCollision(seals, sealions, iciclesList, objects);
         collisionController.processCollision(iciclesList, icicles_hit, staticBodies, objects,hitIcicle);
         collisionController.processCollision(waterList, avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
                 objects, avatar.getNumPenguins(), avatar, collectingNote, penguinOverlapStrip, penguinStrip);
 
-            }
+    }
 
 
 
@@ -582,7 +603,9 @@ public class GameplayController extends WorldController implements ContactListen
 
     public void updateCamera(){
         // camera
-        if(avatar.getX()>16){
+        // leave this for ending  avatar.getX() < constants.get("goal").get("pos").getFloat(0)
+        float maxX = constants.get("goal").get("pos").getFloat(0) < 16 ? 320 : constants.get("goal").get("pos").getFloat(0);
+        if(avatar.getX()>16 && avatar.getX() < maxX){
             if(avatar.getX()/32*1280 > cameraX){
                 canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
                 canvas.getCamera().update();
@@ -607,10 +630,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.setFilmStrip(jumpRisingStrip);
             jumping.play();
         }
-        avatar.setThrowing(InputController.getInstance().getClickX(),
-                InputController.getInstance().getClickY(),
-                InputController.getInstance().touchUp() && !resetClick && canThrow,
-                InputController.getInstance().isTouching(), InputController.getInstance().didSecondary(),throwingP);
+        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP);
         canThrow = true;
         avatar.pickUpPenguins();
     }
@@ -732,7 +752,9 @@ public class GameplayController extends WorldController implements ContactListen
                         (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
                     p.setGrounded(true);
                     if(p.isThrowOut() && p.getBodyType()== BodyDef.BodyType.DynamicBody){
-                        penguinLanding.play();
+                        if(p.getSoundPlaying())
+                            penguinLanding.play();
+                        p.setSoundPlaying(false);
                     }
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
@@ -802,8 +824,8 @@ public class GameplayController extends WorldController implements ContactListen
             //contact for moving ice bar
             if(bd1.getName() == "movingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-                if(bd2.getName().startsWith("monster") ){
-                    Monster m = (Monster) bd2;
+                if(bd2.getName().startsWith("sealion") ){
+                    Sealion m = (Sealion) bd2;
                     ((MovingIce) master).addMonster(m);
                 }
                 else if (bd2 instanceof Player){
@@ -815,8 +837,8 @@ public class GameplayController extends WorldController implements ContactListen
 
             if(bd2.getName() == "movingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-                if(bd1.getName().startsWith("monster") ){
-                    Monster m = (Monster) bd1;
+                if(bd1.getName().startsWith("sealion") ){
+                    Sealion m = (Sealion) bd1;
                     ((MovingIce) master).addMonster(m);
                 }
                 else if (bd1 instanceof Player){
@@ -883,7 +905,7 @@ public class GameplayController extends WorldController implements ContactListen
         if(bd1.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
             if(bd2.getName().startsWith("monster") ){
-                Monster m = (Monster) bd2;
+                Sealion m = (Sealion) bd2;
                 ((MovingIce) master).removeMonster(m);
             }
             else if (bd2 instanceof Player){
@@ -895,7 +917,7 @@ public class GameplayController extends WorldController implements ContactListen
         if(bd2.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
             if(bd1.getName().startsWith("monster") ){
-                Monster m = (Monster) bd1;
+                Sealion m = (Sealion) bd1;
                 ((MovingIce) master).removeMonster(m);
             }
             else if (bd1 instanceof Player){

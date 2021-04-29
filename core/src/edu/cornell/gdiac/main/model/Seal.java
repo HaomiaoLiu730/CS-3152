@@ -11,7 +11,7 @@ import edu.cornell.gdiac.main.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 
-public class Monster extends CapsuleObstacle {
+public class Seal extends CapsuleObstacle {
     private final JsonValue data;
 
     // Physics constants
@@ -34,8 +34,6 @@ public class Monster extends CapsuleObstacle {
 
     /** Whether our feet are on the ground */
     private boolean isGrounded;
-    /** Whether the monster moves horizontally */
-    private boolean isHorizontal;
     /** The range of movements */
     private float moveRange;
     /** Which direction is the monster facing */
@@ -139,7 +137,7 @@ public class Monster extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Monster(JsonValue data, float x, float y, float width, float height, String name, float range, boolean isHor) {
+    public Seal(JsonValue data, float x, float y, float width, float height, String name, float range) {
         super(x,y,width*data.getFloat("hshrink"),height*data.getFloat("vshrink"));
         MONSTER_DENSITY= data.getFloat("density");
         MONSTER_FORCE=data.getFloat("force");
@@ -153,15 +151,12 @@ public class Monster extends CapsuleObstacle {
         setFriction(MONSTER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setRestitution(data.getFloat("restitution"));
         setFixedRotation(true);
-        if (!isHor) {
-            setAngle((float) Math.PI/2);
-        }
+        setAngle((float) Math.PI/2);
 
         // Gameplay attributes
         isGrounded = false;
         faceRight = -1;
         moveRange = range;
-        isHorizontal = isHor;
         setName(name);
     }
 
@@ -206,22 +201,12 @@ public class Monster extends CapsuleObstacle {
             return;
         }
 
-        if (isHorizontal) {
-            if (Math.abs(forceCache.x) >= Math.abs(faceRight*moveRange)) {
-                faceRight = -1*faceRight;
-                forceCache.set(faceRight*10,0);
-            } else {
-                float formerX = forceCache.x;
-                forceCache.set(formerX+faceRight*1f,0);
-            }
+        if (Math.abs(forceCache.y) >= Math.abs(faceRight*moveRange)) {
+            faceRight = -1*faceRight;
+            forceCache.set(0,faceRight*10);
         } else {
-            if (Math.abs(forceCache.y) >= Math.abs(faceRight*moveRange)) {
-                faceRight = -1*faceRight;
-                forceCache.set(0,faceRight*10);
-            } else {
-                float formerY = forceCache.y;
-                forceCache.set(0,formerY+faceRight*1f);
-            }
+            float formerY = forceCache.y;
+            forceCache.set(0,formerY+faceRight*1f);
         }
         body.applyForce(forceCache,getPosition(),true);
     }
@@ -263,10 +248,6 @@ public class Monster extends CapsuleObstacle {
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
         canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
-    }
-
-    public void setMovingIceoffset(float x){
-        setPosition(getX()-x,getY());
     }
 }
 
