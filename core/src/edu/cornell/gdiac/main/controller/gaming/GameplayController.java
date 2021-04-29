@@ -669,14 +669,14 @@ public class GameplayController extends WorldController implements ContactListen
         // Final message
         if (complete && !failed) {
             canvas.begin(); // DO NOT SCALE
-            winning.play();
+            winning.play(0.1f,1,0);
             gameFont.setColor(Color.WHITE);
             canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         } else if (failed && !resetClick) {
             canvas.begin(); // DO NOT SCALE
-            losing.play();
+            losing.play(0.1f,1,0);
             gameFont.setColor(Color.WHITE);
             canvas.drawTextCentered("FAILURE!", gameFont, 0.0f);
             gameFont.setColor(Color.BLACK);
@@ -719,7 +719,9 @@ public class GameplayController extends WorldController implements ContactListen
                 if(avatar.moveState == Player.animationState.jumpHanging){
                     avatar.moveState = Player.animationState.jumpLanding;
                     avatar.setFilmStrip(jumpLandingStrip);
-                    bearLanding.play();
+                    float relativeX = (avatar.getX()*40-cameraX)/640;
+                    bearLanding.play(1,1,relativeX);
+                    //bearLanding.play();
                 }
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
