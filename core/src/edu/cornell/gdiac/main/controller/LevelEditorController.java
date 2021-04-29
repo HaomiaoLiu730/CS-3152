@@ -817,7 +817,6 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     }
 
     public void generateObjects(){
-        // TODO
         ArrayList<float[]> notePos = new ArrayList<>();
         ArrayList<float[]> icePos = new ArrayList<>();
         ArrayList<float[]> iceLayout = new ArrayList();
