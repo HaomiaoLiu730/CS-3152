@@ -186,9 +186,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         TEXTURE_COMPONENTS.add(Component.MonsterHori);
         TEXTURE_COMPONENTS.add(Component.MonsterVer);
         POLYGON_COMPONENTS.add(Component.Icicle);
-
     }
-
 
     @Override
     public boolean keyDown(int keycode) {
