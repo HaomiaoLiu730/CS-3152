@@ -363,7 +363,6 @@ public class InputController {
 
         clickX = Gdx.input.getX();
         clickY = Gdx.input.getY();
-
         prevIsTouching = isTouching;
         isTouching = Gdx.input.isTouched();
         if(prevIsTouching && !isTouching){

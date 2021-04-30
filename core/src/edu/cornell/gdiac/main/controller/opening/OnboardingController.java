@@ -96,8 +96,10 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
 
     public void update(float delta) {
         inputController.readInput();
-        if(inputController.didPressSpace()){
-            listener.updateScreen(this, 0);
+        if(Math.abs(Gdx.input.getX() - 660) <= 75 && Math.abs(720 - Gdx.input.getY() - 335) <= 20){
+            if (Gdx.input.isTouched()) {
+                listener.updateScreen(this, 0);
+        }
         }
         if(inputController.didPressE()){
             listener.updateScreen(this, 1);
@@ -126,8 +128,8 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
             canvas.draw(roundPenguin,Color.WHITE,roundPenguin.getWidth()/2f,roundPenguin.getHeight()/2f, penguinX, penguinY, pengiunAngle,1f,1f);
         }else{
             canvas.drawOverlay(front, true);
-            canvas.drawText(letterFont, "Press Space to Start", 485, 250);
-            canvas.drawText(letterFont, "Press E to for level editor", 485, 100);
+            canvas.drawText(letterFont, "Play", 640, 425);
+            canvas.drawText(letterFont, "Level Select", 600, 350);
         }
         canvas.end();
     }
