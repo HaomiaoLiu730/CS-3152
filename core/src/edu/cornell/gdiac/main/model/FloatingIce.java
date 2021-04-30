@@ -21,6 +21,9 @@ public class FloatingIce extends ComplexObstacle {
     private float momentum;
     private int index;
     private int coolDownCount;
+    private boolean offsetFlag = false;
+
+    private int direction = 0;
 
     /**
      * Creates a new spinner with the given physics data.
@@ -109,20 +112,39 @@ public class FloatingIce extends ComplexObstacle {
     @Override
     public void update(float delta) {
         super.update(delta);
-        pin.setPosition(pin.getX() - momentum, pin.getY());
-        momentum -= 0.0009;
-        if (Math.abs(momentum) < 0.001) {
+        if(momentum!=0) {
+            pin.setPosition(pin.getX() - momentum, pin.getY());
+            if(momentum >0)
+                momentum -= 0.0009;
+            else
+                momentum += 0.0009;
+            if (Math.abs(momentum) < 0.001) {
+                momentum = 0;
+            }
+        }
+        if (offsetFlag) {
+            float offset = direction * 0.03f;
+            if(momentum != 0)
+                offset = -momentum *5;
+            pin.setPosition(pin.getX() - offset, pin.getY());
             momentum = 0;
+            offsetFlag = false;
         }
     }
 
     public void hitByIcicle(float force){
         if(momentum == 0)
             momentum = force;
+        if(momentum>0) direction = 1;
+        else direction = -1;
     }
 
     public void resetMomentum(){
         momentum = 0;
+    }
+
+    public void offsetX(){
+        offsetFlag = true;
     }
 }
 
