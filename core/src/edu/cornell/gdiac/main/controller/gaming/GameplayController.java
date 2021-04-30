@@ -20,10 +20,7 @@ import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
-<<<<<<< HEAD
-=======
-//import javax.xml.soap.Text;
->>>>>>> main
+
 import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
