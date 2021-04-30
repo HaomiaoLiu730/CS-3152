@@ -223,7 +223,7 @@ public class Penguin extends CapsuleObstacle {
 
         setDensity(PENGUIN_DENSITY);
         setFriction(PENGUIN_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
-        setBodyType(BodyDef.BodyType.StaticBody);
+//        setBodyType(BodyDef.BodyType.StaticBody);
         setFixedRotation(true);
         fixture.filter.groupIndex = -8;
 
