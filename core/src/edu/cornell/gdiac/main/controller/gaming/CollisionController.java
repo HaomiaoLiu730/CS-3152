@@ -3,7 +3,6 @@ package edu.cornell.gdiac.main.controller.gaming;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import edu.cornell.gdiac.audio.SoundBuffer;
 import edu.cornell.gdiac.main.model.*;
 import edu.cornell.gdiac.main.obstacle.Obstacle;
 import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
@@ -35,9 +34,22 @@ public class CollisionController {
     }
 
 
-    public void processCollision(ArrayList<Monster> monsters, Player avatar, PooledList<Obstacle> objects ){
+    public void processCollision(ArrayList<Seal> seals, ArrayList<Sealion> sealions, Player avatar, PooledList<Obstacle> objects ){
         // Monster moving and attacking
-        for (Monster monster: monsters) {
+        for (Seal monster: seals) {
+            if (monster.isActive()) {
+                avatarPos = avatar.getPosition();
+                float dist = avatar.getPosition().dst(monster.getPosition());
+                if (avatar.isPunching()) {
+                    if (dist < 3) {
+                        monster.setActive(false);
+                        monster.setAwake(false);
+                        objects.remove(monster);
+                    }
+                }
+            }
+        }
+        for (Sealion monster: sealions) {
             if (monster.isActive()) {
                 avatarPos = avatar.getPosition();
                 float dist = avatar.getPosition().dst(monster.getPosition());
@@ -52,9 +64,26 @@ public class CollisionController {
         }
     }
 
-    public boolean processCollision(ArrayList<Monster> monsters, FilmStrip attackStrip, List<Penguin> penguins){
+    public boolean processCollision(ArrayList<Seal> seals, ArrayList<Sealion> sealions, FilmStrip attackStrip, List<Penguin> penguins){
         boolean fail = false;
-        for (Monster monster: monsters) {
+        for (Seal monster: seals) {
+            if (monster.isActive()) {
+                boolean moveMon = true;
+                for(Penguin p: penguins){
+                    boolean avatarBetweenX = (p.getPosition().x < avatarPos.x && avatarPos.x < monster.getPosition().x) ||
+                            (p.getPosition().x > avatarPos.x && avatarPos.x > monster.getPosition().x);
+                    float dist = p.getPosition().dst(monster.getPosition());
+                    if (dist < 3 && !avatarBetweenX) {
+                        moveMon = false;
+                        fail = true;
+                    }
+                }
+                if (moveMon) {
+                    monster.applyForce();
+                }
+            }
+        }
+        for (Sealion monster: sealions) {
             if (monster.isActive()) {
                 boolean moveMon = true;
                 for(Penguin p: penguins){
@@ -78,8 +107,19 @@ public class CollisionController {
         return fail;
     }
 
-    public void processCollision(ArrayList<Monster> monsters, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
-        for (Monster monster: monsters) {
+    public void processCollision(ArrayList<Seal> seals, ArrayList<Sealion> sealions, List<PolygonObstacle> icicles, PooledList<Obstacle> objects){
+        for (Seal monster: seals) {
+            if (monster.isActive()) {
+                for (PolygonObstacle icicle: icicles){
+                    if (icicle.getPosition().dst(monster.getPosition()) <= 1){
+                        objects.remove(monster);
+                        monster.setActive(false);
+                        monster.setAwake(false);
+                    }
+                }
+            }
+        }
+        for (Sealion monster: sealions) {
             if (monster.isActive()) {
                 for (PolygonObstacle icicle: icicles){
                     if (icicle.getPosition().dst(monster.getPosition()) <= 1){
@@ -160,7 +200,6 @@ public class CollisionController {
     public void processCollision(List<Water> waters, List<Penguin> penguins){
         for (Water water: waters){
             for (Penguin p : penguins) {
-                System.out.println(p.isActive());
                 float leftX = water.getX()-((Water) water).getWidth()/2;
                 float rightX = water.getX()+((Water) water).getWidth()/2;
                 float downY = water.getY()-((Water) water).getHeight()/2;

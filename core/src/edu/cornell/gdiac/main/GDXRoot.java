@@ -91,10 +91,21 @@ public class GDXRoot extends Game implements ScreenListener {
 			controllers[i+prevLevels].setScreenListener(this);
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.Oceania);
-//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
-//			controllers[i+prevLevels] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
-//			controllers[i+prevLevels].setScreenListener(this);
-//		}
+		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Asia); i++){
+			controllers[i+prevLevels] = new GameplayController("asia/asiaMain.json",i);
+			controllers[i+prevLevels].setScreenListener(this);
+		}
+		prevLevels += numOfLevels.get(MenuController.Continent.Asia);
+		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
+			controllers[i+prevLevels] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
+			controllers[i+prevLevels].setScreenListener(this);
+		}
+		prevLevels += numOfLevels.get(MenuController.Continent.NorthAmerica);
+		for(int i = 0; i < numOfLevels.get(MenuController.Continent.SouthAmerica); i++){
+			controllers[i+prevLevels] = new GameplayController("southAmerica/southAmericaMain.json",i);
+			controllers[i+prevLevels].setScreenListener(this);
+		}
+
 		current = 0;
 		menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
@@ -157,6 +168,24 @@ public class GDXRoot extends Game implements ScreenListener {
 			}else if(hundred == 3){
 				current = numOfLevels.get(MenuController.Continent.Africa)+(exitCode%10);
 				currentContinent = MenuController.Continent.Oceania;
+			}else if(hundred == 4){
+				current = numOfLevels.get(MenuController.Continent.Africa)
+						+ numOfLevels.get(MenuController.Continent.Oceania)
+						+(exitCode%10);
+				currentContinent = MenuController.Continent.Asia;
+			}else if(hundred == 5){
+				current = numOfLevels.get(MenuController.Continent.Africa)
+						+ numOfLevels.get(MenuController.Continent.Oceania)
+						+ numOfLevels.get(MenuController.Continent.Asia)
+						+(exitCode%10);
+				currentContinent = MenuController.Continent.NorthAmerica;
+			}else if(hundred == 6){
+				current = numOfLevels.get(MenuController.Continent.Africa)
+						+ numOfLevels.get(MenuController.Continent.Oceania)
+						+ numOfLevels.get(MenuController.Continent.Asia)
+						+ numOfLevels.get(MenuController.Continent.NorthAmerica)
+						+(exitCode%10);
+				currentContinent = MenuController.Continent.SouthAmerica;
 			}
 			controllers[current].loadContent(directory);
 			controllers[current].setScreenListener(this);
@@ -192,6 +221,18 @@ public class GDXRoot extends Game implements ScreenListener {
 					addedVal = current;
 				}else if(currentContinent == MenuController.Continent.Oceania){
 					addedVal = current - numOfLevels.get(MenuController.Continent.Africa);
+				}else if(currentContinent == MenuController.Continent.Asia){
+					addedVal = current - numOfLevels.get(MenuController.Continent.Africa)
+							- numOfLevels.get(MenuController.Continent.Oceania);
+				}else if(currentContinent == MenuController.Continent.NorthAmerica){
+					addedVal = current - numOfLevels.get(MenuController.Continent.Africa)
+							- numOfLevels.get(MenuController.Continent.Oceania)
+							- numOfLevels.get(MenuController.Continent.Asia);
+				}else if(currentContinent == MenuController.Continent.SouthAmerica){
+					addedVal = current - numOfLevels.get(MenuController.Continent.Africa)
+							- numOfLevels.get(MenuController.Continent.Oceania)
+							- numOfLevels.get(MenuController.Continent.Asia)
+							- numOfLevels.get(MenuController.Continent.NorthAmerica);
 				}
 				if(finished.length == 0 || finished[finished.length-1] < addedVal){
 					value.get("finished").get(currentContinent.name()).addChild(new JsonValue(addedVal));
@@ -206,13 +247,21 @@ public class GDXRoot extends Game implements ScreenListener {
 							MenuController.unlockContinents(MenuController.Continent.Oceania);
 							break;
 						case Oceania:
-//							currentContinent = MenuController.Continent.Asia;
+							currentContinent = MenuController.Continent.Asia;
+							MenuController.unlockContinents(MenuController.Continent.Asia);
 							break;
+						case Asia:
+							currentContinent = MenuController.Continent.NorthAmerica;
+							MenuController.unlockContinents(MenuController.Continent.NorthAmerica);
+						case NorthAmerica:
+							currentContinent = MenuController.Continent.SouthAmerica;
+							MenuController.unlockContinents(MenuController.Continent.SouthAmerica);
 						default:
 							break;
 					}
 				}
-				if(current == 6){
+				// TODO: total levels
+				if(current == 11){
 					menuController.reset();
 					menuController.setScreenListener(this);
 					setScreen(menuController);

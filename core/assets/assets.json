@@ -11,6 +11,11 @@
     "losing": "sounds/death jingle.ogg"
   },
   "textures": {
+    "avatarNormal": {
+      "file": "images/shared/avatarNormal.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "avatarWalking": {
       "file": "images/shared/avatarWalking.png",
       "minFilter": "linear",
@@ -46,6 +51,31 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "penguin3": {
+      "file": "images/shared/penguin3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin4": {
+      "file": "images/shared/penguin4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin5": {
+      "file": "images/shared/penguin5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin6": {
+      "file": "images/shared/penguin6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin7": {
+      "file": "images/shared/penguin7.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "penguin": {
       "file": "images/shared/penguin.png",
       "minFilter": "linear",
@@ -61,8 +91,13 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "monster": {
-      "file": "images/shared/monster.png",
+    "sealion": {
+      "file": "images/shared/sealion.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "seal": {
+      "file": "images/shared/seal.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

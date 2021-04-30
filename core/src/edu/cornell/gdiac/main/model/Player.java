@@ -85,6 +85,7 @@ public class Player extends CapsuleObstacle {
 
 
 
+    private FilmStrip normalStrip;
 
     /** The current horizontal movement of the character */
     private float movement;
@@ -185,12 +186,19 @@ public class Player extends CapsuleObstacle {
     public void setThrowingStrip(FilmStrip strip){
         throwingStrip = strip;
     }
+
+    public void setNormalStrip(FilmStrip strip){
+        normalStrip = strip;
+    }
+
     public void setPenguinStrip(FilmStrip strip){
         this.penguinStrip=strip;
     }
+
     public void setPenguinOverlapStrip(FilmStrip strip){
         this.penguinOverlapStrip=strip;
     }
+
     public void setPenguinWalkingStrip(FilmStrip strip){
         this.penguinWalkingStrip = strip;
     }
@@ -349,6 +357,7 @@ public class Player extends CapsuleObstacle {
                     p.setIndex(numPenguins);
                     p.setBodyType(BodyDef.BodyType.DynamicBody);
                     p.setY(getY()-1);
+//                    p.setBodyType(BodyDef.BodyType.StaticBody);
                     numPenguins += 1;
                     changeOverlap(1,true,false);
                 }
@@ -362,14 +371,18 @@ public class Player extends CapsuleObstacle {
         }
         float dt =  0.01643628f;
         directionCache.set(xDir, yDir).nor();
-        float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
-        float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
-        for(int i = 0; i<10; i+=2){
-            float t = i * 0.05f;
-            float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
-            float y = (getY()+2 + vy * t + 0.5f * (-26f) * t * t) * 720f/ 18f;
-            trajectories[i] = x;
-            trajectories[i+1] = y;
+        try{
+            float vx = (float) (force*directionCache.x*10 * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
+            float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
+            for(int i = 0; i<10; i+=2){
+                float t = i * 0.05f;
+                float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
+                float y = (getY()+2 + vy * t + 0.5f * (-26f) * t * t) * 720f/ 18f;
+                trajectories[i] = x;
+                trajectories[i+1] = y;
+            }
+        }catch (Exception e){
+            return;
         }
     }
     public void setThrowing(boolean touchUp,Sound throwing){
@@ -403,7 +416,7 @@ public class Player extends CapsuleObstacle {
         }else if(touchUp && throwingCount == 0){
             if(numPenguins > 0){
                 for(Penguin p: penguins){
-                    if(p.getIndex() == numPenguins-1){
+                    if(p.getIndex() == numPenguins-1 && !p.isThrowOut()){
                         p.setBodyType(BodyDef.BodyType.DynamicBody);
                         p.setSensor(false);
                         setFilmStrip(throwingStrip);
@@ -622,10 +635,15 @@ public class Player extends CapsuleObstacle {
 
         // Don't want to be moving. Damp out player motion
         if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache,getPosition(),true);
+            setVX(0);
+            if (moveState == animationState.walking && !isPunching) {
+                setFilmStrip(normalStrip);
+            }
         } else {
             setVX(Math.signum(getMovement())*getMaxSpeed());
+            if (moveState == animationState.walking) {
+                setFilmStrip(walkingStrip);
+            }
         }
 
         // Jump!
@@ -675,7 +693,7 @@ public class Player extends CapsuleObstacle {
                 filmStrip.nextFrame();
             }
         }else if(moveState == animationState.jumpRising){
-            if(timeCounter >= 0.2) {
+            if(timeCounter >= 0.1) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
@@ -685,8 +703,8 @@ public class Player extends CapsuleObstacle {
             }
         }else if(moveState == animationState.jumpHanging){
             // nothing here
-        }else if(moveState == animationState.jumpLanding ){
-            if(timeCounter >= 0.2) {
+        }else if(moveState == animationState.jumpLanding || moveState == animationState.throwing){
+            if(timeCounter >= 0.1) {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
@@ -724,7 +742,7 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
-            if(Math.abs(p.getY()-getY()) > 3f && !p.isThrowOut()){
+            if((Math.abs(p.getY()-getY()) > 3f && !p.isThrowOut())){
                 p.setY(getY());
             }
             p.applyForce(0,0, 0);

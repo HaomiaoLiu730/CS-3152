@@ -56,14 +56,23 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     private static JsonValue value;
 
-    private float[] NORTH_AMERICA_LEVELS = new float[]{
-            1100f, 600f, 1000f, 610f, 300f, 470f
-    };
     private float[] AFRICA_LEVELS = new float[]{
             427f, 550f, 550, 540f, 680, 470f, 720, 350f, 700, 190
     };
     private float[] OCEANIA_LEVELS = new float[]{
             367, 324, 463, 300, 640, 335, 470, 400, 622, 422,
+    };
+    private float[] ASIA_LEVELS = new float[]{
+            511, 530, 635, 500
+            // 950, 520
+    };
+    private float[] NORTH_AMERICA_LEVELS = new float[]{
+            1100f, 600f, 1000f, 610f
+            // 300f, 470f
+    };
+    private float[] SOUTH_AMERICA_LEVELS = new float[]{
+            500, 550
+            // 530, 480, 640, 430
     };
 
     private AssetDirectory internal;
@@ -278,13 +287,21 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         if(drawPoints){
             int previousLevel = nextLevel;
             switch (currentContinent){
+                case Africa:
+                    updateNextLevelHelper(AFRICA_LEVELS);
+                    break;
+                case Oceania:
+                    updateNextLevelHelper(OCEANIA_LEVELS);
+                    break;
+                case Asia:
+                    updateNextLevelHelper(ASIA_LEVELS);
+                    break;
                 case NorthAmerica:
                     updateNextLevelHelper(NORTH_AMERICA_LEVELS);
                     break;
-                case Africa:
-                    updateNextLevelHelper(AFRICA_LEVELS);
-                case Oceania:
-                    updateNextLevelHelper(OCEANIA_LEVELS);
+                case SouthAmerica:
+                    updateNextLevelHelper(SOUTH_AMERICA_LEVELS);
+                    break;
                 default:
                     break;
             }
@@ -312,14 +329,20 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         if(drawPoints){
             int finishedLevelNum = finished.get(currentContinent).size();
             switch (currentContinent){
-                case NorthAmerica:
-                    drawPointsHelper(finishedLevelNum, NORTH_AMERICA_LEVELS);
-                    break;
                 case Africa:
                     drawPointsHelper(finishedLevelNum, AFRICA_LEVELS);
                     break;
                 case Oceania:
                     drawPointsHelper(finishedLevelNum, OCEANIA_LEVELS);
+                    break;
+                case Asia:
+                    drawPointsHelper(finishedLevelNum, ASIA_LEVELS);
+                    break;
+                case NorthAmerica:
+                    drawPointsHelper(finishedLevelNum, NORTH_AMERICA_LEVELS);
+                    break;
+                case SouthAmerica:
+                    drawPointsHelper(finishedLevelNum, SOUTH_AMERICA_LEVELS);
                     break;
                 default:
                     break;
@@ -381,6 +404,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             int hundred = 0;
             if(currentContinent == Continent.Africa) hundred = 2;
             if(currentContinent == Continent.Oceania) hundred = 3;
+            if(currentContinent == Continent.Asia) hundred = 4;
+            if(currentContinent == Continent.NorthAmerica) hundred = 5;
+            if(currentContinent == Continent.SouthAmerica) hundred = 6;
             if (isReady() && listener != null) {
                 listener.updateScreen(this, hundred*10+nextLevel);
                 menuSellect.play();

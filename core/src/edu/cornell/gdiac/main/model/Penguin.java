@@ -35,6 +35,7 @@ public class Penguin extends CapsuleObstacle {
     private final float SENSOR_HEIGHT;
     /** Identifier to allow us to track the sensor in ContactListener */
     private final String SENSOR_NAME;
+    private boolean soundPlaying;
 
 
     private int index;
@@ -118,6 +119,15 @@ public class Penguin extends CapsuleObstacle {
 
     public void setThrownOut(boolean value){
         isThrownOut = value;
+        soundPlaying = value;
+    }
+
+    public void setSoundPlaying(boolean value){
+        soundPlaying = value;
+    }
+
+    public boolean getSoundPlaying(){
+        return soundPlaying;
     }
 
     public boolean isThrowOut(){
@@ -220,6 +230,7 @@ public class Penguin extends CapsuleObstacle {
 
         setDensity(PENGUIN_DENSITY);
         setFriction(PENGUIN_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
+//        setBodyType(BodyDef.BodyType.StaticBody);
         setFixedRotation(true);
         fixture.filter.groupIndex = -8;
 
@@ -229,6 +240,7 @@ public class Penguin extends CapsuleObstacle {
         this.index = index;
         setName("penguin"+index);
         this.data=data;
+        soundPlaying = false;
     }
 
     /**
@@ -333,7 +345,6 @@ public class Penguin extends CapsuleObstacle {
 
 
         }
-
     }
 
     /**

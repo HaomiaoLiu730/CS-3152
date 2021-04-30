@@ -68,17 +68,17 @@ public abstract class WorldController implements Screen {
 
     /** The texture for the player */
     protected FilmStrip avatarStrip;
+    /** The texture for the player */
+    protected FilmStrip avatarNormalStrip;
     /** The texture for the penguin */
     protected FilmStrip penguinWalkingStrip;
     /** The texture for the penguin rolling */
     protected FilmStrip penguinRollingStrip;
-//    /** The texture for the penguin  */
-//    protected FilmStrip penguinStrip1;
-//    /** The texture for the penguin overlap */
-//    protected FilmStrip penguinStrip2;
     protected ArrayList<FilmStrip> penguins = new ArrayList<>();
     /** The texture for the monster */
-    protected FilmStrip monsterStrip;
+    protected FilmStrip sealionStrip;
+    /** The texture for the monster */
+    protected FilmStrip sealStrip;
     /** The texture for the waves */
     protected FilmStrip wavesStrip;
     /** The texture for the water */
@@ -139,10 +139,6 @@ public abstract class WorldController implements Screen {
     protected Sound losing;
 
 
-
-
-
-
     /**
      * Preloads the assets for this controller.
      *
@@ -182,9 +178,16 @@ public abstract class WorldController implements Screen {
         avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 1, 18);
         penguins.add(new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1));
         penguins.add(new FilmStrip(directory.getEntry("penguin2", Texture.class), 1, 1));
+        penguins.add(new FilmStrip(directory.getEntry("penguin3", Texture.class), 1, 1));
+        penguins.add(new FilmStrip(directory.getEntry("penguin4", Texture.class), 1, 1));
+        penguins.add(new FilmStrip(directory.getEntry("penguin5", Texture.class), 1, 1));
+        penguins.add(new FilmStrip(directory.getEntry("penguin6", Texture.class), 1, 1));
+        penguins.add(new FilmStrip(directory.getEntry("penguin7", Texture.class), 1, 1));
+        avatarNormalStrip = new FilmStrip(directory.getEntry("avatarNormal", Texture.class), 1, 1);
         penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
         penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
-        monsterStrip = new FilmStrip(directory.getEntry("monster", Texture.class), 1, 1);
+        sealionStrip = new FilmStrip(directory.getEntry("sealion", Texture.class), 1, 1);
+        sealStrip = new FilmStrip(directory.getEntry("seal", Texture.class), 1, 1);
         attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         exitStrip = new FilmStrip(directory.getEntry("exit", Texture.class), 1, 1);
