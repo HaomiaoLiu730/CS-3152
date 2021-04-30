@@ -62,6 +62,7 @@ public class GameplayController extends WorldController implements ContactListen
     private boolean resetClick;
     /** Whether the player can throw or not */
     private boolean canThrow;
+    private boolean closeAttemp;
 
     private boolean isEditingView;
     private float[] grounded;
@@ -504,9 +505,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-        if(isPaused){
-            disableMovement = true;
-        }
         for (int i = 0; i < iciclesList.size(); i++) {
             if (staticBodies.get(i) == 1) {
                 iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
@@ -516,7 +514,17 @@ public class GameplayController extends WorldController implements ContactListen
 
         if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
             isPaused = true;
+            disableMovement = true;
             return;
+        }
+        if(isPaused){
+            if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
+                    ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
+                isPaused = false;
+                disableMovement = false;
+                avatar.resetThrowing();
+                return;
+            }
         }
         if (resetCountDown < 0 && !failed) {
             if (!isEditingView) {
@@ -665,14 +673,17 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.getHeight()/2f-200);
             if(InputController.getInstance().touchUp() && Gdx.input.getX()>500 && Gdx.input.getY()>150&&Gdx.input.getX()<760 && Gdx.input.getY()<280){
                 isPaused = false;
+                disableMovement = false;
                 canvas.end();
                 listener.updateScreen(this, GAMEPLAY_CONTINUE);
                 return;
             }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
                 isPaused = false;
+                disableMovement = false;
                 reset();
             }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>370&&Gdx.input.getX()<760 && Gdx.input.getY()<410){
                 isPaused = false;
+                disableMovement = false;
                 canvas.end();
                 listener.updateScreen(this, GAMEPLAY_MENU);
                 return;

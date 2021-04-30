@@ -440,9 +440,14 @@ public class Player extends CapsuleObstacle {
                     }
                 }
             }
-            }
         }
-
+    }
+    public void resetThrowing(){
+        throwingCount = 0;
+        throwingForce = 0f;
+        xDir = 0f;
+        yDir = 0f;
+    }
 
 
     /**
