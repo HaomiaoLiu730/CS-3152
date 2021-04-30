@@ -89,6 +89,14 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private Texture africaLine;
     private Texture europeLine;
     private Texture oceaniaLine;
+    private Texture penguin1;
+    private Texture penguin2;
+    private Texture penguin3;
+    private Texture penguin4;
+    private Texture penguin5;
+    private Texture penguin6;
+    private Texture penguin7;
+    private Texture[] penguins = new Texture[7];
 
     private Sound menuSellect;
     private Sound menuScroll;
@@ -132,6 +140,20 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         africaLine = internal.getEntry("AfricaLine", Texture.class);
         menuSellect = internal.getEntry("menuSellect", SoundBuffer.class);
         menuScroll = internal.getEntry("menuScroll",SoundBuffer.class);
+        penguin1 = internal.getEntry("penguin1", Texture.class);
+        penguin2 = internal.getEntry("penguin2", Texture.class);
+        penguin3 = internal.getEntry("penguin3", Texture.class);
+        penguin4 = internal.getEntry("penguin4", Texture.class);
+        penguin5 = internal.getEntry("penguin5", Texture.class);
+        penguin6 = internal.getEntry("penguin6", Texture.class);
+        penguin7 = internal.getEntry("penguin7", Texture.class);
+        penguins[0] = penguin1;
+        penguins[1] = penguin2;
+        penguins[2] = penguin3;
+        penguins[3] = penguin4;
+        penguins[4] = penguin5;
+        penguins[5] = penguin6;
+        penguins[6] = penguin7;
 
         active  = true;
         zoomIn = false;
@@ -323,6 +345,22 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         canvas.drawOverlay(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey,0, 0);
         canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,0, 0);
         canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,0, 0);
+        if (!zoomIn && !drawPoints) {
+            canvas.draw(penguin5, Color.WHITE, 960f, 460f, penguin5.getWidth()/2, penguin5.getHeight()/2);
+            canvas.drawText(gameFont, "5", 990f, 525f);
+            canvas.draw(penguin6, Color.WHITE, 1115f, 260f, penguin6.getWidth()/2, penguin6.getHeight()/2);
+            canvas.drawText(gameFont, "6", 1130f, 340f);
+            canvas.draw(penguin4, Color.WHITE, 410f, 470f, penguin4.getWidth()/2, penguin4.getHeight()/2);
+            canvas.drawText(gameFont, "4", 460f, 515f);
+            canvas.draw(penguin1, Color.WHITE, 200f, 490f, penguin1.getWidth()/2, penguin1.getHeight()/2);
+            canvas.drawText(gameFont, "1", 238f, 560f);
+            canvas.draw(penguin2, Color.WHITE, 120f, 320f, penguin2.getWidth()/2, penguin2.getHeight()/2);
+            canvas.drawText(gameFont, "2", 163f, 400f);
+            canvas.draw(penguin3, Color.WHITE, 525f, 205f, penguin3.getWidth()/2, penguin3.getHeight()/2);
+            canvas.drawText(gameFont, "3", 562f, 300f);
+            canvas.draw(penguin7, Color.WHITE, 350f, 15f, penguin7.getWidth()/2, penguin7.getHeight()/2);
+            canvas.drawText(gameFont, "7", 405f, 65f);
+        }
         if(drawPoints){
             int finishedLevelNum = finished.get(currentContinent).size();
             switch (currentContinent){
@@ -351,10 +389,16 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     public void drawPointsHelper(int finishedLevelNum, float[] arr){
         for(int i = 0; i < finishedLevelNum*2; i+=2){
-            canvas.drawCircle(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 10f: 5f);
+            canvas.drawEllipse(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
+            //canvas.drawText(gameFont, String.valueOf((i+2)/2), arr[i], arr[i+1]);
+            if (i+3 < numOfLevels.get(currentContinent)*2){
+                canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
+                canvas.drawTriangle(Color.BLACK, arr[i+2]+8f, arr[i+3]-10f, arr[i+2]+13f, arr[i+3], arr[i+2]+18f, arr[i+3]-10f);
+            }
         }
         if(finishedLevelNum != numOfLevels.get(currentContinent)){
-            canvas.drawCircle(Color.LIGHT_GRAY, arr[finishedLevelNum*2], arr[finishedLevelNum*2+1], nextLevel == finishedLevelNum ? 10f: 5f);
+            canvas.drawEllipse(Color.LIGHT_GRAY, arr[finishedLevelNum*2], arr[finishedLevelNum*2+1], nextLevel == finishedLevelNum ? 75f/2: 25f,
+                    nextLevel == finishedLevelNum ? 45f/2: 15);
         }
     }
 
