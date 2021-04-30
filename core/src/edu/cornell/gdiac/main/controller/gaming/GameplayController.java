@@ -339,12 +339,6 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setPenguinRollingStrip(penguinRollingStrip);
         avatar.setPenguinStrip(penguins.get(0));
         avatar.setPenguinOverlapStrip(penguins.get(avatar.getNumPenguins()-1));
-//        if (avatar.getNumPenguins()>1) {
-//            avatar.setPenguinOverlapStrip(penguinStrip2);
-//        }
-//        else{
-//            avatar.setPenguinOverlapStrip(penguinStrip);
-//        }
         addObject(avatar);
 
         for(int i = 0; i<num_penguins; i++){

@@ -160,6 +160,7 @@ public class CollisionController {
     public void processCollision(List<Water> waters, List<Penguin> penguins){
         for (Water water: waters){
             for (Penguin p : penguins) {
+                System.out.println(p.isActive());
                 float leftX = water.getX()-((Water) water).getWidth()/2;
                 float rightX = water.getX()+((Water) water).getWidth()/2;
                 float downY = water.getY()-((Water) water).getHeight()/2;
