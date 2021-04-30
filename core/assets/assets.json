@@ -184,7 +184,7 @@
   },
   "fonts": {
     "gameFont": {
-      "file": "fonts/MarkerFelt.ttf",
+      "file": "fonts/AmaticSC-Bold.ttf",
       "size": 16
     }
   }
