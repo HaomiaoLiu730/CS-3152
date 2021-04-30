@@ -24,6 +24,7 @@ import edu.cornell.gdiac.util.ScreenListener;
 import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
+import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_CONTINUE;
 import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_MENU;
 
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
@@ -663,7 +664,10 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.getWidth()/2f- 200,
                     canvas.getHeight()/2f-200);
             if(InputController.getInstance().touchUp() && Gdx.input.getX()>500 && Gdx.input.getY()>150&&Gdx.input.getX()<760 && Gdx.input.getY()<280){
-                // continue
+                isPaused = false;
+                canvas.end();
+                listener.updateScreen(this, GAMEPLAY_CONTINUE);
+                return;
             }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
                 isPaused = false;
                 reset();
