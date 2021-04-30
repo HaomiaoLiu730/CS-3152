@@ -46,8 +46,33 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "penguinOverlap": {
-      "file": "images/shared/penguin_overlap.png",
+    "penguin2": {
+      "file": "images/shared/penguin2.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin3": {
+      "file": "images/shared/penguin3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin4": {
+      "file": "images/shared/penguin4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin5": {
+      "file": "images/shared/penguin5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin6": {
+      "file": "images/shared/penguin6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin7": {
+      "file": "images/shared/penguin7.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

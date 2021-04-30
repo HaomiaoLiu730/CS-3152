@@ -112,6 +112,7 @@ public class GameplayController extends WorldController implements ContactListen
     ArrayList<Integer> staticBodies = new ArrayList<>();
     ArrayList<Boolean> icicles_hit = new ArrayList<>();
 
+
     /**
      * Creates a new game with a playing field of the given size.
      * <p>
@@ -330,7 +331,7 @@ public class GameplayController extends WorldController implements ContactListen
         PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool");
         PUNCH_TIME=constants.get("player").getInt("punch_time");
         punchCooldown=constants.get("player").getInt("punch_cooldown");
-        avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight, num_penguins);
+        avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
         avatar.setArrowTexture(arrowTexture);
@@ -344,35 +345,21 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.setNormalStrip(avatarNormalStrip);
         avatar.setPenguinWalkingStrip((penguinWalkingStrip));
         avatar.setPenguinRollingStrip(penguinRollingStrip);
-        avatar.setPenguinStrip(penguinStrip);
-        if (avatar.getNumPenguins()>1) {
-            avatar.setPenguinOverlapStrip(penguinOverlapStrip);
-        }
-        else{
-            avatar.setPenguinOverlapStrip(penguinStrip);
-        }
+        avatar.setPenguinStrip(penguins.get(0));
+        avatar.setPenguinOverlapStrip(penguins.get(avatar.getNumPenguins()-1));
         addObject(avatar);
 
         for(int i = 0; i<num_penguins; i++){
             avatar.getPenguins().get(i).setDrawScale(scale);
             avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
-            if (avatar.getNumPenguins()>1) {
-                avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
-            }
-            else{
-                avatar.getPenguins().get(i).setOverlapFilmStrip(penguinStrip);
-            }
+            avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(avatar.getNumPenguins()-1));
+
             addObject(avatar.getPenguins().get(i));
             avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
-            avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
-            if (avatar.getNumPenguins()>1) {
-                avatar.getPenguins().get(i).setOverlapFilmStrip(penguinOverlapStrip);
-            }
-            else{
-                avatar.getPenguins().get(i).setOverlapFilmStrip(penguinStrip);
-            }
+            avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(avatar.getNumPenguins()-1));
+
 
         }
 
@@ -585,9 +572,10 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController.processCollision(seals, sealions, iciclesList, objects);
         collisionController.processCollision(iciclesList, icicles_hit, staticBodies, objects,hitIcicle);
         collisionController.processCollision(waterList, avatar);
+        collisionController.processCollision(waterList, avatar.getPenguins(),avatar);
 
         notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
-                objects, avatar.getNumPenguins(), avatar, collectingNote, penguinOverlapStrip, penguinStrip);
+                objects, avatar.getNumPenguins(), avatar, collectingNote, penguins);
 
     }
 
@@ -793,6 +781,7 @@ public class GameplayController extends WorldController implements ContactListen
             if (bd1 == avatar && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
+
 
             // Check for win condition
             if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||

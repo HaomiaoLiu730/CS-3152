@@ -9,6 +9,7 @@ import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,7 +133,7 @@ public class CollisionController {
     }
 
     public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip, int numNotes,
-                                        PooledList<Obstacle> objects, int numPenguins, Player avatar, Sound sound, FilmStrip penguinOverlap, FilmStrip penguinDefault){
+                                        PooledList<Obstacle> objects, int numPenguins, Player avatar, Sound sound, ArrayList<FilmStrip> films){
         for (Note note: notes){
             if (!note.isCollected()){
                 for (Penguin p: penguins){
@@ -151,14 +152,9 @@ public class CollisionController {
                         objects.remove(penguins.get(last_index));
                         penguins.get(last_index).setActive(false);
                         penguins.get(last_index).setAwake(false);
-                        if (avatar.getNumPenguins() > 1) {
+                        if (avatar.getNumPenguins()>0) {
                             for (Penguin pen : avatar.getPenguins()) {
-                                pen.setOverlapFilmStrip(penguinOverlap);
-
-                            }
-                        } else {
-                            for (Penguin pen : avatar.getPenguins()) {
-                                pen.setOverlapFilmStrip(penguinDefault);
+                                pen.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                             }
                         }
                         penguins.remove(penguins.get(last_index));
@@ -197,6 +193,33 @@ public class CollisionController {
             float upY = water.getY()+((Water) water).getHeight()/2;
             if (avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.getY() >= downY && avatar.getY() <= upY) {
                 GameplayController.hitWater(true);
+            }
+        }
+    }
+
+    public void processCollision(List<Water> waters, List<Penguin> penguins, Player avatar){
+        for (Water water: waters){
+            for (Penguin p : penguins) {
+                float leftX = water.getX()-((Water) water).getWidth()/2;
+                float rightX = water.getX()+((Water) water).getWidth()/2;
+                float downY = water.getY()-((Water) water).getHeight()/2;
+                float upY = water.getY()+((Water) water).getHeight()/2;
+                if (p.getX() >= leftX && p.getX() <= rightX && p.getY() >= downY && p.getY() <= upY) {
+                    p.setInWater(true);
+                    p.setBodyType(BodyDef.BodyType.StaticBody);
+                    p.setActive(false);
+                    if ((avatar.isGrounded()&&!p.isThrowOut()  && !(avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.isGrounded())))
+                    {
+                        p.setActive(false);
+                        p.setY(avatar.getY() - avatar.getHeight() / 4 -0.1f);
+                    }
+                }
+                else if (p.getX() >= leftX && p.getX() <= rightX) {
+                    p.setActive(true);
+                    p.setInWater(false);
+                }
+
+
             }
         }
     }

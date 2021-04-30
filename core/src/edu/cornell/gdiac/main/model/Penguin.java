@@ -9,6 +9,8 @@ import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.main.obstacle.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.ArrayList;
+
 /**
  * Player avatar for the plaform game.
  *
@@ -34,6 +36,8 @@ public class Penguin extends CapsuleObstacle {
     /** Identifier to allow us to track the sensor in ContactListener */
     private final String SENSOR_NAME;
     private boolean soundPlaying;
+    private boolean inWater;
+
 
 
     private int index;
@@ -50,11 +54,13 @@ public class Penguin extends CapsuleObstacle {
     private FilmStrip walkingStrip;
     private FilmStrip rollingStrip;
     private FilmStrip overlapStrip;
+    private ArrayList<FilmStrip> p_films;
 
     private float timeCounter = 0;
     private boolean isThrownOut;
     private float angle;
     public boolean updateWalking = false;
+    private boolean isLast=false;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -71,13 +77,21 @@ public class Penguin extends CapsuleObstacle {
      */
     public void setMovement(float force, float xDir, float yDir) {
         // Change facing if appropriate
-
         if (xDir < 0) {
             faceRight = false;
         } else {
             faceRight = true;
         }
         applyForce(force, xDir, yDir);
+    }
+    public void setIsLast(boolean last){
+        this.isLast=last;
+    }
+    public void setInWater(boolean inWater){
+        this.inWater=inWater;
+    }
+    public boolean getInWater(){
+        return inWater;
     }
 
     /**
@@ -223,7 +237,6 @@ public class Penguin extends CapsuleObstacle {
 
         setDensity(PENGUIN_DENSITY);
         setFriction(PENGUIN_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
-//        setBodyType(BodyDef.BodyType.StaticBody);
         setFixedRotation(true);
         fixture.filter.groupIndex = -8;
 
@@ -331,9 +344,12 @@ public class Penguin extends CapsuleObstacle {
         }
         float effect = faceRight ? 1.0f : -1.0f;
         if(isThrownOut){
-            canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
-        }else{
-            canvas.draw(overlapStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,0,effect,1.0f);
+            canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y-10f, getAngle(), 1f, 1f);
+        }else if (!isLast){
+                canvas.draw(overlapStrip, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0, effect, 1.0f);
+
+
+
         }
     }
 

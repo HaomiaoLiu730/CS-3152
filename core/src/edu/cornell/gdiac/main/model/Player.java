@@ -80,6 +80,11 @@ public class Player extends CapsuleObstacle {
     private FilmStrip penguinRollingStrip;
     private FilmStrip penguinStrip;
     private FilmStrip penguinOverlapStrip;
+    private ArrayList<FilmStrip> p_films;
+
+
+
+
     private FilmStrip normalStrip;
 
     /** The current horizontal movement of the character */
@@ -205,7 +210,17 @@ public class Player extends CapsuleObstacle {
     public void setCameraX(float val){
         this.cameraX = val;
     }
-
+    public boolean changeOverlap(int idx, boolean setLast, boolean lastOne){
+       if (numPenguins>idx-1) {
+           for (Penguin pen : penguins) {
+               pen.setOverlapFilmStrip(p_films.get(numPenguins - idx));
+               if (setLast)
+                   pen.setIsLast(lastOne);
+           }
+           return true;
+       }
+       return false;
+    }
     /**
      * Sets left/right movement of this character.
      *
@@ -340,24 +355,20 @@ public class Player extends CapsuleObstacle {
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
+                    p.setBodyType(BodyDef.BodyType.DynamicBody);
                     p.setY(getY()-1);
 //                    p.setBodyType(BodyDef.BodyType.StaticBody);
                     numPenguins += 1;
-                    if (numPenguins > 1) {
-                        for (Penguin pen : penguins) {
-                            pen.setOverlapFilmStrip(penguinOverlapStrip);
-                        }
-                    } else {
-                        for (Penguin pen : penguins) {
-                            pen.setOverlapFilmStrip(penguinStrip);
-                        }
-                    }
+                    changeOverlap(1,true,false);
                 }
             }
         }
 
 
     public void calculateTrajectory(float force, float xDir, float yDir){
+        if (penguins.isEmpty()){
+            return;
+        }
         float dt =  0.01643628f;
         directionCache.set(xDir, yDir).nor();
         try{
@@ -377,12 +388,14 @@ public class Player extends CapsuleObstacle {
     public void setThrowing(boolean touchUp,Sound throwing){
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             throwingCount = -1;
+            changeOverlap(1,true,false);
         }
         if(touchUp && throwingCount == -1){
             throwingCount = 0;
             throwingForce = 0f;
             xDir = 0f;
             yDir = 0f;
+
         }else if(Gdx.input.isTouched() && throwingCount == 0){
             xDir = ((Gdx.input.getX() + cameraX-640))/1280f*32;
             yDir = (720-Gdx.input.getY())/720f*18;
@@ -393,6 +406,12 @@ public class Player extends CapsuleObstacle {
             }else if(throwingForce <= 0){
                 incr = true;
             }
+            if (!changeOverlap(2,false,false)){
+                for (Penguin pen:penguins) {
+                    pen.setIsLast(true);
+                }
+            }
+
             calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
         }else if(touchUp && throwingCount == 0){
             if(numPenguins > 0){
@@ -415,22 +434,16 @@ public class Player extends CapsuleObstacle {
                         throwingForce = 0f;
                         xDir = 0f;
                         yDir = 0f;
-                        if (numPenguins==1){
-                            for (Penguin pen: penguins) {
-                                pen.setOverlapFilmStrip(penguinStrip);
-                            }
-                        }
+                        changeOverlap(1,false,false);
+
                         return;
                     }
                 }
             }
-            if (numPenguins==1){
-                for (Penguin pen: penguins) {
-                    pen.setOverlapFilmStrip(penguinStrip);
-                }
             }
         }
-    }
+
+
 
     /**
      * Returns true if the dude is on the ground.
@@ -530,7 +543,7 @@ public class Player extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Player(JsonValue data, JsonValue p_data, float width, float height, int numOfPenguins) {
+    public Player(JsonValue data, JsonValue p_data, float width, float height, int numOfPenguins, ArrayList<FilmStrip> p_films) {
         super(data.get("pos").getFloat(0),data.get("pos").getFloat(1),width* data.getFloat("hshrink"),height* data.getFloat("vshrink"));
         PLAYER_DENSITY=data.getFloat("density");
         PLAYER_FRICTION=data.getFloat("friction");
@@ -543,13 +556,12 @@ public class Player extends CapsuleObstacle {
         SHOOT_COOLDOWN=data.getInt("shoot_cooldown");
         SENSOR_HEIGHT=data.getFloat("sensor_height");
         SENSOR_NAME=data.getString("sensor_name");
-//        MAX_THROWING_FORCE=data.getFloat("max_throw_force");
         MAX_THROWING_FORCE = 440;
         PENGUIN_WIDTH=p_data.getFloat("width");
         PENGUIN_HEIGHT=p_data.getFloat("height");
 
         this.data=data;
-
+        this.p_films=p_films;
         setDensity(PLAYER_DENSITY);
         setFriction(PLAYER_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
@@ -564,7 +576,7 @@ public class Player extends CapsuleObstacle {
         this.totalPenguins = numOfPenguins;
         this.numPenguins = totalPenguins;
         for(int i = 0; i < numOfPenguins; i++){
-            penguins.add(new Penguin(p_data, p_data.getFloat("width"), p_data.getFloat("height"), i));
+            penguins.add(new Penguin(p_data, p_data.getFloat("width"), p_data.getFloat("height")-0.6f, i));
         }
 
         shootCooldown = data.getInt("shoot_cooldown");
@@ -700,6 +712,16 @@ public class Player extends CapsuleObstacle {
                 }
             }
         }
+        else if (moveState == animationState.throwing){
+            if(timeCounter >= 0.1) {
+                timeCounter = 0;
+                filmStrip.nextFrame();
+                if (filmStrip.getFrame() == 0){
+                    setFilmStrip(walkingStrip);
+                    moveState = animationState.walking;
+                }
+            }
+        }
 
         if (isJumping()) {
             jumpCooldown = JUMP_COOLDOWN;
@@ -719,9 +741,10 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
-            if(Math.abs(p.getY()-getY()) > 3f && !p.isThrowOut()){
+            if((Math.abs(p.getY()-getY()) > 3f && !p.isThrowOut())){
                 p.setY(getY());
             }
+
             p.applyForce(0,0, 0);
         }
 
@@ -735,14 +758,19 @@ public class Player extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+
         float effect = faceRight ? 1.0f : -1.0f;
-        if(Gdx.input.isTouched()&& throwingCount == 0 && numPenguins > 0){
+        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
+
+        if(Gdx.input.isTouched()&& throwingCount == 0 &&numPenguins>0){
             for(int i = 0; i<trajectories.length; i+=2){
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
             }
+            canvas.draw(penguinStrip,Color.WHITE,penguinStrip.getRegionWidth()/2f, penguinStrip.getRegionHeight()/2f,getX()*drawScale.x,getY()*drawScale.y,0,effect * .75f,.75f);
+
+
         }
-        canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
     }
 
     /**
