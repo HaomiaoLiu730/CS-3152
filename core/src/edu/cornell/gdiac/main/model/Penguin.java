@@ -106,9 +106,6 @@ public class Penguin extends CapsuleObstacle {
             body.applyForce(forceCache,getPosition(),true);
             forceCache.set(0, force*temp.y*0.12f);
             body.applyLinearImpulse(forceCache,getPosition(),true);
-//            System.out.println(force);
-//            System.out.println(temp);
-//            System.out.println((force*temp.x*10)+","+(force*temp.y*0.1f));
         }
 
     }
