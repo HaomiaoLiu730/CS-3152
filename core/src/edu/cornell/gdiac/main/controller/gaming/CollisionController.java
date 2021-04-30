@@ -194,6 +194,12 @@ public class CollisionController {
             if (avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.getY() >= downY && avatar.getY() <= upY) {
                 GameplayController.hitWater(true);
             }
+            else {
+                for (Penguin p: avatar.getPenguins()){
+                    if (!p.isThrowOut())
+                         p.setY(avatar.getY()-avatar.getHeight()/4-0.1f);
+                }
+            }
         }
     }
 

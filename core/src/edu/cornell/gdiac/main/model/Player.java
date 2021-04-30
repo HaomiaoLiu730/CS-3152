@@ -745,6 +745,7 @@ public class Player extends CapsuleObstacle {
             if((Math.abs(p.getY()-getY()) > 3f && !p.isThrowOut())){
                 p.setY(getY());
             }
+
             p.applyForce(0,0, 0);
         }
 
