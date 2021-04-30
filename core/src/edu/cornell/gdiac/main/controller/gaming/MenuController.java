@@ -394,9 +394,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         for(int i = 0; i < finishedLevelNum*2; i+=2){
             canvas.drawEllipse(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
             //canvas.drawText(gameFont, String.valueOf((i+2)/2), arr[i], arr[i+1]);
-//            if (i+3 < arr.length){
-//                canvas.drawDottedLine(1, arr[i], arr[i+1], arr[i+2], arr[i+3]);
-//            }
+            if (i+3 < numOfLevels.get(currentContinent)*2){
+                canvas.drawDottedLine(2, arr[i], arr[i+1], arr[i+2], arr[i+3]);
+            }
         }
         if(finishedLevelNum != numOfLevels.get(currentContinent)){
             canvas.drawEllipse(Color.LIGHT_GRAY, arr[finishedLevelNum*2], arr[finishedLevelNum*2+1], nextLevel == finishedLevelNum ? 75f/2: 25f,
