@@ -261,7 +261,7 @@ public class GDXRoot extends Game implements ScreenListener {
 					}
 				}
 				// TODO: total levels
-				if(current == 11){
+				if(current == 14){
 					menuController.reset();
 					menuController.setScreenListener(this);
 					setScreen(menuController);
