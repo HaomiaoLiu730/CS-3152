@@ -1,0 +1,19 @@
+{
+  "platform": "windows64",
+  "jdk": "/Users/Lisa/Downloads/jre-8u281-windows-x64.exe",
+  "executable": "myapp",
+  "classpath": [
+    "out/artifacts/CS_3152_jar/CS-3152.jar"
+  ],
+  "removelibs": [
+    "out/artifacts/CS_3152_jar/CS-3152.jar"
+  ],
+  "mainclass": "edu.cornell.gdiac.desktop.DesktopLauncher",
+  "vmargs": [
+  ],
+  "resources": [
+    "core/assets"
+  ],
+  "minimizejre": "soft",
+  "output": "out_windows"
+}

@@ -1379,4 +1379,24 @@ public class GameCanvas {
         shapeRenderer.end();
         spriteBatch.begin();
     }
+
+    public void drawDottedLine(int dotDist, float x1, float y1, float x2, float y2) {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
+        Vector2 vec2 = new Vector2(x2, y2).sub(new Vector2(x1, y1));
+        float length = vec2.len();
+        for(int i = 0; i < length; i += dotDist) {
+            vec2.clamp(length - i, length - i);
+            shapeRenderer.point(x1 + vec2.x, y1 + vec2.y, 0);
+        }
+        shapeRenderer.end();
+    }
+
+    public void drawEllipse(Color color, float x, float y, float width, float height){
+        spriteBatch.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(color);
+        shapeRenderer.ellipse(x,y,width,height);
+        shapeRenderer.end();
+        spriteBatch.begin();
+    }
 }
