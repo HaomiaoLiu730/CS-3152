@@ -248,7 +248,7 @@ public class Player extends CapsuleObstacle {
         }else{
             for(Penguin p: penguins){
                 if(!p.isThrowOut()){
-                    p.setX(getX() + PENGUIN_WIDTH * (p.getIndex()+1) * (faceRight? -1 : 1));
+                    p.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
                     p.setFaceRight(faceRight);
                 }
             }
