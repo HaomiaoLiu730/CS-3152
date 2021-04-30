@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
@@ -514,6 +515,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
             isPaused = true;
+            avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
             disableMovement = true;
             return;
         }
@@ -522,7 +524,6 @@ public class GameplayController extends WorldController implements ContactListen
                     ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
                 isPaused = false;
                 disableMovement = false;
-                avatar.resetThrowing();
                 return;
             }
         }
@@ -631,7 +632,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.setFilmStrip(jumpRisingStrip);
             jumping.play();
         }
-        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP);
+        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
         canThrow = true;
         avatar.pickUpPenguins();
     }
