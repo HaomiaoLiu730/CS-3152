@@ -155,6 +155,11 @@
       "file":"images/shared/waves.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "icicle_3d": {
+      "file":"images/shared/icicle_3d.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {

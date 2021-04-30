@@ -298,13 +298,13 @@ public class GameplayController extends WorldController implements ContactListen
         iciclesList = new ArrayList<PolygonObstacle>();
         for (int i = 0; i < icicles.get("pos").size; i ++){
             PolygonObstacle icicle;
-            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            
+            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));
             icicle.setBodyType(BodyDef.BodyType.StaticBody);
             icicle.setDensity(icicles.getFloat("density"));
             icicle.setFriction(icicles.getFloat("friction"));
             icicle.setRestitution(icicles.getFloat("restitution"));
-            icicle.setDrawScale(scale);
-            icicle.setTexture(icicleStrip);
+            icicle.setDrawScale(new Vector2(icicleTexture.getRegionWidth()/scale.x, icicleTexture.getRegionHeight()/scale.y));
+            icicle.setTexture(icicleTexture);
             icicle.setName("icicle" + i);
             addObject(icicle);
             iciclesList.add(icicle);

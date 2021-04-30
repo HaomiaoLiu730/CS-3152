@@ -99,6 +99,8 @@ public abstract class WorldController implements Screen {
     protected Texture whiteTexture;
     /** The texture for the pure black*/
     protected Texture blackTexture;
+    /** The texture for the 3d icicle */
+    protected FilmStrip icicleTexture;
     /** The texture region for the snow */
     protected TextureRegion snowTextureRegion;
     /** The texture region for the ice */
@@ -209,6 +211,7 @@ public abstract class WorldController implements Screen {
         miceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
         whiteTexture = directory.getEntry("white",Texture.class);
         blackTexture = directory.getEntry("black",Texture.class);
+        icicleTexture = new FilmStrip(directory.getEntry("icicle_3d", Texture.class), 1, 1);
 
         hitIcicle = directory.getEntry("hitIcicle", SoundBuffer.class);
         punching = directory.getEntry("punching", SoundBuffer.class);
