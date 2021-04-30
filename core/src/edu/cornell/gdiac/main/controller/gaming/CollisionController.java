@@ -196,7 +196,7 @@ public class CollisionController {
             }
             else {
                 for (Penguin p: avatar.getPenguins()){
-                    if (!p.isThrowOut() && avatar.is)
+                    if (!p.isThrowOut())
                          p.setY(avatar.getY()-avatar.getHeight()/4-0.1f);
                 }
             }
