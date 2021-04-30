@@ -99,6 +99,8 @@ public abstract class WorldController implements Screen {
     protected Texture blackTexture;
     /** The texture region for the snow */
     protected TextureRegion snowTextureRegion;
+    protected TextureRegion pauseButton;
+    protected TextureRegion pauseScreen;
     /** The texture region for the ice */
     protected TextureRegion iceTextureRegion;
     /** The texture region for the floating ice */
@@ -212,6 +214,8 @@ public abstract class WorldController implements Screen {
         miceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
         whiteTexture = directory.getEntry("white",Texture.class);
         blackTexture = directory.getEntry("black",Texture.class);
+        pauseButton = new TextureRegion(directory.getEntry("pauseButton", Texture.class));
+        pauseScreen = new TextureRegion(directory.getEntry("pauseScreen",Texture.class));
 
         hitIcicle = directory.getEntry("hitIcicle", SoundBuffer.class);
         punching = directory.getEntry("punching", SoundBuffer.class);
