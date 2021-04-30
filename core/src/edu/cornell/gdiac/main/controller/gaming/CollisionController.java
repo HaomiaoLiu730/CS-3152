@@ -60,7 +60,7 @@ public class CollisionController {
                     boolean avatarBetweenX = (p.getPosition().x < avatarPos.x && avatarPos.x < monster.getPosition().x) ||
                             (p.getPosition().x > avatarPos.x && avatarPos.x > monster.getPosition().x);
                     float dist = p.getPosition().dst(monster.getPosition());
-                    if (dist < 3 && !avatarBetweenX && (p.isThrowOut() || p.getIndex() == 0)) {
+                    if (dist < 3 && !avatarBetweenX) {
                         monster.setFilmStrip(attackStrip);
                         if (p.getPosition().x < monster.getPosition().x) {
                             monster.setFacingRight(-1);
