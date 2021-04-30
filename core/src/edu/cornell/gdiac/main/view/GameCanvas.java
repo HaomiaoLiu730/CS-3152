@@ -431,6 +431,7 @@ public class GameCanvas {
         // Have to draw the background twice for continuous scrolling.
         spriteBatch.draw(image, x,   y);
         spriteBatch.draw(image, x+w, y);
+        spriteBatch.draw(image, x+2*w, y);
     }
 
     /**
