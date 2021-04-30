@@ -71,6 +71,7 @@ public class GameplayController extends WorldController implements ContactListen
     private Texture background;
     private BitmapFont gameFont ;
     private JsonValue constants;
+    private boolean endSoundPlaying;
 
     /** number of penguins */
     private int num_penguins;
@@ -88,7 +89,7 @@ public class GameplayController extends WorldController implements ContactListen
     private static  int PUNCH_TIME;
     private int punchCooldown;
     /** resetCountdown */
-    public static int resetCountDown = 30;
+    public static int resetCountDown = 200;
 
     private String jsonFile;
 
@@ -130,6 +131,7 @@ public class GameplayController extends WorldController implements ContactListen
         world.setContactListener(this);
 
         this.jsonFile = jsonFile;
+        endSoundPlaying = false;
 
         internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
         internal.loadAssets();
@@ -202,6 +204,7 @@ public class GameplayController extends WorldController implements ContactListen
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        endSoundPlaying = false;
         notesCollected = 0;
         hitWater(false);
         Vector2 gravity = new Vector2(world.getGravity());
@@ -220,7 +223,7 @@ public class GameplayController extends WorldController implements ContactListen
         setComplete(false);
         setFailure(false);
         populateLevel();
-        resetCountDown = 30;
+        resetCountDown = 200;
         quitClick = false;
         resetClick = false;
         canThrow = false;
@@ -689,14 +692,20 @@ public class GameplayController extends WorldController implements ContactListen
         // Final message
         if (complete && !failed) {
             canvas.begin(); // DO NOT SCALE
-            winning.play();
+            if(!endSoundPlaying) {
+                winning.play(0.5f, 1, 0);
+                endSoundPlaying = true;
+            }
             gameFont.setColor(Color.WHITE);
             canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         } else if (failed && !resetClick) {
             canvas.begin(); // DO NOT SCALE
-            losing.play();
+            if(!endSoundPlaying) {
+                losing.play(0.5f, 1, 0);
+                endSoundPlaying = true;
+            }
             gameFont.setColor(Color.WHITE);
             canvas.drawTextCentered("FAILURE!", gameFont, 0.0f);
             gameFont.setColor(Color.BLACK);
