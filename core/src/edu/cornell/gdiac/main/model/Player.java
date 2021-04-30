@@ -556,7 +556,6 @@ public class Player extends CapsuleObstacle {
         SHOOT_COOLDOWN=data.getInt("shoot_cooldown");
         SENSOR_HEIGHT=data.getFloat("sensor_height");
         SENSOR_NAME=data.getString("sensor_name");
-//        MAX_THROWING_FORCE=data.getFloat("max_throw_force");
         MAX_THROWING_FORCE = 440;
         PENGUIN_WIDTH=p_data.getFloat("width");
         PENGUIN_HEIGHT=p_data.getFloat("height");
