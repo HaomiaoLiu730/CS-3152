@@ -194,29 +194,31 @@ public class CollisionController {
             if (avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.getY() >= downY && avatar.getY() <= upY) {
                 GameplayController.hitWater(true);
             }
-            else {
-                for (Penguin p: avatar.getPenguins()){
-                    if (!p.isThrowOut())
-                         p.setY(avatar.getY()-avatar.getHeight()/4-0.1f);
-                }
-            }
         }
     }
 
-    public void processCollision(List<Water> waters, List<Penguin> penguins){
+    public void processCollision(List<Water> waters, List<Penguin> penguins, Player avatar){
         for (Water water: waters){
             for (Penguin p : penguins) {
                 float leftX = water.getX()-((Water) water).getWidth()/2;
                 float rightX = water.getX()+((Water) water).getWidth()/2;
                 float downY = water.getY()-((Water) water).getHeight()/2;
                 float upY = water.getY()+((Water) water).getHeight()/2;
-                if (p.getX() >= leftX && p.getX() <= rightX && p.getY() >= downY && p.getY() <= upY ) {
+                if (p.getX() >= leftX && p.getX() <= rightX && p.getY() >= downY && p.getY() <= upY) {
+                    p.setInWater(true);
                     p.setBodyType(BodyDef.BodyType.StaticBody);
                     p.setActive(false);
+                    if ((avatar.isGrounded()&&!p.isThrowOut()  && !(avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.isGrounded())))
+                    {
+                        p.setActive(false);
+                        p.setY(avatar.getY() - avatar.getHeight() / 4 -0.1f);
+                    }
                 }
-                else{
+                else if (p.getX() >= leftX && p.getX() <= rightX) {
                     p.setActive(true);
+                    p.setInWater(false);
                 }
+
 
             }
         }

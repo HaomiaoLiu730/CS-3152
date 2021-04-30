@@ -36,6 +36,8 @@ public class Penguin extends CapsuleObstacle {
     /** Identifier to allow us to track the sensor in ContactListener */
     private final String SENSOR_NAME;
     private boolean soundPlaying;
+    private boolean inWater;
+
 
 
     private int index;
@@ -75,7 +77,6 @@ public class Penguin extends CapsuleObstacle {
      */
     public void setMovement(float force, float xDir, float yDir) {
         // Change facing if appropriate
-
         if (xDir < 0) {
             faceRight = false;
         } else {
@@ -85,6 +86,12 @@ public class Penguin extends CapsuleObstacle {
     }
     public void setIsLast(boolean last){
         this.isLast=last;
+    }
+    public void setInWater(boolean inWater){
+        this.inWater=inWater;
+    }
+    public boolean getInWater(){
+        return inWater;
     }
 
     /**

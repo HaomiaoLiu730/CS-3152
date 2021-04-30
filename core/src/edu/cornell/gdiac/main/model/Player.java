@@ -763,7 +763,7 @@ public class Player extends CapsuleObstacle {
         float effect = faceRight ? 1.0f : -1.0f;
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
-        if(Gdx.input.isTouched()&& throwingCount == 0){
+        if(Gdx.input.isTouched()&& throwingCount == 0 &&numPenguins>0){
             for(int i = 0; i<trajectories.length; i+=2){
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
