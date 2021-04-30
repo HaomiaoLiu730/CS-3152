@@ -1,7 +1,7 @@
 {
   "textures": {
     "background": {
-      "file": "images/africa/background1.png",
+      "file": "images/asia/background.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }
@@ -15,6 +15,7 @@
   },
   "jsons": {
     "level1": "asia/level1.json",
-    "level2": "asia/level2.json"
+    "level2": "asia/level2.json",
+    "level3": "asia/level3.json"
   }
 }
