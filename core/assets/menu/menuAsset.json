@@ -109,6 +109,41 @@
       "file":     "images/menu/flight6.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "penguin1": {
+      "file":     "images/menu/1.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin2": {
+      "file":     "images/menu/2.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin3": {
+      "file":     "images/menu/3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin4": {
+      "file":     "images/menu/4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin5": {
+      "file":     "images/menu/5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin6": {
+      "file":     "images/menu/6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "penguin7": {
+      "file":     "images/menu/7.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
