@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
@@ -24,11 +25,14 @@ import edu.cornell.gdiac.util.ScreenListener;
 import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
+import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_CONTINUE;
+import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_MENU;
+
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
-    private static final float MOUSE_TOL = 20f;
+    private static final float MOUSE_TOL = 50f;
 
     private AssetDirectory internal;
     /** Reference to the character avatar */
@@ -59,9 +63,13 @@ public class GameplayController extends WorldController implements ContactListen
     private boolean resetClick;
     /** Whether the player can throw or not */
     private boolean canThrow;
+    private boolean closeAttemp;
 
     private boolean isEditingView;
     private float[] grounded;
+
+    private boolean isPaused;
+    private boolean disableMovement;
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -205,6 +213,7 @@ public class GameplayController extends WorldController implements ContactListen
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        disableMovement = false;
         endSoundPlaying = false;
         notesCollected = 0;
         hitWater(false);
@@ -272,8 +281,7 @@ public class GameplayController extends WorldController implements ContactListen
      * Lays out the game geography.
      */
     private void populateLevel() {
-        quitPos = new Vector2(canvas.getWidth()-60f, canvas.getHeight()-30.0f);
-        resetPos = new Vector2(canvas.getWidth()-120f, canvas.getHeight()-30.0f);
+        quitPos = new Vector2(canvas.getWidth()-80f, canvas.getHeight()-80f);
         buttonR = 20;
 
         // Add level goal
@@ -499,24 +507,25 @@ public class GameplayController extends WorldController implements ContactListen
     @Override
     public void update(float dt) {
         for (int i = 0; i < iciclesList.size(); i++) {
-
             if (staticBodies.get(i) == 1) {
                 iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
                 staticBodies.set(i, 2);
             }
         }
 
-        if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
-            if (Gdx.input.isTouched()) {
-                hitWater(true);
-                resetClick = true;
+        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+            isPaused = true;
+            avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
+            disableMovement = true;
+            return;
+        }
+        if(isPaused){
+            if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
+                    ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
+                isPaused = false;
+                disableMovement = false;
                 return;
             }
-        }
-        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
-            listener.updateScreen(this, GDXRoot.GAMEPLAY_MENU);
-            quitClick = true;
-            return;
         }
         if (resetCountDown < 0 && !failed) {
             if (!isEditingView) {
@@ -529,7 +538,9 @@ public class GameplayController extends WorldController implements ContactListen
 
         backToEdit();
         updateCamera();
-        updatePlayer();
+        if(!disableMovement){
+            updatePlayer();
+        }
 
         if (complete) {
             resetCountDown -= 1;
@@ -621,7 +632,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.setFilmStrip(jumpRisingStrip);
             jumping.play();
         }
-        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP);
+        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
         canThrow = true;
         avatar.pickUpPenguins();
     }
@@ -647,7 +658,6 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
         }
 
-
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
@@ -658,14 +668,33 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawText(gameFont, noteMsg, 5.0f, canvas.getHeight() - 5.0f);
             canvas.drawText(gameFont, penguinMsg, 5.0f, canvas.getHeight() - 40.0f);
         }
+        if(isPaused){
+            canvas.drawFixed(pauseScreen,
+                    canvas.getWidth()/2f- 200,
+                    canvas.getHeight()/2f-200);
+            if(InputController.getInstance().touchUp() && Gdx.input.getX()>500 && Gdx.input.getY()>150&&Gdx.input.getX()<760 && Gdx.input.getY()<280){
+                isPaused = false;
+                disableMovement = false;
+                canvas.end();
+                listener.updateScreen(this, GAMEPLAY_CONTINUE);
+                return;
+            }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
+                isPaused = false;
+                disableMovement = false;
+                reset();
+            }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>370&&Gdx.input.getX()<760 && Gdx.input.getY()<410){
+                isPaused = false;
+                disableMovement = false;
+                canvas.end();
+                listener.updateScreen(this, GAMEPLAY_MENU);
+                return;
+            }
+        }
         if(isEditingView){
             canvas.drawSquare(Color.BLACK,1200,560,60,40);
             canvas.drawText(gameFont, "Edit", 1200,600);
         }else{
-            canvas.drawCircle(Color.FIREBRICK, quitPos.x, quitPos.y, buttonR);
-            canvas.drawText( gameFont, "Quit", quitPos.x-15f, quitPos.y-30f);
-            canvas.drawCircle(Color.TEAL, resetPos.x, resetPos.y, buttonR);
-            canvas.drawText( gameFont, "Reset",resetPos.x-25f, resetPos.y-30f);
+            canvas.drawFixed(pauseButton,quitPos.x, quitPos.y);
         }
         canvas.end();
 

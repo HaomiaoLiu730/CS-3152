@@ -387,8 +387,8 @@ public class Player extends CapsuleObstacle {
             return;
         }
     }
-    public void setThrowing(boolean touchUp,Sound throwing){
-        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+    public void setThrowing(boolean touchUp,Sound throwing, boolean stop){
+        if(stop){
             throwingCount = -1;
             changeOverlap(1,true,false);
         }
@@ -437,14 +437,12 @@ public class Player extends CapsuleObstacle {
                         xDir = 0f;
                         yDir = 0f;
                         changeOverlap(1,false,false);
-
                         return;
                     }
                 }
             }
-            }
         }
-
+    }
 
 
     /**

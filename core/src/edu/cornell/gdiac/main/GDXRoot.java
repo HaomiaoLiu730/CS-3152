@@ -23,6 +23,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	public static final int EDITOR_GAMEPLAY = 128;
 	public static final int GAMEPLAY_EDITOR = 129;
+	public static final int GAMEPLAY_CONTINUE = 130;
 	public static final int GAMEPLAY_MENU = 150;
 
 	/** AssetManager to load game assets (textures, sounds, etc.) */
@@ -36,6 +37,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	Loading loading;
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
+	private int totalLevels;
 
 	private GameplayController levelEditorGameplayController;
 	/** menu controller*/
@@ -75,7 +77,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		directory = new AssetDirectory("assets.json");
 		directory.loadAssets();
 		directory.finishLoading();
-		int totalLevels = 0;
+		totalLevels = 0;
 		for(MenuController.Continent continent: MenuController.Continent.values()){
 			totalLevels += numOfLevels.get(continent);
 		}
@@ -110,6 +112,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
 		setScreen(loading);
+
 	}
 
 	@Override
@@ -120,6 +123,14 @@ public class GDXRoot extends Game implements ScreenListener {
 			directory.dispose();
 			directory = null;
 		}
+	}
+
+	public void nextLevel(){
+		controllers[current].loadContent(directory);
+		controllers[current].setScreenListener(this);
+		controllers[current].setCanvas(canvas);
+		controllers[current].reset();
+		setScreen(controllers[current]);
 	}
 
 	/**
@@ -201,7 +212,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				levelEditorGameplayController.setScreenListener(this);
 				setScreen(levelEditorGameplayController);
 			}
-		}else if(screen instanceof GameplayController){
+		} else if(screen instanceof GameplayController){
 			if (exitCode == GAMEPLAY_MENU) {
 				controllers[current].dispose();
 				menuController.reset();
@@ -212,7 +223,9 @@ public class GDXRoot extends Game implements ScreenListener {
 				levelEditorGameplayController.setScreenListener(this);
 				setScreen(levelEditor);
 			}else{
-				controllers[current].dispose();
+				if(exitCode!=GAMEPLAY_CONTINUE){
+					controllers[current].dispose();
+				}
 				// write progress to json
 				current++;
 				int[] finished = value.get("finished").get(currentContinent.name()).asIntArray();
@@ -234,11 +247,60 @@ public class GDXRoot extends Game implements ScreenListener {
 							- numOfLevels.get(MenuController.Continent.Asia)
 							- numOfLevels.get(MenuController.Continent.NorthAmerica);
 				}
+				if(exitCode == GAMEPLAY_CONTINUE){
+					if(finished.length > addedVal){
+						nextLevel();
+						return;
+					}
+					if(addedVal == numOfLevels.get(currentContinent)){
+						switch (currentContinent){
+							case Africa:
+								if(value.get("finished").get(MenuController.Continent.Oceania.name()).asIntArray().length != 0) {
+									currentContinent = MenuController.Continent.Oceania;
+									nextLevel();
+								}
+								break;
+							case Oceania:
+								if(value.get("finished").get(MenuController.Continent.Asia.name()).asIntArray().length != 0) {
+									currentContinent = MenuController.Continent.Asia;
+									nextLevel();
+								}
+								break;
+							case Asia:
+								if(value.get("finished").get(MenuController.Continent.NorthAmerica.name()).asIntArray().length != 0) {
+									currentContinent = MenuController.Continent.NorthAmerica;
+									nextLevel();
+								}
+								break;
+							case NorthAmerica:
+								if(value.get("finished").get(MenuController.Continent.SouthAmerica.name()).asIntArray().length != 0) {
+									currentContinent = MenuController.Continent.SouthAmerica;
+									nextLevel();
+								}
+								break;
+							case SouthAmerica:
+								current --;
+								nextLevel();
+								if(value.get("finished").get(MenuController.Continent.Antarctica.name()).asIntArray().length != 0) {
+									currentContinent = MenuController.Continent.Antarctica;
+									nextLevel();
+								}
+								break;
+							default:
+								break;
+						}
+						return;
+					}
+					current --;
+					nextLevel();
+					return;
+				}
 				if(finished.length == 0 || finished[finished.length-1] < addedVal){
 					value.get("finished").get(currentContinent.name()).addChild(new JsonValue(addedVal));
 					FileHandle file = Gdx.files.local("menu/levelProgress.json");
 					file.writeString(value.prettyPrint(JsonWriter.OutputType.json,0), false);
 				}
+
 				if(current == numOfLevels.get(currentContinent)){
 					// switch to the second level
 					switch (currentContinent){
@@ -260,18 +322,13 @@ public class GDXRoot extends Game implements ScreenListener {
 							break;
 					}
 				}
-				// TODO: total levels
-				if(current == 14){
+				if(current == totalLevels-1){
 					menuController.reset();
 					menuController.setScreenListener(this);
 					setScreen(menuController);
 					return;
 				}else{
-					controllers[current].loadContent(directory);
-					controllers[current].setScreenListener(this);
-					controllers[current].setCanvas(canvas);
-					controllers[current].reset();
-					setScreen(controllers[current]);
+					nextLevel();
 				}
 			}
 		}
