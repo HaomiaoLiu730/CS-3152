@@ -29,7 +29,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private ScreenListener listener;
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
-    private static final float MOUSE_TOL = 10f;
+    private static final float MOUSE_TOL = 24f;
     /** Whether or not this player mode is still active */
     private boolean active;
     /** is ready for game mode*/
@@ -41,6 +41,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private boolean drawPoints;
     private Camera camera;
     private boolean prevTouched;
+    private float zoomInTime = 0;
     public enum Continent{
         NorthAmerica,
         SouthAmerica,
@@ -207,11 +208,17 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         unlockedContinents.add(continent);
     }
 
+    public float quadraticFunction(float a, float b, float c, float t){
+        return a*t*t+b*t+c;
+    }
+
     private void zoomInto(float viewportWidth, float viewportHeight, float cameraPosX, float cameraPosY){
+        zoomInTime+=0.1;
+        float deltaPosY = quadraticFunction(0.06f,0.05f,0,zoomInTime);
         float scale = Math.abs(cameraPosY - 360);
-        float deltaWidth = (viewportWidth-1280)/scale;
-        float deltaHeight = (viewportHeight-720)/scale;
-        float deltaPosX = (cameraPosX - 640f)/scale;
+        float deltaWidth = (viewportWidth-1280)/scale*deltaPosY;
+        float deltaHeight = (viewportHeight-720)/scale*deltaPosY;
+        float deltaPosX = (cameraPosX - 640f)/scale*deltaPosY;
         camera.viewportWidth = camera.viewportWidth >= viewportWidth ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
         camera.viewportHeight = camera.viewportHeight >= viewportHeight ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
 
@@ -221,14 +228,15 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             camera.position.x = camera.position.x >= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
         }
         if(cameraPosY - 360 > 0){
-            camera.position.y = camera.position.y <= cameraPosY ? camera.position.y + 1 :camera.position.y;
+            camera.position.y = camera.position.y <= cameraPosY ? camera.position.y + deltaPosY :camera.position.y;
         }else{
-            camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - 1 :camera.position.y;
+            camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - deltaPosY :camera.position.y;
         }
         camera.update();
         if(Math.abs(camera.position.y - cameraPosY) <= 1){
             drawPoints = true;
             zoomIn = false;
+            zoomInTime = 0;
         }
     }
 
