@@ -43,7 +43,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	private LevelEditorController levelEditor;
 	private static JsonValue value;
 	private static HashMap<MenuController.Continent, Integer> numOfLevels = new HashMap<>();
-	private MenuController.Continent currentContinent = MenuController.Continent.Africa;
+	private MenuController.Continent currentContinent = MenuController.Continent.Europe;
 	/**
 	 * Creates a new game application root
 	 */
@@ -81,6 +81,11 @@ public class GDXRoot extends Game implements ScreenListener {
 		}
 		int prevLevels = 0;
 		controllers = new WorldController[totalLevels];
+		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Europe); i++){
+			controllers[i+prevLevels] = new GameplayController("europe/europeMain.json",i);
+			controllers[i+prevLevels].setScreenListener(this);
+		}
+		prevLevels += numOfLevels.get(MenuController.Continent.Europe);
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Africa); i++){
 			controllers[i+prevLevels] = new GameplayController("africa/africaMain.json",i);
 			controllers[i+prevLevels].setScreenListener(this);
@@ -163,24 +168,29 @@ public class GDXRoot extends Game implements ScreenListener {
 				currentContinent = MenuController.Continent.Europe;
 				current = exitCode%10;
 			}else if(hundred == 2){
-				current = exitCode%10;
+				current = numOfLevels.get(MenuController.Continent.Europe)+(exitCode%10);
 				currentContinent = MenuController.Continent.Africa;
 			}else if(hundred == 3){
-				current = numOfLevels.get(MenuController.Continent.Africa)+(exitCode%10);
+				current = numOfLevels.get(MenuController.Continent.Europe)
+						+ numOfLevels.get(MenuController.Continent.Africa)
+						+ (exitCode%10);
 				currentContinent = MenuController.Continent.Oceania;
 			}else if(hundred == 4){
-				current = numOfLevels.get(MenuController.Continent.Africa)
+				current = numOfLevels.get(MenuController.Continent.Europe)
+						+ numOfLevels.get(MenuController.Continent.Africa)
 						+ numOfLevels.get(MenuController.Continent.Oceania)
 						+(exitCode%10);
 				currentContinent = MenuController.Continent.Asia;
 			}else if(hundred == 5){
-				current = numOfLevels.get(MenuController.Continent.Africa)
+				current = numOfLevels.get(MenuController.Continent.Europe)
+						+ numOfLevels.get(MenuController.Continent.Africa)
 						+ numOfLevels.get(MenuController.Continent.Oceania)
 						+ numOfLevels.get(MenuController.Continent.Asia)
 						+(exitCode%10);
 				currentContinent = MenuController.Continent.NorthAmerica;
 			}else if(hundred == 6){
-				current = numOfLevels.get(MenuController.Continent.Africa)
+				current = numOfLevels.get(MenuController.Continent.Europe)
+						+ numOfLevels.get(MenuController.Continent.Africa)
 						+ numOfLevels.get(MenuController.Continent.Oceania)
 						+ numOfLevels.get(MenuController.Continent.Asia)
 						+ numOfLevels.get(MenuController.Continent.NorthAmerica)
@@ -217,19 +227,25 @@ public class GDXRoot extends Game implements ScreenListener {
 				current++;
 				int[] finished = value.get("finished").get(currentContinent.name()).asIntArray();
 				int addedVal = 0;
-				if(currentContinent == MenuController.Continent.Africa){
+				if(currentContinent == MenuController.Continent.Europe) {
 					addedVal = current;
+				}else if(currentContinent == MenuController.Continent.Africa){
+					addedVal = current - numOfLevels.get(MenuController.Continent.Europe);
 				}else if(currentContinent == MenuController.Continent.Oceania){
-					addedVal = current - numOfLevels.get(MenuController.Continent.Africa);
+					addedVal = current - numOfLevels.get(MenuController.Continent.Europe)
+							- numOfLevels.get(MenuController.Continent.Africa);
 				}else if(currentContinent == MenuController.Continent.Asia){
-					addedVal = current - numOfLevels.get(MenuController.Continent.Africa)
+					addedVal = current - numOfLevels.get(MenuController.Continent.Europe)
+							- numOfLevels.get(MenuController.Continent.Africa)
 							- numOfLevels.get(MenuController.Continent.Oceania);
 				}else if(currentContinent == MenuController.Continent.NorthAmerica){
-					addedVal = current - numOfLevels.get(MenuController.Continent.Africa)
+					addedVal = current - numOfLevels.get(MenuController.Continent.Europe)
+							- numOfLevels.get(MenuController.Continent.Africa)
 							- numOfLevels.get(MenuController.Continent.Oceania)
 							- numOfLevels.get(MenuController.Continent.Asia);
 				}else if(currentContinent == MenuController.Continent.SouthAmerica){
-					addedVal = current - numOfLevels.get(MenuController.Continent.Africa)
+					addedVal = current - numOfLevels.get(MenuController.Continent.Europe)
+							- numOfLevels.get(MenuController.Continent.Africa)
 							- numOfLevels.get(MenuController.Continent.Oceania)
 							- numOfLevels.get(MenuController.Continent.Asia)
 							- numOfLevels.get(MenuController.Continent.NorthAmerica);
@@ -242,6 +258,9 @@ public class GDXRoot extends Game implements ScreenListener {
 				if(current == numOfLevels.get(currentContinent)){
 					// switch to the second level
 					switch (currentContinent){
+						case Europe:
+							currentContinent = MenuController.Continent.Africa;
+							MenuController.unlockContinents(MenuController.Continent.Africa);
 						case Africa:
 							currentContinent = MenuController.Continent.Oceania;
 							MenuController.unlockContinents(MenuController.Continent.Oceania);

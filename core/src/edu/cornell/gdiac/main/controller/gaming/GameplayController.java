@@ -88,6 +88,7 @@ public class GameplayController extends WorldController implements ContactListen
     /** Length (in animation frames) for punching */
     private static  int PUNCH_TIME;
     private int punchCooldown;
+    private int level;
     /** resetCountdown */
     public static int resetCountDown = 200;
 
@@ -132,6 +133,7 @@ public class GameplayController extends WorldController implements ContactListen
         world.setContactListener(this);
 
         this.jsonFile = jsonFile;
+        this.level = level;
         endSoundPlaying = false;
 
         internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
@@ -643,6 +645,33 @@ public class GameplayController extends WorldController implements ContactListen
 
         canvas.begin();
         canvas.drawBackground(background,0, 0);
+        // draw tutorial text
+        if(this.jsonFile.startsWith("europe")){
+            switch (this.level){
+                case 0:
+                    canvas.drawText("Use 'WASD' or arrow keys \n to control movement", gameFont,500, 500);
+                    canvas.drawText("Ice bars can tilt", gameFont,1280, 320);
+                    canvas.drawText("you would lose one penguin \n to collect a note",gameFont,1800, 500);
+                    break;
+                case 1:
+                    canvas.drawText("Some ice bars can also move!", gameFont,1500, 400);
+                    break;
+                case 2:
+                    canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 560);
+                    canvas.drawText("Throw the penguins by long press the mouse \n to control direction and force", gameFont,700, 500);
+                    canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
+                    canvas.drawText("Try to throw the penguin \n at the note to collect it!", gameFont,2000, 600);
+                    break;
+                case 3:
+                    canvas.drawText("Come closer and press F to kill the seal!", gameFont,1360, 360);
+                    canvas.drawText("Protect the penguins from the seals!", gameFont,1360, 330);
+                    canvas.drawText("Also protect the penguins from the sealions!", gameFont,1800, 320);
+
+                    break;
+                default:
+                    break;
+            }
+        }
         if(complete || failed){
             canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
         }
