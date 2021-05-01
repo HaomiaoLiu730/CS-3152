@@ -37,7 +37,7 @@ public class Penguin extends CapsuleObstacle {
     private final String SENSOR_NAME;
     private boolean soundPlaying;
     private boolean inWater;
-
+    public float PENGUIN_MASS = 0.87674415f;
 
 
     private int index;
@@ -161,6 +161,7 @@ public class Penguin extends CapsuleObstacle {
      */
     public void setGrounded(boolean value) {
         isGrounded = value;
+        setLinearVelocity(forceCache.set(0,0));
     }
 
     /**

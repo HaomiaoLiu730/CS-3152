@@ -162,7 +162,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
         active  = true;
         zoomIn = false;
-        currentContinent = Continent.Africa;
+        currentContinent = Continent.Europe;
         camera = canvas.getCamera();
         this.canvas = canvas;
 
@@ -232,7 +232,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - deltaPosY :camera.position.y;
         }
         camera.update();
-        if(Math.abs(camera.position.y - cameraPosY) <= 1){
+        if(Math.abs(camera.position.y - cameraPosY) <= 5){
             drawPoints = true;
             zoomIn = false;
             zoomInTime = 0;

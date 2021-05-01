@@ -90,6 +90,7 @@ public class GameplayController extends WorldController implements ContactListen
     private static boolean hitWater = false;
     private boolean complete = false;
     private boolean failed = false;
+    private Vector2 forceCache = new Vector2();
 
     /** Cooldown (in animation frames) for punching */
     private static  int PUNCH_COOLDOWN;
@@ -369,8 +370,8 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(avatar.getNumPenguins()-1));
-
-
+            avatar.getPenguins().get(i).setActive(false);
+            avatar.getPenguins().get(i).setSensor(true);
         }
 
         JsonValue enemy = constants.get("enemy");
@@ -747,6 +748,8 @@ public class GameplayController extends WorldController implements ContactListen
             gameFont.setColor(Color.BLACK);
             canvas.end();
         } else if (failed && !resetClick) {
+            disableMovement = true;
+            avatar.setLinearVelocity(forceCache.set(0,avatar.getLinearVelocity().y));
             canvas.begin(); // DO NOT SCALE
             if(!endSoundPlaying) {
                 losing.play(0.5f, 1, 0);

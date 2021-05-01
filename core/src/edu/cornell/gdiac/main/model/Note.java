@@ -44,6 +44,8 @@ public class Note extends BoxObstacle {
 
     public void setCollected(boolean val){
         isCollected = val;
+        setActive(false);
+        setAwake(false);
     }
 
     public boolean isCollected(){
