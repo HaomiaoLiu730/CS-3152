@@ -161,6 +161,7 @@ public class Penguin extends CapsuleObstacle {
      */
     public void setGrounded(boolean value) {
         isGrounded = value;
+        setLinearVelocity(forceCache.set(0,0));
     }
 
     /**

@@ -252,7 +252,7 @@ public class Player extends CapsuleObstacle {
             for(Penguin p: penguins){
                 if(!p.isThrowOut()){
                     p.setSensor(true);
-                    p.setBodyType(BodyDef.BodyType.StaticBody);
+//                    p.setBodyType(BodyDef.BodyType.StaticBody);
                     if(faceRight){
                         if(p.getX() - getX() < -PENGUIN_WIDTH){
                             fixPenguin = false;
@@ -262,8 +262,8 @@ public class Player extends CapsuleObstacle {
                     }else{
                         if(p.getX() - getX() > PENGUIN_WIDTH){
                             fixPenguin = false;
-                            p.setSensor(false);
-//                            p.setBodyType(BodyDef.BodyType.DynamicBody);
+//                            p.setSensor(false);
+//                            p.setBodyType(BodyDef.BodyType.KinematicBody);
                         }
                     }
                 }
@@ -351,14 +351,14 @@ public class Player extends CapsuleObstacle {
      */
     public void pickUpPenguins() {
             for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 1.5f && p.isThrowOut()){
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 1.5f && p.isThrowOut() && p.getLinearVelocity().y <= 0){
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
-//                    p.setBodyType(BodyDef.BodyType.DynamicBody);
                     p.setY(getY()-1);
                     p.setActive(false);
-                    p.setBodyType(BodyDef.BodyType.StaticBody);
+                    p.setBodyType(BodyDef.BodyType.DynamicBody);
+                    p.setSensor(true);
                     numPenguins += 1;
                     changeOverlap(1,true,false);
                 }
@@ -412,7 +412,6 @@ public class Player extends CapsuleObstacle {
                     pen.setIsLast(true);
                 }
             }
-
             calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
         }else if(touchUp && throwingCount == 0){
             if(numPenguins > 0){
@@ -740,7 +739,7 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
-            if((Math.abs(p.getY()-getY()) > 3f && !p.isThrowOut())){
+            if(!p.isThrowOut()){
                 p.setY(getY());
             }
 
