@@ -1,0 +1,10 @@
+{
+  "jrePath": "jre",
+  "classPath": [
+    "CS-3152.jar"
+  ],
+  "mainClass": "edu.cornell.gdiac.desktop.DesktopLauncher",
+  "useZgcIfSupportedOs": false,
+  "vmArgs": [
+  ]
+}

@@ -151,5 +151,9 @@ public class MovingIce extends ComplexObstacle {
     public void removePlyaer(){
         bear = null;
     }
+
+    public void hitSomething(){
+        direction = -direction;
+    }
 }
 

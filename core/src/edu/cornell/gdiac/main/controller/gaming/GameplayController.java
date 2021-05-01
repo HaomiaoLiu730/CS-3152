@@ -21,7 +21,7 @@ import edu.cornell.gdiac.main.controller.WorldController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
-//import javax.xml.soap.Text;
+
 import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
@@ -97,6 +97,7 @@ public class GameplayController extends WorldController implements ContactListen
     /** Length (in animation frames) for punching */
     private static  int PUNCH_TIME;
     private int punchCooldown;
+    private int level;
     /** resetCountdown */
     public static int resetCountDown = 200;
 
@@ -141,6 +142,7 @@ public class GameplayController extends WorldController implements ContactListen
         world.setContactListener(this);
 
         this.jsonFile = jsonFile;
+        this.level = level;
         endSoundPlaying = false;
 
         internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
@@ -655,6 +657,33 @@ public class GameplayController extends WorldController implements ContactListen
 
         canvas.begin();
         canvas.drawBackground(background,0, 0);
+        // draw tutorial text
+        if(this.jsonFile.startsWith("europe")){
+            switch (this.level){
+                case 0:
+                    canvas.drawText("Use 'WASD' or arrow keys \n to control movement", gameFont,500, 500);
+                    canvas.drawText("Ice bars can tilt", gameFont,1280, 320);
+                    canvas.drawText("you would lose one penguin \n to collect a note",gameFont,1800, 500);
+                    break;
+                case 1:
+                    canvas.drawText("Some ice bars can also move!", gameFont,1500, 400);
+                    break;
+                case 2:
+                    canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 560);
+                    canvas.drawText("Throw the penguins by long press the mouse \n to control direction and force", gameFont,700, 500);
+                    canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
+                    canvas.drawText("Try to throw the penguin \n at the note to collect it!", gameFont,2000, 600);
+                    break;
+                case 3:
+                    canvas.drawText("Come closer and press F to kill the seal!", gameFont,1360, 360);
+                    canvas.drawText("Protect the penguins from the seals!", gameFont,1360, 330);
+                    canvas.drawText("Also protect the penguins from the sealions!", gameFont,1800, 320);
+
+                    break;
+                default:
+                    break;
+            }
+        }
         if(complete || failed){
             canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
         }
@@ -798,6 +827,7 @@ public class GameplayController extends WorldController implements ContactListen
                 staticBodies.set(index, staticBodies.get(index)+1);
             }
 
+
             if (bd1 instanceof Penguin && bd2.getName().startsWith("icicle")){
                 icicles_hit.set(iciclesList.indexOf(bd2),true);
             }
@@ -807,10 +837,12 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             // set the ice bar tilt only for avatar
-            if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") && bd2 == avatar) {
+            if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") &&
+                    (bd2 == avatar || bd2.getName().startsWith("icicle")) ) {
                 bd1.setFixedRotation(false);
             }
-            if (bd1 == avatar && (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
+            if ((bd1 == avatar || bd1.getName().startsWith("icicle")) &&
+                    (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
 
@@ -825,14 +857,14 @@ public class GameplayController extends WorldController implements ContactListen
             if(bd1.getName() == "floatingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
                 if(bd2.getName().startsWith("icicle") ){
-                    float force = bd2.getMass()/2000;
+                    float force = (float) Math.log(bd1.getMass())/75;
                     if (bd2.getX()<bd1.getX()){
                         force = -force;
                     }
                     ((FloatingIce)master).hitByIcicle(force);
                 }
-                else if (!(bd1 instanceof Penguin)){
-                    ((FloatingIce)master).resetMomentum();
+                else if (!(bd2 instanceof Penguin) && !(bd2 instanceof Player)){
+                    ((FloatingIce)master).offsetX();
                 }
 
             }
@@ -840,14 +872,14 @@ public class GameplayController extends WorldController implements ContactListen
             if(bd2.getName() == "floatingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
                 if(bd1.getName().startsWith("icicle")){
-                    float force = bd1.getMass()/2000;
+                    float force = (float) Math.log(bd1.getMass())/75;
                     if (bd1.getX()<bd2.getX()){
                         force = -force;
                     }
                     ((FloatingIce)master).hitByIcicle(force);
                 }
-                else if (!(bd1 instanceof Penguin)){
-                    ((FloatingIce)master).resetMomentum();
+                else if (!(bd1 instanceof Penguin)&& !(bd1 instanceof Player)){
+                    ((FloatingIce)master).offsetX();
                 }
             }
 
@@ -862,6 +894,9 @@ public class GameplayController extends WorldController implements ContactListen
                     Player p = (Player) bd2;
                     ((MovingIce) master).addPlayer(p);
                 }
+                else  if (! (bd2 instanceof Penguin)){
+                    ((MovingIce) master).hitSomething();
+                }
 
             }
 
@@ -874,6 +909,9 @@ public class GameplayController extends WorldController implements ContactListen
                 else if (bd1 instanceof Player){
                     Player p = (Player) bd1;
                     ((MovingIce) master).addPlayer(p);
+                }
+                else  if (! (bd1 instanceof Penguin)){
+                    ((MovingIce) master).hitSomething();
                 }
 
             }

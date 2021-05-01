@@ -156,6 +156,8 @@ public class Player extends CapsuleObstacle {
     /** Cache for internal position calculations */
     private Vector2 position = new Vector2();
 
+    private float movingIceOffset=0;
+
     /**
      * Returns left/right movement of this character.
      *
@@ -746,6 +748,8 @@ public class Player extends CapsuleObstacle {
             p.applyForce(0,0, 0);
         }
 
+        setPosition(getX()-movingIceOffset,getY());
+
         super.update(dt);
 
     }
@@ -784,6 +788,6 @@ public class Player extends CapsuleObstacle {
     }
 
     public void setMovingIceoffset(float x){
-        setPosition(getX()-x,getY());
+        movingIceOffset = x;
     }
 }
