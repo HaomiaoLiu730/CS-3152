@@ -683,6 +683,12 @@ public class Player extends CapsuleObstacle {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        for (Penguin p: penguins) {
+            if(!p.isThrowOut()){
+                p.setY(getY());
+            }
+        }
+        if (isPaused()) return;
         // Apply cooldowns
         timeCounter += dt;
 
@@ -741,9 +747,7 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
-            if(!p.isThrowOut()){
-                p.setY(getY());
-            }
+
 
             p.applyForce(0,0, 0);
         }

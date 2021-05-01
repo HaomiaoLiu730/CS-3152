@@ -49,6 +49,8 @@ public abstract class Obstacle {
     private String nametag;
 	/** Drawing scale to convert physics units to pixels */
 	protected Vector2 drawScale;
+	/** Whether or not to use the custom mass data */
+	protected boolean isPaused;
 
 	/// Track garbage collection status
 	/** Whether the object should be removed from the world on next pass */
@@ -908,7 +910,11 @@ public abstract class Obstacle {
     public void setName(String value) {
      	nametag = value; 
 	}
-	
+
+	public boolean isPaused() { return isPaused; }
+
+	public void setPaused(boolean value) { isPaused = value; }
+
 	/**
 	 * Create a new physics object at the origin.
 	 */
@@ -946,6 +952,8 @@ public abstract class Obstacle {
 		
 		// Set the default drawing scale
 		drawScale = new Vector2(1,1);
+
+		isPaused = false;
 	}
 
 	/// Abstract Methods
@@ -979,7 +987,7 @@ public abstract class Obstacle {
 	 *
 	 * @param delta Timing values from parent loop
 	 */
-	public void update(float delta) { 
+	public void update(float delta) {
 	}
 
 	/**

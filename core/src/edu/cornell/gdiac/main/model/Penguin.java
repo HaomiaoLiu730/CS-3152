@@ -319,6 +319,7 @@ public class Penguin extends CapsuleObstacle {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        if (isPaused()) return;
         // Apply cooldowns
         timeCounter += dt;
         if(timeCounter >= 0.2 && updateWalking && !isThrownOut) {
