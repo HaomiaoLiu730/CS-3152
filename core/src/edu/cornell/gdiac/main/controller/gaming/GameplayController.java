@@ -364,11 +364,10 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(avatar.getNumPenguins()-1));
 
             addObject(avatar.getPenguins().get(i));
-            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
+            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.StaticBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(avatar.getNumPenguins()-1));
-
-
+            avatar.getPenguins().get(i).setActive(false);
         }
 
         JsonValue enemy = constants.get("enemy");
@@ -506,6 +505,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        // 0.87674415
         for (int i = 0; i < iciclesList.size(); i++) {
             if (staticBodies.get(i) == 1) {
                 iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
