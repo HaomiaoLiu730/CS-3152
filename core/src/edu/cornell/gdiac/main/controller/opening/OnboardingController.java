@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.InputController;
+import edu.cornell.gdiac.main.controller.gaming.GameplayController;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -97,9 +99,13 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
     public void update(float delta) {
         inputController.readInput();
         if(Math.abs(Gdx.input.getX() - 660) <= 75 && Math.abs(720 - Gdx.input.getY() - 335) <= 20){
-            if (Gdx.input.isTouched()) {
+            if (InputController.getInstance().touchUp())
                 listener.updateScreen(this, 0);
         }
+        if(Math.abs(Gdx.input.getX() - 660) <= 50 && Math.abs(720 - Gdx.input.getY() - 408) <= 20){
+            if (InputController.getInstance().touchUp())
+                listener.updateScreen(this, 2);
+
         }
         if(inputController.didPressE()){
             listener.updateScreen(this, 1);

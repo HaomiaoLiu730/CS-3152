@@ -498,6 +498,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+
         for (int i = 0; i < iciclesList.size(); i++) {
 
             if (staticBodies.get(i) == 1) {
@@ -665,7 +666,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawCircle(Color.FIREBRICK, quitPos.x, quitPos.y, buttonR);
             canvas.drawText( gameFont, "Quit", quitPos.x-15f, quitPos.y-30f);
             canvas.drawCircle(Color.TEAL, resetPos.x, resetPos.y, buttonR);
-            canvas.drawText( gameFont, "Reset",resetPos.x-25f, resetPos.y-30f);
+            canvas.drawText( gameFont, "Reset",resetPos.x-16.5f, resetPos.y-30f);
         }
         canvas.end();
 
