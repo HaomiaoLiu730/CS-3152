@@ -119,10 +119,13 @@ public class MovingIce extends ComplexObstacle {
 
     @Override
     public void update(float delta) {
+        if (isPaused()) return;
         super.update(delta);
-        if (Math.abs(initialX - pin.getX()) > distance) {
-            direction = (-1)*direction;
+        if (initialX - pin.getX() > distance) {
+            direction = -1;
         }
+        if(pin.getX()-initialX  > distance)
+            direction = 1;
 
         pin.setPosition(pin.getX() - direction*speed, pin.getY());
         if(sealions.size()>0){
@@ -152,8 +155,8 @@ public class MovingIce extends ComplexObstacle {
         bear = null;
     }
 
-    public void hitSomething(){
-        direction = -direction;
+    public void hitSomething(int dir){
+        direction = dir;
     }
 }
 

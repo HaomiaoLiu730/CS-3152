@@ -190,7 +190,7 @@ public abstract class WorldController implements Screen {
         penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
         sealionStrip = new FilmStrip(directory.getEntry("sealion", Texture.class), 1, 1);
         sealStrip = new FilmStrip(directory.getEntry("seal", Texture.class), 1, 1);
-        attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
+        attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 2);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         exitStrip = new FilmStrip(directory.getEntry("exit", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);

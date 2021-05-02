@@ -358,9 +358,11 @@ public class Player extends CapsuleObstacle {
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     p.setY(getY()-1);
+                    p.setX(faceRight? getX()-PENGUIN_WIDTH: getX()+PENGUIN_WIDTH);
                     p.setActive(false);
                     p.setBodyType(BodyDef.BodyType.DynamicBody);
                     p.setSensor(true);
+
                     numPenguins += 1;
                     changeOverlap(1,true,false);
                 }
@@ -683,6 +685,12 @@ public class Player extends CapsuleObstacle {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        for (Penguin p: penguins) {
+            if(!p.isThrowOut()){
+                p.setY(getY());
+            }
+        }
+        if (isPaused()) return;
         // Apply cooldowns
         timeCounter += dt;
 
@@ -741,14 +749,10 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
-            if(!p.isThrowOut()){
-                p.setY(getY());
-            }
+
 
             p.applyForce(0,0, 0);
         }
-
-        setPosition(getX()-movingIceOffset,getY());
 
         super.update(dt);
 
@@ -788,6 +792,6 @@ public class Player extends CapsuleObstacle {
     }
 
     public void setMovingIceoffset(float x){
-        movingIceOffset = x;
+        setPosition(getX()-x,getY());
     }
 }

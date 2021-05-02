@@ -106,7 +106,7 @@ public class Water extends BoxObstacle {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-
+        if (isPaused()) return;
         // Apply cooldowns
         if (index == 0) {
             this.timeCounter += dt;
