@@ -99,7 +99,8 @@ public class GameplayController extends WorldController implements ContactListen
     private int punchCooldown;
     private int level;
     /** resetCountdown */
-    public static int resetCountDown = 200;
+    public static final int RESETCD = 100;
+    public static int resetCountDown = RESETCD;
 
     private String jsonFile;
 
@@ -236,7 +237,7 @@ public class GameplayController extends WorldController implements ContactListen
         setComplete(false);
         setFailure(false);
         populateLevel();
-        resetCountDown = 200;
+        resetCountDown = RESETCD;
         quitClick = false;
         resetClick = false;
         canThrow = false;
@@ -856,8 +857,9 @@ public class GameplayController extends WorldController implements ContactListen
             //contact for floating ice bar
             if(bd1.getName() == "floatingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-                if(bd2.getName().startsWith("icicle") ){
-                    float force = (float) Math.log(bd1.getMass())/75;
+                if(bd2.getName().startsWith("icicle") && bd2.getMass()!=0 ){
+                    float force = (float) Math.log(bd2.getMass())/75;
+                    System.out.println("force" + force +" mass "+bd1.getMass());
                     if (bd2.getX()<bd1.getX()){
                         force = -force;
                     }
@@ -871,8 +873,9 @@ public class GameplayController extends WorldController implements ContactListen
 
             if(bd2.getName() == "floatingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-                if(bd1.getName().startsWith("icicle")){
+                if(bd1.getName().startsWith("icicle") && bd1.getMass()!=0){
                     float force = (float) Math.log(bd1.getMass())/75;
+                    System.out.println("force" + force +" mass "+bd1.getMass());
                     if (bd1.getX()<bd2.getX()){
                         force = -force;
                     }
@@ -895,7 +898,10 @@ public class GameplayController extends WorldController implements ContactListen
                     ((MovingIce) master).addPlayer(p);
                 }
                 else  if (! (bd2 instanceof Penguin)){
-                    ((MovingIce) master).hitSomething();
+//                    if(bd1.getX()<bd2.getX())
+//                        ((MovingIce) master).hitSomething(-1);
+//                    else
+//                        ((MovingIce) master).hitSomething(1);
                 }
 
             }
@@ -911,7 +917,10 @@ public class GameplayController extends WorldController implements ContactListen
                     ((MovingIce) master).addPlayer(p);
                 }
                 else  if (! (bd1 instanceof Penguin)){
-                    ((MovingIce) master).hitSomething();
+//                    if(bd2.getX()<bd1.getX())
+//                        ((MovingIce) master).hitSomething(-1);
+//                    else
+//                        ((MovingIce) master).hitSomething(1);
                 }
 
             }

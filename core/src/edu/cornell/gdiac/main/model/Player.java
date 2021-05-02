@@ -358,9 +358,11 @@ public class Player extends CapsuleObstacle {
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     p.setY(getY()-1);
+                    p.setX(faceRight? getX()-PENGUIN_WIDTH: getX()+PENGUIN_WIDTH);
                     p.setActive(false);
                     p.setBodyType(BodyDef.BodyType.DynamicBody);
                     p.setSensor(true);
+
                     numPenguins += 1;
                     changeOverlap(1,true,false);
                 }
@@ -748,8 +750,6 @@ public class Player extends CapsuleObstacle {
             p.applyForce(0,0, 0);
         }
 
-        setPosition(getX()-movingIceOffset,getY());
-
         super.update(dt);
 
     }
@@ -788,6 +788,6 @@ public class Player extends CapsuleObstacle {
     }
 
     public void setMovingIceoffset(float x){
-        movingIceOffset = x;
+        setPosition(getX()-x,getY());
     }
 }
