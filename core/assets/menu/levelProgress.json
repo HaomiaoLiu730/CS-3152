@@ -1,47 +1,21 @@
 {
-	"finished": {
-		"NorthAmerica": [
-			1,
-			2,
-			3
-		],
-		"SouthAmerica": [
-			1,
-			2,
-			3
-		],
-		"Asia": [
-			1,
-			2,
-			3
-		],
-		"Europe": [
-			1,
-			2,
-			3,
-			4,
-			5
-		],
-		"Antarctica": [],
-		"Africa": [
-			1,
-			2,
-			3
-		],
-		"Oceania": [
-			1,
-			2,
-			3
-		]
-	},
-	"numOfLevels": {
-		"NorthAmerica": 3,
-		"SouthAmerica": 3,
-		"Asia": 3,
-		"Europe": 5,
-		"Antarctica": 0,
-		"Africa": 3,
-		"Oceania": 3
-	},
-	"next": 19
+"finished": {
+	"NorthAmerica": [],
+	"SouthAmerica": [],
+	"Asia": [],
+	"Europe": [ 1, 2, 3, 4 ],
+	"Antarctica": [],
+	"Africa": [],
+	"Oceania": []
+},
+"numOfLevels": {
+	"NorthAmerica": 3,
+	"SouthAmerica": 3,
+	"Asia": 3,
+	"Europe": 4,
+	"Antarctica": 0,
+	"Africa": 3,
+	"Oceania": 3
+},
+"next": 4
 }
