@@ -511,20 +511,27 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+            isPaused = true;
+            avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
+            disableMovement = true;
+            return;
+        }
         if(isPaused){
             if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
                     ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
+
                 isPaused = false;
                 disableMovement = false;
-                for (int i=0; i<objects.size(); i++){
-                    if (pauseList.get(i)) {
-                        objects.get(i).setActive(true);
-                    }
-                    if (tiltList.get(i)) {
-                        objects.get(i).setFixedRotation(false);
-                    }
-                    objects.get(i).setPaused(false);
-                }
+//                for (int i=0; i<objects.size(); i++){
+//                    if (pauseList.get(i)) {
+//                        objects.get(i).setActive(true);
+//                    }
+//                    if (tiltList.get(i)) {
+//                        objects.get(i).setFixedRotation(false);
+//                    }
+//                    objects.get(i).setPaused(false);
+//                }
                 return;
             }
         }
