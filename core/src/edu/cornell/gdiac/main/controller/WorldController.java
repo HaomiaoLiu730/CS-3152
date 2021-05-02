@@ -190,7 +190,7 @@ public abstract class WorldController implements Screen {
         penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
         sealionStrip = new FilmStrip(directory.getEntry("sealion", Texture.class), 1, 1);
         sealStrip = new FilmStrip(directory.getEntry("seal", Texture.class), 1, 1);
-        attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 5);
+        attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 2);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         exitStrip = new FilmStrip(directory.getEntry("exit", Texture.class), 1, 1);
         arrowTexture = directory.getEntry("arrow", Texture.class);
@@ -204,7 +204,7 @@ public abstract class WorldController implements Screen {
         jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 3);
         throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
-        icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
+        icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 10, 165);
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
         snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
         iceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));

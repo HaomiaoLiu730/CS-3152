@@ -113,6 +113,7 @@ public class FloatingIce extends ComplexObstacle {
 
     @Override
     public void update(float delta) {
+        if (isPaused()) return;
         super.update(delta);
         if(momentum!=0) {
             pin.setPosition(pin.getX() - momentum, pin.getY());
