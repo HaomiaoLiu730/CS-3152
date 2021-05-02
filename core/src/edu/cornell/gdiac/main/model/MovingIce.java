@@ -119,6 +119,7 @@ public class MovingIce extends ComplexObstacle {
 
     @Override
     public void update(float delta) {
+        if (isPaused()) return;
         super.update(delta);
         if (initialX - pin.getX() > distance) {
             direction = -1;

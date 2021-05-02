@@ -82,6 +82,7 @@ public class Note extends BoxObstacle {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        if (isPaused()) return;
         // Apply cooldowns
         super.update(dt);
     }

@@ -70,6 +70,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     private boolean isPaused;
     private boolean disableMovement;
+    private ArrayList<Boolean> pauseList;
+    private ArrayList<Boolean> tiltList;
 
     private int timeCounter;
 
@@ -105,9 +107,6 @@ public class GameplayController extends WorldController implements ContactListen
     public static int resetCountDown = RESETCD;
 
     private String jsonFile;
-
-    /** The initial position of the player */
-    private static Vector2 PLAYER_POS ;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -342,7 +341,7 @@ public class GameplayController extends WorldController implements ContactListen
         // Create player
         dwidth  = avatarStrip.getRegionWidth()/scale.x;
         dheight = avatarStrip.getRegionHeight()/scale.y;
-        PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool");
+        PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool")/2;
         PUNCH_TIME=constants.get("player").getInt("punch_time");
         punchCooldown=constants.get("player").getInt("punch_cooldown");
         avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
@@ -512,6 +511,23 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        if(isPaused){
+            if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
+                    ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
+                isPaused = false;
+                disableMovement = false;
+                for (int i=0; i<objects.size(); i++){
+                    if (pauseList.get(i)) {
+                        objects.get(i).setActive(true);
+                    }
+                    if (tiltList.get(i)) {
+                        objects.get(i).setFixedRotation(false);
+                    }
+                    objects.get(i).setPaused(false);
+                }
+                return;
+            }
+        }
 
         for (int i = 0; i < iciclesList.size(); i++) {
             if (staticBodies.get(i) == 1) {
@@ -524,15 +540,24 @@ public class GameplayController extends WorldController implements ContactListen
             isPaused = true;
             avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
             disableMovement = true;
-            return;
-        }
-        if(isPaused){
-            if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
-                    ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
-                isPaused = false;
-                disableMovement = false;
-                return;
+            pauseList = new ArrayList<>();
+            tiltList = new ArrayList<>();
+            for (int i=0; i<objects.size(); i++){
+                if (objects.get(i).isActive()) {
+                    pauseList.add(true);
+                    objects.get(i).setActive(false);
+                } else {
+                    pauseList.add(false);
+                }
+                if (!objects.get(i).isFixedRotation()) {
+                    tiltList.add(true);
+                    objects.get(i).setFixedRotation(true);
+                } else {
+                    tiltList.add(false);
+                }
+                objects.get(i).setPaused(true);
             }
+            return;
         }
         if (resetCountDown < 0 && !failed) {
             if (!isEditingView) {
@@ -583,7 +608,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         // Monster moving and attacking
         collisionController.processCollision(seals, sealions, avatar, objects);
-        if (collisionController.processCollision(seals, sealions, sealionStrip, avatar.getPenguins())) {
+        if (collisionController.processCollision(seals, sealions, attackStrip, avatar.getPenguins())) {
             setFailure(true);
             setComplete(true);
         }
@@ -683,7 +708,14 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Come closer and press F to kill the seal!", gameFont,1360, 360);
                     canvas.drawText("Protect the penguins from the seals!", gameFont,1360, 330);
                     canvas.drawText("Also protect the penguins from the sealions!", gameFont,1800, 320);
-
+                    break;
+                case 4:
+                    canvas.drawText("Some ice bars can float around. ", gameFont,860, 400);
+                    canvas.drawText("Jump on the ice bar and then hit down the icicle! ", gameFont,860, 340);
+                    canvas.drawText("How to get on to the high platform?", gameFont,2100, 420);
+                    canvas.drawText("Maybe try hit down the icicle!", gameFont,2100, 360);
+                    canvas.drawText("You are done with tutorial levels!", gameFont,2800, 470);
+                    canvas.drawText("Go explore the world :)", gameFont,2800, 410);
                     break;
                 default:
                     break;
@@ -761,7 +793,7 @@ public class GameplayController extends WorldController implements ContactListen
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawTextCentered("FAILURE!", gameFont, 0.0f);
+            canvas.drawFixed(deadStrip, 460, 200);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         }
@@ -779,6 +811,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void beginContact(Contact contact) {
+        if (isPaused) return;
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
 
@@ -937,6 +970,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void endContact(Contact contact) {
+        if (isPaused) return;
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
 

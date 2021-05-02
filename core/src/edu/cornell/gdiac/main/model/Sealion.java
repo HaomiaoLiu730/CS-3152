@@ -182,6 +182,7 @@ public class Sealion extends PolygonObstacle {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        if (isPaused()) return;
         // Apply cooldowns
         timeCounter += dt;
         if(timeCounter >= 0.1 && Math.abs(getVX()) > 1e-1) {
