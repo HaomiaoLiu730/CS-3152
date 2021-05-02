@@ -258,7 +258,7 @@ public class Player extends CapsuleObstacle {
                     if(faceRight){
                         if(p.getX() - getX() < -PENGUIN_WIDTH){
                             fixPenguin = false;
-                            p.setSensor(false);
+//                            p.setSensor(false);
 //                            p.setBodyType(BodyDef.BodyType.DynamicBody);
                         }
                     }else{
