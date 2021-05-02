@@ -3,7 +3,7 @@
 	"NorthAmerica": [],
 	"SouthAmerica": [],
 	"Asia": [],
-	"Europe": [ ],
+	"Europe": [1,2,3,4 ],
 	"Antarctica": [],
 	"Africa": [ 1 ],
 	"Oceania": []

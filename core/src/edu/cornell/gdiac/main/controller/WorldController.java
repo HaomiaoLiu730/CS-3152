@@ -115,6 +115,7 @@ public abstract class WorldController implements Screen {
     protected FilmStrip noteCollectedStrip;
     /** The texture for the exit */
     protected FilmStrip exitStrip;
+    protected FilmStrip teachThrowingStrip;
 
     /** The texture for the player punching */
     protected FilmStrip punchStrip;
@@ -216,7 +217,7 @@ public abstract class WorldController implements Screen {
         blackTexture = directory.getEntry("black",Texture.class);
         pauseButton = new TextureRegion(directory.getEntry("pauseButton", Texture.class));
         pauseScreen = new TextureRegion(directory.getEntry("pauseScreen",Texture.class));
-
+        teachThrowingStrip = new FilmStrip(directory.getEntry("teachThrowing", Texture.class), 12, 8);;
         hitIcicle = directory.getEntry("hitIcicle", SoundBuffer.class);
         punching = directory.getEntry("punching", SoundBuffer.class);
         jumping = directory.getEntry("jumping", SoundBuffer.class);

@@ -190,6 +190,11 @@
       "file": "images/shared/pause.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "teachThrowing": {
+      "file": "images/shared/teachThrowing.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {

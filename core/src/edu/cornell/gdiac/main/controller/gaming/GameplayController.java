@@ -71,6 +71,8 @@ public class GameplayController extends WorldController implements ContactListen
     private boolean isPaused;
     private boolean disableMovement;
 
+    private int timeCounter;
+
     /** number of notes collected*/
     public static int notesCollected;
     /** Handle collision and physics (CONTROLLER CLASS) */
@@ -671,8 +673,9 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Some ice bars can also move!", gameFont,1500, 400);
                     break;
                 case 2:
-                    canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 560);
-                    canvas.drawText("Throw the penguins by long press the mouse \n to control direction and force", gameFont,700, 500);
+                    teachThrowingStrip.nextFrame();
+                    canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 660);
+                    canvas.draw(teachThrowingStrip, 900, 400);
                     canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
                     canvas.drawText("Try to throw the penguin \n at the note to collect it!", gameFont,2000, 600);
                     break;
