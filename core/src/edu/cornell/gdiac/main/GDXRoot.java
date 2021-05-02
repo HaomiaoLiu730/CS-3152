@@ -188,6 +188,10 @@ public class GDXRoot extends Game implements ScreenListener {
 				if(current == numOfLevels.get(currentContinent)){
 					// switch to the second level
 					switch (currentContinent){
+						case Europe:
+							currentContinent = MenuController.Continent.Africa;
+							MenuController.unlockContinents(MenuController.Continent.Africa);
+							break;
 						case Africa:
 							currentContinent = MenuController.Continent.Oceania;
 							MenuController.unlockContinents(MenuController.Continent.Oceania);
@@ -310,6 +314,9 @@ public class GDXRoot extends Game implements ScreenListener {
 					}
 					if(addedVal == numOfLevels.get(currentContinent)){
 						switch (currentContinent){
+							case Europe:
+								currentContinent = MenuController.Continent.Africa;
+								MenuController.unlockContinents(MenuController.Continent.Africa);
 							case Africa:
 								if(value.get("finished").get(MenuController.Continent.Oceania.name()).asIntArray().length != 0) {
 									currentContinent = MenuController.Continent.Oceania;
