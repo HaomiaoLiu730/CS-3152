@@ -23,7 +23,7 @@ public class FloatingIce extends ComplexObstacle {
     private int coolDownCount;
     private boolean offsetFlag = false;
 
-    private int direction = 0;
+    private int direction;
 
     /**
      * Creates a new spinner with the given physics data.
@@ -63,6 +63,8 @@ public class FloatingIce extends ComplexObstacle {
 
         bodies.add(pin);
         this.data=data;
+
+        direction = 0;
     }
 
 
