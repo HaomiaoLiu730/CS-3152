@@ -2,7 +2,7 @@
 "finished": {
 	"NorthAmerica": [1,2,3,4],
 	"SouthAmerica": [1,2,3,4],
-	"Asia": [1,2,3,4,5],
+	"Asia": [1,2,3],
 	"Europe": [ 1, 2, 3, 4 ,5],
 	"Antarctica": [],
 	"Africa": [ 1,2,3 ],
@@ -11,7 +11,7 @@
 "numOfLevels": {
 	"NorthAmerica": 4,
 	"SouthAmerica": 4,
-	"Asia": 5,
+	"Asia": 3,
 	"Europe": 5,
 	"Antarctica": 0,
 	"Africa": 3,
