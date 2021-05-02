@@ -180,6 +180,16 @@
       "file":"images/shared/waves.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "pauseButton": {
+      "file":"images/shared/pauseButton.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "pauseScreen": {
+      "file": "images/shared/pause.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
