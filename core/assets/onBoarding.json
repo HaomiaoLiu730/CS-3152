@@ -13,12 +13,12 @@
   },
   "fonts": {
     "gameFont": {
-      "file": "fonts/MarkerFelt.ttf",
+      "file": "fonts/AmaticSC-Bold.ttf",
       "size": 40,
       "color": "black"
     },
     "letterFont": {
-      "file": "fonts/MarkerFelt.ttf",
+      "file": "fonts/AmaticSC-Bold.ttf",
       "size": 40,
       "color": "white"
     }

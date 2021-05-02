@@ -13,11 +13,11 @@
   },
   "fonts": {
     "mainFont": {
-      "file": "fonts/MarkerFelt.ttf",
+      "file": "fonts/AmaticSC-Bold.ttf",
       "size": 30
     },
     "promptFont": {
-      "file": "fonts/MarkerFelt.ttf",
+      "file": "fonts/AmaticSC-Bold.ttf",
       "size": 20
     }
   }

@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.InputController;
+import edu.cornell.gdiac.main.controller.gaming.GameplayController;
 import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -41,16 +43,10 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
     private BitmapFont letterFont;
     private BitmapFont gameFont;
     /** pause time*/
-    long time = -160;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
-    private float penguinX;
-    private float pengiunAngle;
-    private Vector2 lineStart;
-    private Vector2 lineEnd;
-
     private InputController inputController;
 
     /** Listener that will update the player mode when we are done */
@@ -63,8 +59,6 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         // Waiting on these values until we see the canvas
         heightY = -1;
         scale = -1.0f;
-        time = -200;
-        penguinX = 100;
         active = false;
         this.canvas  = canvas;
 
@@ -83,9 +77,6 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
         letterFont = internal.getEntry("letterFont", BitmapFont.class);
 
-        lineStart = new Vector2(penguinX,penguinY);
-        lineEnd = new Vector2(penguinX, penguinY);
-
         // Start loading the real assets
         assets = new AssetDirectory( file );
         assets.loadAssets();
@@ -96,8 +87,14 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
 
     public void update(float delta) {
         inputController.readInput();
-        if(inputController.didPressSpace()){
-            listener.updateScreen(this, 0);
+        if(Math.abs(Gdx.input.getX() - 660) <= 75 && Math.abs(720 - Gdx.input.getY() - 335) <= 20){
+            if (InputController.getInstance().touchUp())
+                listener.updateScreen(this, 0);
+        }
+        if(Math.abs(Gdx.input.getX() - 660) <= 50 && Math.abs(720 - Gdx.input.getY() - 408) <= 20){
+            if (InputController.getInstance().touchUp())
+                listener.updateScreen(this, 2);
+
         }
         if(inputController.didPressE()){
             listener.updateScreen(this, 1);
@@ -115,20 +112,9 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
 
     public void draw() {
         canvas.begin();
-        time += 1;
-        pengiunAngle += 0.1f;
-        pengiunAngle %= 360;
-        penguinX += 2f;
-        if(time < 0){
-            canvas.drawOverlay(front, true);
-            lineEnd.x = penguinX;
-            canvas.drawLine(Color.BLACK, lineStart, lineEnd, 1);
-            canvas.draw(roundPenguin,Color.WHITE,roundPenguin.getWidth()/2f,roundPenguin.getHeight()/2f, penguinX, penguinY, pengiunAngle,1f,1f);
-        }else{
-            canvas.drawOverlay(front, true);
-            canvas.drawText(letterFont, "Press Space to Start", 485, 250);
-            canvas.drawText(letterFont, "Press E to for level editor", 485, 100);
-        }
+        canvas.drawOverlay(front, true);
+        canvas.drawText(letterFont, "Play", 640, 425);
+        canvas.drawText(letterFont, "Level Select", 600, 350);
         canvas.end();
     }
 
