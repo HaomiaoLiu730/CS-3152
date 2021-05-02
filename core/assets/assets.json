@@ -177,17 +177,27 @@
       "magFilter": "linear"
     },
     "waves": {
-      "file":"images/shared/waves.png",
+      "file": "images/shared/waves.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
     "pauseButton": {
-      "file":"images/shared/pauseButton.png",
+      "file": "images/shared/pauseButton.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
     "pauseScreen": {
       "file": "images/shared/pause.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "teachThrowing": {
+      "file": "images/shared/teachThrowing.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dead": {
+      "file": "images/shared/dead.png",
       "minFilter": "linear",
       "magFilter": "linear"
     }
