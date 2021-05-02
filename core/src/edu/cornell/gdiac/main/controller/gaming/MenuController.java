@@ -62,19 +62,21 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             //720, 340. 333, 511, 474, 490, 600, 470
     };
     private float[] AFRICA_LEVELS = new float[]{
-            427f, 550f, 550, 540f, 680, 470f, 720, 350f, 700, 190
+            427f, 550f, 550, 540f, 680, 470f,
+            //720, 350f, 700, 190
     };
     private float[] OCEANIA_LEVELS = new float[]{
-            367, 324, 463, 300, 640, 335, 470, 400, 622, 422,
+            367, 324, 463, 300, 640, 335
+            // 470, 400, 622, 422,
     };
     private float[] ASIA_LEVELS = new float[]{
-            511, 530, 635, 500,950, 520
+            511, 530, 635, 500,950, 520,760, 290,620, 300, 433, 300
     };
     private float[] NORTH_AMERICA_LEVELS = new float[]{
-            1100f, 600f, 1000f, 610f, 300f, 470f
+            1100f, 600f, 1000f, 610f, 300f, 470f, 500f, 300f,
     };
     private float[] SOUTH_AMERICA_LEVELS = new float[]{
-            500, 550, 530, 480, 640, 430
+            500, 550, 530, 480, 640, 430, 600, 360
     };
 
     private AssetDirectory internal;
