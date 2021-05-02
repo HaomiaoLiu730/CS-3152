@@ -1,12 +1,12 @@
 {
 "finished": {
-	"NorthAmerica": [],
-	"SouthAmerica": [],
-	"Asia": [],
-	"Europe": [],
+	"NorthAmerica": [1,2,3],
+	"SouthAmerica": [1,2,3],
+	"Asia": [1,2,3],
+	"Europe": [ 1, 2, 3, 4 ],
 	"Antarctica": [],
-	"Africa": [],
-	"Oceania": []
+	"Africa": [ 1,2,3 ],
+	"Oceania": [1,2,3]
 },
 "numOfLevels": {
 	"NorthAmerica": 3,
