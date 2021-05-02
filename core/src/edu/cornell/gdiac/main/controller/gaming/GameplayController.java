@@ -678,6 +678,7 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Come closer and press F to kill the seal!", gameFont,1360, 360);
                     canvas.drawText("Protect the penguins from the seals!", gameFont,1360, 330);
                     canvas.drawText("Also protect the penguins from the sealions!", gameFont,1800, 320);
+                    break;
                 case 4:
                     canvas.drawText("Some ice bars can float around. ", gameFont,860, 400);
                     canvas.drawText("Jump on the ice bar and then hit down the icicle! ", gameFont,860, 340);
@@ -685,8 +686,6 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Maybe try hit down the icicle!", gameFont,2100, 360);
                     canvas.drawText("You are done with tutorial levels!", gameFont,2800, 470);
                     canvas.drawText("Go explore the world :)", gameFont,2800, 410);
-
-
                     break;
                 default:
                     break;
