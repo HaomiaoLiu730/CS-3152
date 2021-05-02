@@ -190,6 +190,11 @@
       "file": "images/shared/pause.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "dead": {
+      "file": "images/shared/dead.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
