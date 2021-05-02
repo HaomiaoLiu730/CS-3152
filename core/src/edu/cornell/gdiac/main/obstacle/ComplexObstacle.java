@@ -1022,6 +1022,7 @@ public abstract class ComplexObstacle extends Obstacle {
 	 * @param dt Timing values from parent loop
 	 */
 	public void update(float delta) {
+		if (isPaused()) return;
 		// Delegate to components
 		for(Obstacle obj : bodies) {
 			obj.update(delta);

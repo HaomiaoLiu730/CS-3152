@@ -72,8 +72,9 @@ public class CollisionController {
                 for(Penguin p: penguins){
                     boolean avatarBetweenX = (p.getPosition().x < avatarPos.x && avatarPos.x < monster.getPosition().x) ||
                             (p.getPosition().x > avatarPos.x && avatarPos.x > monster.getPosition().x);
-                    float dist = p.getPosition().dst(monster.getPosition());
-                    if (dist < 3 && !avatarBetweenX) {
+                    float Xdist = Math.abs(p.getX()-monster.getX());
+                    float Ydist = Math.abs(p.getY()-monster.getY());
+                    if (Xdist < 0.5 && Ydist < 3 && !avatarBetweenX) {
                         moveMon = false;
                         fail = true;
                     }
