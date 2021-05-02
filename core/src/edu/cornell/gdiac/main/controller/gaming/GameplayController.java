@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.main.controller.gaming;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
@@ -24,11 +25,14 @@ import edu.cornell.gdiac.util.ScreenListener;
 import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
+import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_CONTINUE;
+import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_MENU;
+
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
-    private static final float MOUSE_TOL = 20f;
+    private static final float MOUSE_TOL = 50f;
 
     private AssetDirectory internal;
     /** Reference to the character avatar */
@@ -59,9 +63,13 @@ public class GameplayController extends WorldController implements ContactListen
     private boolean resetClick;
     /** Whether the player can throw or not */
     private boolean canThrow;
+    private boolean closeAttemp;
 
     private boolean isEditingView;
     private float[] grounded;
+
+    private boolean isPaused;
+    private boolean disableMovement;
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -82,14 +90,17 @@ public class GameplayController extends WorldController implements ContactListen
     private static boolean hitWater = false;
     private boolean complete = false;
     private boolean failed = false;
+    private Vector2 forceCache = new Vector2();
 
     /** Cooldown (in animation frames) for punching */
     private static  int PUNCH_COOLDOWN;
     /** Length (in animation frames) for punching */
     private static  int PUNCH_TIME;
     private int punchCooldown;
+    private int level;
     /** resetCountdown */
-    public static int resetCountDown = 200;
+    public static final int RESETCD = 100;
+    public static int resetCountDown = RESETCD;
 
     private String jsonFile;
 
@@ -132,6 +143,7 @@ public class GameplayController extends WorldController implements ContactListen
         world.setContactListener(this);
 
         this.jsonFile = jsonFile;
+        this.level = level;
         endSoundPlaying = false;
 
         internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
@@ -205,6 +217,7 @@ public class GameplayController extends WorldController implements ContactListen
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        disableMovement = false;
         endSoundPlaying = false;
         notesCollected = 0;
         hitWater(false);
@@ -224,7 +237,7 @@ public class GameplayController extends WorldController implements ContactListen
         setComplete(false);
         setFailure(false);
         populateLevel();
-        resetCountDown = 200;
+        resetCountDown = RESETCD;
         quitClick = false;
         resetClick = false;
         canThrow = false;
@@ -272,8 +285,7 @@ public class GameplayController extends WorldController implements ContactListen
      * Lays out the game geography.
      */
     private void populateLevel() {
-        quitPos = new Vector2(canvas.getWidth()-60f, canvas.getHeight()-30.0f);
-        resetPos = new Vector2(canvas.getWidth()-120f, canvas.getHeight()-30.0f);
+        quitPos = new Vector2(canvas.getWidth()-80f, canvas.getHeight()-80f);
         buttonR = 20;
 
         // Add level goal
@@ -359,8 +371,8 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
             avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(avatar.getNumPenguins()-1));
-
-
+            avatar.getPenguins().get(i).setActive(false);
+            avatar.getPenguins().get(i).setSensor(true);
         }
 
         JsonValue enemy = constants.get("enemy");
@@ -500,24 +512,25 @@ public class GameplayController extends WorldController implements ContactListen
     public void update(float dt) {
 
         for (int i = 0; i < iciclesList.size(); i++) {
-
             if (staticBodies.get(i) == 1) {
                 iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
                 staticBodies.set(i, 2);
             }
         }
 
-        if (Math.abs(Gdx.input.getX() - resetPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - resetPos.y) <= MOUSE_TOL) {
-            if (Gdx.input.isTouched()) {
-                hitWater(true);
-                resetClick = true;
+        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+            isPaused = true;
+            avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
+            disableMovement = true;
+            return;
+        }
+        if(isPaused){
+            if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
+                    ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
+                isPaused = false;
+                disableMovement = false;
                 return;
             }
-        }
-        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
-            listener.updateScreen(this, GDXRoot.GAMEPLAY_MENU);
-            quitClick = true;
-            return;
         }
         if (resetCountDown < 0 && !failed) {
             if (!isEditingView) {
@@ -530,7 +543,9 @@ public class GameplayController extends WorldController implements ContactListen
 
         backToEdit();
         updateCamera();
-        updatePlayer();
+        if(!disableMovement){
+            updatePlayer();
+        }
 
         if (complete) {
             resetCountDown -= 1;
@@ -622,7 +637,7 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.setFilmStrip(jumpRisingStrip);
             jumping.play();
         }
-        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP);
+        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
         canThrow = true;
         avatar.pickUpPenguins();
     }
@@ -644,10 +659,36 @@ public class GameplayController extends WorldController implements ContactListen
 
         canvas.begin();
         canvas.drawBackground(background,0, 0);
+        // draw tutorial text
+        if(this.jsonFile.startsWith("europe")){
+            switch (this.level){
+                case 0:
+                    canvas.drawText("Use 'WASD' or arrow keys \n to control movement", gameFont,500, 500);
+                    canvas.drawText("Ice bars can tilt", gameFont,1280, 320);
+                    canvas.drawText("you would lose one penguin \n to collect a note",gameFont,1800, 500);
+                    break;
+                case 1:
+                    canvas.drawText("Some ice bars can also move!", gameFont,1500, 400);
+                    break;
+                case 2:
+                    canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 560);
+                    canvas.drawText("Throw the penguins by long press the mouse \n to control direction and force", gameFont,700, 500);
+                    canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
+                    canvas.drawText("Try to throw the penguin \n at the note to collect it!", gameFont,2000, 600);
+                    break;
+                case 3:
+                    canvas.drawText("Come closer and press F to kill the seal!", gameFont,1360, 360);
+                    canvas.drawText("Protect the penguins from the seals!", gameFont,1360, 330);
+                    canvas.drawText("Also protect the penguins from the sealions!", gameFont,1800, 320);
+
+                    break;
+                default:
+                    break;
+            }
+        }
         if(complete || failed){
             canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
         }
-
 
         for(Obstacle obj : objects) {
             obj.draw(canvas);
@@ -659,14 +700,33 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawText(gameFont, noteMsg, 5.0f, canvas.getHeight() - 5.0f);
             canvas.drawText(gameFont, penguinMsg, 5.0f, canvas.getHeight() - 40.0f);
         }
+        if(isPaused){
+            canvas.drawFixed(pauseScreen,
+                    canvas.getWidth()/2f- 200,
+                    canvas.getHeight()/2f-200);
+            if(InputController.getInstance().touchUp() && Gdx.input.getX()>500 && Gdx.input.getY()>150&&Gdx.input.getX()<760 && Gdx.input.getY()<280){
+                isPaused = false;
+                disableMovement = false;
+                canvas.end();
+                listener.updateScreen(this, GAMEPLAY_CONTINUE);
+                return;
+            }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
+                isPaused = false;
+                disableMovement = false;
+                reset();
+            }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>370&&Gdx.input.getX()<760 && Gdx.input.getY()<410){
+                isPaused = false;
+                disableMovement = false;
+                canvas.end();
+                listener.updateScreen(this, GAMEPLAY_MENU);
+                return;
+            }
+        }
         if(isEditingView){
             canvas.drawSquare(Color.BLACK,1200,560,60,40);
             canvas.drawText(gameFont, "Edit", 1200,600);
         }else{
-            canvas.drawCircle(Color.FIREBRICK, quitPos.x, quitPos.y, buttonR);
-            canvas.drawText( gameFont, "Quit", quitPos.x-15f, quitPos.y-30f);
-            canvas.drawCircle(Color.TEAL, resetPos.x, resetPos.y, buttonR);
-            canvas.drawText( gameFont, "Reset",resetPos.x-16.5f, resetPos.y-30f);
+            canvas.drawFixed(pauseButton,quitPos.x, quitPos.y);
         }
         canvas.end();
 
@@ -690,6 +750,8 @@ public class GameplayController extends WorldController implements ContactListen
             gameFont.setColor(Color.BLACK);
             canvas.end();
         } else if (failed && !resetClick) {
+            disableMovement = true;
+            avatar.setLinearVelocity(forceCache.set(0,avatar.getLinearVelocity().y));
             canvas.begin(); // DO NOT SCALE
             if(!endSoundPlaying) {
                 losing.play(0.5f, 1, 0);
@@ -796,8 +858,9 @@ public class GameplayController extends WorldController implements ContactListen
             //contact for floating ice bar
             if(bd1.getName() == "floatingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-                if(bd2.getName().startsWith("icicle") ){
-                    float force = (float) Math.log(bd1.getMass())/75;
+                if(bd2.getName().startsWith("icicle") && bd2.getMass()!=0 ){
+                    float force = (float) Math.log(bd2.getMass())/75;
+                    System.out.println("force" + force +" mass "+bd1.getMass());
                     if (bd2.getX()<bd1.getX()){
                         force = -force;
                     }
@@ -811,8 +874,9 @@ public class GameplayController extends WorldController implements ContactListen
 
             if(bd2.getName() == "floatingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-                if(bd1.getName().startsWith("icicle")){
+                if(bd1.getName().startsWith("icicle") && bd1.getMass()!=0){
                     float force = (float) Math.log(bd1.getMass())/75;
+                    System.out.println("force" + force +" mass "+bd1.getMass());
                     if (bd1.getX()<bd2.getX()){
                         force = -force;
                     }
@@ -835,7 +899,10 @@ public class GameplayController extends WorldController implements ContactListen
                     ((MovingIce) master).addPlayer(p);
                 }
                 else  if (! (bd2 instanceof Penguin)){
-                    ((MovingIce) master).hitSomething();
+//                    if(bd1.getX()<bd2.getX())
+//                        ((MovingIce) master).hitSomething(-1);
+//                    else
+//                        ((MovingIce) master).hitSomething(1);
                 }
 
             }
@@ -851,7 +918,10 @@ public class GameplayController extends WorldController implements ContactListen
                     ((MovingIce) master).addPlayer(p);
                 }
                 else  if (! (bd1 instanceof Penguin)){
-                    ((MovingIce) master).hitSomething();
+//                    if(bd2.getX()<bd1.getX())
+//                        ((MovingIce) master).hitSomething(-1);
+//                    else
+//                        ((MovingIce) master).hitSomething(1);
                 }
 
             }

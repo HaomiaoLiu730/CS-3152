@@ -29,7 +29,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private ScreenListener listener;
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
-    private static final float MOUSE_TOL = 10f;
+    private static final float MOUSE_TOL = 24f;
     /** Whether or not this player mode is still active */
     private boolean active;
     /** is ready for game mode*/
@@ -41,6 +41,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private boolean drawPoints;
     private Camera camera;
     private boolean prevTouched;
+    private float zoomInTime = 0;
     public enum Continent{
         NorthAmerica,
         SouthAmerica,
@@ -56,6 +57,10 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     private static JsonValue value;
 
+    private float[] EUROPE_LEVELS = new float[]{
+            436f, 540f,760,476,390, 360, 566, 380
+            //720, 340. 333, 511, 474, 490, 600, 470
+    };
     private float[] AFRICA_LEVELS = new float[]{
             427f, 550f, 550, 540f, 680, 470f, 720, 350f, 700, 190
     };
@@ -157,7 +162,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
         active  = true;
         zoomIn = false;
-        currentContinent = Continent.Africa;
+        currentContinent = Continent.Europe;
         camera = canvas.getCamera();
         this.canvas = canvas;
 
@@ -187,15 +192,10 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         numOfLevels.put(Continent.Antarctica, value.get("numOfLevels").getInt("Antarctica"));
         numOfLevels.put(Continent.Africa, value.get("numOfLevels").getInt("Africa"));
         numOfLevels.put(Continent.Oceania, value.get("numOfLevels").getInt("Oceania"));
-        unlockedContinents.add(Continent.Africa);
+        unlockedContinents.add(Continent.Europe);
         for(Continent continent: finished.keySet()){
             if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
                 unlockedContinents.add(continent);
-                switch (continent){
-                    case Africa:
-                        unlockContinents(Continent.Oceania);
-                        break;
-                }
             }
             if(finished.get(continent).size()!=0){
                 unlockedContinents.add(continent);
@@ -207,11 +207,17 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         unlockedContinents.add(continent);
     }
 
+    public float quadraticFunction(float a, float b, float c, float t){
+        return a*t*t+b*t+c;
+    }
+
     private void zoomInto(float viewportWidth, float viewportHeight, float cameraPosX, float cameraPosY){
+        zoomInTime+=0.1;
+        float deltaPosY = quadraticFunction(0.06f,0.05f,0,zoomInTime);
         float scale = Math.abs(cameraPosY - 360);
-        float deltaWidth = (viewportWidth-1280)/scale;
-        float deltaHeight = (viewportHeight-720)/scale;
-        float deltaPosX = (cameraPosX - 640f)/scale;
+        float deltaWidth = (viewportWidth-1280)/scale*deltaPosY;
+        float deltaHeight = (viewportHeight-720)/scale*deltaPosY;
+        float deltaPosX = (cameraPosX - 640f)/scale*deltaPosY;
         camera.viewportWidth = camera.viewportWidth >= viewportWidth ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
         camera.viewportHeight = camera.viewportHeight >= viewportHeight ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
 
@@ -221,14 +227,15 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             camera.position.x = camera.position.x >= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
         }
         if(cameraPosY - 360 > 0){
-            camera.position.y = camera.position.y <= cameraPosY ? camera.position.y + 1 :camera.position.y;
+            camera.position.y = camera.position.y <= cameraPosY ? camera.position.y + deltaPosY :camera.position.y;
         }else{
-            camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - 1 :camera.position.y;
+            camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - deltaPosY :camera.position.y;
         }
         camera.update();
-        if(Math.abs(camera.position.y - cameraPosY) <= 1){
+        if(Math.abs(camera.position.y - cameraPosY) <= 5){
             drawPoints = true;
             zoomIn = false;
+            zoomInTime = 0;
         }
     }
 
@@ -275,6 +282,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     public void zoomInEffect(){
         if(zoomIn && unlockedContinents.contains(currentContinent)){
             switch (currentContinent){
+                case Europe:
+                    zoomInto(560f, 300f, 230f, 530f);
+                    break;
                 case NorthAmerica:
                     zoomInto(560f, 350f, 1000f, 480f);
                     break;
@@ -283,9 +293,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                     break;
                 case Asia:
                     zoomInto(720f, 390f, 460f, 440f);
-                    break;
-                case Europe:
-                    zoomInto(560f, 300f, 230f, 530f);
                     break;
                 case Africa:
                     zoomInto(580f, 320f, 160f, 300f);
@@ -306,6 +313,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         if(drawPoints){
             int previousLevel = nextLevel;
             switch (currentContinent){
+                case Europe:
+                    updateNextLevelHelper(EUROPE_LEVELS);
+                    break;
                 case Africa:
                     updateNextLevelHelper(AFRICA_LEVELS);
                     break;
@@ -364,6 +374,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         if(drawPoints){
             int finishedLevelNum = finished.get(currentContinent).size();
             switch (currentContinent){
+                case Europe:
+                    drawPointsHelper(finishedLevelNum, EUROPE_LEVELS);
+                    break;
                 case Africa:
                     drawPointsHelper(finishedLevelNum, AFRICA_LEVELS);
                     break;
@@ -443,6 +456,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
             // We are are ready, notify our listener
             int hundred = 0;
+            if(currentContinent == Continent.Europe) hundred = 1;
             if(currentContinent == Continent.Africa) hundred = 2;
             if(currentContinent == Continent.Oceania) hundred = 3;
             if(currentContinent == Continent.Asia) hundred = 4;
@@ -469,9 +483,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         nextLevel = -1;
         for(Continent continent: finished.keySet()){
             if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
-                if(continent != Continent.Asia){
-                    unlockedContinents.add(continent);
-                }
+                unlockedContinents.add(continent);
             }
         }
     }

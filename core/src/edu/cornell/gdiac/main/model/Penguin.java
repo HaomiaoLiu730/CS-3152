@@ -37,7 +37,7 @@ public class Penguin extends CapsuleObstacle {
     private final String SENSOR_NAME;
     private boolean soundPlaying;
     private boolean inWater;
-
+    public float PENGUIN_MASS = 0.87674415f;
 
 
     private int index;
@@ -161,6 +161,7 @@ public class Penguin extends CapsuleObstacle {
      */
     public void setGrounded(boolean value) {
         isGrounded = value;
+        setLinearVelocity(forceCache.set(0,0));
     }
 
     /**
@@ -346,10 +347,7 @@ public class Penguin extends CapsuleObstacle {
         if(isThrownOut){
             canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y-10f, getAngle(), 1f, 1f);
         }else if (!isLast){
-                canvas.draw(overlapStrip, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0, effect, 1.0f);
-
-
-
+            canvas.draw(overlapStrip, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0, effect, 1.0f);
         }
     }
 
