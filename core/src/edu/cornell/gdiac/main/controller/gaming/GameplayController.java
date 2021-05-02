@@ -570,9 +570,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         backToEdit();
         updateCamera();
-        if(!disableMovement){
-            updatePlayer();
-        }
+        updatePlayer();
 
         if (complete) {
             resetCountDown -= 1;
