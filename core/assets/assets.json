@@ -7,8 +7,15 @@
     "collectingNote": "sounds/note things.ogg",
     "bearLanding": "sounds/Land sfx.ogg",
     "penguinLanding": "sounds/land 2.ogg",
-    "winning": "sounds/checkpoint.ogg",
-    "losing": "sounds/death jingle.ogg"
+    "winning": "sounds/win.ogg",
+    "losing": "sounds/lose.ogg",
+    "l1": "sounds/LEVEL_STEM_1.ogg",
+    "l2": "sounds/LEVEL_STEM_2.ogg",
+    "l3": "sounds/LEVEL_STEM_3.ogg",
+    "l4": "sounds/LEVEL_STEM_4.ogg",
+    "l5": "sounds/LEVEL_STEM_5.ogg",
+    "l6": "sounds/LEVEL_STEM_6.ogg",
+    "l7": "sounds/LEVEL_STEM_7.ogg"
   },
   "textures": {
     "avatarNormal": {
@@ -148,6 +155,11 @@
     },
     "ice": {
       "file": "images/shared/ice.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "floatingIce": {
+      "file": "images/shared/floatingIce.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

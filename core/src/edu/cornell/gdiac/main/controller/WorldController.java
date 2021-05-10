@@ -143,6 +143,7 @@ public abstract class WorldController implements Screen {
     protected Sound penguinLanding;
     protected Sound winning;
     protected Sound losing;
+    protected Sound[] BackgroundMusic = new Sound[7];
 
 
     /**
@@ -214,7 +215,7 @@ public abstract class WorldController implements Screen {
         iceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
         waterStrip =new FilmStrip(directory.getEntry("water", Texture.class), 1, 1);
         wavesStrip = new FilmStrip(directory.getEntry("waves", Texture.class), 1, 4);
-        ficeTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
+        ficeTextureRegion = new TextureRegion(directory.getEntry("floatingIce", Texture.class));
         miceTextureRegion = new TextureRegion(directory.getEntry("ice", Texture.class));
         whiteTexture = directory.getEntry("white",Texture.class);
         blackTexture = directory.getEntry("black",Texture.class);
@@ -233,6 +234,14 @@ public abstract class WorldController implements Screen {
         penguinLanding = directory.getEntry("penguinLanding", SoundBuffer.class);
         winning = directory.getEntry("winning", SoundBuffer.class);
         losing = directory.getEntry("losing",SoundBuffer.class);
+
+        BackgroundMusic[0] = directory.getEntry("l1",SoundBuffer.class);
+        BackgroundMusic[1] = directory.getEntry("l2",SoundBuffer.class);
+        BackgroundMusic[2] = directory.getEntry("l3",SoundBuffer.class);
+        BackgroundMusic[3] = directory.getEntry("l4",SoundBuffer.class);
+        BackgroundMusic[4] = directory.getEntry("l5",SoundBuffer.class);
+        BackgroundMusic[5] = directory.getEntry("l6",SoundBuffer.class);
+        BackgroundMusic[6] = directory.getEntry("l7",SoundBuffer.class);
 
     }
 

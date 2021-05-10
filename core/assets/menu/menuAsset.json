@@ -158,6 +158,7 @@
   },
   "sounds": {
     "menuSellect": "sounds/menu_select.ogg",
-    "menuScroll": "sounds/menu_scroll.ogg"
+    "menuScroll": "sounds/menu_scroll.ogg",
+    "menuBackground": "sounds/MAIN_MENU.ogg"
   }
 }
