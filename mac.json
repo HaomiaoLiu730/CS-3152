@@ -1,7 +1,7 @@
 {
-  "platform": "windows64",
-  "jdk": "/Users/Lisa/Downloads/jre-8u281-windows-x64.exe",
-  "executable": "myapp",
+  "platform": "mac",
+  "jdk": "/Users/Lisa/Downloads/OpenJDK11U-jdk_x64_mac_hotspot_2019-01-20-01-32.tar.gz",
+  "executable": "BearWithMe",
   "classpath": [
     "out/artifacts/CS_3152_jar/CS-3152.jar"
   ],
@@ -12,8 +12,9 @@
   "vmargs": [
   ],
   "resources": [
-    "core/assets"
+    "core/assets",
+    "core/resources"
   ],
   "minimizejre": "soft",
-  "output": "out_windows"
+  "output": "out_mac"
 }
