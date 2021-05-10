@@ -22,6 +22,7 @@ import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
 
+import javax.swing.*;
 import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
@@ -135,7 +136,7 @@ public class GameplayController extends WorldController implements ContactListen
      * @param height The height of the game window
      */
     public GameplayController(float width, float height, boolean isEditingView, String jsonFile, int level) {
-        super(width,height,DEFAULT_GRAVITY);
+        super(width,height,DEFAULT_GRAVITY*2.5f);
         currentLevelNum = level;
         scale = super.scale;
         setDebug(false);
@@ -347,9 +348,6 @@ public class GameplayController extends WorldController implements ContactListen
         avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
         avatar.setDrawScale(scale);
         avatar.setFilmStrip(avatarStrip);
-        avatar.setArrowTexture(arrowTexture);
-        avatar.setEnergyBar(energyBarTexture);
-        avatar.setEnergyBarOutline(energyBarOutlineTexture);
         avatar.setJumpHangingStrip(jumpHangingStrip);
         avatar.setJumpLandingStrip(jumpLandingStrip);
         avatar.setJumpRisingStrip(jumpRisingStrip);
@@ -428,6 +426,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         JsonValue ices = constants.get("ice");
         JsonValue icepos = ices.get("pos");
+        Ice ice;
         for (int i =0; i< icepos.size; i++) {
             int w = ices.get("layout").get(i).getInt(0);
             int h = ices.get("layout").get(i).getInt(1);
@@ -445,8 +444,8 @@ public class GameplayController extends WorldController implements ContactListen
         JsonValue ficepos = fices.get("pos");
         FloatingIce fIce;
         for (int i =0; i< ficepos.size; i++) {
-        int w = fices.get("layout").get(i).getInt(0);
-        int h = fices.get("layout").get(i).getInt(1);
+            int w = fices.get("layout").get(i).getInt(0);
+            int h = fices.get("layout").get(i).getInt(1);
             fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
             TextureRegion temp = new TextureRegion(ficeTextureRegion);
             temp.setRegionWidth(w);
@@ -511,12 +510,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
-        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
-            isPaused = true;
-            avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
-            disableMovement = true;
-            return;
-        }
         if(isPaused){
             if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
                     ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
@@ -528,12 +521,61 @@ public class GameplayController extends WorldController implements ContactListen
 //                        objects.get(i).setActive(true);
 //                    }
 //                    if (tiltList.get(i)) {
-//                        objects.get(i).setFixedRotation(false);
+//                        if (objects.get(i).getName() == "floatingIce") {
+//                            FloatingIce fice = (FloatingIce) objects.get(i);
+//                            fice.getIceBar().setAngularDamping(0.5f);
+//                            fice.getIceBar().setFixedRotation(false);
+//                        } else {
+//                            Ice ice = (Ice) objects.get(i);
+//                            ice.getIceBar().setAngularDamping(0.5f);
+//                            ice.getIceBar().setFixedRotation(false);
+//                        }
 //                    }
 //                    objects.get(i).setPaused(false);
 //                }
-                return;
             }
+            return;
+        }
+
+        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+            isPaused = true;
+            avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
+            disableMovement = true;
+//            pauseList = new ArrayList<>();
+//            tiltList = new ArrayList<>();
+//            for (int i=0; i<objects.size(); i++){
+//                if (objects.get(i).isActive()) {
+//                    pauseList.add(true);
+//                    objects.get(i).setActive(false);
+//                } else {
+//                    pauseList.add(false);
+//                }
+//                if (objects.get(i).getName() == "floatingIce") {
+//                    FloatingIce fice = (FloatingIce) objects.get(i);
+//                    if (!fice.getIceBar().isFixedRotation()) {
+//                        tiltList.add(true);
+//                        fice.getIceBar().setAngularDamping(0);
+//                        fice.getIceBar().setAngularVelocity(0);
+//                        fice.getIceBar().setFixedRotation(true);
+//                    } else {
+//                        tiltList.add(false);
+//                    }
+//                } else if (objects.get(i).getName() == "Ice") {
+//                    Ice ice = (Ice) objects.get(i);
+//                    if (!ice.getIceBar().isFixedRotation()) {
+//                        tiltList.add(true);
+//                        ice.getIceBar().setAngularDamping(0);
+//                        ice.getIceBar().setAngularVelocity(0);
+//                        ice.getIceBar().setFixedRotation(true);
+//                    } else {
+//                        tiltList.add(false);
+//                    }
+//                } else {
+//                    tiltList.add(false);
+//                }
+//                objects.get(i).setPaused(true);
+//            }
+            return;
         }
 
         for (int i = 0; i < iciclesList.size(); i++) {
@@ -543,29 +585,6 @@ public class GameplayController extends WorldController implements ContactListen
             }
         }
 
-        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
-            isPaused = true;
-            avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
-            disableMovement = true;
-            pauseList = new ArrayList<>();
-            tiltList = new ArrayList<>();
-            for (int i=0; i<objects.size(); i++){
-                if (objects.get(i).isActive()) {
-                    pauseList.add(true);
-                    objects.get(i).setActive(false);
-                } else {
-                    pauseList.add(false);
-                }
-                if (!objects.get(i).isFixedRotation()) {
-                    tiltList.add(true);
-                    objects.get(i).setFixedRotation(true);
-                } else {
-                    tiltList.add(false);
-                }
-                objects.get(i).setPaused(true);
-            }
-            return;
-        }
         if (resetCountDown < 0 && !failed) {
             if (!isEditingView) {
                 this.listener.updateScreen(this, currentLevelNum);
@@ -683,7 +702,7 @@ public class GameplayController extends WorldController implements ContactListen
      */
     public void draw(float dt) {
         if (quitClick) return;
-        // TODO: fix this
+
         if(canvas==null){
             return;
         }
@@ -816,7 +835,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void beginContact(Contact contact) {
-        if (isPaused) return;
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
 
@@ -848,9 +866,11 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             // check whether the penguin is grounded
+            bd1IsGround = !(bd1 instanceof Note) && (!(bd1 instanceof Water));
+            bd2IsGround = !(bd2 instanceof Note) && (!(bd2 instanceof Water));
             for(Penguin p: avatar.getPenguins()){
-                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar) ||
-                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar)) {
+                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar && bd1IsGround) ||
+                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar && bd2IsGround)) {
                     p.setGrounded(true);
                     if(p.isThrowOut() && p.getBodyType()== BodyDef.BodyType.DynamicBody){
                         if(p.getSoundPlaying())
@@ -988,7 +1008,6 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void endContact(Contact contact) {
-        if (isPaused) return;
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
 
@@ -1012,9 +1031,11 @@ public class GameplayController extends WorldController implements ContactListen
             }
         }
 
+        bd1IsGround = !(bd11 instanceof Note) && (!(bd11 instanceof Water));
+        bd2IsGround = !(bd22 instanceof Note) && (!(bd22 instanceof Water));
         for(Penguin p: avatar.getPenguins()){
-            if ((p.getSensorName().equals(fd2) && p != bd11 && bd11 != avatar) ||
-                    (p.getSensorName().equals(fd1) && p != bd22 && bd22 != avatar)) {
+            if ((p.getSensorName().equals(fd2) && p != bd11 && bd11 != avatar && bd2IsGround) ||
+                    (p.getSensorName().equals(fd1) && p != bd22 && bd22 != avatar && bd2IsGround)) {
                 sensorFixtures.remove(p == bd11 ? fix2 : fix1);
                 p.setGrounded(false);
             }
@@ -1049,7 +1070,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         if(bd1.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-            if(bd2.getName().startsWith("monster") ){
+            if(bd2.getName().startsWith("sealion") ){
                 Sealion m = (Sealion) bd2;
                 ((MovingIce) master).removeMonster(m);
             }
@@ -1061,7 +1082,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         if(bd2.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-            if(bd1.getName().startsWith("monster") ){
+            if(bd1.getName().startsWith("sealion") ){
                 Sealion m = (Sealion) bd1;
                 ((MovingIce) master).removeMonster(m);
             }

@@ -123,9 +123,6 @@ public class Player extends CapsuleObstacle {
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     private FilmStrip filmStrip;
-    private Texture arrowTexture;
-    private Texture energyBarOutline;
-    private Texture energyBar;
     private float timeCounter;
     private int totalPenguins;
     private int numPenguins;
@@ -551,7 +548,7 @@ public class Player extends CapsuleObstacle {
         PLAYER_FRICTION=data.getFloat("friction");
         PLAYER_FORCE=data.getFloat("force");
         PLAYER_DAMPING= data.getFloat("damping");
-        PLAYER_MAXSPEED=data.getFloat("max_speed");
+        PLAYER_MAXSPEED=data.getFloat("max_speed")*1.4f;
         PLAYER_JUMP=data.getFloat("player_jump");
         JUMP_COOLDOWN=data.getInt("jump_cooldown");
         THROW_COOLDOWN=data.getInt("throw_cooldown");
@@ -649,26 +646,16 @@ public class Player extends CapsuleObstacle {
 
         // Jump!
         if (isJumping()) {
-            setVY(PLAYER_JUMP);
+            setVY(PLAYER_JUMP*1.4f);
         } else if (!isGrounded) {
-            forceCache.set(0, -25f);
-            body.applyForce(forceCache,getPosition(),true);
+//            forceCache.set(0, -25f);
+//            body.applyForce(forceCache,getPosition(),true);
         }
     }
 
     public void setFilmStrip(FilmStrip strip){
         this.filmStrip = strip;
         origin.set(strip.getRegionWidth()/2.0f, strip.getRegionHeight()/2.0f);
-    }
-
-    public void setArrowTexture(Texture arrow){
-        this.arrowTexture = arrow;
-    }
-    public void setEnergyBarOutline(Texture texture){
-        this.energyBarOutline = texture;
-    }
-    public void setEnergyBar(Texture texture){
-        this.energyBar = texture;
     }
 
     public float vToDelta(float v){
@@ -749,8 +736,6 @@ public class Player extends CapsuleObstacle {
 
         for(Penguin p: penguins){
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
-
-
             p.applyForce(0,0, 0);
         }
 
