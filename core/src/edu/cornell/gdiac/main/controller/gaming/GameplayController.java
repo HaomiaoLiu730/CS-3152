@@ -162,6 +162,7 @@ public class GameplayController extends WorldController implements ContactListen
         num_notes = defaults.getInt("num_notes",0);
         this.isEditingView = isEditingView;
         grounded = defaults.get("grounded").asFloatArray();
+
     }
 
     public void setJsonValue(JsonValue jsonValue){
@@ -289,6 +290,15 @@ public class GameplayController extends WorldController implements ContactListen
         quitPos = new Vector2(canvas.getWidth()-80f, canvas.getHeight()-80f);
         buttonR = 20;
 
+
+        for(int i=0;i<7;i++){
+            BackgroundMusic[i].stop();
+        }
+        for(int i=0;i<num_penguins;i++){
+            if(i>6) break;
+            BackgroundMusic[i].loop();
+        }
+
         // Add level goal
         float dwidth, dheight;
         JsonValue defaults = constants.get("defaults");
@@ -315,7 +325,7 @@ public class GameplayController extends WorldController implements ContactListen
             icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            
             icicle.setBodyType(BodyDef.BodyType.StaticBody);
             icicle.setDensity(icicles.getFloat("density"));
-            icicle.setFriction(icicles.getFloat("friction"));
+            icicle.setFriction(0);
             icicle.setRestitution(icicles.getFloat("restitution"));
             icicle.setDrawScale(scale);
             icicle.setTexture(icicleStrip);
@@ -582,7 +592,7 @@ public class GameplayController extends WorldController implements ContactListen
         if (complete) {
             resetCountDown -= 1;
         }
-        if (resetCountDown < 0 && failed) {
+        if ((resetCountDown < 0 && failed) ) {
             reset();
         }
 
@@ -757,6 +767,9 @@ public class GameplayController extends WorldController implements ContactListen
             }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>370&&Gdx.input.getX()<760 && Gdx.input.getY()<410){
                 isPaused = false;
                 disableMovement = false;
+                for(int i=0;i<7;i++){
+                    BackgroundMusic[i].stop();
+                }
                 canvas.end();
                 listener.updateScreen(this, GAMEPLAY_MENU);
                 return;
@@ -782,6 +795,8 @@ public class GameplayController extends WorldController implements ContactListen
         if (complete && !failed) {
             canvas.begin(); // DO NOT SCALE
             if(!endSoundPlaying) {
+                for(int i=0;i<7;i++)
+                    BackgroundMusic[i].stop();
                 winning.play(0.5f, 1, 0);
                 endSoundPlaying = true;
             }
@@ -794,6 +809,8 @@ public class GameplayController extends WorldController implements ContactListen
             avatar.setLinearVelocity(forceCache.set(0,avatar.getLinearVelocity().y));
             canvas.begin(); // DO NOT SCALE
             if(!endSoundPlaying) {
+                for(int i=0;i<7;i++)
+                    BackgroundMusic[i].stop();
                 losing.play(0.5f, 1, 0);
                 endSoundPlaying = true;
             }
@@ -901,7 +918,6 @@ public class GameplayController extends WorldController implements ContactListen
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
                 if(bd2.getName().startsWith("icicle") && bd2.getMass()!=0 ){
                     float force = (float) Math.log(bd2.getMass())/75;
-                    System.out.println("force" + force +" mass "+bd1.getMass());
                     if (bd2.getX()<bd1.getX()){
                         force = -force;
                     }
@@ -917,7 +933,6 @@ public class GameplayController extends WorldController implements ContactListen
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
                 if(bd1.getName().startsWith("icicle") && bd1.getMass()!=0){
                     float force = (float) Math.log(bd1.getMass())/75;
-                    System.out.println("force" + force +" mass "+bd1.getMass());
                     if (bd1.getX()<bd2.getX()){
                         force = -force;
                     }
