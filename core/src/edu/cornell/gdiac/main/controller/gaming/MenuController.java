@@ -107,6 +107,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     private Sound menuSellect;
     private Sound menuScroll;
+    private Sound menuBackground;
+
+    private boolean isMenuBPlaying;
 
 
     private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
@@ -146,6 +149,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         europeLine = internal.getEntry("EuropeLine", Texture.class);
         africaLine = internal.getEntry("AfricaLine", Texture.class);
         menuSellect = internal.getEntry("menuSellect", SoundBuffer.class);
+        menuBackground = internal.getEntry("menuBackground",SoundBuffer.class);
         menuScroll = internal.getEntry("menuScroll",SoundBuffer.class);
         penguin1 = internal.getEntry("penguin1", Texture.class);
         penguin2 = internal.getEntry("penguin2", Texture.class);
@@ -167,6 +171,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         currentContinent = Continent.Europe;
         camera = canvas.getCamera();
         this.canvas = canvas;
+
+        isMenuBPlaying = false;
 
         refreshMenu();
     }
@@ -455,6 +461,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         if (active) {
             update(delta);
             draw();
+            if(!isMenuBPlaying)
+            {
+                menuBackground.loop(0.5f);
+                isMenuBPlaying = true;
+            }
 
             // We are are ready, notify our listener
             int hundred = 0;
@@ -467,6 +478,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             if (isReady() && listener != null) {
                 listener.updateScreen(this, hundred*10+nextLevel);
                 menuSellect.play();
+                menuBackground.stop();
+                isMenuBPlaying = false;
             }
         }
     }

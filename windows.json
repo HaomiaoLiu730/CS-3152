@@ -1,0 +1,20 @@
+{
+  "platform": "windows64",
+  "jdk": "/Program Files/Java/jre1.8.0_281",
+  "executable": "BearWithMe",
+  "classpath": [
+    "out/artifacts/CS_3152_jar/CS-3152.jar"
+  ],
+  "removelibs": [
+    "out/artifacts/CS_3152_jar/CS-3152.jar"
+  ],
+  "mainclass": "edu.cornell.gdiac.desktop.DesktopLauncher",
+  "vmargs": [
+  ],
+  "resources": [
+    "core/assets",
+    "core/resources"
+  ],
+  "minimizejre": "soft",
+  "output": "out_windows"
+}

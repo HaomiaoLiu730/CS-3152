@@ -31,6 +31,8 @@ public class Ice extends ComplexObstacle {
     private BoxObstacle iceBar;
     private WheelObstacle pin;
 
+    public BoxObstacle getIceBar() {return iceBar;}
+
     /**
      * Creates a new spinner with the given physics data.
      *

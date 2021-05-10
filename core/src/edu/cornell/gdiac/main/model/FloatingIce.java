@@ -25,6 +25,8 @@ public class FloatingIce extends ComplexObstacle {
 
     private int direction;
 
+    public BoxObstacle getIceBar() {return iceBar;}
+
     /**
      * Creates a new spinner with the given physics data.
      *

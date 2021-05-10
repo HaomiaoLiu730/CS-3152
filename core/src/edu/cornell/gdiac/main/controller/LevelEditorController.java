@@ -24,7 +24,6 @@ import edu.cornell.gdiac.util.ScreenListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 public class LevelEditorController implements Screen, InputProcessor, ControllerListener, Loading {
 
