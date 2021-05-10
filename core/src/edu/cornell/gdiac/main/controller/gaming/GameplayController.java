@@ -862,12 +862,25 @@ public class GameplayController extends WorldController implements ContactListen
             }
 
             if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("icicle")){
-                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
-                staticBodies.set(index, staticBodies.get(index)+1);
+                WorldManifold worldmanifold;
+                worldmanifold = contact.getWorldManifold();
+                for(Vector2 point : worldmanifold.getPoints()){
+                    if (point.x == bd2.getX()){
+                        int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
+                        staticBodies.set(index, staticBodies.get(index)+1);
+                    }
+                }
             }
             if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
-                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
-                staticBodies.set(index, staticBodies.get(index)+1);
+                WorldManifold worldmanifold;
+                worldmanifold = contact.getWorldManifold();
+                for(Vector2 point : worldmanifold.getPoints()){
+                    if (point.x == bd1.getX()){
+                        int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
+                        staticBodies.set(index, staticBodies.get(index)+1);
+                    }
+                }
+
             }
 
 
@@ -1014,12 +1027,24 @@ public class GameplayController extends WorldController implements ContactListen
             Obstacle bd2 = (Obstacle)body2.getUserData();
 
             if(bd1.getName().startsWith("snow") && bd2.getName().startsWith("icicle")){
-                int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
-                staticBodies.set(index, staticBodies.get(index)-1);
+                WorldManifold worldmanifold;
+                worldmanifold = contact.getWorldManifold();
+                for(Vector2 point : worldmanifold.getPoints()){
+                    if (point.x == bd2.getX()){
+                        int index = Integer.parseInt(bd2.getName().substring(bd2.getName().length()-1));
+                        staticBodies.set(index, staticBodies.get(index)-1);
+                    }
+                }
             }
             if(bd2.getName().startsWith("snow") && bd1.getName().startsWith("icicle")){
-                int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
-                staticBodies.set(index, staticBodies.get(index)-1);
+                WorldManifold worldmanifold;
+                worldmanifold = contact.getWorldManifold();
+                for(Vector2 point : worldmanifold.getPoints()){
+                    if (point.x == bd1.getX()){
+                        int index = Integer.parseInt(bd1.getName().substring(bd1.getName().length()-1));
+                        staticBodies.set(index, staticBodies.get(index)-1);
+                    }
+                }
             }
 
         if(bd1.getName() == "movingIceBar"){
