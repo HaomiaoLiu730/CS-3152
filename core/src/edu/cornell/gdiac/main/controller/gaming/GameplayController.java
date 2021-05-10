@@ -339,23 +339,23 @@ public class GameplayController extends WorldController implements ContactListen
         addObject(exit);
 
         // Create player
-        dwidth  = avatarStrip.getRegionWidth()/scale.x;
-        dheight = avatarStrip.getRegionHeight()/scale.y;
+        dwidth  = walkingStrips.get(0).getRegionWidth()/scale.x;
+        dheight = walkingStrips.get(0).getRegionHeight()/scale.y;
         PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool")/2;
         PUNCH_TIME=constants.get("player").getInt("punch_time");
         punchCooldown=constants.get("player").getInt("punch_cooldown");
         avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
         avatar.setDrawScale(scale);
-        avatar.setFilmStrip(avatarStrip);
+        avatar.setFilmStrip(walkingStrips.get(avatar.getNumPenguins()));
         avatar.setArrowTexture(arrowTexture);
         avatar.setEnergyBar(energyBarTexture);
         avatar.setEnergyBarOutline(energyBarOutlineTexture);
-        avatar.setJumpHangingStrip(jumpHangingStrip);
-        avatar.setJumpLandingStrip(jumpLandingStrip);
-        avatar.setJumpRisingStrip(jumpRisingStrip);
-        avatar.setWalkingStrip(avatarStrip);
-        avatar.setThrowingStrip(throwingStrip);
-        avatar.setNormalStrip(avatarNormalStrip);
+        avatar.setJumpHangingStrip(jumpHangingStrips);
+        avatar.setJumpLandingStrip(jumpLandingStrips);
+        avatar.setJumpRisingStrip(jumpRisingStrips);
+        avatar.setWalkingStrip(walkingStrips);
+        avatar.setThrowingStrip(throwStrips);
+        avatar.setNormalStrip(normalStrips);
         avatar.setPenguinWalkingStrip((penguinWalkingStrip));
         avatar.setPenguinRollingStrip(penguinRollingStrip);
         avatar.setPenguinStrip(penguins.get(0));
@@ -601,7 +601,7 @@ public class GameplayController extends WorldController implements ContactListen
             punchCooldown -= 1;
         }
         if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
-            avatar.setFilmStrip(avatarStrip);
+            avatar.setFilmStrip(walkingStrips.get(avatar.getNumPenguins()));
             avatar.setPunching(false);
         }
 
@@ -666,7 +666,7 @@ public class GameplayController extends WorldController implements ContactListen
         avatar.applyForce();
         if(avatar.isJumping()&&InputController.getInstance().didPrimary()){
             avatar.moveState = Player.animationState.jumpRising;
-            avatar.setFilmStrip(jumpRisingStrip);
+            avatar.setFilmStrip(jumpRisingStrips.get(avatar.getNumPenguins()));
             jumping.play();
         }
         avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
@@ -841,7 +841,7 @@ public class GameplayController extends WorldController implements ContactListen
                 if(avatar.moveState == Player.animationState.jumpHanging ||
                         avatar.moveState == Player.animationState.jumpRising){
                     avatar.moveState = Player.animationState.jumpLanding;
-                    avatar.setFilmStrip(jumpLandingStrip);
+                    avatar.setFilmStrip(jumpLandingStrips.get(avatar.getNumPenguins()));
                     bearLanding.play();
                 }
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground

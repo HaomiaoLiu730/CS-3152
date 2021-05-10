@@ -11,33 +11,243 @@
     "losing": "sounds/death jingle.ogg"
   },
   "textures": {
-    "avatarNormal": {
-      "file": "images/shared/avatarNormal.png",
+    "avatarNormal0": {
+      "file": "images/shared/avatarNormal0.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "avatarWalking": {
-      "file": "images/shared/avatarWalking.png",
+    "avatarNormal1": {
+      "file": "images/shared/avatarNormal1.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "jumpRising": {
-      "file": "images/shared/jumpRising.png",
+    "avatarNormal2": {
+      "file": "images/shared/avatarNormal2.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "jumpHanging": {
-      "file": "images/shared/jumpHanging.png",
+    "avatarNormal3": {
+      "file": "images/shared/avatarNormal3.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "jumpLanding": {
-      "file": "images/shared/jumpLanding.png",
+    "avatarNormal4": {
+      "file": "images/shared/avatarNormal4.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "avatarThrow": {
-      "file": "images/shared/throw.png",
+    "avatarNormal5": {
+      "file": "images/shared/avatarNormal5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarNormal6": {
+      "file": "images/shared/avatarNormal6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarNormal7": {
+      "file": "images/shared/avatarNormal7.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarWalking0": {
+      "file": "images/shared/avatarWalking0.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarWalking1": {
+      "file": "images/shared/avatarWalking1.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarWalking2": {
+      "file": "images/shared/avatarWalking2.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarWalking3": {
+      "file": "images/shared/avatarWalking3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarWalking4": {
+      "file": "images/shared/avatarWalking4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarWalking5": {
+      "file": "images/shared/avatarWalking5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarWalking6": {
+      "file": "images/shared/avatarWalking6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarWalking7": {
+      "file": "images/shared/avatarWalking7.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpRising0": {
+      "file": "images/shared/jumpRising0.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpRising1": {
+      "file": "images/shared/jumpRising1.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpRising2": {
+      "file": "images/shared/jumpRising2.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpRising3": {
+      "file": "images/shared/jumpRising3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpRising4": {
+      "file": "images/shared/jumpRising4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpRising5": {
+      "file": "images/shared/jumpRising5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpRising6": {
+      "file": "images/shared/jumpRising6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpRising7": {
+      "file": "images/shared/jumpRising7.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging0": {
+      "file": "images/shared/jumpHanging0.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging1": {
+      "file": "images/shared/jumpHanging1.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging2": {
+      "file": "images/shared/jumpHanging2.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging3": {
+      "file": "images/shared/jumpHanging3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging4": {
+      "file": "images/shared/jumpHanging4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging5": {
+      "file": "images/shared/jumpHanging5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging6": {
+      "file": "images/shared/jumpHanging6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpHanging7": {
+      "file": "images/shared/jumpHanging7.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding0": {
+      "file": "images/shared/jumpLanding0.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding1": {
+      "file": "images/shared/jumpLanding1.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding2": {
+      "file": "images/shared/jumpLanding2.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding3": {
+      "file": "images/shared/jumpLanding3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding4": {
+      "file": "images/shared/jumpLanding4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding5": {
+      "file": "images/shared/jumpLanding5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding6": {
+      "file": "images/shared/jumpLanding6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "jumpLanding7": {
+      "file": "images/shared/jumpLanding7.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow0": {
+      "file": "images/shared/throw0.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow1": {
+      "file": "images/shared/throw1.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow2": {
+      "file": "images/shared/throw2.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow3": {
+      "file": "images/shared/throw3.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow4": {
+      "file": "images/shared/throw4.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow5": {
+      "file": "images/shared/throw5.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow6": {
+      "file": "images/shared/throw6.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "avatarThrow7": {
+      "file": "images/shared/throw7.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },

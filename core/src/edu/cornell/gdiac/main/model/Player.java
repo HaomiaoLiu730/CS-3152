@@ -67,15 +67,17 @@ public class Player extends CapsuleObstacle {
     private float PENGUIN_HEIGHT;
 
     /** The texture for the player jumping */
-    private FilmStrip jumpRisingStrip;
+    private ArrayList<FilmStrip>  jumpRisingStrips;
     /** The texture for the player jumping */
-    private FilmStrip jumpHangingStrip;
+    private ArrayList<FilmStrip>  jumpHangingStrips;
     /** The texture for the player jumping */
-    private FilmStrip jumpLandingStrip;
+    private ArrayList<FilmStrip>  jumpLandingStrips;
     /** The texture for the player walking */
-    private FilmStrip walkingStrip;
+    private ArrayList<FilmStrip> walkingStrips;
     /** The texture for the player throwing */
-    private FilmStrip throwingStrip;
+    private ArrayList<FilmStrip>  throwingStrips;
+    private ArrayList<FilmStrip>  normalStrips;
+
     private FilmStrip penguinWalkingStrip;
     private FilmStrip penguinRollingStrip;
     private FilmStrip penguinStrip;
@@ -169,28 +171,28 @@ public class Player extends CapsuleObstacle {
         return movement;
     }
 
-    public void setJumpRisingStrip(FilmStrip strip){
-        jumpRisingStrip = strip;
+    public void setJumpRisingStrip(ArrayList<FilmStrip> strip){
+        jumpRisingStrips = strip;
     }
 
-    public void setJumpHangingStrip(FilmStrip strip){
-        jumpHangingStrip = strip;
+    public void setJumpHangingStrip(ArrayList<FilmStrip> strip){
+        jumpHangingStrips = strip;
     }
 
-    public void setJumpLandingStrip(FilmStrip strip){
-        jumpLandingStrip = strip;
+    public void setJumpLandingStrip(ArrayList<FilmStrip> strip){
+        jumpLandingStrips = strip;
     }
 
-    public void setWalkingStrip(FilmStrip strip){
-        walkingStrip = strip;
+    public void setWalkingStrip(ArrayList<FilmStrip> strip){
+        walkingStrips = strip;
     }
 
-    public void setThrowingStrip(FilmStrip strip){
-        throwingStrip = strip;
+    public void setThrowingStrip(ArrayList<FilmStrip> strip){
+        throwingStrips = strip;
     }
 
-    public void setNormalStrip(FilmStrip strip){
-        normalStrip = strip;
+    public void setNormalStrip(ArrayList<FilmStrip> strip ){
+        normalStrips = strip;
     }
 
     public void setPenguinStrip(FilmStrip strip){
@@ -367,6 +369,7 @@ public class Player extends CapsuleObstacle {
                     changeOverlap(1,true,false);
                 }
             }
+
         }
 
 
@@ -423,7 +426,7 @@ public class Player extends CapsuleObstacle {
                     if(p.getIndex() == numPenguins-1 && !p.isThrowOut()){
                         p.setBodyType(BodyDef.BodyType.DynamicBody);
                         p.setSensor(false);
-                        setFilmStrip(throwingStrip);
+                        setFilmStrip(throwingStrips.get(numPenguins));
                         throwing.play();
                         p.setFilmStrip(penguinRollingStrip);
                         p.setGrounded(false);
@@ -638,12 +641,12 @@ public class Player extends CapsuleObstacle {
         if (getMovement() == 0f) {
             setVX(0);
             if (moveState == animationState.walking && !isPunching) {
-                setFilmStrip(normalStrip);
+                setFilmStrip(normalStrips.get(numPenguins));
             }
         } else {
             setVX(Math.signum(getMovement())*getMaxSpeed());
             if (moveState == animationState.walking) {
-                setFilmStrip(walkingStrip);
+                setFilmStrip(walkingStrips.get(numPenguins));
             }
         }
 
@@ -677,6 +680,10 @@ public class Player extends CapsuleObstacle {
         return k*v+b;
     }
 
+    public void setStrip(int num_penguins, animationState animationState){
+
+    }
+
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
@@ -705,7 +712,7 @@ public class Player extends CapsuleObstacle {
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
                     moveState = animationState.jumpHanging;
-                    setFilmStrip(jumpHangingStrip);
+                    setFilmStrip(jumpHangingStrips.get(numPenguins));
                 }
             }
         }else if(moveState == animationState.jumpHanging){
@@ -715,7 +722,7 @@ public class Player extends CapsuleObstacle {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
-                    setFilmStrip(walkingStrip);
+                    setFilmStrip(walkingStrips.get(numPenguins));
                     moveState = animationState.walking;
                 }
             }
@@ -725,7 +732,7 @@ public class Player extends CapsuleObstacle {
                 timeCounter = 0;
                 filmStrip.nextFrame();
                 if (filmStrip.getFrame() == 0){
-                    setFilmStrip(walkingStrip);
+                    setFilmStrip(walkingStrips.get(numPenguins));
                     moveState = animationState.walking;
                 }
             }

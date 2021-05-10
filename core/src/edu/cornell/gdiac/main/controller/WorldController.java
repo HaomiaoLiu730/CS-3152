@@ -67,7 +67,15 @@ public abstract class WorldController implements Screen {
     protected Array<String> assets;
 
     /** The texture for the player */
-    protected FilmStrip avatarStrip;
+    protected ArrayList<FilmStrip> walkingStrips = new ArrayList<>();
+    protected ArrayList<FilmStrip> jumpHangingStrips = new ArrayList<>();
+    protected ArrayList<FilmStrip> jumpLandingStrips = new ArrayList<>();
+    protected ArrayList<FilmStrip> jumpRisingStrips = new ArrayList<>();
+    protected ArrayList<FilmStrip> throwStrips = new ArrayList<>();
+    protected ArrayList<FilmStrip> normalStrips = new ArrayList<>();
+
+
+
     /** The texture for the player */
     protected FilmStrip avatarNormalStrip;
     /** The texture for the penguin */
@@ -181,7 +189,60 @@ public abstract class WorldController implements Screen {
 //        }
 
         // Allocate the tiles
-        avatarStrip = new FilmStrip(directory.getEntry("avatarWalking", Texture.class), 1, 18);
+        walkingStrips.add(new FilmStrip(directory.getEntry("avatarWalking0", Texture.class), 1, 18));
+        walkingStrips.add(new FilmStrip(directory.getEntry("avatarWalking1", Texture.class), 1, 18));
+        walkingStrips.add(new FilmStrip(directory.getEntry("avatarWalking2", Texture.class), 1, 18));
+        walkingStrips.add(new FilmStrip(directory.getEntry("avatarWalking3", Texture.class), 1, 18));
+        walkingStrips.add(new FilmStrip(directory.getEntry("avatarWalking4", Texture.class), 1, 18));
+        walkingStrips.add(new FilmStrip(directory.getEntry("avatarWalking5", Texture.class), 1, 18));
+        walkingStrips.add(new FilmStrip(directory.getEntry("avatarWalking6", Texture.class), 1, 18));
+        walkingStrips.add(new FilmStrip(directory.getEntry("avatarWalking7", Texture.class), 1, 18));
+
+        jumpRisingStrips.add(new FilmStrip(directory.getEntry("jumpRising0", Texture.class), 1, 4));
+        jumpRisingStrips.add(new FilmStrip(directory.getEntry("jumpRising1", Texture.class), 1, 4));
+        jumpRisingStrips.add(new FilmStrip(directory.getEntry("jumpRising2", Texture.class), 1, 4));
+        jumpRisingStrips.add(new FilmStrip(directory.getEntry("jumpRising3", Texture.class), 1, 4));
+        jumpRisingStrips.add(new FilmStrip(directory.getEntry("jumpRising4", Texture.class), 1, 4));
+        jumpRisingStrips.add(new FilmStrip(directory.getEntry("jumpRising5", Texture.class), 1, 4));
+        jumpRisingStrips.add(new FilmStrip(directory.getEntry("jumpRising6", Texture.class), 1, 4));
+        jumpRisingStrips.add(new FilmStrip(directory.getEntry("jumpRising7", Texture.class), 1, 4));
+
+        jumpHangingStrips.add(new FilmStrip(directory.getEntry("jumpHanging0", Texture.class), 1, 1));
+        jumpHangingStrips.add(new FilmStrip(directory.getEntry("jumpHanging1", Texture.class), 1, 1));
+        jumpHangingStrips.add(new FilmStrip(directory.getEntry("jumpHanging2", Texture.class), 1, 1));
+        jumpHangingStrips.add(new FilmStrip(directory.getEntry("jumpHanging3", Texture.class), 1, 1));
+        jumpHangingStrips.add(new FilmStrip(directory.getEntry("jumpHanging4", Texture.class), 1, 1));
+        jumpHangingStrips.add(new FilmStrip(directory.getEntry("jumpHanging5", Texture.class), 1, 1));
+        jumpHangingStrips.add(new FilmStrip(directory.getEntry("jumpHanging6", Texture.class), 1, 1));
+        jumpHangingStrips.add(new FilmStrip(directory.getEntry("jumpHanging7", Texture.class), 1, 1));
+
+        jumpLandingStrips.add(new FilmStrip(directory.getEntry("jumpLanding0", Texture.class), 1, 3));
+        jumpLandingStrips.add(new FilmStrip(directory.getEntry("jumpLanding1", Texture.class), 1, 3));
+        jumpLandingStrips.add(new FilmStrip(directory.getEntry("jumpLanding2", Texture.class), 1, 3));
+        jumpLandingStrips.add(new FilmStrip(directory.getEntry("jumpLanding3", Texture.class), 1, 3));
+        jumpLandingStrips.add(new FilmStrip(directory.getEntry("jumpLanding4", Texture.class), 1, 3));
+        jumpLandingStrips.add(new FilmStrip(directory.getEntry("jumpLanding5", Texture.class), 1, 3));
+        jumpLandingStrips.add(new FilmStrip(directory.getEntry("jumpLanding6", Texture.class), 1, 3));
+        jumpLandingStrips.add(new FilmStrip(directory.getEntry("jumpLanding7", Texture.class), 1, 3));
+
+        throwStrips.add(new FilmStrip(directory.getEntry("avatarThrow0", Texture.class), 1, 6));
+        throwStrips.add(new FilmStrip(directory.getEntry("avatarThrow1", Texture.class), 1, 6));
+        throwStrips.add(new FilmStrip(directory.getEntry("avatarThrow2", Texture.class), 1, 6));
+        throwStrips.add(new FilmStrip(directory.getEntry("avatarThrow3", Texture.class), 1, 6));
+        throwStrips.add(new FilmStrip(directory.getEntry("avatarThrow4", Texture.class), 1, 6));
+        throwStrips.add(new FilmStrip(directory.getEntry("avatarThrow5", Texture.class), 1, 6));
+        throwStrips.add(new FilmStrip(directory.getEntry("avatarThrow6", Texture.class), 1, 6));
+        throwStrips.add(new FilmStrip(directory.getEntry("avatarThrow7", Texture.class), 1, 6));
+
+        normalStrips.add(new FilmStrip(directory.getEntry("avatarNormal0", Texture.class), 1, 1));
+        normalStrips.add(new FilmStrip(directory.getEntry("avatarNormal1", Texture.class), 1, 1));
+        normalStrips.add(new FilmStrip(directory.getEntry("avatarNormal2", Texture.class), 1, 1));
+        normalStrips.add(new FilmStrip(directory.getEntry("avatarNormal3", Texture.class), 1, 1));
+        normalStrips.add(new FilmStrip(directory.getEntry("avatarNormal4", Texture.class), 1, 1));
+        normalStrips.add(new FilmStrip(directory.getEntry("avatarNormal5", Texture.class), 1, 1));
+        normalStrips.add(new FilmStrip(directory.getEntry("avatarNormal6", Texture.class), 1, 1));
+        normalStrips.add(new FilmStrip(directory.getEntry("avatarNormal7", Texture.class), 1, 1));
+
         penguins.add(new FilmStrip(directory.getEntry("penguin", Texture.class), 1, 1));
         penguins.add(new FilmStrip(directory.getEntry("penguin2", Texture.class), 1, 1));
         penguins.add(new FilmStrip(directory.getEntry("penguin3", Texture.class), 1, 1));
@@ -189,7 +250,7 @@ public abstract class WorldController implements Screen {
         penguins.add(new FilmStrip(directory.getEntry("penguin5", Texture.class), 1, 1));
         penguins.add(new FilmStrip(directory.getEntry("penguin6", Texture.class), 1, 1));
         penguins.add(new FilmStrip(directory.getEntry("penguin7", Texture.class), 1, 1));
-        avatarNormalStrip = new FilmStrip(directory.getEntry("avatarNormal", Texture.class), 1, 1);
+//        avatarNormalStrip = new FilmStrip(directory.getEntry("avatarNormal", Texture.class), 1, 1);
         penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
         penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
         sealionStrip = new FilmStrip(directory.getEntry("sealion", Texture.class), 1, 1);
@@ -203,10 +264,10 @@ public abstract class WorldController implements Screen {
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
         noteLeftStrip = new FilmStrip(directory.getEntry("notcollected", Texture.class), 1, 1);
         noteCollectedStrip = new FilmStrip(directory.getEntry("collected", Texture.class), 1, 1);
-        jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 4);
-        jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
-        jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 3);
-        throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
+//        jumpRisingStrip = new FilmStrip(directory.getEntry("jumpRising", Texture.class), 1, 4);
+//        jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
+//        jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 3);
+//        throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
         worldAssetState = AssetState.COMPLETE;
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 10, 165);
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
