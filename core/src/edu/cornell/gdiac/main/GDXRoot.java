@@ -20,7 +20,6 @@ import edu.cornell.gdiac.main.view.GameCanvas;
 import edu.cornell.gdiac.util.ScreenListener;
 
 import java.util.HashMap;
-import java.util.logging.Level;
 
 public class GDXRoot extends Game implements ScreenListener {
 
@@ -84,6 +83,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		directory.loadAssets();
 		directory.finishLoading();
 		assetLoader = new AssetLoader(directory);
+		gameplayController.setScreenListener(this);
 
 		totalLevels = 0;
 		for(MenuController.Continent continent: MenuController.Continent.values()){

@@ -13,6 +13,7 @@ import edu.cornell.gdiac.main.obstacle.BoxObstacle;
 import edu.cornell.gdiac.main.obstacle.PolygonObstacle;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class LevelLoader {
 
@@ -28,6 +29,7 @@ public class LevelLoader {
     public int num_notes;
     private int level;
     public float[] grounded;
+    public String jsonFile;
 
     ArrayList<PolygonObstacle> snowList = new ArrayList<>();
     ArrayList<PolygonObstacle> iciclesList = new ArrayList<>();
@@ -39,8 +41,12 @@ public class LevelLoader {
     ArrayList<FloatingIce> floatingIcesList = new ArrayList<FloatingIce>();
     ArrayList<MovingIce> movingIcesList = new ArrayList<MovingIce>();
 
+    public LevelLoader reset(){
+        return new LevelLoader(jsonFile, level);
+    }
 
     public LevelLoader(String jsonFile, int level){
+        this.jsonFile = jsonFile;
         internal = new AssetDirectory(jsonFile);
         internal.loadAssets();
         internal.finishLoading();

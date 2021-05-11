@@ -3,7 +3,7 @@
 	"NorthAmerica": [ 1, 2, 3, 4 ],
 	"SouthAmerica": [ 1, 2, 3, 4 ],
 	"Asia": [ 1, 2, 3 ],
-	"Europe": [ 1, 2, 3, 4, 5 ],
+	"Europe": [ 1, 2, 3, 4, 5, 8 ],
 	"Antarctica": [],
 	"Africa": [ 1, 2, 3 ],
 	"Oceania": [ 1, 2, 3 ]
@@ -17,5 +17,5 @@
 	"Africa": 3,
 	"Oceania": 3
 },
-"next": 0
+"next": 8
 }

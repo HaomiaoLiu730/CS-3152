@@ -36,7 +36,7 @@ public class GameplayController extends WorldController implements ContactListen
     private ScreenListener listener;
     private static final float MOUSE_TOL = 50f;
 
-    private AssetDirectory internal;
+//    private AssetDirectory internal;
     /** Reference to the character levelLoader.avatar */
 //    private Player levelLoader.avatar;
     /** Reference to the seal */
@@ -79,6 +79,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     private int timeCounter;
 
+    private AssetLoader assetLoader = GDXRoot.assetLoader;
+
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -87,7 +89,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     private Texture background;
     private BitmapFont gameFont ;
-    private JsonValue constants;
+//    private JsonValue constants;
     private boolean endSoundPlaying;
 
     /** number of penguins */
@@ -238,8 +240,6 @@ public class GameplayController extends WorldController implements ContactListen
             obj.deactivatePhysics(world);
         }
         objects.clear();
-//        seals.clear();
-//        sealions.clear();
         addQueue.clear();
         world.dispose();
 
@@ -300,15 +300,14 @@ public class GameplayController extends WorldController implements ContactListen
     private void populateLevel() {
         quitPos = new Vector2(canvas.getWidth()-80f, canvas.getHeight()-80f);
         buttonR = 20;
-
-
         for(int i=0;i<7;i++){
-            BackgroundMusic[i].stop();
+            assetLoader.BackgroundMusic[i].stop();
         }
         for(int i=0;i<num_penguins;i++){
             if(i>6) break;
-            BackgroundMusic[i].loop();
+            assetLoader.BackgroundMusic[i].loop();
         }
+        levelLoader = levelLoader.reset();
 
         for(PolygonObstacle snow: levelLoader.snowList){
             addObject(snow);
@@ -316,6 +315,7 @@ public class GameplayController extends WorldController implements ContactListen
         for(PolygonObstacle icicle: levelLoader.iciclesList){
             addObject(icicle);
         }
+
         addObject(levelLoader.exit);
         addObject(levelLoader.avatar);
         for(Penguin p: levelLoader.avatar.getPenguins()){
@@ -324,6 +324,7 @@ public class GameplayController extends WorldController implements ContactListen
             p.setActive(false);
             p.setSensor(true);
         }
+
         for(Note note: levelLoader.notesList){
             addObject(note);
         }
@@ -334,12 +335,14 @@ public class GameplayController extends WorldController implements ContactListen
             water.setActive(false);
             water.setAwake(false);
         }
+
         for(Ice ice: levelLoader.iceList){
             addObject(ice);
         }
         for(FloatingIce floatingIce: levelLoader.floatingIcesList){
             addObject(floatingIce);
         }
+
         for(MovingIce movingIce: levelLoader.movingIcesList){
             addObject(movingIce);
         }
@@ -560,8 +563,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void dispose() {
-        internal.dispose();
-        internal = null;
+//        internal.dispose();
+//        internal = null;
         collisionController = null;
         canvas = null;
     }
@@ -670,16 +673,16 @@ public class GameplayController extends WorldController implements ContactListen
 
         // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
-            levelLoader.avatar.setFilmStrip(punchStrip);
+            levelLoader.avatar.setFilmStrip(assetLoader.punchStrip);
             levelLoader.avatar.setPunching(true);
-            punching.play();
+            assetLoader.punching.play();
             punchCooldown = PUNCH_COOLDOWN;
         } else {
             punchCooldown -= 1;
         }
         if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
             // TODO:
-            levelLoader.avatar.setFilmStrip(avatarStrip);
+            levelLoader.avatar.setFilmStrip(assetLoader.avatarStrip);
             levelLoader.avatar.setPunching(false);
         }
 
@@ -696,12 +699,12 @@ public class GameplayController extends WorldController implements ContactListen
 //            setComplete(true);
 //        }
 //        collisionController.processCollision(seals, sealions, iciclesList, objects);
-        collisionController.processCollision(levelLoader.iciclesList, icicles_hit, staticBodies, objects,hitIcicle);
+        collisionController.processCollision(levelLoader.iciclesList, icicles_hit, staticBodies, objects,assetLoader.hitIcicle);
         collisionController.processCollision(levelLoader.waterList, levelLoader.avatar);
         collisionController.processCollision(levelLoader.waterList, levelLoader.avatar.getPenguins(),levelLoader.avatar);
 
-        notesCollected = collisionController.penguin_note_interaction(levelLoader.avatar.getPenguins(), levelLoader.notesList, noteCollectedStrip, notesCollected,
-                objects, levelLoader.avatar.getNumPenguins(), levelLoader.avatar, collectingNote, penguins);
+        notesCollected = collisionController.penguin_note_interaction(levelLoader.avatar.getPenguins(), levelLoader.notesList, assetLoader.noteCollectedStrip, notesCollected,
+                objects, levelLoader.avatar.getNumPenguins(), levelLoader.avatar, assetLoader.collectingNote, assetLoader.penguins);
 
     }
 
@@ -721,7 +724,7 @@ public class GameplayController extends WorldController implements ContactListen
     public void updateCamera(){
         // camera
         // leave this for ending  levelLoader.avatar.getX() < constants.get("goal").get("pos").getFloat(0)
-        float maxX = constants.get("goal").get("pos").getFloat(0) < 16 ? 320 : constants.get("goal").get("pos").getFloat(0);
+        float maxX = levelLoader.exit.getX() < 16 ? 320 : levelLoader.exit.getX();
         if(levelLoader.avatar.getX()>16 && levelLoader.avatar.getX() < maxX){
             if(levelLoader.avatar.getX()/32*1280 > cameraX){
                 canvas.getCamera().translate(levelLoader.avatar.getX()/32*1280-cameraX, 0f);
@@ -744,10 +747,10 @@ public class GameplayController extends WorldController implements ContactListen
         levelLoader.avatar.applyForce();
         if(levelLoader.avatar.isJumping()&&InputController.getInstance().didPrimary()){
             levelLoader.avatar.moveState = Player.animationState.jumpRising;
-            levelLoader.avatar.setFilmStrip(jumpRisingStrip);
-            jumping.play();
+            levelLoader.avatar.setFilmStrip(assetLoader.jumpRisingStrip);
+            assetLoader.jumping.play();
         }
-        levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), assetLoader.throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
         canThrow = true;
         levelLoader.avatar.pickUpPenguins();
     }
@@ -770,7 +773,7 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.begin();
         canvas.drawBackground(background,0, 0);
         // draw tutorial text
-        if(this.jsonFile.startsWith("europe")){
+        if(levelLoader.jsonFile.startsWith("europe")){
             switch (this.level){
                 case 0:
                     canvas.drawText("Use 'WASD' or arrow keys \n to control movement", gameFont,500, 500);
@@ -781,9 +784,9 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Some ice bars can also move!", gameFont,1500, 400);
                     break;
                 case 2:
-                    teachThrowingStrip.nextFrame();
+                    assetLoader.teachThrowingStrip.nextFrame();
                     canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 660);
-                    canvas.draw(teachThrowingStrip, 900, 400);
+                    canvas.draw(assetLoader.teachThrowingStrip, 900, 400);
                     canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
                     canvas.drawText("Try to throw the penguin \n at the note to collect it!", gameFont,2000, 600);
                     break;
@@ -805,7 +808,7 @@ public class GameplayController extends WorldController implements ContactListen
             }
         }
         if(complete || failed){
-            canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
+            canvas.draw(assetLoader.blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
         }
 
         for(Obstacle obj : objects) {
@@ -819,7 +822,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawText(gameFont, penguinMsg, 5.0f, canvas.getHeight() - 40.0f);
         }
         if(isPaused){
-            canvas.drawFixed(pauseScreen,
+            canvas.drawFixed(assetLoader.pauseScreen,
                     canvas.getWidth()/2f- 200,
                     canvas.getHeight()/2f-200);
             if(InputController.getInstance().touchUp() && Gdx.input.getX()>500 && Gdx.input.getY()>150&&Gdx.input.getX()<760 && Gdx.input.getY()<280){
@@ -836,7 +839,7 @@ public class GameplayController extends WorldController implements ContactListen
                 isPaused = false;
                 disableMovement = false;
                 for(int i=0;i<7;i++){
-                    BackgroundMusic[i].stop();
+                    assetLoader.BackgroundMusic[i].stop();
                 }
                 canvas.end();
                 listener.updateScreen(this, GAMEPLAY_MENU);
@@ -847,7 +850,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawSquare(Color.BLACK,1200,560,60,40);
             canvas.drawText(gameFont, "Edit", 1200,600);
         }else{
-            canvas.drawFixed(pauseButton,quitPos.x, quitPos.y);
+            canvas.drawFixed(assetLoader.pauseButton,quitPos.x, quitPos.y);
         }
         canvas.end();
 
@@ -864,8 +867,8 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.begin(); // DO NOT SCALE
             if(!endSoundPlaying) {
                 for(int i=0;i<7;i++)
-                    BackgroundMusic[i].stop();
-                winning.play(0.5f, 1, 0);
+                    assetLoader.BackgroundMusic[i].stop();
+                assetLoader.winning.play(0.5f, 1, 0);
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
@@ -878,12 +881,12 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.begin(); // DO NOT SCALE
             if(!endSoundPlaying) {
                 for(int i=0;i<7;i++)
-                    BackgroundMusic[i].stop();
-                losing.play(0.5f, 1, 0);
+                    assetLoader.BackgroundMusic[i].stop();
+                assetLoader.losing.play(0.5f, 1, 0);
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawFixed(deadStrip, 460, 200);
+            canvas.drawFixed(assetLoader.deadStrip, 460, 200);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         }
@@ -925,8 +928,8 @@ public class GameplayController extends WorldController implements ContactListen
                 if(levelLoader.avatar.moveState == Player.animationState.jumpHanging ||
                         levelLoader.avatar.moveState == Player.animationState.jumpRising){
                     levelLoader.avatar.moveState = Player.animationState.jumpLanding;
-                    levelLoader.avatar.setFilmStrip(jumpLandingStrip);
-                    bearLanding.play();
+                    levelLoader.avatar.setFilmStrip(assetLoader.jumpLandingStrip);
+                    assetLoader.bearLanding.play();
                 }
                 sensorFixtures.add(levelLoader.avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
@@ -940,7 +943,7 @@ public class GameplayController extends WorldController implements ContactListen
                     p.setGrounded(true);
                     if(p.isThrowOut() && p.getBodyType()== BodyDef.BodyType.DynamicBody){
                         if(p.getSoundPlaying())
-                            penguinLanding.play();
+                            assetLoader.penguinLanding.play();
                         p.setSoundPlaying(false);
                     }
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
