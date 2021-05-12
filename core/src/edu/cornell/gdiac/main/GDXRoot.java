@@ -10,7 +10,9 @@ import com.badlogic.gdx.utils.JsonWriter;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.controller.LevelEditorController;
 import edu.cornell.gdiac.main.controller.WorldController;
+import edu.cornell.gdiac.main.controller.gaming.AssetLoader;
 import edu.cornell.gdiac.main.controller.gaming.GameplayController;
+import edu.cornell.gdiac.main.controller.gaming.LevelLoader;
 import edu.cornell.gdiac.main.controller.gaming.MenuController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.controller.opening.OnboardingController;
@@ -26,6 +28,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	public static final int GAMEPLAY_CONTINUE = 130;
 	public static final int GAMEPLAY_MENU = 150;
 
+	public static AssetLoader assetLoader;
+
 	/** AssetManager to load game assets (textures, sounds, etc.) */
 	AssetDirectory directory;
 
@@ -35,7 +39,9 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	Loading loading;
 	/** List of all WorldControllers */
-	private WorldController[] controllers;
+//	private WorldController[] controllers;
+	private LevelLoader[] levelLoaders;
+	GameplayController gameplayController = new GameplayController();
 	private int totalLevels;
 
 	private GameplayController levelEditorGameplayController;
@@ -76,40 +82,50 @@ public class GDXRoot extends Game implements ScreenListener {
 		directory = new AssetDirectory("assets.json");
 		directory.loadAssets();
 		directory.finishLoading();
+		assetLoader = new AssetLoader(directory);
+		gameplayController.setScreenListener(this);
+
 		totalLevels = 0;
 		for(MenuController.Continent continent: MenuController.Continent.values()){
 			totalLevels += numOfLevels.get(continent);
 		}
 		int prevLevels = 0;
-		controllers = new WorldController[totalLevels];
+//		controllers = new WorldController[totalLevels];
+		levelLoaders = new LevelLoader[totalLevels];
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Europe); i++){
-			controllers[i+prevLevels] = new GameplayController("europe/europeMain.json",i);
-			controllers[i+prevLevels].setScreenListener(this);
+			levelLoaders[i+prevLevels] = new LevelLoader("europe/europeMain.json", i);
+//			controllers[i+prevLevels] = new GameplayController("europe/europeMain.json",i);
+//			controllers[i+prevLevels].setScreenListener(this);
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.Europe);
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Africa); i++){
-			controllers[i+prevLevels] = new GameplayController("africa/africaMain.json",i);
-			controllers[i+prevLevels].setScreenListener(this);
+			levelLoaders[i+prevLevels] = new LevelLoader("africa/africaMain.json", i);
+//			controllers[i+prevLevels] = new GameplayController("africa/africaMain.json",i);
+//			controllers[i+prevLevels].setScreenListener(this);
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.Africa);
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Oceania); i++){
-			controllers[i+prevLevels] = new GameplayController("oceania/oceaniaMain.json",i);
-			controllers[i+prevLevels].setScreenListener(this);
+			levelLoaders[i+prevLevels] = new LevelLoader("oceania/oceaniaMain.json", i);
+//			controllers[i+prevLevels] = new GameplayController("oceania/oceaniaMain.json",i);
+//			controllers[i+prevLevels].setScreenListener(this);
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.Oceania);
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Asia); i++){
-			controllers[i+prevLevels] = new GameplayController("asia/asiaMain.json",i);
-			controllers[i+prevLevels].setScreenListener(this);
+			levelLoaders[i+prevLevels] = new LevelLoader("asia/asiaMain.json", i);
+//			controllers[i+prevLevels] = new GameplayController("asia/asiaMain.json",i);
+//			controllers[i+prevLevels].setScreenListener(this);
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.Asia);
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
-			controllers[i+prevLevels] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
-			controllers[i+prevLevels].setScreenListener(this);
+			levelLoaders[i+prevLevels] = new LevelLoader("NorthAmerica/northAmericaMain.json", i);
+//			controllers[i+prevLevels] = new GameplayController("NorthAmerica/northAmericaMain.json",i);
+//			controllers[i+prevLevels].setScreenListener(this);
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.NorthAmerica);
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.SouthAmerica); i++){
-			controllers[i+prevLevels] = new GameplayController("southAmerica/southAmericaMain.json",i);
-			controllers[i+prevLevels].setScreenListener(this);
+			levelLoaders[i+prevLevels] = new LevelLoader("southAmerica/southAmericaMain.json", i);
+//			controllers[i+prevLevels] = new GameplayController("southAmerica/southAmericaMain.json",i);
+//			controllers[i+prevLevels].setScreenListener(this);
 		}
 
 		current = 0;
@@ -122,19 +138,24 @@ public class GDXRoot extends Game implements ScreenListener {
 	@Override
 	public void dispose () {
 		setScreen(null);
-		if (directory != null) {
-			directory.unloadAssets();
-			directory.dispose();
-			directory = null;
-		}
+//		if (directory != null) {
+//			directory.unloadAssets();
+//			directory.dispose();
+//			directory = null;
+//		}
 	}
 
 	public void nextLevel(){
-		controllers[current].loadContent(directory);
-		controllers[current].setScreenListener(this);
-		controllers[current].setCanvas(canvas);
-		controllers[current].reset();
-		setScreen(controllers[current]);
+		gameplayController.loadLevel(levelLoaders[current]);
+		gameplayController.setCanvas(canvas);
+		gameplayController.reset();
+		setScreen(gameplayController);
+
+//		controllers[current].loadContent(directory);
+//		controllers[current].setScreenListener(this);
+//		controllers[current].setCanvas(canvas);
+//		controllers[current].reset();
+//		setScreen(controllers[current]);
 	}
 
 	/**
@@ -179,11 +200,12 @@ public class GDXRoot extends Game implements ScreenListener {
 
 				}
 				current=value.getInt("next");
-				controllers[current].loadContent(directory);
-				controllers[current].setScreenListener(this);
-				controllers[current].setCanvas(canvas);
-				controllers[current].reset();
-				setScreen(controllers[current]);
+				nextLevel();
+//				controllers[current].loadContent(directory);
+//				controllers[current].setScreenListener(this);
+//				controllers[current].setCanvas(canvas);
+//				controllers[current].reset();
+//				setScreen(controllers[current]);
 
 				if(current == numOfLevels.get(currentContinent)){
 					// switch to the second level
@@ -252,15 +274,20 @@ public class GDXRoot extends Game implements ScreenListener {
 				value.addChild("next",new JsonValue(current));
 
 			}
-			controllers[current].loadContent(directory);
-			controllers[current].setScreenListener(this);
-			controllers[current].setCanvas(canvas);
-			controllers[current].reset();
-			setScreen(controllers[current]);
+//			controllers[current].loadContent(directory);
+//			controllers[current].setScreenListener(this);
+//			controllers[current].setCanvas(canvas);
+//			controllers[current].reset();
+//			setScreen(controllers[current]);
+
+			nextLevel();
 		} else if(screen instanceof LevelEditorController){
 			if(exitCode == EDITOR_GAMEPLAY){
-				levelEditorGameplayController = new GameplayController(true, "levelEditor.json",0);
-				levelEditorGameplayController.loadContent(directory);
+				LevelLoader levelLoader= new LevelLoader("levelEditor.json", 0);
+				levelEditorGameplayController = new GameplayController();
+				levelEditorGameplayController.loadLevel(levelLoader);
+//				levelEditorGameplayController = new GameplayController(true, "levelEditor.json",0);
+//				levelEditorGameplayController.loadContent(directory);
 				levelEditorGameplayController.setCanvas(canvas);
 				levelEditorGameplayController.reset();
 				levelEditorGameplayController.setScreenListener(this);
@@ -268,7 +295,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		} else if(screen instanceof GameplayController){
 			if (exitCode == GAMEPLAY_MENU) {
-				controllers[current].dispose();
+				// dispose the level loader
+//				controllers[current].dispose();
 				menuController.reset();
 				menuController.setScreenListener(this);
 				setScreen(menuController);
@@ -278,7 +306,8 @@ public class GDXRoot extends Game implements ScreenListener {
 				setScreen(levelEditor);
 			}else{
 				if(exitCode!=GAMEPLAY_CONTINUE){
-					controllers[current].dispose();
+					// dispose the level loader
+//				controllers[current].dispose();
 				}
 				// write progress to json
 				current++;
