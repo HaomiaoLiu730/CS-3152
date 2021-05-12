@@ -355,8 +355,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             }
             camera.update();
             if (Math.abs(camera.position.x - cameraPosX) <= 10) {
-                System.out.println("finish");
-                System.out.println(camera.position.x + ","+camera.position.y);
                 zoomInTime = 0;
                 zoomOut = false;
                 this.reset();
