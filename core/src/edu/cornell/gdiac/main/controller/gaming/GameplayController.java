@@ -957,7 +957,12 @@ public class GameplayController extends WorldController implements ContactListen
                     ((FloatingIce)master).hitByIcicle(force);
                 }
                 else if (!(bd2 instanceof Penguin) && !(bd2 instanceof Player)){
-                    ((FloatingIce)master).offsetX();
+                    WorldManifold worldmanifold;
+                    worldmanifold = contact.getWorldManifold();
+                    if(bd1.getX()<worldmanifold.getPoints()[0].x)
+                        ((FloatingIce)master).offsetX(1);
+                    else
+                        ((FloatingIce)master).offsetX(-1);
                 }
 
             }
@@ -972,7 +977,12 @@ public class GameplayController extends WorldController implements ContactListen
                     ((FloatingIce)master).hitByIcicle(force);
                 }
                 else if (!(bd1 instanceof Penguin)&& !(bd1 instanceof Player)){
-                    ((FloatingIce)master).offsetX();
+                    WorldManifold worldmanifold;
+                    worldmanifold = contact.getWorldManifold();
+                    if(bd2.getX()<worldmanifold.getPoints()[0].x)
+                        ((FloatingIce)master).offsetX(1);
+                    else
+                        ((FloatingIce)master).offsetX(-1);
                 }
             }
 
@@ -988,9 +998,10 @@ public class GameplayController extends WorldController implements ContactListen
                     ((MovingIce) master).addPlayer(p);
                 }
                 else  if (! (bd2 instanceof Penguin)){
-                    if(bd1.getX()<bd2.getX()) {
+                    WorldManifold worldmanifold;
+                    worldmanifold = contact.getWorldManifold();
+                    if(bd1.getX()<worldmanifold.getPoints()[0].x) {
                         ((MovingIce) master).hitSomething(1);
-                        System.out.println("hit something "+"direction 1");
                     }
                     else
                         ((MovingIce) master).hitSomething(-1);
@@ -1009,13 +1020,11 @@ public class GameplayController extends WorldController implements ContactListen
                     ((MovingIce) master).addPlayer(p);
                 }
                 else  if (! (bd1 instanceof Penguin)){
-                    //((MovingIce) master).hitSomething(-((MovingIce) master).getDirection());
                     WorldManifold worldmanifold;
                     worldmanifold = contact.getWorldManifold();
 
                     if(bd2.getX()<worldmanifold.getPoints()[0].x) {
                         ((MovingIce) master).hitSomething(1);
-                        System.out.println("hit something "+"direction 1");
                     }
                     else
                         ((MovingIce) master).hitSomething(-1);

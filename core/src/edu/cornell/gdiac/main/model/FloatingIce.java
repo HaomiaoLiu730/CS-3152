@@ -148,8 +148,9 @@ public class FloatingIce extends ComplexObstacle {
         momentum = 0;
     }
 
-    public void offsetX(){
+    public void offsetX(int dir){
         offsetFlag = true;
+        direction = dir;
     }
 }
 
