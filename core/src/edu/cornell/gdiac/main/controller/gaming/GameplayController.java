@@ -946,43 +946,59 @@ public class GameplayController extends WorldController implements ContactListen
                 setComplete(true);
             }
 
-            //contact for floating ice bar
-            if(bd1.getName() == "floatingIceBar"){
-                ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-                if(bd2.getName().startsWith("icicle") && bd2.getMass()!=0 ){
-                    float force = (float) Math.log(bd2.getMass())/75;
-                    if (bd2.getX()<bd1.getX()){
-                        force = -force;
-                    }
-                    ((FloatingIce)master).hitByIcicle(force);
+
+            if((bd1.getName() == bd2.getName()) && bd1.getName() == "floatingIceBar"){
+                FloatingIce master1 = (FloatingIce)((BoxObstacle)bd1).getMaster();
+                FloatingIce master2 = (FloatingIce)((BoxObstacle)bd2).getMaster();
+                if ( master1.getMomentum()>0){
+                    master2.hitByFloatingIce(master1.getMomentum()/2, master1.getDirection());
+                    master1.hitByFloatingIce(master1.getMomentum()/4,master1.getDirection());
                 }
-                else if (!(bd2 instanceof Penguin) && !(bd2 instanceof Player)){
-                    WorldManifold worldmanifold;
-                    worldmanifold = contact.getWorldManifold();
-                    if(bd1.getX()<worldmanifold.getPoints()[0].x)
-                        ((FloatingIce)master).offsetX(1);
-                    else
-                        ((FloatingIce)master).offsetX(-1);
+                else {
+                    master1.hitByFloatingIce(master2.getMomentum()/2, master2.getDirection());
+                    master2.hitByFloatingIce(master2.getMomentum()/4, master2.getDirection());
                 }
 
             }
+            else {
 
-            if(bd2.getName() == "floatingIceBar"){
-                ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-                if(bd1.getName().startsWith("icicle") && bd1.getMass()!=0){
-                    float force = (float) Math.log(bd1.getMass())/75;
-                    if (bd1.getX()<bd2.getX()){
-                        force = -force;
+
+                //contact for floating ice bar
+                if (bd1.getName() == "floatingIceBar") {
+                    ComplexObstacle master = ((BoxObstacle) bd1).getMaster();
+                    if (bd2.getName().startsWith("icicle") && bd2.getMass() != 0) {
+                        float force = (float) Math.log(bd2.getMass()) / 75;
+                        if (bd2.getX() < bd1.getX()) {
+                            force = -force;
+                        }
+                        ((FloatingIce) master).hitByIcicle(force);
+                    } else if (!(bd2 instanceof Penguin) && !(bd2 instanceof Player)) {
+                        WorldManifold worldmanifold;
+                        worldmanifold = contact.getWorldManifold();
+                        if (bd1.getX() < worldmanifold.getPoints()[0].x)
+                            ((FloatingIce) master).offsetX(1);
+                        else
+                            ((FloatingIce) master).offsetX(-1);
                     }
-                    ((FloatingIce)master).hitByIcicle(force);
+
                 }
-                else if (!(bd1 instanceof Penguin)&& !(bd1 instanceof Player)){
-                    WorldManifold worldmanifold;
-                    worldmanifold = contact.getWorldManifold();
-                    if(bd2.getX()<worldmanifold.getPoints()[0].x)
-                        ((FloatingIce)master).offsetX(1);
-                    else
-                        ((FloatingIce)master).offsetX(-1);
+
+                if (bd2.getName() == "floatingIceBar") {
+                    ComplexObstacle master = ((BoxObstacle) bd2).getMaster();
+                    if (bd1.getName().startsWith("icicle") && bd1.getMass() != 0) {
+                        float force = (float) Math.log(bd1.getMass()) / 75;
+                        if (bd1.getX() < bd2.getX()) {
+                            force = -force;
+                        }
+                        ((FloatingIce) master).hitByIcicle(force);
+                    } else if (!(bd1 instanceof Penguin) && !(bd1 instanceof Player)) {
+                        WorldManifold worldmanifold;
+                        worldmanifold = contact.getWorldManifold();
+                        if (bd2.getX() < worldmanifold.getPoints()[0].x)
+                            ((FloatingIce) master).offsetX(1);
+                        else
+                            ((FloatingIce) master).offsetX(-1);
+                    }
                 }
             }
 

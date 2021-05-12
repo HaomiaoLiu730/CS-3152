@@ -144,6 +144,11 @@ public class FloatingIce extends ComplexObstacle {
         else direction = -1;
     }
 
+    public void hitByFloatingIce(float mom, int dir){
+        momentum = mom;
+        direction = dir;
+    }
+
     public void resetMomentum(){
         momentum = 0;
     }
@@ -151,6 +156,13 @@ public class FloatingIce extends ComplexObstacle {
     public void offsetX(int dir){
         offsetFlag = true;
         direction = dir;
+    }
+
+    public int getDirection(){
+        return direction;
+    }
+    public float getMomentum(){
+        return momentum;
     }
 }
 
