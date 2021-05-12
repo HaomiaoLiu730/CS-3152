@@ -7,6 +7,7 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -35,23 +36,23 @@ public class GameplayController extends WorldController implements ContactListen
     private ScreenListener listener;
     private static final float MOUSE_TOL = 50f;
 
-    private AssetDirectory internal;
-    /** Reference to the character avatar */
-    private Player avatar;
+//    private AssetDirectory internal;
+    /** Reference to the character levelLoader.avatar */
+//    private Player levelLoader.avatar;
     /** Reference to the seal */
-    private ArrayList<Seal> seals = new ArrayList<>();
+//    private ArrayList<Seal> seals = new ArrayList<>();
     /** Reference to the sealion */
-    private ArrayList<Sealion> sealions = new ArrayList<>();
+//    private ArrayList<Sealion> sealions = new ArrayList<>();
     /** Reference to the icicles */
-    private ArrayList<PolygonObstacle> iciclesList;
+//    private ArrayList<PolygonObstacle> iciclesList;
     /** Reference to the water */
-    private Water water;
+//    private Water water;
     /** Reference to the ice */
-    private Ice ice;
+//    private Ice ice;
     /** Reference to the list of notes */
-    private ArrayList<Note> notesList;
+//    private ArrayList<Note> notesList;
     /** Reference to the list of waters */
-    private ArrayList<Water> waterList;
+//    private ArrayList<Water> waterList;
     /** Position of Reset button */
     private Vector2 resetPos;
     /** Position of Quit button */
@@ -74,7 +75,12 @@ public class GameplayController extends WorldController implements ContactListen
     private ArrayList<Boolean> pauseList;
     private ArrayList<Boolean> tiltList;
 
+    private LevelLoader levelLoader;
+
     private int timeCounter;
+
+    private AssetLoader assetLoader = GDXRoot.assetLoader;
+
 
     /** number of notes collected*/
     public static int notesCollected;
@@ -83,7 +89,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     private Texture background;
     private BitmapFont gameFont ;
-    private JsonValue constants;
+//    private JsonValue constants;
     private boolean endSoundPlaying;
 
     /** number of penguins */
@@ -135,7 +141,7 @@ public class GameplayController extends WorldController implements ContactListen
      * @param width  The width of the game window
      * @param height The height of the game window
      */
-    public GameplayController(float width, float height, boolean isEditingView, String jsonFile, int level) {
+    public GameplayController(float width, float height, boolean isEditingView) {
         super(width,height,DEFAULT_GRAVITY*2.5f);
         currentLevelNum = level;
         scale = super.scale;
@@ -148,21 +154,21 @@ public class GameplayController extends WorldController implements ContactListen
         this.level = level;
         endSoundPlaying = false;
 
-        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
-        internal.loadAssets();
-        internal.finishLoading();
-        background = internal.getEntry("background", Texture.class);
-        gameFont = internal.getEntry("gameFont", BitmapFont.class);
+//        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
+//        internal.loadAssets();
+//        internal.finishLoading();
+//        background = internal.getEntry("background", Texture.class);
+//        gameFont = internal.getEntry("gameFont", BitmapFont.class);
 
         collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
 
-        constants = internal.getEntry( "level"+(level+1), JsonValue.class );
-        JsonValue defaults = constants.get("defaults");
-        num_penguins = defaults.getInt("num_penguins",0);
-        num_notes = defaults.getInt("num_notes",0);
+//        constants = internal.getEntry( "level"+(level+1), JsonValue.class );
+//        JsonValue defaults = constants.get("defaults");
+//        num_penguins = defaults.getInt("num_penguins",0);
+//        num_notes = defaults.getInt("num_notes",0);
         this.isEditingView = isEditingView;
-        grounded = defaults.get("grounded").asFloatArray();
+//        grounded = defaults.get("grounded").asFloatArray();
 
     }
 
@@ -170,12 +176,12 @@ public class GameplayController extends WorldController implements ContactListen
 
     }
 
-    public GameplayController(String jsonFile, int level){
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, false, jsonFile, level);
+    public GameplayController(){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, false);
     }
 
-    public GameplayController(boolean isEditorView, String jsonFile, int level){
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, isEditorView, jsonFile, level);
+    public GameplayController(boolean isEditorView){
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, isEditorView);
     }
 
     /**
@@ -193,6 +199,10 @@ public class GameplayController extends WorldController implements ContactListen
 
     public void setFailure(boolean val){
         this.failed = val;
+    }
+
+    public void loadLevel(LevelLoader levelLoader){
+        this.levelLoader = levelLoader;
     }
 
     /**
@@ -230,8 +240,6 @@ public class GameplayController extends WorldController implements ContactListen
             obj.deactivatePhysics(world);
         }
         objects.clear();
-        seals.clear();
-        sealions.clear();
         addQueue.clear();
         world.dispose();
 
@@ -246,7 +254,7 @@ public class GameplayController extends WorldController implements ContactListen
         canThrow = false;
         staticBodies.clear();
         icicles_hit.clear();
-        for (PolygonObstacle icicle: iciclesList) {
+        for (PolygonObstacle icicle: levelLoader.iciclesList) {
             staticBodies.add(0);
             icicles_hit.add(false);
         }
@@ -256,13 +264,13 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.getCamera().position.x = 1280/2;
         canvas.getCamera().position.y = 720/2;
         cameraX = canvas.getCamera().position.x;
-        if(avatar.getX()/32*1280 > cameraX){
-            canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
+        if(levelLoader.avatar.getX()/32*1280 > cameraX){
+            canvas.getCamera().translate(levelLoader.avatar.getX()/32*1280-cameraX, 0f);
             canvas.getCamera().update();
             cameraX = canvas.getCamera().position.x;
         }
-        else if(avatar.getX()/32*1280 < cameraX){
-            canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
+        else if(levelLoader.avatar.getX()/32*1280 < cameraX){
+            canvas.getCamera().translate(levelLoader.avatar.getX()/32*1280-cameraX, 0f);
             canvas.getCamera().update();
             cameraX = canvas.getCamera().position.x;
         }
@@ -270,17 +278,19 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController = new CollisionController(1280, 720);
 
         sensorFixtures = new ObjectSet<Fixture>();
-        internal = new AssetDirectory(isEditingView ? "levelEditor.json" : this.jsonFile);
-        internal.loadAssets();
-        internal.finishLoading();
-        background = internal.getEntry("background", Texture.class);
-        gameFont = internal.getEntry("gameFont", BitmapFont.class);
+//        internal = new AssetDirectory(isEditingView ? "levelEditor.json" : this.jsonFile);
+//        internal.loadAssets();
+//        internal.finishLoading();
+        background = levelLoader.background;
+//        background = internal.getEntry("background", Texture.class);
+        gameFont = levelLoader.gameFont;
 
 
-        constants = internal.getEntry( "level"+(this.currentLevelNum+1), JsonValue.class );
-        JsonValue defaults = constants.get("defaults");
-        num_penguins = defaults.getInt("num_penguins",0);
-        num_notes = defaults.getInt("num_notes",0);
+//        constants = internal.getEntry( "level"+(this.currentLevelNum+1), JsonValue.class );
+//        JsonValue defaults = constants.get("defaults");
+        num_penguins = levelLoader.num_penguins;
+        num_notes = levelLoader.num_notes;
+        grounded = levelLoader.grounded;
 
     }
 
@@ -290,16 +300,55 @@ public class GameplayController extends WorldController implements ContactListen
     private void populateLevel() {
         quitPos = new Vector2(canvas.getWidth()-80f, canvas.getHeight()-80f);
         buttonR = 20;
-
-
         for(int i=0;i<7;i++){
-            BackgroundMusic[i].stop();
+            assetLoader.BackgroundMusic[i].stop();
         }
         for(int i=0;i<num_penguins;i++){
             if(i>6) break;
-            BackgroundMusic[i].loop();
+            assetLoader.BackgroundMusic[i].loop();
+        }
+        levelLoader = levelLoader.reset();
+
+        for(PolygonObstacle snow: levelLoader.snowList){
+            addObject(snow);
+        }
+        for(PolygonObstacle icicle: levelLoader.iciclesList){
+            addObject(icicle);
         }
 
+        addObject(levelLoader.exit);
+        addObject(levelLoader.avatar);
+        for(Penguin p: levelLoader.avatar.getPenguins()){
+            addObject(p);
+            p.getBody().setType(BodyDef.BodyType.DynamicBody);
+            p.setActive(false);
+            p.setSensor(true);
+        }
+
+        for(Note note: levelLoader.notesList){
+            addObject(note);
+        }
+        for(Water water: levelLoader.waterList){
+            addObject(water);
+            // water.setBodyType(BodyDef.BodyType.StaticBody);
+            // water.setSensor(true);
+            water.setActive(false);
+            water.setAwake(false);
+        }
+
+        for(Ice ice: levelLoader.iceList){
+            addObject(ice);
+        }
+        for(FloatingIce floatingIce: levelLoader.floatingIcesList){
+            addObject(floatingIce);
+        }
+
+        for(MovingIce movingIce: levelLoader.movingIcesList){
+            addObject(movingIce);
+        }
+
+
+        /**
         // Add level goal
         float dwidth, dheight;
         JsonValue defaults = constants.get("defaults");
@@ -350,38 +399,38 @@ public class GameplayController extends WorldController implements ContactListen
         addObject(exit);
 
         // Create player
-        dwidth  = avatarStrip.getRegionWidth()/scale.x;
-        dheight = avatarStrip.getRegionHeight()/scale.y;
+        dwidth  = levelLoader.avatarStrip.getRegionWidth()/scale.x;
+        dheight = levelLoader.avatarStrip.getRegionHeight()/scale.y;
         PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool")/2;
         PUNCH_TIME=constants.get("player").getInt("punch_time");
         punchCooldown=constants.get("player").getInt("punch_cooldown");
-        avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
-        avatar.setDrawScale(scale);
-        avatar.setFilmStrip(avatarStrip);
-        avatar.setJumpHangingStrip(jumpHangingStrip);
-        avatar.setJumpLandingStrip(jumpLandingStrip);
-        avatar.setJumpRisingStrip(jumpRisingStrip);
-        avatar.setWalkingStrip(avatarStrip);
-        avatar.setThrowingStrip(throwingStrip);
-        avatar.setNormalStrip(avatarNormalStrip);
-        avatar.setPenguinWalkingStrip((penguinWalkingStrip));
-        avatar.setPenguinRollingStrip(penguinRollingStrip);
-        avatar.setPenguinStrip(penguins.get(0));
-        avatar.setPenguinOverlapStrip(penguins.get(avatar.getNumPenguins()-1));
-        addObject(avatar);
+        levelLoader.avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
+        levelLoader.avatar.setDrawScale(scale);
+        levelLoader.avatar.setFilmStrip(levelLoader.avatarStrip);
+        levelLoader.avatar.setJumpHangingStrip(jumpHangingStrip);
+        levelLoader.avatar.setJumpLandingStrip(jumpLandingStrip);
+        levelLoader.avatar.setJumpRisingStrip(jumpRisingStrip);
+        levelLoader.avatar.setWalkingStrip(levelLoader.avatarStrip);
+        levelLoader.avatar.setThrowingStrip(throwingStrip);
+        levelLoader.avatar.setNormalStrip(levelLoader.avatarNormalStrip);
+        levelLoader.avatar.setPenguinWalkingStrip((penguinWalkingStrip));
+        levelLoader.avatar.setPenguinRollingStrip(penguinRollingStrip);
+        levelLoader.avatar.setPenguinStrip(penguins.get(0));
+        levelLoader.avatar.setPenguinOverlapStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
+        addObject(levelLoader.avatar);
 
         for(int i = 0; i<num_penguins; i++){
-            avatar.getPenguins().get(i).setDrawScale(scale);
-            avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
-            avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
-            avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(avatar.getNumPenguins()-1));
+            levelLoader.avatar.getPenguins().get(i).setDrawScale(scale);
+            levelLoader.avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
+            levelLoader.avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
+            levelLoader.avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
 
-            addObject(avatar.getPenguins().get(i));
-            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
-            avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
-            avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(avatar.getNumPenguins()-1));
-            avatar.getPenguins().get(i).setActive(false);
-            avatar.getPenguins().get(i).setSensor(true);
+            addObject(levelLoader.avatar.getPenguins().get(i));
+            levelLoader.avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
+            levelLoader.avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
+            levelLoader.avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
+            levelLoader.avatar.getPenguins().get(i).setActive(false);
+            levelLoader.avatar.getPenguins().get(i).setSensor(true);
         }
 
         JsonValue enemy = constants.get("enemy");
@@ -483,6 +532,8 @@ public class GameplayController extends WorldController implements ContactListen
             addObject(mIce);
         }
 
+         */
+
     }
 
     /**
@@ -502,7 +553,7 @@ public class GameplayController extends WorldController implements ContactListen
             return false;
         }
 
-        if (!failed && avatar.getY() < -1) {
+        if (!failed && levelLoader.avatar.getY() < -1) {
             setFailure(true);
             return false;
         }
@@ -512,8 +563,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void dispose() {
-        internal.dispose();
-        internal = null;
+//        internal.dispose();
+//        internal = null;
         collisionController = null;
         canvas = null;
     }
@@ -549,7 +600,7 @@ public class GameplayController extends WorldController implements ContactListen
 
         if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
             isPaused = true;
-            avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
+            levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
             disableMovement = true;
 //            pauseList = new ArrayList<>();
 //            tiltList = new ArrayList<>();
@@ -588,9 +639,9 @@ public class GameplayController extends WorldController implements ContactListen
             return;
         }
 
-        for (int i = 0; i < iciclesList.size(); i++) {
+        for (int i = 0; i < levelLoader.iciclesList.size(); i++) {
             if (staticBodies.get(i) == 1) {
-                iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
+                levelLoader.iciclesList.get(i).setBodyType(BodyDef.BodyType.StaticBody);
                 staticBodies.set(i, 2);
             }
         }
@@ -622,16 +673,17 @@ public class GameplayController extends WorldController implements ContactListen
 
         // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
-            avatar.setFilmStrip(punchStrip);
-            avatar.setPunching(true);
-            punching.play();
+            levelLoader.avatar.setFilmStrip(assetLoader.punchStrip);
+            levelLoader.avatar.setPunching(true);
+            assetLoader.punching.play();
             punchCooldown = PUNCH_COOLDOWN;
         } else {
             punchCooldown -= 1;
         }
         if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
-            avatar.setFilmStrip(avatarStrip);
-            avatar.setPunching(false);
+            // TODO:
+            levelLoader.avatar.setFilmStrip(assetLoader.avatarStrip);
+            levelLoader.avatar.setPunching(false);
         }
 
         // Losing condition
@@ -641,18 +693,18 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // Monster moving and attacking
-        collisionController.processCollision(seals, sealions, avatar, objects);
-        if (collisionController.processCollision(seals, sealions, attackStrip, avatar.getPenguins())) {
-            setFailure(true);
-            setComplete(true);
-        }
-        collisionController.processCollision(seals, sealions, iciclesList, objects);
-        collisionController.processCollision(iciclesList, icicles_hit, staticBodies, objects,hitIcicle);
-        collisionController.processCollision(waterList, avatar);
-        collisionController.processCollision(waterList, avatar.getPenguins(),avatar);
+//        collisionController.processCollision(seals, sealions, levelLoader.avatar, objects);
+//        if (collisionController.processCollision(seals, sealions, attackStrip, levelLoader.avatar.getPenguins())) {
+//            setFailure(true);
+//            setComplete(true);
+//        }
+//        collisionController.processCollision(seals, sealions, iciclesList, objects);
+        collisionController.processCollision(levelLoader.iciclesList, icicles_hit, staticBodies, objects,assetLoader.hitIcicle);
+        collisionController.processCollision(levelLoader.waterList, levelLoader.avatar);
+        collisionController.processCollision(levelLoader.waterList, levelLoader.avatar.getPenguins(),levelLoader.avatar);
 
-        notesCollected = collisionController.penguin_note_interaction(avatar.getPenguins(), notesList, noteCollectedStrip, notesCollected,
-                objects, avatar.getNumPenguins(), avatar, collectingNote, penguins);
+        notesCollected = collisionController.penguin_note_interaction(levelLoader.avatar.getPenguins(), levelLoader.notesList, assetLoader.noteCollectedStrip, notesCollected,
+                objects, levelLoader.avatar.getNumPenguins(), levelLoader.avatar, assetLoader.collectingNote, assetLoader.penguins);
 
     }
 
@@ -671,36 +723,36 @@ public class GameplayController extends WorldController implements ContactListen
 
     public void updateCamera(){
         // camera
-        // leave this for ending  avatar.getX() < constants.get("goal").get("pos").getFloat(0)
-        float maxX = constants.get("goal").get("pos").getFloat(0) < 16 ? 320 : constants.get("goal").get("pos").getFloat(0);
-        if(avatar.getX()>16 && avatar.getX() < maxX){
-            if(avatar.getX()/32*1280 > cameraX){
-                canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
+        // leave this for ending  levelLoader.avatar.getX() < constants.get("goal").get("pos").getFloat(0)
+        float maxX = levelLoader.exit.getX() < 16 ? 320 : levelLoader.exit.getX();
+        if(levelLoader.avatar.getX()>16 && levelLoader.avatar.getX() < maxX){
+            if(levelLoader.avatar.getX()/32*1280 > cameraX){
+                canvas.getCamera().translate(levelLoader.avatar.getX()/32*1280-cameraX, 0f);
                 canvas.getCamera().update();
                 cameraX = canvas.getCamera().position.x;
             }
-            else if(avatar.getX()/32*1280 < cameraX){
-                canvas.getCamera().translate(avatar.getX()/32*1280-cameraX, 0f);
+            else if(levelLoader.avatar.getX()/32*1280 < cameraX){
+                canvas.getCamera().translate(levelLoader.avatar.getX()/32*1280-cameraX, 0f);
                 canvas.getCamera().update();
                 cameraX = canvas.getCamera().position.x;
             }
         }
-        avatar.setCameraX(cameraX);
+        levelLoader.avatar.setCameraX(cameraX);
     }
 
     public void updatePlayer(){
-        // avatar motion
-        avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
-        avatar.setJumping(InputController.getInstance().didPrimary());
-        avatar.applyForce();
-        if(avatar.isJumping()&&InputController.getInstance().didPrimary()){
-            avatar.moveState = Player.animationState.jumpRising;
-            avatar.setFilmStrip(jumpRisingStrip);
-            jumping.play();
+        // levelLoader.avatar motion
+        levelLoader.avatar.setMovement(InputController.getInstance().getHorizontal() * levelLoader.avatar.getForce());
+        levelLoader.avatar.setJumping(InputController.getInstance().didPrimary());
+        levelLoader.avatar.applyForce();
+        if(levelLoader.avatar.isJumping()&&InputController.getInstance().didPrimary()){
+            levelLoader.avatar.moveState = Player.animationState.jumpRising;
+            levelLoader.avatar.setFilmStrip(assetLoader.jumpRisingStrip);
+            assetLoader.jumping.play();
         }
-        avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), assetLoader.throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
         canThrow = true;
-        avatar.pickUpPenguins();
+        levelLoader.avatar.pickUpPenguins();
     }
 
     /**
@@ -721,7 +773,7 @@ public class GameplayController extends WorldController implements ContactListen
         canvas.begin();
         canvas.drawBackground(background,0, 0);
         // draw tutorial text
-        if(this.jsonFile.startsWith("europe")){
+        if(levelLoader.jsonFile.startsWith("europe")){
             switch (this.level){
                 case 0:
                     canvas.drawText("Use 'WASD' or arrow keys \n to control movement", gameFont,500, 500);
@@ -732,9 +784,9 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Some ice bars can also move!", gameFont,1500, 400);
                     break;
                 case 2:
-                    teachThrowingStrip.nextFrame();
+                    assetLoader.teachThrowingStrip.nextFrame();
                     canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 660);
-                    canvas.draw(teachThrowingStrip, 900, 400);
+                    canvas.draw(assetLoader.teachThrowingStrip, 900, 400);
                     canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
                     canvas.drawText("Try to throw the penguin \n at the note to collect it!", gameFont,2000, 600);
                     break;
@@ -756,7 +808,7 @@ public class GameplayController extends WorldController implements ContactListen
             }
         }
         if(complete || failed){
-            canvas.draw(blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
+            canvas.draw(assetLoader.blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
         }
 
         for(Obstacle obj : objects) {
@@ -764,13 +816,13 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         String noteMsg = "Notes collected: "+ notesCollected + "/"+num_notes;
-        String penguinMsg = "Penguins: "+ avatar.getNumPenguins() + "/"+num_penguins;
+        String penguinMsg = "Penguins: "+ levelLoader.avatar.getNumPenguins() + "/"+num_penguins;
         if(!complete || failed) {
             canvas.drawText(gameFont, noteMsg, 5.0f, canvas.getHeight() - 5.0f);
             canvas.drawText(gameFont, penguinMsg, 5.0f, canvas.getHeight() - 40.0f);
         }
         if(isPaused){
-            canvas.drawFixed(pauseScreen,
+            canvas.drawFixed(assetLoader.pauseScreen,
                     canvas.getWidth()/2f- 200,
                     canvas.getHeight()/2f-200);
             if(InputController.getInstance().touchUp() && Gdx.input.getX()>500 && Gdx.input.getY()>150&&Gdx.input.getX()<760 && Gdx.input.getY()<280){
@@ -787,7 +839,7 @@ public class GameplayController extends WorldController implements ContactListen
                 isPaused = false;
                 disableMovement = false;
                 for(int i=0;i<7;i++){
-                    BackgroundMusic[i].stop();
+                    assetLoader.BackgroundMusic[i].stop();
                 }
                 canvas.end();
                 listener.updateScreen(this, GAMEPLAY_MENU);
@@ -798,7 +850,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawSquare(Color.BLACK,1200,560,60,40);
             canvas.drawText(gameFont, "Edit", 1200,600);
         }else{
-            canvas.drawFixed(pauseButton,quitPos.x, quitPos.y);
+            canvas.drawFixed(assetLoader.pauseButton,quitPos.x, quitPos.y);
         }
         canvas.end();
 
@@ -815,8 +867,8 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.begin(); // DO NOT SCALE
             if(!endSoundPlaying) {
                 for(int i=0;i<7;i++)
-                    BackgroundMusic[i].stop();
-                winning.play(0.5f, 1, 0);
+                    assetLoader.BackgroundMusic[i].stop();
+                assetLoader.winning.play(0.5f, 1, 0);
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
@@ -825,16 +877,16 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.end();
         } else if (failed && !resetClick) {
             disableMovement = true;
-            avatar.setLinearVelocity(forceCache.set(0,avatar.getLinearVelocity().y));
+            levelLoader.avatar.setLinearVelocity(forceCache.set(0,levelLoader.avatar.getLinearVelocity().y));
             canvas.begin(); // DO NOT SCALE
             if(!endSoundPlaying) {
                 for(int i=0;i<7;i++)
-                    BackgroundMusic[i].stop();
-                losing.play(0.5f, 1, 0);
+                    assetLoader.BackgroundMusic[i].stop();
+                assetLoader.losing.play(0.5f, 1, 0);
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawFixed(deadStrip, 460, 200);
+            canvas.drawFixed(assetLoader.deadStrip, 460, 200);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         }
@@ -868,30 +920,30 @@ public class GameplayController extends WorldController implements ContactListen
             // See if we have landed on the ground.
             boolean bd1IsGround = !(bd1 instanceof Penguin) && !(bd1 instanceof Note) && (!(bd1 instanceof Water));
             boolean bd2IsGround = !(bd2 instanceof Penguin) && !(bd2 instanceof Note) && (!(bd2 instanceof Water));
-            if ((avatar.getSensorName().equals(fd2) && avatar != bd1 && bd1IsGround) ||
-                    (avatar.getSensorName().equals(fd1) && avatar != bd2 && bd2IsGround)) {
-                avatar.setGrounded(true);
+            if ((levelLoader.avatar.getSensorName().equals(fd2) && levelLoader.avatar != bd1 && bd1IsGround) ||
+                    (levelLoader.avatar.getSensorName().equals(fd1) && levelLoader.avatar != bd2 && bd2IsGround)) {
+                levelLoader.avatar.setGrounded(true);
                 playerGround += 1;
 
-                if(avatar.moveState == Player.animationState.jumpHanging ||
-                        avatar.moveState == Player.animationState.jumpRising){
-                    avatar.moveState = Player.animationState.jumpLanding;
-                    avatar.setFilmStrip(jumpLandingStrip);
-                    bearLanding.play();
+                if(levelLoader.avatar.moveState == Player.animationState.jumpHanging ||
+                        levelLoader.avatar.moveState == Player.animationState.jumpRising){
+                    levelLoader.avatar.moveState = Player.animationState.jumpLanding;
+                    levelLoader.avatar.setFilmStrip(assetLoader.jumpLandingStrip);
+                    assetLoader.bearLanding.play();
                 }
-                sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
+                sensorFixtures.add(levelLoader.avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
             // check whether the penguin is grounded
             bd1IsGround = !(bd1 instanceof Note) && (!(bd1 instanceof Water));
             bd2IsGround = !(bd2 instanceof Note) && (!(bd2 instanceof Water));
-            for(Penguin p: avatar.getPenguins()){
-                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != avatar && bd1IsGround) ||
-                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != avatar && bd2IsGround)) {
+            for(Penguin p: levelLoader.avatar.getPenguins()){
+                if ((p.getSensorName().equals(fd2) && p != bd1 && bd1 != levelLoader.avatar && bd1IsGround) ||
+                        (p.getSensorName().equals(fd1) && p != bd2 && bd2 != levelLoader.avatar && bd2IsGround)) {
                     p.setGrounded(true);
                     if(p.isThrowOut() && p.getBodyType()== BodyDef.BodyType.DynamicBody){
                         if(p.getSoundPlaying())
-                            penguinLanding.play();
+                            assetLoader.penguinLanding.play();
                         p.setSoundPlaying(false);
                     }
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
@@ -922,27 +974,27 @@ public class GameplayController extends WorldController implements ContactListen
 
 
             if (bd1 instanceof Penguin && bd2.getName().startsWith("icicle")){
-                icicles_hit.set(iciclesList.indexOf(bd2),true);
+                icicles_hit.set(levelLoader.iciclesList.indexOf(bd2),true);
             }
 
             if (bd2 instanceof Penguin && bd1.getName().startsWith("icicle")){
-                icicles_hit.set(iciclesList.indexOf(bd1),true);
+                icicles_hit.set(levelLoader.iciclesList.indexOf(bd1),true);
             }
 
-            // set the ice bar tilt only for avatar
+            // set the ice bar tilt only for levelLoader.avatar
             if ((bd1.getName()=="iceBar" || bd1.getName()=="floatingIceBar") &&
-                    (bd2 == avatar || bd2.getName().startsWith("icicle")) ) {
+                    (bd2 == levelLoader.avatar || bd2.getName().startsWith("icicle")) ) {
                 bd1.setFixedRotation(false);
             }
-            if ((bd1 == avatar || bd1.getName().startsWith("icicle")) &&
+            if ((bd1 == levelLoader.avatar || bd1.getName().startsWith("icicle")) &&
                     (bd2.getName()=="iceBar"|| bd2.getName()=="floatingIceBar")) {
                 bd2.setFixedRotation(false);
             }
 
 
             // Check for win condition
-            if ((bd1.getName() == "exit" && bd2 == avatar && notesCollected == num_notes) ||
-                    (bd1 == avatar && bd2.getName() == "exit" && notesCollected == num_notes)) {
+            if ((bd1.getName() == "exit" && bd2 == levelLoader.avatar && notesCollected == num_notes) ||
+                    (bd1 == levelLoader.avatar && bd2.getName() == "exit" && notesCollected == num_notes)) {
                 setComplete(true);
             }
 
@@ -1037,20 +1089,20 @@ public class GameplayController extends WorldController implements ContactListen
 
         boolean bd1IsGround = !(bd11 instanceof Penguin) && !(bd11 instanceof Note) && (!(bd11 instanceof Water));
         boolean bd2IsGround = !(bd22 instanceof Penguin) && !(bd22 instanceof Note) && (!(bd22 instanceof Water));
-        if ((avatar.getSensorName().equals(fd2) && avatar != bd11 && bd1IsGround) ||
-                (avatar.getSensorName().equals(fd1) && avatar != bd22 && bd2IsGround)) {
-            sensorFixtures.remove(avatar == bd11 ? fix2 : fix1);
+        if ((levelLoader.avatar.getSensorName().equals(fd2) && levelLoader.avatar != bd11 && bd1IsGround) ||
+                (levelLoader.avatar.getSensorName().equals(fd1) && levelLoader.avatar != bd22 && bd2IsGround)) {
+            sensorFixtures.remove(levelLoader.avatar == bd11 ? fix2 : fix1);
             playerGround -= 1;
             if (playerGround == 0) {
-                avatar.setGrounded(false);
+                levelLoader.avatar.setGrounded(false);
             }
         }
 
         bd1IsGround = !(bd11 instanceof Note) && (!(bd11 instanceof Water));
         bd2IsGround = !(bd22 instanceof Note) && (!(bd22 instanceof Water));
-        for(Penguin p: avatar.getPenguins()){
-            if ((p.getSensorName().equals(fd2) && p != bd11 && bd11 != avatar && bd2IsGround) ||
-                    (p.getSensorName().equals(fd1) && p != bd22 && bd22 != avatar && bd2IsGround)) {
+        for(Penguin p: levelLoader.avatar.getPenguins()){
+            if ((p.getSensorName().equals(fd2) && p != bd11 && bd11 != levelLoader.avatar && bd2IsGround) ||
+                    (p.getSensorName().equals(fd1) && p != bd22 && bd22 != levelLoader.avatar && bd2IsGround)) {
                 sensorFixtures.remove(p == bd11 ? fix2 : fix1);
                 p.setGrounded(false);
             }
