@@ -247,6 +247,27 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         }
     }
 
+
+    private float[] getCoordinate(float x, float y){
+        float cameraPosX = 640;
+        float cameraPosY = 360;
+        float deltaPosY = quadraticFunction(0.06f, 0.05f, 0, zoomInTime);
+        float scale = Math.abs(cameraPosX - 360);
+        float deltaPosX = Math.abs(cameraPosX - camera.position.x)/scale*deltaPosY;
+                float[] result = new float[2];
+        if (x - 640 > 0) {
+            result[0] = x > cameraPosX ? x - deltaPosX : x;
+        } else {
+            result[0] = x < cameraPosX ? x + deltaPosX : x;
+        }
+        if (y - 360 > 0) {
+            result[1] = y > cameraPosY ? y - deltaPosY : y;
+        } else {
+            result[1] = y < cameraPosY ? y + deltaPosY : y;
+        }
+        return result;
+    }
+
     public void update(float delta) {
         zoomInEffect();
         selectContinent();
@@ -411,7 +432,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     public void drawPointsHelper(int finishedLevelNum, float[] arr){
         for(int i = 0; i < finishedLevelNum*2; i+=2){
             canvas.drawEllipse(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
-            //canvas.drawText(gameFont, String.valueOf((i+2)/2), arr[i], arr[i+1]);
+            canvas.drawText(gameFont, String.valueOf((i+2)/2), getCoordinate(arr[i], arr[i+1])[0], getCoordinate(arr[i], arr[i+1])[1]);
             if (i+3 < numOfLevels.get(currentContinent)*2){
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
                 canvas.drawTriangle(Color.BLACK, arr[i+2]+8f, arr[i+3]-10f, arr[i+2]+13f, arr[i+3], arr[i+2]+18f, arr[i+3]-10f);
