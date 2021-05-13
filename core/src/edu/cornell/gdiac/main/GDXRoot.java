@@ -284,7 +284,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if(screen instanceof LevelEditorController){
 			if(exitCode == EDITOR_GAMEPLAY){
 				LevelLoader levelLoader= new LevelLoader("levelEditor.json", 0);
-				levelEditorGameplayController = new GameplayController();
+				levelEditorGameplayController = new GameplayController(true);
 				levelEditorGameplayController.loadLevel(levelLoader);
 //				levelEditorGameplayController = new GameplayController(true, "levelEditor.json",0);
 //				levelEditorGameplayController.loadContent(directory);
