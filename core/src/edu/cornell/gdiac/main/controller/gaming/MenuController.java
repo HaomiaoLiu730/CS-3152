@@ -230,21 +230,34 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         float deltaWidth = (viewportWidth-1280)/scale*deltaPosY;
         float deltaHeight = (viewportHeight-720)/scale*deltaPosY;
         float deltaPosX = (cameraPosX - 640f)/scale*deltaPosY;
-        camera.viewportWidth = camera.viewportWidth >= viewportWidth ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
-        camera.viewportHeight = camera.viewportHeight >= viewportHeight ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
+//        camera.viewportWidth = camera.viewportWidth >= viewportWidth ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
+//        camera.viewportHeight = camera.viewportHeight >= viewportHeight ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
 
-        if(cameraPosX - 640 > 0){
-            camera.position.x = camera.position.x <= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
-        }else{
-            camera.position.x = camera.position.x >= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
-        }
+        camera.viewportWidth = camera.viewportWidth + deltaWidth;
+        camera.viewportHeight = camera.viewportHeight + deltaHeight;
+        camera.position.x = camera.position.x + deltaPosX;
+        //camera.position.y = camera.position.y + deltaPosY;
+//        if(cameraPosX - 640 > 0){
+//            camera.position.x = camera.position.x <= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
+//        }else{
+//            camera.position.x = camera.position.x >= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
+//        }
+//        if(cameraPosY - 360 > 0){
+//            camera.position.y = camera.position.y <= cameraPosY ? camera.position.y + deltaPosY :camera.position.y;
+//        }else{
+//            camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - deltaPosY :camera.position.y;
+//        }
         if(cameraPosY - 360 > 0){
-            camera.position.y = camera.position.y <= cameraPosY ? camera.position.y + deltaPosY :camera.position.y;
+            camera.position.y = camera.position.y + deltaPosY;
         }else{
-            camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - deltaPosY :camera.position.y;
+            camera.position.y = camera.position.y - deltaPosY;
         }
         camera.update();
         if(Math.abs(camera.position.y - cameraPosY) <= 5){
+            drawPoints = true;
+            zoomIn = false;
+            zoomInTime = 0;
+        } else if(Math.abs(camera.position.x - cameraPosX) <= 5){
             drawPoints = true;
             zoomIn = false;
             zoomInTime = 0;
@@ -360,25 +373,25 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         if(zoomIn && unlockedContinents.contains(currentContinent)){
             switch (currentContinent){
                 case Europe:
-                    zoomInto(460f, 300f, 230f, 530f);
+                    zoomInto(640f, 360f, 230f, 520f);
                     break;
                 case NorthAmerica:
-                    zoomInto(560f, 350f, 1000f, 480f);
+                    zoomInto(640f, 360f, 1000f, 480f);
                     break;
                 case SouthAmerica:
-                    zoomInto(300f, 300f, 1100f, 220f);
+                    zoomInto(640f, 360f, 1100f, 220f);
                     break;
                 case Asia:
-                    zoomInto(720f, 390f, 460f, 440f);
+                    zoomInto(640f, 360f, 460f, 440f);
                     break;
                 case Africa:
-                    zoomInto(400f, 320f, 200f, 300f);
+                    zoomInto(640f, 360f, 200f, 300f);
                     break;
                 case Oceania:
-                    zoomInto(420f, 230f,600f, 220f);
+                    zoomInto(640f, 360f,600f, 220f);
                     break;
                 case Antarctica:
-                    zoomInto(700f, 300f, 350f, 20f);
+                    zoomInto(640f, 360f, 350f, 20f);
                     break;
                 default:
                     break;
@@ -458,16 +471,30 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         }
     }
 
+    private void drawWorldMap(float x, float y) {
+        canvas.drawOverlay(background,x, y);
+        canvas.drawOverlay(northAmerica, unlockedContinents.contains(Continent.NorthAmerica)? Color.WHITE : grey, x, y);
+        canvas.drawOverlay(southAmerica, unlockedContinents.contains(Continent.SouthAmerica)? Color.WHITE : grey,x,y);
+        canvas.drawOverlay(oceania, unlockedContinents.contains(Continent.Oceania)? Color.WHITE : grey,x, y);
+        canvas.drawOverlay(asia, unlockedContinents.contains(Continent.Asia)? Color.WHITE : grey,x, y);
+        canvas.drawOverlay(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey,x, y);
+        canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,x, y);
+        canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,x, y);
+    }
+
     public void draw() {
         canvas.begin();
-        canvas.drawOverlay(background,true);
-        canvas.drawOverlay(northAmerica, unlockedContinents.contains(Continent.NorthAmerica)? Color.WHITE : grey, 0, 0);
-        canvas.drawOverlay(southAmerica, unlockedContinents.contains(Continent.SouthAmerica)? Color.WHITE : grey,0,0);
-        canvas.drawOverlay(oceania, unlockedContinents.contains(Continent.Oceania)? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(asia, unlockedContinents.contains(Continent.Asia)? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,0, 0);
-        canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,0, 0);
+
+        drawWorldMap(-1275,720);
+        drawWorldMap(-1275,0);
+        drawWorldMap(-1275,-720);
+        drawWorldMap(0,720);
+        drawWorldMap(0,-720);
+        drawWorldMap(0,0);
+        drawWorldMap(1275,720);
+        drawWorldMap(1275,0);
+        drawWorldMap(1275,-720);
+
         if (!zoomIn && !drawPoints) {
             canvas.draw(penguin5, Color.WHITE, 960f, 460f, penguin5.getWidth()/2, penguin5.getHeight()/2);
             canvas.drawText(gameFont, "5", 990f, 525f);
@@ -533,7 +560,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     public void drawCurrentContinent(){
-        if(!zoomIn && !drawPoints){
+        if(!zoomIn && !drawPoints && !zoomOut){
             switch (currentContinent){
                 case Antarctica:
                     canvas.drawOverlay(antarcticaLine,true);
