@@ -820,8 +820,8 @@ public class GameplayController extends WorldController implements ContactListen
         String noteMsg = "Notes collected: "+ notesCollected + "/"+num_notes;
         String penguinMsg = "Penguins: "+ levelLoader.avatar.getNumPenguins() + "/"+num_penguins;
         if(!complete || failed) {
-            canvas.drawText(gameFont, noteMsg, 5.0f, canvas.getHeight() - 5.0f);
-            canvas.drawText(gameFont, penguinMsg, 5.0f, canvas.getHeight() - 40.0f);
+            canvas.drawText(gameFont, noteMsg, 5.0f+canvas.getCamera().position.x-640, canvas.getHeight() - 5.0f);
+            canvas.drawText(gameFont, penguinMsg, 5.0f+canvas.getCamera().position.x-640, canvas.getHeight() - 40.0f);
         }
         if(isPaused){
             canvas.drawFixed(assetLoader.pauseScreen,
