@@ -230,23 +230,10 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         float deltaWidth = (viewportWidth-1280)/scale*deltaPosY;
         float deltaHeight = (viewportHeight-720)/scale*deltaPosY;
         float deltaPosX = (cameraPosX - 640f)/scale*deltaPosY;
-//        camera.viewportWidth = camera.viewportWidth >= viewportWidth ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
-//        camera.viewportHeight = camera.viewportHeight >= viewportHeight ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
 
         camera.viewportWidth = camera.viewportWidth + deltaWidth;
         camera.viewportHeight = camera.viewportHeight + deltaHeight;
         camera.position.x = camera.position.x + deltaPosX;
-        //camera.position.y = camera.position.y + deltaPosY;
-//        if(cameraPosX - 640 > 0){
-//            camera.position.x = camera.position.x <= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
-//        }else{
-//            camera.position.x = camera.position.x >= cameraPosX ? camera.position.x + deltaPosX :camera.position.x;
-//        }
-//        if(cameraPosY - 360 > 0){
-//            camera.position.y = camera.position.y <= cameraPosY ? camera.position.y + deltaPosY :camera.position.y;
-//        }else{
-//            camera.position.y = camera.position.y >= cameraPosY ? camera.position.y - deltaPosY :camera.position.y;
-//        }
         if(cameraPosY - 360 > 0){
             camera.position.y = camera.position.y + deltaPosY;
         }else{
@@ -254,10 +241,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         }
         camera.update();
         if(Math.abs(camera.position.y - cameraPosY) <= 5){
-            drawPoints = true;
-            zoomIn = false;
-            zoomInTime = 0;
-        } else if(Math.abs(camera.position.x - cameraPosX) <= 5){
             drawPoints = true;
             zoomIn = false;
             zoomInTime = 0;
@@ -406,15 +389,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             zoomInTime += 0.1;
             float cameraPosX = 640;
             float cameraPosY = 360;
-            float viewportWidth = 1280;
-            float viewportHeight = 720;
             float deltaPosY = quadraticFunction(0.06f, 0.05f, 0, zoomInTime);
             float scale = Math.abs(cameraPosX - 360);
             float deltaWidth = (1280 - camera.viewportWidth) / scale * deltaPosY;
             float deltaHeight = (720 - camera.viewportHeight) / scale * deltaPosY;
             float deltaPosX = Math.abs(cameraPosX - camera.position.x)/scale*deltaPosY;
-            camera.viewportWidth = camera.viewportWidth < viewportWidth ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
-            camera.viewportHeight = camera.viewportHeight < viewportHeight ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
+            camera.viewportWidth = camera.viewportWidth + deltaWidth;
+            camera.viewportHeight = camera.viewportHeight + deltaHeight;
 
             if (camera.position.x - 640 > 0) {
                 camera.position.x = camera.position.x > cameraPosX ? camera.position.x - deltaPosX : camera.position.x;
@@ -427,7 +408,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                 camera.position.y = camera.position.y < cameraPosY ? camera.position.y + deltaPosY : camera.position.y;
             }
             camera.update();
-            if (Math.abs(camera.position.x - cameraPosX) <= 10) {
+            if (Math.abs(camera.position.x - cameraPosX) <= 2) {
                 zoomInTime = 0;
                 zoomOut = false;
                 this.reset();
@@ -538,6 +519,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             canvas.drawText(gameFont, "3", 562f, 300f);
             canvas.draw(penguin7, Color.WHITE, 350f, 15f, penguin7.getWidth()/2, penguin7.getHeight()/2);
             canvas.drawText(gameFont, "7", 405f, 65f);
+            gameFont.getData().setScale(2f);
+            canvas.drawText(gameFont, "World Map", 580f, 680f);
+            gameFont.getData().setScale(1f);
         }
         canvas.end();
     }
