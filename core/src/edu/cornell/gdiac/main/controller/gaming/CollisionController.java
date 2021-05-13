@@ -228,7 +228,6 @@ public class CollisionController {
                 float downY = water.getY()-((Water) water).getHeight()/2;
                 float upY = water.getY()+((Water) water).getHeight()/2;
                 if (p.getX() >= leftX && p.getX() <= rightX && p.getY() >= downY && p.getY() <= upY) {
-                    //p.setInWater(true);
                     if (p.isThrowOut() && !p.isGrounded()) {
                         if (avatar.getX() < p.getX()) {
                             p.setX(p.getX()-0.1f);
@@ -238,7 +237,6 @@ public class CollisionController {
                         p.setY(upY-0.2f);
                         p.setVY(0);
                     }
-                    //p.setActive(false);
                     if ((avatar.isGrounded()&&!p.isThrowOut()  && !(avatar.getX() >= leftX && avatar.getX() <= rightX && avatar.isGrounded())))
                     {
                         p.setActive(false);
@@ -246,7 +244,6 @@ public class CollisionController {
                     }
                 } else if (p.getX() >= leftX && p.getX() <= rightX) {
                     p.setActive(true);
-                    //p.setInWater(false);
                 }
             }
         }

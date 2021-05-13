@@ -1350,7 +1350,7 @@ public class GameCanvas {
             Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
             return;
         }
-        font.draw(spriteBatch, text, x+camera.position.x-640f, y);
+        font.draw(spriteBatch, text, x, y);
     }
 
     public void drawLine(Color color, Vector2 start, Vector2 end, int lineWidth){

@@ -63,6 +63,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             436f, 540f,760,476,390, 360, 566, 380, 500, 300
             //720, 340. 333, 511, 474, 490, 600, 470
     };
+    private float[] EUROPE_CAMERA = new float[] {230,530};
     private float[] AFRICA_LEVELS = new float[]{
             227f, 550f, 350, 540f, 480, 470f,
             //720, 350f, 700, 190
@@ -517,6 +518,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     public void drawPointsHelper(int finishedLevelNum, float[] arr){
         for(int i = 0; i < finishedLevelNum*2; i+=2){
             canvas.drawEllipse(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
+            //canvas.drawText(gameFont, String.valueOf((i+2)/2), arr[i]*camera.viewportWidth/1280+Math.abs(640-camera.position.x)+camera.position.x-640f, arr[i+1]*camera.viewportHeight/720+Math.abs(360-camera.position.y)+camera.position.y-360f);
             canvas.drawText(gameFont, String.valueOf((i+2)/2), getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0], getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
             if (i+3 < numOfLevels.get(currentContinent)*2){
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
