@@ -48,9 +48,6 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
     private InputController inputController;
-    private boolean isHoverPlay=false;
-    private boolean isHoverLevel=false;
-
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
@@ -91,19 +88,13 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
     public void update(float delta) {
         inputController.readInput();
         if(Math.abs(Gdx.input.getX() - 660) <= 75 && Math.abs(720 - Gdx.input.getY() - 335) <= 20){
-            isHoverLevel=true;
             if (InputController.getInstance().touchUp())
                 listener.updateScreen(this, 0);
         }
-        else if(Math.abs(Gdx.input.getX() - 660) <= 50 && Math.abs(720 - Gdx.input.getY() - 408) <= 20){
-            isHoverPlay=true;
+        if(Math.abs(Gdx.input.getX() - 660) <= 50 && Math.abs(720 - Gdx.input.getY() - 408) <= 20){
             if (InputController.getInstance().touchUp())
                 listener.updateScreen(this, 2);
 
-        }
-        else{
-            isHoverLevel=false;
-            isHoverPlay=false;
         }
         if(inputController.didPressE()){
             listener.updateScreen(this, 1);
@@ -119,26 +110,11 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         this.listener = listener;
     }
 
-    public void drawStart(float scale_play, float scale_level, int x_play, int x_level){
-        letterFont.getData().setScale(scale_play);
-        canvas.drawText(letterFont, "Play", x_play, 425);
-        letterFont.getData().setScale(scale_level);
-        canvas.drawText(letterFont, "Level Select", x_level, 350);
-
-    }
     public void draw() {
         canvas.begin();
         canvas.drawOverlay(front, true);
-        if(!isHoverLevel&&!isHoverPlay) {
-            drawStart(1,1,640,600);
-        }
-        else if (isHoverLevel){
-            drawStart(1,1.1f,640,594);
-        }
-        else if(isHoverPlay){
-            drawStart(1.1f,1,638,600);
-
-        }
+        canvas.drawText(letterFont, "Play", 640, 425);
+        canvas.drawText(letterFont, "Level Select", 600, 350);
         canvas.end();
     }
 
