@@ -495,22 +495,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         drawWorldMap(1275,0);
         drawWorldMap(1275,-720);
 
-        if (!zoomIn && !drawPoints) {
-            canvas.draw(penguin5, Color.WHITE, 960f, 460f, penguin5.getWidth()/2, penguin5.getHeight()/2);
-            canvas.drawText(gameFont, "5", 990f, 525f);
-            canvas.draw(penguin6, Color.WHITE, 1115f, 260f, penguin6.getWidth()/2, penguin6.getHeight()/2);
-            canvas.drawText(gameFont, "6", 1130f, 340f);
-            canvas.draw(penguin4, Color.WHITE, 410f, 470f, penguin4.getWidth()/2, penguin4.getHeight()/2);
-            canvas.drawText(gameFont, "4", 460f, 515f);
-            canvas.draw(penguin1, Color.WHITE, 200f, 490f, penguin1.getWidth()/2, penguin1.getHeight()/2);
-            canvas.drawText(gameFont, "1", 238f, 560f);
-            canvas.draw(penguin2, Color.WHITE, 120f, 320f, penguin2.getWidth()/2, penguin2.getHeight()/2);
-            canvas.drawText(gameFont, "2", 163f, 400f);
-            canvas.draw(penguin3, Color.WHITE, 525f, 205f, penguin3.getWidth()/2, penguin3.getHeight()/2);
-            canvas.drawText(gameFont, "3", 562f, 300f);
-            canvas.draw(penguin7, Color.WHITE, 350f, 15f, penguin7.getWidth()/2, penguin7.getHeight()/2);
-            canvas.drawText(gameFont, "7", 405f, 65f);
-        }
+
         if(drawPoints){
             int finishedLevelNum = finished.get(currentContinent).size();
             canvas.drawFixed(backArrowTexture);
@@ -538,6 +523,22 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             }
         }
         drawCurrentContinent();
+        if (!zoomIn && !drawPoints && !zoomOut) {
+            canvas.draw(penguin5, Color.WHITE, 960f, 460f, penguin5.getWidth()/2, penguin5.getHeight()/2);
+            canvas.drawText(gameFont, "5", 990f, 525f);
+            canvas.draw(penguin6, Color.WHITE, 1115f, 260f, penguin6.getWidth()/2, penguin6.getHeight()/2);
+            canvas.drawText(gameFont, "6", 1130f, 340f);
+            canvas.draw(penguin4, Color.WHITE, 410f, 470f, penguin4.getWidth()/2, penguin4.getHeight()/2);
+            canvas.drawText(gameFont, "4", 460f, 515f);
+            canvas.draw(penguin1, Color.WHITE, 200f, 490f, penguin1.getWidth()/2, penguin1.getHeight()/2);
+            canvas.drawText(gameFont, "1", 238f, 560f);
+            canvas.draw(penguin2, Color.WHITE, 120f, 320f, penguin2.getWidth()/2, penguin2.getHeight()/2);
+            canvas.drawText(gameFont, "2", 163f, 400f);
+            canvas.draw(penguin3, Color.WHITE, 525f, 205f, penguin3.getWidth()/2, penguin3.getHeight()/2);
+            canvas.drawText(gameFont, "3", 562f, 300f);
+            canvas.draw(penguin7, Color.WHITE, 350f, 15f, penguin7.getWidth()/2, penguin7.getHeight()/2);
+            canvas.drawText(gameFont, "7", 405f, 65f);
+        }
         canvas.end();
     }
 
