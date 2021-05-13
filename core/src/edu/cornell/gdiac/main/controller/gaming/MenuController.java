@@ -60,15 +60,15 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private static JsonValue value;
 
     private float[] EUROPE_LEVELS = new float[]{
-            436f, 540f,760,476,390, 360, 566, 380, 500, 300
+            852f, 427f,757,426, 770,347, 690,342, 580,300
             //720, 340. 333, 511, 474, 490, 600, 470
     };
     private float[] AFRICA_LEVELS = new float[]{
-            227f, 550f, 350, 540f, 480, 470f,
+            450, 417, 564, 475, 682, 453
             //720, 350f, 700, 190
     };
     private float[] OCEANIA_LEVELS = new float[]{
-            367, 324, 463, 300, 640, 335
+            530, 384, 613, 428, 731, 393
             // 470, 400, 622, 422,
     };
     private float[] ASIA_LEVELS = new float[]{
