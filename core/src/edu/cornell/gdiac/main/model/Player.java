@@ -439,6 +439,11 @@ public class Player extends CapsuleObstacle {
                         return;
                     }
                 }
+            }else{
+                throwingCount = 0;
+                throwingForce = 0f;
+                xDir = 0f;
+                yDir = 0f;
             }
         }
     }
