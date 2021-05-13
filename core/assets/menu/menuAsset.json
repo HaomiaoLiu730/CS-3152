@@ -144,6 +144,11 @@
       "file":     "images/menu/7.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "backArrow": {
+      "file":     "images/menu/backArrow.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {

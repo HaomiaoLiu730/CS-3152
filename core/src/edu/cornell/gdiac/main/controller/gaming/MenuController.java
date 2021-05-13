@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
@@ -37,6 +38,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private static Color grey = new Color(1,1,1,0.5f);
     private Continent currentContinent;
     private boolean zoomIn;
+    private boolean zoomOut;
     private int nextLevel = -1;
     private boolean drawPoints;
     private Camera camera;
@@ -62,7 +64,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             //720, 340. 333, 511, 474, 490, 600, 470
     };
     private float[] AFRICA_LEVELS = new float[]{
-            427f, 550f, 550, 540f, 680, 470f,
+            227f, 550f, 350, 540f, 480, 470f,
             //720, 350f, 700, 190
     };
     private float[] OCEANIA_LEVELS = new float[]{
@@ -76,7 +78,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             1100f, 600f, 1000f, 610f, 300f, 470f, 500f, 300f,
     };
     private float[] SOUTH_AMERICA_LEVELS = new float[]{
-            500, 550, 530, 480, 640, 430, 600, 360
+            700, 550, 730, 480, 840, 430, 800, 360
     };
 
     private AssetDirectory internal;
@@ -103,6 +105,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private Texture penguin5;
     private Texture penguin6;
     private Texture penguin7;
+    private TextureRegion backArrowTexture;
     private Texture[] penguins = new Texture[7];
 
     private Sound menuSellect;
@@ -158,6 +161,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         penguin5 = internal.getEntry("penguin5", Texture.class);
         penguin6 = internal.getEntry("penguin6", Texture.class);
         penguin7 = internal.getEntry("penguin7", Texture.class);
+        backArrowTexture = new TextureRegion(internal.getEntry("backArrow", Texture.class));
         penguins[0] = penguin1;
         penguins[1] = penguin2;
         penguins[2] = penguin3;
@@ -270,6 +274,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     public void update(float delta) {
         zoomInEffect();
+        zoomOutEffect();
         selectContinent();
         InputController.getInstance().readInput();
         if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
@@ -280,6 +285,10 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             zoomIn = true;
         }
         updateNextLevel();
+        if(InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX()-100)<40 && Math.abs(Gdx.input.getY()-60)<40){
+            zoomOut = true;
+            isReady = false;
+        }
     }
 
     public void selectContinent(){
@@ -312,19 +321,19 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         if(zoomIn && unlockedContinents.contains(currentContinent)){
             switch (currentContinent){
                 case Europe:
-                    zoomInto(560f, 300f, 230f, 530f);
+                    zoomInto(460f, 300f, 230f, 530f);
                     break;
                 case NorthAmerica:
                     zoomInto(560f, 350f, 1000f, 480f);
                     break;
                 case SouthAmerica:
-                    zoomInto(560f, 300f, 1180f, 220f);
+                    zoomInto(300f, 300f, 1100f, 220f);
                     break;
                 case Asia:
                     zoomInto(720f, 390f, 460f, 440f);
                     break;
                 case Africa:
-                    zoomInto(580f, 320f, 160f, 300f);
+                    zoomInto(400f, 320f, 200f, 300f);
                     break;
                 case Oceania:
                     zoomInto(420f, 230f,600f, 220f);
@@ -334,6 +343,42 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                     break;
                 default:
                     break;
+            }
+        }
+    }
+
+    public void zoomOutEffect(){
+        if(zoomOut) {
+            drawPoints = false;
+            zoomIn = false;
+            zoomInTime += 0.1;
+            float cameraPosX = 640;
+            float cameraPosY = 360;
+            float viewportWidth = 1280;
+            float viewportHeight = 720;
+            float deltaPosY = quadraticFunction(0.06f, 0.05f, 0, zoomInTime);
+            float scale = Math.abs(cameraPosX - 360);
+            float deltaWidth = (1280 - camera.viewportWidth) / scale * deltaPosY;
+            float deltaHeight = (720 - camera.viewportHeight) / scale * deltaPosY;
+            float deltaPosX = Math.abs(cameraPosX - camera.position.x)/scale*deltaPosY;
+            camera.viewportWidth = camera.viewportWidth < viewportWidth ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
+            camera.viewportHeight = camera.viewportHeight < viewportHeight ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
+
+            if (camera.position.x - 640 > 0) {
+                camera.position.x = camera.position.x > cameraPosX ? camera.position.x - deltaPosX : camera.position.x;
+            } else {
+                camera.position.x = camera.position.x < cameraPosX ? camera.position.x + deltaPosX : camera.position.x;
+            }
+            if (camera.position.y - 360 > 5) {
+                camera.position.y = camera.position.y > cameraPosY ? camera.position.y - deltaPosY : camera.position.y;
+            } else {
+                camera.position.y = camera.position.y < cameraPosY ? camera.position.y + deltaPosY : camera.position.y;
+            }
+            camera.update();
+            if (Math.abs(camera.position.x - cameraPosX) <= 10) {
+                zoomInTime = 0;
+                zoomOut = false;
+                this.reset();
             }
         }
     }
@@ -402,6 +447,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         }
         if(drawPoints){
             int finishedLevelNum = finished.get(currentContinent).size();
+            canvas.drawFixed(backArrowTexture);
             switch (currentContinent){
                 case Europe:
                     drawPointsHelper(finishedLevelNum, EUROPE_LEVELS);
