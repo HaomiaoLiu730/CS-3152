@@ -249,59 +249,29 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
 
     private float[] getCoordinate(float x, float y, Continent c) {
-        float width;
-        float height;
-        float camx;
-        float camy;
+        float width = 640f;
+        float height = 360f;
         float[] result = new float[2];
         if (c == Continent.Europe) {
-            width = 460f;
-            height = 300f;
-            camx = 230f;
-            camy = 530f;
             result[0] = x*width/1280+407;
             result[1] = y*height/720+375;
         } else if (c == Continent.NorthAmerica) {
-            width = 560f;
-            height = 350f;
-            camx = 1000f;
-            camy = 480f;
             result[0] = x*width/1280+355;
             result[1] = y*height/720+295;
         } else if (c == Continent.SouthAmerica) {
-            width = 300f;
-            height = 300f;
-            camx = 1100f;
-            camy = 220f;
             result[0] = x*width/1280+487;
             result[1] = y*height/720+67;
         } else if (c == Continent.Asia) {
-            width = 720f;
-            height = 390f;
-            camx = 460f;
-            camy = 440f;
             result[0] = x*width/1280+275;
             result[1] = y*height/720+235;
         } else if (c == Continent.Africa) {
-            width = 400f;
-            height = 320f;
-            camx = 200f;
-            camy = 300f;
             result[0] = x*width/1280+420;
             result[1] = y*height/720+145;
         } else if (c == Continent.Oceania) {
-            width = 420f;
-            height = 230f;
-            camx = 600f;
-            camy = 220f;
             result[0] = x*width/1280 + 425;
             result[1] = y*height/720 + 100;
         } else {
-            width = 700f;
-            height = 300f;
-            camx = 350f;
-            camy = 20f;
-            result[0] = x*width/1280-camx+640;
+            result[0] = x*width/1280-350+640;
             result[1] = y*height/720+400;
         }
         return result;
