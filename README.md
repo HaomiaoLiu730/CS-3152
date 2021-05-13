@@ -7,8 +7,7 @@ CONTROLS:
 A/LEFT KEY: move left  
 D/RIGHT KEY: move right  
 W/UP KEY: jump  
-F KEY: punch (the seal and sealion)  
-MOUSE CLICK: first click to determine the direction of the throw, then hold to determine the power  
+MOUSE CLICK: drag to determine the angle of throwing, hold to determine the strength and then release the mouse to throw out a penguin  
 SPACE BAR: cancel the throw  
 *Collect notes by throwing penguins to them to pass the level  
 *Penguins will be automatically picked back within a short distance  

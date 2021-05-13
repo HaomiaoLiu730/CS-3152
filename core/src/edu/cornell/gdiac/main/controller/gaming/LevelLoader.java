@@ -236,4 +236,8 @@ public class LevelLoader {
             movingIcesList.add(mIce);
         }
     }
+
+    public int getLevel(){
+        return level;
+    }
 }
