@@ -252,22 +252,61 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
 
-    private float[] getCoordinate(float x, float y){
-        float cameraPosX = 640;
-        float cameraPosY = 360;
-        float deltaPosY = quadraticFunction(0.06f, 0.05f, 0, zoomInTime);
-        float scale = Math.abs(cameraPosX - 360);
-        float deltaPosX = Math.abs(cameraPosX - camera.position.x)/scale*deltaPosY;
-                float[] result = new float[2];
-        if (x - 640 > 0) {
-            result[0] = x > cameraPosX ? x - deltaPosX : x;
+    private float[] getCoordinate(float x, float y, Continent c) {
+        float width;
+        float height;
+        float camx;
+        float camy;
+        float[] result = new float[2];
+        if (c == Continent.Europe) {
+            width = 460f;
+            height = 300f;
+            camx = 230f;
+            camy = 530f;
+            result[0] = x*width/1280+407;
+            result[1] = y*height/720+375;
+        } else if (c == Continent.NorthAmerica) {
+            width = 560f;
+            height = 350f;
+            camx = 1000f;
+            camy = 480f;
+            result[0] = x*width/1280+355;
+            result[1] = y*height/720+295;
+        } else if (c == Continent.SouthAmerica) {
+            width = 300f;
+            height = 300f;
+            camx = 1100f;
+            camy = 220f;
+            result[0] = x*width/1280+487;
+            result[1] = y*height/720+67;
+        } else if (c == Continent.Asia) {
+            width = 720f;
+            height = 390f;
+            camx = 460f;
+            camy = 440f;
+            result[0] = x*width/1280+280;
+            result[1] = y*height/720+240;
+        } else if (c == Continent.Africa) {
+            width = 400f;
+            height = 320f;
+            camx = 200f;
+            camy = 300f;
+            result[0] = x*width/1280+420;
+            result[1] = y*height/720+145;
+        } else if (c == Continent.Oceania) {
+            width = 420f;
+            height = 230f;
+            camx = 600f;
+            camy = 220f;
+            result[0] = x*width/1280 + 425;
+            result[1] = y*height/720 + 100;
         } else {
-            result[0] = x < cameraPosX ? x + deltaPosX : x;
-        }
-        if (y - 360 > 0) {
-            result[1] = y > cameraPosY ? y - deltaPosY : y;
-        } else {
-            result[1] = y < cameraPosY ? y + deltaPosY : y;
+            width = 700f;
+            height = 300f;
+            camx = 350f;
+            camy = 20f;
+            result[0] = x*width/1280-camx+640;
+            result[1] = y*height/720+400;
         }
         return result;
     }
@@ -478,7 +517,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     public void drawPointsHelper(int finishedLevelNum, float[] arr){
         for(int i = 0; i < finishedLevelNum*2; i+=2){
             canvas.drawEllipse(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
-            canvas.drawText(gameFont, String.valueOf((i+2)/2), getCoordinate(arr[i], arr[i+1])[0], getCoordinate(arr[i], arr[i+1])[1]);
+            canvas.drawText(gameFont, String.valueOf((i+2)/2), getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0], getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
             if (i+3 < numOfLevels.get(currentContinent)*2){
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
                 canvas.drawTriangle(Color.BLACK, arr[i+2]+8f, arr[i+3]-10f, arr[i+2]+13f, arr[i+3], arr[i+2]+18f, arr[i+3]-10f);
