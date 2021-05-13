@@ -92,7 +92,7 @@ public class GameplayController extends WorldController implements ContactListen
 //    private JsonValue constants;
     private boolean endSoundPlaying;
 
-    /** number of penguins */
+//    /** number of penguins */
     private int num_penguins;
     /** number of notes */
     private int num_notes;
@@ -230,6 +230,9 @@ public class GameplayController extends WorldController implements ContactListen
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        num_penguins = levelLoader.num_penguins;
+        num_notes = levelLoader.num_notes;
+        grounded = levelLoader.grounded;
         disableMovement = false;
         endSoundPlaying = false;
         notesCollected = 0;
@@ -288,9 +291,6 @@ public class GameplayController extends WorldController implements ContactListen
 
 //        constants = internal.getEntry( "level"+(this.currentLevelNum+1), JsonValue.class );
 //        JsonValue defaults = constants.get("defaults");
-        num_penguins = levelLoader.num_penguins;
-        num_notes = levelLoader.num_notes;
-        grounded = levelLoader.grounded;
 
     }
 
@@ -300,13 +300,6 @@ public class GameplayController extends WorldController implements ContactListen
     private void populateLevel() {
         quitPos = new Vector2(canvas.getWidth()-80f, canvas.getHeight()-80f);
         buttonR = 20;
-        for(int i=0;i<7;i++){
-            assetLoader.BackgroundMusic[i].stop();
-        }
-        for(int i=0;i<num_penguins;i++){
-            if(i>6) break;
-            assetLoader.BackgroundMusic[i].loop();
-        }
         levelLoader = levelLoader.reset();
 
         for(PolygonObstacle snow: levelLoader.snowList){
@@ -345,6 +338,14 @@ public class GameplayController extends WorldController implements ContactListen
 
         for(MovingIce movingIce: levelLoader.movingIcesList){
             addObject(movingIce);
+        }
+
+        for(int i=0;i<7;i++){
+            assetLoader.BackgroundMusic[i].stop();
+        }
+        for(int i=0;i<levelLoader.num_penguins;i++){
+            if(i>6) break;
+            assetLoader.BackgroundMusic[i].loop();
         }
 
 
