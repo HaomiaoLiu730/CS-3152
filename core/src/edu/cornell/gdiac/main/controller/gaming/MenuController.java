@@ -373,22 +373,22 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         if(zoomIn && unlockedContinents.contains(currentContinent)){
             switch (currentContinent){
                 case Europe:
-                    zoomInto(640f, 360f, 230f, 520f);
+                    zoomInto(640f, 360f, 205f, 510f);
                     break;
                 case NorthAmerica:
-                    zoomInto(640f, 360f, 1000f, 480f);
+                    zoomInto(640f, 360f, 1050f, 480f);
                     break;
                 case SouthAmerica:
-                    zoomInto(640f, 360f, 1100f, 220f);
+                    zoomInto(640f, 360f, 1140f, 220f);
                     break;
                 case Asia:
-                    zoomInto(640f, 360f, 460f, 440f);
+                    zoomInto(640f, 360f, 455f, 470f);
                     break;
                 case Africa:
-                    zoomInto(640f, 360f, 200f, 300f);
+                    zoomInto(640f, 360f, 70f, 330f);
                     break;
                 case Oceania:
-                    zoomInto(640f, 360f,600f, 220f);
+                    zoomInto(640f, 360f,560f, 210f);
                     break;
                 case Antarctica:
                     zoomInto(640f, 360f, 350f, 20f);
