@@ -284,8 +284,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             height = 390f;
             camx = 460f;
             camy = 440f;
-            result[0] = x*width/1280+280;
-            result[1] = y*height/720+240;
+            result[0] = x*width/1280+275;
+            result[1] = y*height/720+235;
         } else if (c == Continent.Africa) {
             width = 400f;
             height = 320f;
@@ -489,22 +489,22 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             canvas.drawFixed(backArrowTexture);
             switch (currentContinent){
                 case Europe:
-                    drawPointsHelper(finishedLevelNum, EUROPE_LEVELS);
+                    drawPointsHelper(finishedLevelNum, EUROPE_LEVELS, 1);
                     break;
                 case Africa:
-                    drawPointsHelper(finishedLevelNum, AFRICA_LEVELS);
+                    drawPointsHelper(finishedLevelNum, AFRICA_LEVELS, 2);
                     break;
                 case Oceania:
-                    drawPointsHelper(finishedLevelNum, OCEANIA_LEVELS);
+                    drawPointsHelper(finishedLevelNum, OCEANIA_LEVELS, 3);
                     break;
                 case Asia:
-                    drawPointsHelper(finishedLevelNum, ASIA_LEVELS);
+                    drawPointsHelper(finishedLevelNum, ASIA_LEVELS, 4);
                     break;
                 case NorthAmerica:
-                    drawPointsHelper(finishedLevelNum, NORTH_AMERICA_LEVELS);
+                    drawPointsHelper(finishedLevelNum, NORTH_AMERICA_LEVELS, 5);
                     break;
                 case SouthAmerica:
-                    drawPointsHelper(finishedLevelNum, SOUTH_AMERICA_LEVELS);
+                    drawPointsHelper(finishedLevelNum, SOUTH_AMERICA_LEVELS, 6);
                     break;
                 default:
                     break;
@@ -514,11 +514,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         canvas.end();
     }
 
-    public void drawPointsHelper(int finishedLevelNum, float[] arr){
+    public void drawPointsHelper(int finishedLevelNum, float[] arr, int continent){
         for(int i = 0; i < finishedLevelNum*2; i+=2){
             canvas.drawEllipse(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
             //canvas.drawText(gameFont, String.valueOf((i+2)/2), arr[i]*camera.viewportWidth/1280+Math.abs(640-camera.position.x)+camera.position.x-640f, arr[i+1]*camera.viewportHeight/720+Math.abs(360-camera.position.y)+camera.position.y-360f);
-            canvas.drawText(gameFont, String.valueOf((i+2)/2), getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
+            gameFont.getData().setScale(0.75f);
+            canvas.drawText(gameFont, continent+"-"+(i+2)/2, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
+            gameFont.getData().setScale(1f);
             if (i+3 < numOfLevels.get(currentContinent)*2){
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
                 canvas.drawTriangle(Color.BLACK, arr[i+2]+8f, arr[i+3]-10f, arr[i+2]+13f, arr[i+3], arr[i+2]+18f, arr[i+3]-10f);
