@@ -253,23 +253,23 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         float height = 360f;
         float[] result = new float[2];
         if (c == Continent.Europe) {
-            result[0] = x*width/1280+407;
-            result[1] = y*height/720+375;
+            result[0] = x*width/1280+312;
+            result[1] = y*height/720+325;
         } else if (c == Continent.NorthAmerica) {
-            result[0] = x*width/1280+355;
-            result[1] = y*height/720+295;
+            result[0] = x*width/1280+310;
+            result[1] = y*height/720+293;
         } else if (c == Continent.SouthAmerica) {
-            result[0] = x*width/1280+487;
-            result[1] = y*height/720+67;
+            result[0] = x*width/1280+297;
+            result[1] = y*height/720+47;
         } else if (c == Continent.Asia) {
-            result[0] = x*width/1280+275;
-            result[1] = y*height/720+235;
+            result[0] = x*width/1280+312;
+            result[1] = y*height/720+285;
         } else if (c == Continent.Africa) {
-            result[0] = x*width/1280+420;
-            result[1] = y*height/720+145;
+            result[0] = x*width/1280+310;
+            result[1] = y*height/720+155;
         } else if (c == Continent.Oceania) {
-            result[0] = x*width/1280 + 425;
-            result[1] = y*height/720 + 100;
+            result[0] = x*width/1280 + 312;
+            result[1] = y*height/720 + 30;
         } else {
             result[0] = x*width/1280-350+640;
             result[1] = y*height/720+400;
