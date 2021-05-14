@@ -74,13 +74,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             // 470, 400, 622, 422,
     };
     private float[] ASIA_LEVELS = new float[]{
-            511, 500, 635, 470, 950, 490, 760, 260, 620, 270, 543, 270, 433, 270
+            580, 220, 300, 350, 394, 450, 541, 530, 620, 400, 850, 523, 1100, 520
     };
     private float[] NORTH_AMERICA_LEVELS = new float[]{
-            1050f, 600f, 950f, 610f, 350f, 470f, 550f, 300f, 650f, 300f, 720f, 320f,600, 200f
+            260, 460, 420, 400, 590, 460, 740, 600, 950, 570, 720, 300, 580, 230
     };
     private float[] SOUTH_AMERICA_LEVELS = new float[]{
-            620, 550, 650, 480, 760, 430, 720, 360, 660, 320, 620, 280
+            620, 550, 650, 480, 765, 460, 720, 370, 640, 360, 605, 240
     };
 
     private AssetDirectory internal;
@@ -286,11 +286,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             result[0] = x*width/1280+310;
             result[1] = y*height/720+293;
         } else if (c == Continent.SouthAmerica) {
-            result[0] = x*width/1280+297;
-            result[1] = y*height/720+47;
+            result[0] = x*width/1280+312;
+            result[1] = y*height/720+37;
         } else if (c == Continent.Asia) {
             result[0] = x*width/1280+312;
-            result[1] = y*height/720+285;
+            result[1] = y*height/720+262;
         } else if (c == Continent.Africa) {
             result[0] = x*width/1280+310;
             result[1] = y*height/720+155;
@@ -434,7 +434,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                 camera.position.y = camera.position.y < cameraPosY ? camera.position.y + deltaPosY : camera.position.y;
             }
             camera.update();
-            if (Math.abs(camera.position.x - cameraPosX) < deltaPosX) {
+            if (Math.abs(camera.position.x - cameraPosX) < deltaPosX || Math.abs(camera.position.y - cameraPosY) < deltaPosY) {
                 zoomInTime = 0;
                 zoomOut = false;
                 this.reset();
@@ -594,7 +594,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             draw();
             if(!isMenuBPlaying)
             {
-                //menuBackground.loop(0.5f);
+                menuBackground.loop(0.5f);
                 isMenuBPlaying = true;
             }
 
