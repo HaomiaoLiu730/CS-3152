@@ -74,13 +74,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             // 470, 400, 622, 422,
     };
     private float[] ASIA_LEVELS = new float[]{
-            511, 500, 635, 470, 950, 490, 760, 260, 620, 270, 543, 270, 433, 270
+            580, 220, 300, 350, 394, 450, 541, 530, 620, 400, 850, 523, 1100, 520
     };
     private float[] NORTH_AMERICA_LEVELS = new float[]{
-            1050f, 600f, 950f, 610f, 350f, 470f, 550f, 300f, 650f, 300f, 720f, 320f,600, 200f
+            260, 460, 420, 400, 590, 460, 740, 600, 950, 570, 720, 300, 580, 230
     };
     private float[] SOUTH_AMERICA_LEVELS = new float[]{
-            620, 550, 650, 480, 760, 430, 720, 360, 660, 320, 620, 280
+            620, 550, 650, 480, 765, 460, 720, 370, 640, 360, 605, 240
     };
 
     private AssetDirectory internal;
@@ -112,9 +112,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private Texture dot3;
     private Texture dot4;
     private Texture dot5;
+    private Texture dot6;
+    private Texture dot7;
     private TextureRegion backArrowTexture;
     private Texture[] penguins = new Texture[7];
-    private Texture[] dots = new Texture[5];
+    private Texture[] dots = new Texture[7];
 
     private Sound menuSellect;
     private Sound menuScroll;
@@ -177,6 +179,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         dot3 = internal.getEntry("dot3", Texture.class);
         dot4 = internal.getEntry("dot4", Texture.class);
         dot5 = internal.getEntry("dot5", Texture.class);
+        dot6 = internal.getEntry("dot6", Texture.class);
+        dot7 = internal.getEntry("dot7", Texture.class);
         backArrowTexture = new TextureRegion(internal.getEntry("backArrow", Texture.class));
         penguins[0] = penguin1;
         penguins[1] = penguin2;
@@ -190,6 +194,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         dots[2] = dot3;
         dots[3] = dot4;
         dots[4] = dot5;
+        dots[5] = dot6;
+        dots[6] = dot7;
 
         active  = true;
         zoomIn = false;
@@ -280,11 +286,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             result[0] = x*width/1280+310;
             result[1] = y*height/720+293;
         } else if (c == Continent.SouthAmerica) {
-            result[0] = x*width/1280+297;
-            result[1] = y*height/720+47;
+            result[0] = x*width/1280+312;
+            result[1] = y*height/720+37;
         } else if (c == Continent.Asia) {
             result[0] = x*width/1280+312;
-            result[1] = y*height/720+285;
+            result[1] = y*height/720+262;
         } else if (c == Continent.Africa) {
             result[0] = x*width/1280+310;
             result[1] = y*height/720+155;
@@ -428,7 +434,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                 camera.position.y = camera.position.y < cameraPosY ? camera.position.y + deltaPosY : camera.position.y;
             }
             camera.update();
-            if (Math.abs(camera.position.x - cameraPosX) < deltaPosX) {
+            if (Math.abs(camera.position.x - cameraPosX) < deltaPosX || Math.abs(camera.position.y - cameraPosY) < deltaPosY) {
                 zoomInTime = 0;
                 zoomOut = false;
                 this.reset();
@@ -588,7 +594,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             draw();
             if(!isMenuBPlaying)
             {
-                //menuBackground.loop(0.5f);
+                menuBackground.loop(0.5f);
                 isMenuBPlaying = true;
             }
 
