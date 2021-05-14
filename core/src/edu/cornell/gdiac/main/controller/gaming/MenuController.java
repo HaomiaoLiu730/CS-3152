@@ -340,7 +340,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                     zoomInto(640f, 360f, 1140f, 220f);
                     break;
                 case Asia:
-                    zoomInto(640f, 360f, 455f, 470f);
+                    zoomInto(640f, 360f, 460f, 440f);
                     break;
                 case Africa:
                     zoomInto(640f, 360f, 70f, 330f);
