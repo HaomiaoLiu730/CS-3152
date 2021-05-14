@@ -559,7 +559,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             draw();
             if(!isMenuBPlaying)
             {
-                //menuBackground.loop(0.5f);
+                menuBackground.loop(0.5f);
                 isMenuBPlaying = true;
             }
 
