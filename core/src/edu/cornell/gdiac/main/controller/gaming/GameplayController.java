@@ -790,18 +790,20 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 660);
                     canvas.draw(assetLoader.teachThrowingStrip, 900, 400);
                     canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
-                    canvas.drawText("Try to throw the penguin \n at the note to collect it!", gameFont,2000, 600);
+                    canvas.drawText("Try to throw the penguin \nat the note to collect it!", gameFont,2000, 600);
                     break;
                 case 3:
-                    canvas.drawText("Come closer and press F to kill the seal!", gameFont,1360, 360);
-                    canvas.drawText("Protect the penguins from the seals!", gameFont,1360, 330);
-                    canvas.drawText("Also protect the penguins from the sealions!", gameFont,1800, 320);
-                    break;
-                case 4:
                     canvas.drawText("Some ice bars can float around. ", gameFont,860, 400);
                     canvas.drawText("Jump on the ice bar and then hit down the icicle! ", gameFont,860, 340);
                     canvas.drawText("How to get on to the high platform?", gameFont,2100, 420);
                     canvas.drawText("Maybe try hit down the icicle!", gameFont,2100, 360);
+                    break;
+                case 4:
+                    canvas.drawText("Control the throwing angle and strength. ", gameFont,750, 500);
+                    canvas.drawText("Don't let penguins fall into sea! ", gameFont,750, 440);
+                    canvas.drawText("If they do, you can still pick them back \nas they swim towards you!", gameFont, 1163, 70);
+                    canvas.drawText("Sometimes it's hard to pick penguins back...", gameFont,1610, 400);
+                    canvas.drawText("So aim for your target carefully. ", gameFont,1610, 340);
                     canvas.drawText("You are done with tutorial levels!", gameFont,2800, 470);
                     canvas.drawText("Go explore the world :)", gameFont,2800, 410);
                     break;
