@@ -606,8 +606,8 @@ public class GameCanvas {
 
         // Unlike Lab 1, we can shortcut without a master drawing method
         spriteBatch.setColor(Color.WHITE);
-        spriteBatch.draw(region, 20+camera.position.x-camera.viewportWidth/2f, camera.position.y+camera.viewportHeight/2-60,
-                region.getRegionWidth()/2f,region.getRegionHeight()/2f,
+        spriteBatch.draw(region, camera.position.x-camera.viewportWidth/2f, camera.position.y+camera.viewportHeight/2-75,
+                region.getRegionWidth(),region.getRegionHeight(),
                 region.getRegionWidth(), region.getRegionHeight(),
                 camera.viewportWidth/1280, camera.viewportHeight/720,0);
     }
