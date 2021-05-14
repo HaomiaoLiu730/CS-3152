@@ -374,6 +374,34 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     public void zoomOutEffect(){
+        switch (currentContinent){
+            case Europe:
+                zoomOut(205f, 510f);
+                break;
+            case NorthAmerica:
+                zoomOut(1050f, 480f);
+                break;
+            case SouthAmerica:
+                zoomOut(1140f, 220f);
+                break;
+            case Asia:
+                zoomOut(460f, 440f);
+                break;
+            case Africa:
+                zoomOut(70f, 330f);
+                break;
+            case Oceania:
+                zoomOut(560f, 210f);
+                break;
+            case Antarctica:
+                zoomOut(350f, 20f);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void zoomOut(float oriPosX, float oriPosY){
         if(zoomOut) {
             drawPoints = false;
             zoomIn = false;
@@ -381,25 +409,26 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             float cameraPosX = 640;
             float cameraPosY = 360;
             float deltaPosY = quadraticFunction(0.06f, 0.05f, 0, zoomInTime);
-            float scale = Math.abs(cameraPosX - 360);
-            float deltaWidth = (1280 - camera.viewportWidth) / scale * deltaPosY;
-            float deltaHeight = (720 - camera.viewportHeight) / scale * deltaPosY;
-            float deltaPosX = Math.abs(cameraPosX - camera.position.x)/scale*deltaPosY;
-            camera.viewportWidth = camera.viewportWidth + deltaWidth;
-            camera.viewportHeight = camera.viewportHeight + deltaHeight;
+            float scale = Math.abs(oriPosY - 360);
+            float deltaWidth = (1280 - 640) / scale * deltaPosY;
+            float deltaHeight = (720 - 360) / scale * deltaPosY;
+            float deltaPosX = Math.abs(cameraPosX - oriPosX)/scale*deltaPosY;
+
+            camera.viewportWidth = camera.viewportWidth < 1280 ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
+            camera.viewportHeight = camera.viewportHeight < 720 ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
 
             if (camera.position.x - 640 > 0) {
                 camera.position.x = camera.position.x > cameraPosX ? camera.position.x - deltaPosX : camera.position.x;
             } else {
                 camera.position.x = camera.position.x < cameraPosX ? camera.position.x + deltaPosX : camera.position.x;
             }
-            if (camera.position.y - 360 > 5) {
+            if (camera.position.y - 360 > 0) {
                 camera.position.y = camera.position.y > cameraPosY ? camera.position.y - deltaPosY : camera.position.y;
             } else {
                 camera.position.y = camera.position.y < cameraPosY ? camera.position.y + deltaPosY : camera.position.y;
             }
             camera.update();
-            if (Math.abs(camera.position.x - cameraPosX) <= 2) {
+            if (Math.abs(camera.position.x - cameraPosX) < deltaPosX) {
                 zoomInTime = 0;
                 zoomOut = false;
                 this.reset();
@@ -585,6 +614,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         drawPoints = false;
         canvas.getCamera().position.x = 640;
         canvas.getCamera().position.y = 360;
+        canvas.getCamera().viewportWidth = 1280;
+        canvas.getCamera().viewportHeight = 720;
         canvas.getCamera().update();
         FileHandle file = Gdx.files.local("menu/levelProgress.json");
         JsonReader jsonReader = new JsonReader();
