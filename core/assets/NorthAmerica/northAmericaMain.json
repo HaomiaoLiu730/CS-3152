@@ -17,6 +17,9 @@
     "level1": "NorthAmerica/level1.json",
     "level2": "NorthAmerica/level2.json",
     "level3": "NorthAmerica/level3.json",
-    "level4": "NorthAmerica/level4.json"
+    "level4": "NorthAmerica/level4.json",
+    "level5": "NorthAmerica/level5.json",
+    "level6": "NorthAmerica/level6.json",
+    "level7": "NorthAmerica/level7.json"
   }
 }
