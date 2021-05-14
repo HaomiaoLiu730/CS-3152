@@ -152,9 +152,14 @@
     }
   },
   "fonts": {
-    "gameFont": {
+    "gameFont32": {
       "file": "fonts/AmaticSC-Bold.ttf",
-      "size": 24,
+      "size": 128,
+      "color": "black"
+    },
+    "gameFont64": {
+      "file": "fonts/AmaticSC-Bold.ttf",
+      "size": 64,
       "color": "black"
     }
   },

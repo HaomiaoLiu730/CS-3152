@@ -36,6 +36,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     /** is ready for game mode*/
     private boolean isReady = false;
     private static Color grey = new Color(1,1,1,0.5f);
+    private static Color lineColor = new Color(0,0,0,0.8f);
+    private static Color buttonColor = new Color(120/255,120/255,120/255,1f);
     private Continent currentContinent;
     private boolean zoomIn;
     private boolean zoomOut;
@@ -117,7 +119,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
 
-    private BitmapFont gameFont;
+    private BitmapFont gameFont32;
+    private BitmapFont gameFont64;
 
     /**
      * Creates a new game with a playing field of the given size.
@@ -143,7 +146,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         antarctica = internal.getEntry("Antarctica", Texture.class);
         africa = internal.getEntry("Africa", Texture.class);
         oceania = internal.getEntry("Oceania", Texture.class);
-        gameFont = internal.getEntry("gameFont", BitmapFont.class);
+        gameFont32 = internal.getEntry("gameFont32", BitmapFont.class);
+        gameFont32.getData().setScale(0.4f*0.25f);
+        gameFont64 = internal.getEntry("gameFont64", BitmapFont.class);
         antarcticaLine = internal.getEntry("AntarcticaLine", Texture.class);
         northAmericaLine = internal.getEntry("NorthAmericaLine", Texture.class);
         southAmericaLine = internal.getEntry("SouthAmericaLine", Texture.class);
@@ -423,28 +428,29 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     private void drawWorldMap(float x, float y) {
-        canvas.drawOverlay(background,x, y);
-        canvas.drawOverlay(northAmerica, unlockedContinents.contains(Continent.NorthAmerica)? Color.WHITE : grey, x, y);
-        canvas.drawOverlay(southAmerica, unlockedContinents.contains(Continent.SouthAmerica)? Color.WHITE : grey,x,y);
-        canvas.drawOverlay(oceania, unlockedContinents.contains(Continent.Oceania)? Color.WHITE : grey,x, y);
-        canvas.drawOverlay(asia, unlockedContinents.contains(Continent.Asia)? Color.WHITE : grey,x, y);
-        canvas.drawOverlay(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey,x, y);
-        canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,x, y);
-        canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,x, y);
+        canvas.drawOverlay(background, x, y);
+
     }
 
     public void draw() {
         canvas.begin();
 
-        drawWorldMap(-1275,720);
-        drawWorldMap(-1275,0);
-        drawWorldMap(-1275,-720);
-        drawWorldMap(0,720);
-        drawWorldMap(0,-720);
-        drawWorldMap(0,0);
-        drawWorldMap(1275,720);
-        drawWorldMap(1275,0);
-        drawWorldMap(1275,-720);
+        canvas.drawOverlay(background, -1280, 720);
+        canvas.drawOverlay(background, -1280, 0);
+        canvas.drawOverlay(background, -1280, -720);
+        canvas.drawOverlay(background, 0, 720);
+        canvas.drawOverlay(background, 0, -720);
+        canvas.drawOverlay(background, 1280, 720);
+        canvas.drawOverlay(background, 1280, 0);
+        canvas.drawOverlay(background, 1280, -720);
+        canvas.drawOverlay(background, 0, 0);
+        canvas.draw(northAmerica, unlockedContinents.contains(Continent.NorthAmerica)? Color.WHITE : grey, 0, 0, northAmerica.getWidth()/5, northAmerica.getHeight()/5);
+        canvas.draw(southAmerica, unlockedContinents.contains(Continent.SouthAmerica)? Color.WHITE : grey, 0, 0, southAmerica.getWidth()/5, southAmerica.getHeight()/5);
+        canvas.draw(oceania, unlockedContinents.contains(Continent.Oceania)? Color.WHITE : grey, 0, 0, oceania.getWidth()/5, oceania.getHeight()/5);
+        canvas.draw(asia, unlockedContinents.contains(Continent.Asia)? Color.WHITE : grey, 0, 0, asia.getWidth()/5, asia.getHeight()/5);
+        canvas.draw(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey, 0, 0, europe.getWidth()/5, europe.getHeight()/5);
+        canvas.draw(africa, unlockedContinents.contains(Continent.Africa)? Color.WHITE : grey, 0, 0, africa.getWidth()/5, africa.getHeight()/5);
+        canvas.draw(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey, 0, 0, antarctica.getWidth()/5, antarctica.getHeight()/5);
 
 
         if(drawPoints){
@@ -476,33 +482,22 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         drawCurrentContinent();
         if (!zoomIn && !drawPoints && !zoomOut) {
             canvas.draw(penguin5, Color.WHITE, 960f, 460f, penguin5.getWidth()/2, penguin5.getHeight()/2);
-            canvas.drawText(gameFont, "5", 990f, 525f);
             canvas.draw(penguin6, Color.WHITE, 1115f, 260f, penguin6.getWidth()/2, penguin6.getHeight()/2);
-            canvas.drawText(gameFont, "6", 1130f, 340f);
             canvas.draw(penguin4, Color.WHITE, 410f, 470f, penguin4.getWidth()/2, penguin4.getHeight()/2);
-            canvas.drawText(gameFont, "4", 460f, 515f);
             canvas.draw(penguin1, Color.WHITE, 200f, 490f, penguin1.getWidth()/2, penguin1.getHeight()/2);
-            canvas.drawText(gameFont, "1", 238f, 560f);
             canvas.draw(penguin2, Color.WHITE, 120f, 320f, penguin2.getWidth()/2, penguin2.getHeight()/2);
-            canvas.drawText(gameFont, "2", 163f, 400f);
             canvas.draw(penguin3, Color.WHITE, 525f, 205f, penguin3.getWidth()/2, penguin3.getHeight()/2);
-            canvas.drawText(gameFont, "3", 562f, 300f);
             canvas.draw(penguin7, Color.WHITE, 350f, 15f, penguin7.getWidth()/2, penguin7.getHeight()/2);
-            canvas.drawText(gameFont, "7", 405f, 65f);
-            gameFont.getData().setScale(2f);
-            canvas.drawText(gameFont, "World Map", 580f, 680f);
-            gameFont.getData().setScale(1f);
+            canvas.drawText(gameFont64, "World Map", 580f, 680f);
         }
         canvas.end();
     }
 
     public void drawPointsHelper(int finishedLevelNum, float[] arr, int continent){
         for(int i = 0; i < finishedLevelNum*2; i+=2){
-            canvas.drawEllipse(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
+            canvas.drawEllipse(buttonColor, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
             //canvas.drawText(gameFont, String.valueOf((i+2)/2), arr[i]*camera.viewportWidth/1280+Math.abs(640-camera.position.x)+camera.position.x-640f, arr[i+1]*camera.viewportHeight/720+Math.abs(360-camera.position.y)+camera.position.y-360f);
-            gameFont.getData().setScale(0.75f);
-            canvas.drawText(gameFont, continent+"-"+(i+2)/2, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
-            gameFont.getData().setScale(1f);
+            canvas.drawText(gameFont32, continent+"-"+(i+2)/2, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
             if (i+3 < numOfLevels.get(currentContinent)*2){
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
                 canvas.drawTriangle(Color.BLACK, arr[i+2]+8f, arr[i+3]-10f, arr[i+2]+13f, arr[i+3], arr[i+2]+18f, arr[i+3]-10f);
@@ -515,28 +510,28 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     public void drawCurrentContinent(){
-        if(!zoomIn && !drawPoints && !zoomOut){
+        if(!zoomOut){
             switch (currentContinent){
                 case Antarctica:
-                    canvas.drawOverlay(antarcticaLine,true);
+                    canvas.draw(antarcticaLine, lineColor, 0, 0, antarcticaLine.getWidth()/5, antarcticaLine.getHeight()/5);
                     break;
                 case Africa:
-                    canvas.drawOverlay(africaLine,true);
+                    canvas.draw(africaLine, lineColor, 0, 0, africaLine.getWidth()/5, africaLine.getHeight()/5);
                     break;
                 case Asia:
-                    canvas.drawOverlay(asiaLine,true);
+                    canvas.draw(asiaLine, lineColor, 0, 0, asiaLine.getWidth()/5, asiaLine.getHeight()/5);
                     break;
                 case Oceania:
-                    canvas.drawOverlay(oceaniaLine,true);
+                    canvas.draw(oceaniaLine, lineColor, 0, 0, oceaniaLine.getWidth()/5, oceaniaLine.getHeight()/5);
                     break;
                 case NorthAmerica:
-                    canvas.drawOverlay(northAmericaLine,true);
+                    canvas.draw(northAmericaLine, lineColor, 0, 0, northAmericaLine.getWidth()/5, northAmericaLine.getHeight()/5);
                     break;
                 case SouthAmerica:
-                    canvas.drawOverlay(southAmericaLine,true);
+                    canvas.draw(southAmericaLine, lineColor, 0, 0, southAmericaLine.getWidth()/5, southAmericaLine.getHeight()/5);
                     break;
                 case Europe:
-                    canvas.drawOverlay(europeLine,true);
+                    canvas.draw(europeLine, lineColor, 0, 0, europeLine.getWidth()/5, europeLine.getHeight()/5);
                     break;
             }
         }
@@ -554,7 +549,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             draw();
             if(!isMenuBPlaying)
             {
-                menuBackground.loop(0.5f);
+                //menuBackground.loop(0.5f);
                 isMenuBPlaying = true;
             }
 
@@ -568,7 +563,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             if(currentContinent == Continent.SouthAmerica) hundred = 6;
             if (isReady() && listener != null) {
                 listener.updateScreen(this, hundred*10+nextLevel);
-                menuSellect.play();
+                //menuSellect.play();
                 menuBackground.stop();
                 isMenuBPlaying = false;
             }
