@@ -62,7 +62,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private static JsonValue value;
 
     private float[] EUROPE_LEVELS = new float[]{
-            852f, 427f,757,426, 770,347, 690,342, 580,300
+            600, 410, 820, 390, 710, 330, 580, 290, 450, 270
             //720, 340. 333, 511, 474, 490, 600, 470
     };
     private float[] AFRICA_LEVELS = new float[]{
@@ -443,11 +443,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         }
     }
 
-    private void drawWorldMap(float x, float y) {
-        canvas.drawOverlay(background, x, y);
-
-    }
-
     public void draw() {
         canvas.begin();
 
@@ -516,7 +511,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             canvas.drawText(gameFont32, continent+"-"+(i+2)/2, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
             if (i+3 < numOfLevels.get(currentContinent)*2){
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
-                canvas.drawTriangle(Color.BLACK, arr[i+2]+8f, arr[i+3]-10f, arr[i+2]+13f, arr[i+3], arr[i+2]+18f, arr[i+3]-10f);
             }
         }
         if(finishedLevelNum != numOfLevels.get(currentContinent)){
