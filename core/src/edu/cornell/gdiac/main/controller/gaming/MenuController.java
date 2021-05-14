@@ -114,6 +114,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private Texture dot5;
     private TextureRegion backArrowTexture;
     private Texture[] penguins = new Texture[7];
+    private Texture[] dots = new Texture[5];
 
     private Sound menuSellect;
     private Sound menuScroll;
@@ -184,6 +185,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         penguins[4] = penguin5;
         penguins[5] = penguin6;
         penguins[6] = penguin7;
+        dots[0] = dot1;
+        dots[1] = dot2;
+        dots[2] = dot3;
+        dots[3] = dot4;
+        dots[4] = dot5;
 
         active  = true;
         zoomIn = false;
@@ -462,7 +468,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         canvas.draw(africa, unlockedContinents.contains(Continent.Africa)? Color.WHITE : grey, 0, 0, africa.getWidth()/5, africa.getHeight()/5);
         canvas.draw(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey, 0, 0, antarctica.getWidth()/5, antarctica.getHeight()/5);
 
-
+        drawCurrentContinent();
         if(drawPoints){
             int finishedLevelNum = finished.get(currentContinent).size();
             canvas.drawFixed(backArrowTexture);
@@ -489,7 +495,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                     break;
             }
         }
-        drawCurrentContinent();
+
         if (!zoomIn && !drawPoints && !zoomOut) {
             canvas.draw(penguin5, Color.WHITE, 960f, 460f, penguin5.getWidth()/2, penguin5.getHeight()/2);
             canvas.draw(penguin6, Color.WHITE, 1115f, 260f, penguin6.getWidth()/2, penguin6.getHeight()/2);
@@ -505,8 +511,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     public void drawPointsHelper(int finishedLevelNum, float[] arr, int continent){
         for(int i = 0; i < finishedLevelNum*2; i+=2){
-            canvas.drawEllipse(buttonColor, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
-            //canvas.drawText(gameFont, String.valueOf((i+2)/2), arr[i]*camera.viewportWidth/1280+Math.abs(640-camera.position.x)+camera.position.x-640f, arr[i+1]*camera.viewportHeight/720+Math.abs(360-camera.position.y)+camera.position.y-360f);
+            canvas.draw(dots[i/2], Color.WHITE, getCoordinate(arr[i],arr[i+1],currentContinent)[0]+camera.position.x-640, getCoordinate(arr[i],arr[i+1],currentContinent)[1],
+                    nextLevel == i/2 ? dots[i/2].getWidth()/4: dots[i/2].getWidth()/6, nextLevel == i/2 ? dots[i/2].getHeight()/4: dots[i/2].getHeight()/6);
             canvas.drawText(gameFont32, continent+"-"+(i+2)/2, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
             if (i+3 < numOfLevels.get(currentContinent)*2){
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
@@ -559,7 +565,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             draw();
             if(!isMenuBPlaying)
             {
-                menuBackground.loop(0.5f);
+                //menuBackground.loop(0.5f);
                 isMenuBPlaying = true;
             }
 
