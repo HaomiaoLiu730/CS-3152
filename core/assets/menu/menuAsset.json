@@ -149,6 +149,31 @@
       "file":     "images/menu/backArrow.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "dot1": {
+      "file": "images/menu/one.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot2": {
+      "file": "images/menu/two.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot3": {
+      "file": "images/menu/three.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot4": {
+      "file": "images/menu/four.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot5": {
+      "file": "images/menu/five.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {

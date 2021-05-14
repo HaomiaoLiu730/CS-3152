@@ -107,6 +107,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private Texture penguin5;
     private Texture penguin6;
     private Texture penguin7;
+    private Texture dot1;
+    private Texture dot2;
+    private Texture dot3;
+    private Texture dot4;
+    private Texture dot5;
     private TextureRegion backArrowTexture;
     private Texture[] penguins = new Texture[7];
 
@@ -166,6 +171,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         penguin5 = internal.getEntry("penguin5", Texture.class);
         penguin6 = internal.getEntry("penguin6", Texture.class);
         penguin7 = internal.getEntry("penguin7", Texture.class);
+        dot1 = internal.getEntry("dot1", Texture.class);
+        dot2 = internal.getEntry("dot2", Texture.class);
+        dot3 = internal.getEntry("dot3", Texture.class);
+        dot4 = internal.getEntry("dot4", Texture.class);
+        dot5 = internal.getEntry("dot5", Texture.class);
         backArrowTexture = new TextureRegion(internal.getEntry("backArrow", Texture.class));
         penguins[0] = penguin1;
         penguins[1] = penguin2;
