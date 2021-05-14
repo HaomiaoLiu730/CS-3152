@@ -154,7 +154,7 @@
   "fonts": {
     "gameFont": {
       "file": "fonts/AmaticSC-Bold.ttf",
-      "size": 24,
+      "size": 35,
       "color": "black"
     }
   },

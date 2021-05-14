@@ -14,12 +14,12 @@
   "fonts": {
     "gameFont": {
       "file": "fonts/AmaticSC-Bold.ttf",
-      "size": 40,
+      "size": 60,
       "color": "black"
     },
     "letterFont": {
       "file": "fonts/AmaticSC-Bold.ttf",
-      "size": 40,
+      "size": 60,
       "color": "white"
     }
   }
