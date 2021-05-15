@@ -365,6 +365,7 @@ public class Player extends CapsuleObstacle {
 
                     numPenguins += 1;
                     changeOverlap(1,true,false);
+//                    System.out.println("pickp"+p.getIndex());
                 }
             }
         }
@@ -392,6 +393,7 @@ public class Player extends CapsuleObstacle {
         }
     }
     public void setThrowing(boolean touchUp,Sound throwing, boolean stop){
+        if(isThrowing) return;
         if(stop){
             throwingCount = -1;
             changeOverlap(1,true,false);
@@ -420,7 +422,9 @@ public class Player extends CapsuleObstacle {
             calculateTrajectory(throwingForce, xDir-getX(), yDir-getY());
         }else if(touchUp && throwingCount == 0){
             if(numPenguins > 0){
+//                System.out.println("----");
                 for(Penguin p: penguins){
+//                    System.out.println(p.getIndex()+" "+p.isThrowOut());
                     if(p.getIndex() == numPenguins-1 && !p.isThrowOut()){
                         p.setBodyType(BodyDef.BodyType.DynamicBody);
                         p.setSensor(false);
@@ -435,6 +439,7 @@ public class Player extends CapsuleObstacle {
                         p.setMovement(throwingForce, xDir-getX(), yDir-getY());
                         numPenguins -=1;
                         isThrowing = true;
+                        throwCooldown = THROW_COOLDOWN;
                         throwingCount = 0;
                         throwingForce = 0f;
                         xDir = 0f;
@@ -449,6 +454,8 @@ public class Player extends CapsuleObstacle {
                 xDir = 0f;
                 yDir = 0f;
             }
+//            System.out.println("----");
+
         }
     }
 
@@ -734,10 +741,11 @@ public class Player extends CapsuleObstacle {
         } else {
             jumpCooldown = Math.max(0, jumpCooldown - 1);
         }
-        if (isThrowing()) {
-            throwCooldown = THROW_COOLDOWN;
-        } else {
-            throwCooldown = Math.max(0, throwCooldown - 1);
+        if (isThrowing) {
+            throwCooldown -- ;
+            if(throwCooldown <= 0){
+                isThrowing = false;
+            }
         }
         if (isShooting()) {
             shootCooldown = SHOOT_COOLDOWN;
@@ -768,7 +776,7 @@ public class Player extends CapsuleObstacle {
         float effect = faceRight ? 1.0f : -1.0f;
         canvas.draw(filmStrip,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
-        if(Gdx.input.isTouched()&& throwingCount == 0 &&numPenguins>0){
+        if(Gdx.input.isTouched()&& throwingCount == 0 &&numPenguins>0&&!isThrowing){
             for(int i = 0; i<trajectories.length; i+=2){
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);

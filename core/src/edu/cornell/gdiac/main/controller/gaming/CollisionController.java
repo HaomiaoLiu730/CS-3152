@@ -139,45 +139,45 @@ public class CollisionController {
             if (!note.isCollected()){
                 if(avatar.getPosition().dst(note.getPosition()) <= 1 && numPenguins > 0){
                     int last_index = numPenguins - 1;
-                    avatar.setNumPenguins(numPenguins - 1);
-                    objects.remove(penguins.get(last_index));
-                    penguins.get(last_index).setActive(false);
-                    penguins.get(last_index).setAwake(false);
+                    Penguin ret = null;
+                    for(Penguin p : penguins){
+                        if(p.getIndex() == last_index){
+                            ret = p;
+                        }
+                    }
+                    if(ret != null){
+                        penguins.remove(ret);
+                        objects.remove(ret);
+                        ret.setActive(false);
+                        ret.setAwake(false);
+                        avatar.setNumPenguins(numPenguins - 1);
+                    }
                     if (avatar.getNumPenguins() > 0) {
                         for (Penguin pen : avatar.getPenguins()) {
                             pen.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                         }
                         avatar.pseudoPenguin.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                     }
-                    penguins.remove(penguins.get(last_index));
+//                    penguins.remove(penguins.get(last_index));
                     note.setFilmStrip(noteCollectedFilmStrip);
                     note.setCollected(true);
                     numNotes++;
                     sound.play();
                 }else {
                     for (Penguin p : penguins) {
-                        if (p.getPosition().dst(note.getPosition()) <= 1) {
+                        if (p.getPosition().dst(note.getPosition()) <= 1 && p.isThrowOut()) {
                             int last_index;
-                            if (!p.isThrowOut()) {
-                                last_index = numPenguins - 1;
-                                avatar.setNumPenguins(numPenguins - 1);
-                            } else {
-                                p.setActive(false);
-                                p.setAwake(false);
-                                p.setThrownOut(false);
-                                objects.remove(p);
-                                last_index = numPenguins;
-                            }
-                            objects.remove(penguins.get(last_index));
-                            penguins.get(last_index).setActive(false);
-                            penguins.get(last_index).setAwake(false);
+                            p.setActive(false);
+                            p.setAwake(false);
+                            p.setThrownOut(false);
+                            objects.remove(p);
+                            penguins.remove(p);
                             if (avatar.getNumPenguins() > 0) {
                                 for (Penguin pen : avatar.getPenguins()) {
                                     pen.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                                 }
                                 avatar.pseudoPenguin.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                             }
-                            penguins.remove(penguins.get(last_index));
                             note.setFilmStrip(noteCollectedFilmStrip);
                             note.setCollected(true);
                             numNotes++;
