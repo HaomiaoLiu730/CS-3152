@@ -49,7 +49,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	private MenuController menuController;
 	private LevelEditorController levelEditor;
 	private static JsonValue value;
-	private static HashMap<MenuController.Continent, Integer> numOfLevels = new HashMap<>();
+	public static HashMap<MenuController.Continent, Integer> numOfLevels = new HashMap<>();
 	private MenuController.Continent currentContinent = MenuController.Continent.Europe;
 	/**
 	 * Creates a new game application root

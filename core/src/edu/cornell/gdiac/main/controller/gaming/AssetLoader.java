@@ -55,6 +55,8 @@ public class AssetLoader {
     public static FilmStrip noteCollectedStrip;
     /** The texture for the exit */
     public static FilmStrip exitStrip;
+    /** The texture for the cage */
+    public static FilmStrip cageStrip;
     public static FilmStrip teachThrowingStrip;
     /** The texture for the exit */
     public static TextureRegion deadStrip;
@@ -104,6 +106,7 @@ public class AssetLoader {
         avatarNormalStrip = new FilmStrip(directory.getEntry("avatarNormal", Texture.class), 1, 1);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         exitStrip = new FilmStrip(directory.getEntry("exit", Texture.class), 1, 1);
+        cageStrip = new FilmStrip(directory.getEntry("cage", Texture.class), 1, 1);
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
         noteLeftStrip = new FilmStrip(directory.getEntry("notcollected", Texture.class), 1, 1);
         noteCollectedStrip = new FilmStrip(directory.getEntry("collected", Texture.class), 1, 1);
