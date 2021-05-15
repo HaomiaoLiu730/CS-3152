@@ -23,6 +23,10 @@ public class AssetLoader {
     /** The texture for the player */
     public static FilmStrip avatarNormalStrip;
     public static ArrayList<FilmStrip> penguins = new ArrayList<>();
+    /** The texture for the penguin */
+    public static FilmStrip penguinWalkingStrip;
+    /** The texture for the penguin rolling */
+    public static FilmStrip penguinRollingStrip;
     /** The texture for the waves */
     public static FilmStrip wavesStrip;
     /** The texture for the water */
@@ -107,6 +111,8 @@ public class AssetLoader {
         jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
         jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 3);
         throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
+        penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
+        penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 10, 165);
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
         snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
