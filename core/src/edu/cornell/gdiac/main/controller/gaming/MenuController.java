@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.audio.SoundBuffer;
+import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -248,6 +249,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         numOfLevels.put(Continent.Africa, value.get("numOfLevels").getInt("Africa"));
         numOfLevels.put(Continent.Oceania, value.get("numOfLevels").getInt("Oceania"));
         unlockedContinents.add(Continent.Europe);
+        int finishedLevels = 0;
+        int totalLevels = 0;
         for(Continent continent: finished.keySet()){
             if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
                 unlockedContinents.add(continent);
@@ -255,6 +258,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             if(finished.get(continent).size()!=0){
                 unlockedContinents.add(continent);
             }
+            finishedLevels += finished.get(continent).size();
+            totalLevels += numOfLevels.get(continent);
+        }
+        if (finishedLevels == totalLevels) {
+            unlockedContinents.add(Continent.Antarctica);
         }
     }
 
@@ -325,6 +333,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         zoomOutEffect();
         selectContinent();
         InputController.getInstance().readInput();
+        if (prevTouched && !Gdx.input.isTouched() && currentContinent == Continent.Antarctica) {
+            this.listener.updateScreen(this, GDXRoot.ENDING_GAME);
+        }
         if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
             isReady = true;
         }
