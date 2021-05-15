@@ -382,7 +382,8 @@ public class Player extends CapsuleObstacle {
             float vy = (float) (force*directionCache.y*10f * dt / Math.max(penguins.getFirst().getMass(), 1.3064942));
             for(int i = 0; i<10; i+=2){
                 float t = i * 0.05f;
-                float x = ((getX() < 16 ? getX(): 16) + t * vx) * 1280 / 32f;
+                float x = ((getX() < 16 ? getX(): getX() > cameraX / 40f ? getX() - cameraX / 40f + 16 : 16) + t * vx) * 1280 / 32f;
+
                 float y = (getY()+2 + vy * t + 0.5f * (-26f) * t * t) * 720f/ 18f;
                 trajectories[i] = x;
                 trajectories[i+1] = y;
