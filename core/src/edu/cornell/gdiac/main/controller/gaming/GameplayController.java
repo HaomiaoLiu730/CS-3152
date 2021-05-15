@@ -844,9 +844,9 @@ public class GameplayController extends WorldController implements ContactListen
             //contact for moving ice bar
             if(bd1.getName() == "movingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-                if(bd2.getName().startsWith("sealion") ){
-                    Sealion m = (Sealion) bd2;
-                    ((MovingIce) master).addMonster(m);
+                if(bd2.getName().startsWith("penguin") ){
+                    Penguin m = (Penguin) bd2;
+                    ((MovingIce) master).addPenguin(m);
                 }
                 else if (bd2 instanceof Player){
                     Player p = (Player) bd2;
@@ -866,9 +866,9 @@ public class GameplayController extends WorldController implements ContactListen
 
             if(bd2.getName() == "movingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-                if(bd1.getName().startsWith("sealion") ){
-                    Sealion m = (Sealion) bd1;
-                    ((MovingIce) master).addMonster(m);
+                if(bd1.getName().startsWith("penguin") ){
+                    Penguin m = (Penguin) bd1;
+                    ((MovingIce) master).addPenguin(m);
                 }
                 else if (bd1 instanceof Player){
                     Player p = (Player) bd1;
@@ -958,8 +958,8 @@ public class GameplayController extends WorldController implements ContactListen
         if(bd1.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
             if(bd2.getName().startsWith("sealion") ){
-                Sealion m = (Sealion) bd2;
-                ((MovingIce) master).removeMonster(m);
+                Penguin m = (Penguin) bd2;
+                ((MovingIce) master).removePenguin(m);
             }
             else if (bd2 instanceof Player){
                 ((MovingIce) master).removePlyaer();
@@ -970,8 +970,8 @@ public class GameplayController extends WorldController implements ContactListen
         if(bd2.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
             if(bd1.getName().startsWith("sealion") ){
-                Sealion m = (Sealion) bd1;
-                ((MovingIce) master).removeMonster(m);
+                Penguin m = (Penguin) bd1;
+                ((MovingIce) master).removePenguin(m);
             }
             else if (bd1 instanceof Player){
                 ((MovingIce) master).removePlyaer();
