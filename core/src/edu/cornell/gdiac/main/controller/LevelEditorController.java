@@ -63,25 +63,10 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
     protected Texture white;
     /** The texture for the player */
     protected FilmStrip avatarStrip;
-    /** The texture for the penguin */
-    protected FilmStrip penguinWalkingStrip;
-    /** The texture for the penguin rolling */
-    protected FilmStrip penguinRollingStrip;
-    /** The texture for the monster */
-    protected FilmStrip monsterStrip;
-    protected FilmStrip monsterVerStrip;
     /** The texture for the water */
     protected FilmStrip water;
     /** The texture for the ice */
     protected FilmStrip iceStrip;
-    /** The texture for the monster attacking */
-    protected FilmStrip attackStrip;
-    /** The texture for the arrow */
-    protected Texture arrowTexture;
-    /** The texture for the energy bar */
-    protected Texture energyBarTexture;
-    /** The texture for the energy bar */
-    protected Texture energyBarOutlineTexture;
     /** The texture for the icicle */
     protected FilmStrip icicleStrip;
     protected PolygonRegion icicleRegion;
@@ -150,15 +135,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         white = internal.getEntry("white", Texture.class);
         snow = new TextureRegion(internal.getEntry("snow", Texture.class),40,40);
         avatarStrip = new FilmStrip(internal.getEntry("avatarWalking", Texture.class), 1, 18);
-        penguinWalkingStrip = new FilmStrip(internal.getEntry("penguinWalking", Texture.class), 1, 29);
-        penguinRollingStrip = new FilmStrip(internal.getEntry("penguinRolling", Texture.class), 1, 1);
-        monsterStrip = new FilmStrip(internal.getEntry("monsterScaled", Texture.class), 1, 1);
-        monsterVerStrip = new FilmStrip(internal.getEntry("monsterScaledVer", Texture.class), 1, 1);
-        attackStrip = new FilmStrip(internal.getEntry("monsterAttacking", Texture.class), 1, 5);
         exitStrip = new FilmStrip(internal.getEntry("exit", Texture.class), 1, 1);
-        arrowTexture = internal.getEntry("arrow", Texture.class);
-        energyBarOutlineTexture = internal.getEntry("energyBarOutline", Texture.class);
-        energyBarTexture = internal.getEntry("energyBar", Texture.class);
         noteLeftStrip = new FilmStrip(internal.getEntry("notcollected", Texture.class), 1, 1);
         noteCollectedStrip = new FilmStrip(internal.getEntry("collected", Texture.class), 1, 1);
         icicleStrip = new FilmStrip(internal.getEntry("icicle", Texture.class), 1, 1);
@@ -198,7 +175,7 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         parseSnow(value);
         parseGoal(value);
         parseIcicles(value);
-        parseEnemies(value);
+        //parseEnemies(value);
         parseNotes(value);
         parseWater(value);
         parseIce(value);
@@ -253,15 +230,15 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         }
     }
 
-    public void parseEnemies(JsonValue value){
-        for(int i = 0; i<value.get("enemy").get("pos").size; i++){
-            float[] pos = value.get("enemy").get("pos").get(i).asFloatArray();
-            boolean is_hor = value.get("enemy").get("is_hor").asBooleanArray()[i];
-
-            objects.add(new GenericComponent(is_hor ? monsterStrip : monsterVerStrip,
-                    is_hor ? Component.MonsterHori: Component.MonsterVer, pos[0]*40f, pos[1]*40f));
-        }
-    }
+//    public void parseEnemies(JsonValue value){
+//        for(int i = 0; i<value.get("enemy").get("pos").size; i++){
+//            float[] pos = value.get("enemy").get("pos").get(i).asFloatArray();
+//            boolean is_hor = value.get("enemy").get("is_hor").asBooleanArray()[i];
+//
+//            objects.add(new GenericComponent(is_hor ? monsterStrip : monsterVerStrip,
+//                    is_hor ? Component.MonsterHori: Component.MonsterVer, pos[0]*40f, pos[1]*40f));
+//        }
+//    }
 
     public void parseIcicles(JsonValue value){
         short[] triangles = {0,1,2};
@@ -583,14 +560,14 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
                 currentHeight = 80;
             }else if(grid == 8 || grid == 9){
                 currentComponent = Component.MonsterHori;
-                currentStrip = monsterStrip.copy();
-                currentWidth = monsterStrip.getRegionWidth();
-                currentHeight = monsterStrip.getRegionHeight();
+//                currentStrip = monsterStrip.copy();
+//                currentWidth = monsterStrip.getRegionWidth();
+//                currentHeight = monsterStrip.getRegionHeight();
             } else if(grid == 10 || grid == 11){
                 currentComponent = Component.MonsterVer;
-                currentStrip = monsterVerStrip.copy();
-                currentWidth = monsterVerStrip.getRegionWidth();
-                currentHeight = monsterVerStrip.getRegionHeight();
+//                currentStrip = monsterVerStrip.copy();
+//                currentWidth = monsterVerStrip.getRegionWidth();
+//                currentHeight = monsterVerStrip.getRegionHeight();
             }else if(grid == 12){
                 currentComponent = Component.Exit;
                 currentStrip = exitStrip.copy();
@@ -684,8 +661,8 @@ public class LevelEditorController implements Screen, InputProcessor, Controller
         drawScaledChoice(iceStrip, FLOATING_ICE_X, 680, 0.3f, 0.5f,0f);
         drawScaledChoice(iceStrip, MOVING_ICE_X, 680, 0.3f, 0.5f,0f);
         drawScaledChoice(icicleRegion, ICICLE_X, 640, 0.5f, 0.5f);
-        drawScaledChoice(monsterStrip, MONSTER_X, 680, 0.5f, 0.5f,0f);
-        drawScaledChoice(monsterVerStrip, MONSTER_X+80, 680, 0.5f, 0.5f,0f);
+//        drawScaledChoice(monsterStrip, MONSTER_X, 680, 0.5f, 0.5f,0f);
+//        drawScaledChoice(monsterVerStrip, MONSTER_X+80, 680, 0.5f, 0.5f,0f);
         drawScaledChoice(exitStrip, EXIT_X, 680, 0.5f, 0.5f,0f);
         canvas.drawText(displayFont, "ice", ICE_X, 680);
         canvas.drawText(displayFont, "floating", FLOATING_ICE_X-20, 680);
