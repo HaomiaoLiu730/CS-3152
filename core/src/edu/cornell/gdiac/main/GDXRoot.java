@@ -31,22 +31,22 @@ public class GDXRoot extends Game implements ScreenListener {
 	public static AssetLoader assetLoader;
 
 	/** AssetManager to load game assets (textures, sounds, etc.) */
-	AssetDirectory directory;
+	public static AssetDirectory directory;
 
 	private int current = 0;
 	/** Drawing context to display graphics (VIEW CLASS) */
-	GameCanvas canvas;
+	public static GameCanvas canvas;
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	Loading loading;
 	/** List of all WorldControllers */
 //	private WorldController[] controllers;
-	private LevelLoader[] levelLoaders;
+	public static LevelLoader[] levelLoaders;
 	GameplayController gameplayController = new GameplayController();
-	private int totalLevels;
+	public static int totalLevels;
 
 	private GameplayController levelEditorGameplayController;
 	/** menu controller*/
-	private MenuController menuController;
+	public static MenuController menuController;
 	private LevelEditorController levelEditor;
 	private static JsonValue value;
 	public static HashMap<MenuController.Continent, Integer> numOfLevels = new HashMap<>();
@@ -79,12 +79,56 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new OnboardingController(canvas, "gameSpecs.json");
 
+//		directory = new AssetDirectory("assets.json");
+//		directory.loadAssets();
+//		directory.finishLoading();
+//		assetLoader = new AssetLoader(directory);
+		gameplayController.setScreenListener(this);
+
+//		totalLevels = 0;
+//		for(MenuController.Continent continent: MenuController.Continent.values()){
+//			totalLevels += numOfLevels.get(continent);
+//		}
+//		int prevLevels = 0;
+//		levelLoaders = new LevelLoader[totalLevels];
+//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Europe); i++){
+//			levelLoaders[i+prevLevels] = new LevelLoader("europe/europeMain.json", i);
+//		}
+//		prevLevels += numOfLevels.get(MenuController.Continent.Europe);
+//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Africa); i++){
+//			levelLoaders[i+prevLevels] = new LevelLoader("africa/africaMain.json", i);
+//		}
+//		prevLevels += numOfLevels.get(MenuController.Continent.Africa);
+//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Oceania); i++){
+//			levelLoaders[i+prevLevels] = new LevelLoader("oceania/oceaniaMain.json", i);
+//		}
+//		prevLevels += numOfLevels.get(MenuController.Continent.Oceania);
+//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Asia); i++){
+//			levelLoaders[i+prevLevels] = new LevelLoader("asia/asiaMain.json", i);
+//		}
+//		prevLevels += numOfLevels.get(MenuController.Continent.Asia);
+//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
+//			levelLoaders[i+prevLevels] = new LevelLoader("NorthAmerica/northAmericaMain.json", i);
+//		}
+//		prevLevels += numOfLevels.get(MenuController.Continent.NorthAmerica);
+//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.SouthAmerica); i++){
+//			levelLoaders[i+prevLevels] = new LevelLoader("southAmerica/southAmericaMain.json", i);
+//		}
+
+		current = 0;
+		//menuController = new MenuController(canvas);
+		loading.setScreenListener(this);
+		setScreen(loading);
+	}
+
+	public static void load1() {
 		directory = new AssetDirectory("assets.json");
 		directory.loadAssets();
 		directory.finishLoading();
 		assetLoader = new AssetLoader(directory);
-		gameplayController.setScreenListener(this);
+	}
 
+	public static void load2() {
 		totalLevels = 0;
 		for(MenuController.Continent continent: MenuController.Continent.values()){
 			totalLevels += numOfLevels.get(continent);
@@ -114,12 +158,10 @@ public class GDXRoot extends Game implements ScreenListener {
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.SouthAmerica); i++){
 			levelLoaders[i+prevLevels] = new LevelLoader("southAmerica/southAmericaMain.json", i);
 		}
+	}
 
-		current = 0;
+	public static void load3() {
 		menuController = new MenuController(canvas);
-		loading.setScreenListener(this);
-		setScreen(loading);
-
 	}
 
 	@Override
