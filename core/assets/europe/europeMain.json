@@ -8,8 +8,8 @@
   },
   "fonts": {
     "gameFont": {
-      "file": "fonts/MarkerFelt.ttf",
-      "size": 24,
+      "file": "fonts/AmaticSC-Bold.ttf",
+      "size": 35,
       "color": "black"
     }
   },

@@ -598,6 +598,20 @@ public class GameCanvas {
         spriteBatch.draw(region, x+camera.position.x-640,  y);
     }
 
+    public void drawFixed(TextureRegion region) {
+        if (active != DrawPass.STANDARD) {
+            Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+            return;
+        }
+
+        // Unlike Lab 1, we can shortcut without a master drawing method
+        spriteBatch.setColor(Color.WHITE);
+        spriteBatch.draw(region, camera.position.x-camera.viewportWidth/2f, camera.position.y+camera.viewportHeight/2-75,
+                region.getRegionWidth(),region.getRegionHeight(),
+                region.getRegionWidth(), region.getRegionHeight(),
+                camera.viewportWidth/1280, camera.viewportHeight/720,0);
+    }
+
     public void drawFixed(PolygonRegion region, Color tint, float ox, float oy,
                      float x, float y, float angle, float sx, float sy) {
         if (active != DrawPass.STANDARD) {
@@ -1336,7 +1350,7 @@ public class GameCanvas {
             Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
             return;
         }
-        font.draw(spriteBatch, text, x+camera.position.x-640f, y);
+        font.draw(spriteBatch, text, x, y);
     }
 
     public void drawLine(Color color, Vector2 start, Vector2 end, int lineWidth){

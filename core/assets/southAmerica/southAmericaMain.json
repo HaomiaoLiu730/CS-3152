@@ -9,7 +9,7 @@
   "fonts": {
     "gameFont": {
       "file": "fonts/AmaticSC-Bold.ttf",
-      "size": 24,
+      "size": 35,
       "color": "black"
     }
   },
@@ -17,6 +17,8 @@
     "level1": "southAmerica/level1.json",
     "level2": "southAmerica/level2.json",
     "level3": "southAmerica/level3.json",
-    "level4": "southAmerica/level4.json"
+    "level4": "southAmerica/level4.json",
+    "level5": "southAmerica/level5.json",
+    "level6": "southAmerica/level6.json"
   }
 }
