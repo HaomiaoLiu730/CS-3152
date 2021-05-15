@@ -79,7 +79,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new OnboardingController(canvas, "gameSpecs.json");
 
-		System.out.println("start loading");
 		directory = new AssetDirectory("assets.json");
 		directory.loadAssets();
 		directory.finishLoading();
@@ -121,8 +120,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
 		setScreen(loading);
-
-		System.out.println("end loading");
 	}
 
 	@Override
