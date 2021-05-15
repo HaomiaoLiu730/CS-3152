@@ -19,6 +19,7 @@ import edu.cornell.gdiac.util.ScreenListener;
 public class OnboardingController implements Screen, InputProcessor, ControllerListener, Loading {
 
     private final float penguinY = 200;
+    private int flag = 0;
 
     /** is ready for game mode*/
     private boolean isReady = false;
@@ -89,6 +90,18 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
     }
 
     public void update(float delta) {
+        if (flag == 0) {
+            flag ++;
+        } else if (flag == 1) {
+            GDXRoot.load1();
+            flag ++;
+        } else if (flag == 2) {
+            GDXRoot.load2();
+            flag ++;
+        } else if (flag == 3) {
+            GDXRoot.load3();
+            flag ++;
+        }
         inputController.readInput();
         if(Math.abs(Gdx.input.getX() - 645) <= 95 && Math.abs(720 - Gdx.input.getY() - 340) <= 35){
             isHoverLevel=true;
@@ -129,15 +142,22 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
     public void draw() {
         canvas.begin();
         canvas.drawOverlay(front, true);
-        if(!isHoverLevel&&!isHoverPlay) {
-            drawStart(0.95f,0.95f,615,557);
-        }
-        else if (isHoverLevel){
-            drawStart(0.95f,1f,615,555);
-        }
-        else if(isHoverPlay){
-            drawStart(1f,0.95f,614,557);
-
+        if (flag == 1) {
+            canvas.drawText(letterFont, "Loading .", 550, 400);
+        } else if (flag == 2) {
+            canvas.drawText(letterFont, "Loading ..", 550, 400);
+        } else if (flag == 3) {
+            canvas.drawText(letterFont, "Loading ...", 550, 400);
+        } else if (flag == 4) {
+            if(!isHoverLevel&&!isHoverPlay) {
+                drawStart(0.95f,0.95f,615,557);
+            }
+            else if (isHoverLevel){
+                drawStart(0.95f,1f,615,555);
+            }
+            else if(isHoverPlay){
+                drawStart(1f,0.95f,614,557);
+            }
         }
         canvas.end();
     }
