@@ -77,7 +77,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             260, 460, 420, 400, 590, 460, 740, 600, 950, 570, 720, 300, 580, 230
     };
     private float[] SOUTH_AMERICA_LEVELS = new float[]{
-            620, 550, 650, 480, 765, 460, 720, 370, 640, 360, 605, 240
+            620, 550, 650, 480, 765, 460, 725, 355, 630, 370, 605, 240
     };
 
     private AssetDirectory internal;
@@ -110,10 +110,17 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private Texture dot4;
     private Texture dot5;
     private Texture dot6;
-    private Texture dot7;
+    private Texture last1;
+    private Texture last2;
+    private Texture last3;
+    private Texture last4;
+    private Texture last5;
+    private Texture last6;
+    private Texture last7;
     private TextureRegion backArrowTexture;
     private Texture[] penguins = new Texture[7];
-    private Texture[] dots = new Texture[7];
+    private Texture[] dots = new Texture[6];
+    private Texture[] lasts = new Texture[7];
 
     private Sound menuSellect;
     private Sound menuScroll;
@@ -177,7 +184,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         dot4 = internal.getEntry("dot4", Texture.class);
         dot5 = internal.getEntry("dot5", Texture.class);
         dot6 = internal.getEntry("dot6", Texture.class);
-        dot7 = internal.getEntry("dot7", Texture.class);
+        last1 = internal.getEntry("last1", Texture.class);
+        last2 = internal.getEntry("last2", Texture.class);
+        last3 = internal.getEntry("last3", Texture.class);
+        last4 = internal.getEntry("last4", Texture.class);
+        last5 = internal.getEntry("last5", Texture.class);
+        last6 = internal.getEntry("last6", Texture.class);
+        last7 = internal.getEntry("last7", Texture.class);
         backArrowTexture = new TextureRegion(internal.getEntry("backArrow", Texture.class));
         penguins[0] = penguin1;
         penguins[1] = penguin2;
@@ -192,7 +205,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         dots[3] = dot4;
         dots[4] = dot5;
         dots[5] = dot6;
-        dots[6] = dot7;
+        lasts[0] = last1;
+        lasts[1] = last2;
+        lasts[2] = last3;
+        lasts[3] = last4;
+        lasts[4] = last5;
+        lasts[5] = last6;
+        lasts[6] = last7;
 
         active  = true;
         zoomIn = false;
@@ -287,7 +306,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             result[1] = y*height/720+37;
         } else if (c == Continent.Asia) {
             result[0] = x*width/1280+312;
-            result[1] = y*height/720+262;
+            result[1] = y*height/720+257;
         } else if (c == Continent.Africa) {
             result[0] = x*width/1280+310;
             result[1] = y*height/720+155;
@@ -469,7 +488,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     public void updateNextLevelHelper(float[] arr){
         for(int i = 0; i< arr.length; i+=2){
-            if (Math.abs(Gdx.input.getX() - arr[i]) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - arr[i+1]) <= MOUSE_TOL){
+            if (Math.abs(Gdx.input.getX() - (arr[i]+dots[5].getWidth()/12)) <= dots[5].getWidth()/12 && Math.abs(720 - Gdx.input.getY() - (arr[i+1]+dots[1].getHeight()/12)) <= dots[1].getHeight()/12){
                 nextLevel = i/2;
             }
         }
@@ -537,18 +556,30 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     public void drawPointsHelper(int finishedLevelNum, float[] arr, int continent){
-        for(int i = 0; i < finishedLevelNum*2; i+=2){
-            canvas.draw(dots[i/2], Color.WHITE, getCoordinate(arr[i],arr[i+1],currentContinent)[0]+camera.position.x-640, getCoordinate(arr[i],arr[i+1],currentContinent)[1],
+        for(int i = 0; i < finishedLevelNum*2-2; i+=2){
+            canvas.draw(dots[i/2], Color.WHITE,
+                    nextLevel == i/2 ?getCoordinate(arr[i],arr[i+1],currentContinent)[0]+camera.position.x-640-dots[i/2].getWidth()/24 :getCoordinate(arr[i],arr[i+1],currentContinent)[0]+camera.position.x-640,
+                    getCoordinate(arr[i],arr[i+1],currentContinent)[1],
                     nextLevel == i/2 ? dots[i/2].getWidth()/4: dots[i/2].getWidth()/6, nextLevel == i/2 ? dots[i/2].getHeight()/4: dots[i/2].getHeight()/6);
             canvas.drawText(gameFont32, continent+"-"+(i+2)/2, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
             if (i+3 < numOfLevels.get(currentContinent)*2){
-                canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
+                canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, buttonColor);
             }
         }
-        if(finishedLevelNum != numOfLevels.get(currentContinent)){
-            canvas.drawEllipse(Color.LIGHT_GRAY, arr[finishedLevelNum*2], arr[finishedLevelNum*2+1], nextLevel == finishedLevelNum ? 75f/2: 25f,
-                    nextLevel == finishedLevelNum ? 45f/2: 15);
+        if(finishedLevelNum < numOfLevels.get(currentContinent)){
+            canvas.draw(dots[finishedLevelNum], Color.WHITE,
+                    nextLevel == finishedLevelNum-1 ?getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[0]+camera.position.x-640-dots[finishedLevelNum].getWidth()/24 :getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[0]+camera.position.x-640,
+                    getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[1],
+                    nextLevel == finishedLevelNum-1 ? dots[finishedLevelNum].getWidth()/4: dots[finishedLevelNum].getWidth()/6, nextLevel == finishedLevelNum-1 ? dots[finishedLevelNum].getHeight()/4: dots[finishedLevelNum].getHeight()/6);
+        } else {
+            canvas.draw(lasts[continent-1], Color.WHITE,
+                    nextLevel == finishedLevelNum-1 ?getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[0]+camera.position.x-640-lasts[continent-1].getWidth()/24 :getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[0]+camera.position.x-640,
+                    getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[1],
+                    nextLevel == finishedLevelNum-1 ? lasts[continent-1].getWidth()/4: lasts[continent-1].getWidth()/6, nextLevel == finishedLevelNum-1 ? lasts[continent-1].getHeight()/4: lasts[continent-1].getHeight()/6);
         }
+        canvas.drawText(gameFont32, continent+"-"+finishedLevelNum,
+                getCoordinate(arr[finishedLevelNum*2-2]+13f, arr[finishedLevelNum*2-1]-5f, currentContinent)[0]+camera.position.x-640f,
+                getCoordinate(arr[finishedLevelNum*2-2]+13f, arr[finishedLevelNum*2-1]-5f, currentContinent)[1]);
     }
 
     public void drawCurrentContinent(){
