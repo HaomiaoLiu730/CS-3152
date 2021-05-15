@@ -64,6 +64,11 @@ public class InputController {
     private boolean exitPressed;
     private boolean exitPrevious;
 
+    private boolean higherVolume = false;
+    private boolean higherVolumePrevious;
+    private boolean lowerVolume = false;
+    private boolean lowerVolumePrevious;
+
     /** How much are we moving horizontally? */
     private float horizontal;
     /** How much did we move horizontally? */
@@ -260,6 +265,13 @@ public class InputController {
         return touchUp;
     }
 
+    public boolean isLowerVolume(){
+        return lowerVolume;
+    }
+    public boolean isHigherVolume(){
+        return higherVolume;
+    }
+
     /**
      * Creates a new input controller
      *
@@ -294,6 +306,8 @@ public class InputController {
         xPrevious = xPressed;
         leftPrevious = leftPressed;
         rightPrevious = rightPressed;
+        lowerVolumePrevious = lowerVolume;
+        higherVolumePrevious = higherVolume;
 
         // Check to see if a GamePad is connected
         readKeyboard(bounds, scale, false);
@@ -313,6 +327,7 @@ public class InputController {
             spacePressed = false;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+            System.out.println("space pressed");
             spacePressed = true;
         }
 
@@ -393,6 +408,20 @@ public class InputController {
         }
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             spacePressed = true;
+        }
+
+        if(!Gdx.input.isKeyPressed(Input.Keys.N) && lowerVolume){
+            lowerVolume = false;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.N)){
+            lowerVolume = true;
+        }
+        if(!Gdx.input.isKeyPressed(Input.Keys.M) && higherVolume){
+            higherVolume = false;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.M)){
+            System.out.println("true");
+            higherVolume = true;
         }
 
         // Punching
