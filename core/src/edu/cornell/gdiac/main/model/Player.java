@@ -272,11 +272,9 @@ public class Player extends CapsuleObstacle {
                     p.setFaceRight(faceRight);
                 }
             }
-            if(numPenguins > 0){
-                pseudoPenguin.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
-                pseudoPenguin.setFaceRight(faceRight);
+            pseudoPenguin.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
+            pseudoPenguin.setFaceRight(faceRight);
 
-            }
         }
     }
 
@@ -353,12 +351,14 @@ public class Player extends CapsuleObstacle {
      */
     public void pickUpPenguins() {
             for(Penguin p: penguins){
-                if(position.set(getPosition()).sub(p.getPosition()).len() < 2f && p.isThrowOut() && p.getLinearVelocity().y <= 0){
+                if(p.isThrowOut()){
+                    System.out.println(p.getLinearVelocity().x);
+                }
+                if(position.set(getPosition()).sub(p.getPosition()).len() < 2f && p.isThrowOut() && p.getLinearVelocity().y <= 0 && Math.abs(p.getLinearVelocity().x) < 2){
                     p.setThrownOut(false);
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     p.setY(getY()-1);
-//                    p.setX(faceRight? getX()-PENGUIN_WIDTH: getX()+PENGUIN_WIDTH);
                     p.setX(getX());
                     p.setActive(false);
                     p.setBodyType(BodyDef.BodyType.DynamicBody);
