@@ -317,6 +317,10 @@ public class GameplayController extends WorldController implements ContactListen
             p.setActive(false);
             p.setSensor(true);
         }
+        addObject(levelLoader.avatar.pseudoPenguin);
+        levelLoader.avatar.pseudoPenguin.getBody().setType(BodyDef.BodyType.DynamicBody);
+        levelLoader.avatar.pseudoPenguin.setActive(false);
+        levelLoader.avatar.pseudoPenguin.setSensor(true);
 
         for(Note note: levelLoader.notesList){
             addObject(note);

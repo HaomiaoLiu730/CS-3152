@@ -125,7 +125,7 @@ public class Player extends CapsuleObstacle {
     private FilmStrip filmStrip;
     private float timeCounter;
     private int totalPenguins;
-    private int numPenguins;
+    public static int numPenguins;
     private boolean fixPenguin;
     public animationState moveState = animationState.walking;
     private float cameraX;
@@ -145,6 +145,7 @@ public class Player extends CapsuleObstacle {
     }
 
     private LinkedList<Penguin> penguins = new LinkedList<>();
+    public Penguin pseudoPenguin;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -216,6 +217,7 @@ public class Player extends CapsuleObstacle {
                if (setLast)
                    pen.setIsLast(lastOne);
            }
+           pseudoPenguin.setOverlapFilmStrip(p_films.get(numPenguins - idx));
            return true;
        }
        return false;
@@ -246,33 +248,34 @@ public class Player extends CapsuleObstacle {
                 if(!p.isThrowOut()) p.setY(getY()-0.5f);
             }
         }
+        pseudoPenguin.setY(getY()-0.5f);
 
         if(fixPenguin){
-            for(Penguin p: penguins){
-                if(!p.isThrowOut()){
-                    p.setSensor(true);
-//                    p.setBodyType(BodyDef.BodyType.StaticBody);
-                    if(faceRight){
-                        if(p.getX() - getX() < -PENGUIN_WIDTH){
-                            fixPenguin = false;
-//                            p.setSensor(false);
-//                            p.setBodyType(BodyDef.BodyType.DynamicBody);
-                        }
-                    }else{
-                        if(p.getX() - getX() > PENGUIN_WIDTH){
-                            fixPenguin = false;
-//                            p.setSensor(false);
-//                            p.setBodyType(BodyDef.BodyType.KinematicBody);
-                        }
+            if(numPenguins > 0){
+                pseudoPenguin.setSensor(true);
+                if(faceRight){
+                    if(pseudoPenguin.getX() - getX() < -PENGUIN_WIDTH){
+                        fixPenguin = false;
+                    }
+                }else{
+                    if(pseudoPenguin.getX() - getX() > PENGUIN_WIDTH){
+                        fixPenguin = false;
                     }
                 }
+
             }
         }else{
             for(Penguin p: penguins){
                 if(!p.isThrowOut()){
-                    p.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
+                    p.setX(getX());
+                    p.setY(getY());
                     p.setFaceRight(faceRight);
                 }
+            }
+            if(numPenguins > 0){
+                pseudoPenguin.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
+                pseudoPenguin.setFaceRight(faceRight);
+
             }
         }
     }
@@ -355,7 +358,8 @@ public class Player extends CapsuleObstacle {
                     p.setFilmStrip(penguinWalkingStrip);
                     p.setIndex(numPenguins);
                     p.setY(getY()-1);
-                    p.setX(faceRight? getX()-PENGUIN_WIDTH: getX()+PENGUIN_WIDTH);
+//                    p.setX(faceRight? getX()-PENGUIN_WIDTH: getX()+PENGUIN_WIDTH);
+                    p.setX(getX());
                     p.setActive(false);
                     p.setBodyType(BodyDef.BodyType.DynamicBody);
                     p.setSensor(true);
@@ -582,6 +586,7 @@ public class Player extends CapsuleObstacle {
         for(int i = 0; i < numOfPenguins; i++){
             penguins.add(new Penguin(p_data, p_data.getFloat("width"), p_data.getFloat("height")-0.6f, i));
         }
+        pseudoPenguin = new Penguin(p_data,p_data.getFloat("width"), p_data.getFloat("height")-0.6f, -1);
 
         shootCooldown = data.getInt("shoot_cooldown");
         jumpCooldown = data.getInt("jump_cooldown");
@@ -682,6 +687,7 @@ public class Player extends CapsuleObstacle {
                 p.setY(getY());
             }
         }
+        pseudoPenguin.setY(getY());
         if (isPaused()) return;
         // Apply cooldowns
         timeCounter += dt;
@@ -740,6 +746,10 @@ public class Player extends CapsuleObstacle {
         }
 
         for(Penguin p: penguins){
+            if(!p.isThrowOut()){
+                p.setX(getX());
+                p.setY(getY());
+            }
             p.updateWalking = (Math.abs(getVX()) >= 0.1f)? true: false;
             p.applyForce(0,0, 0);
         }
@@ -763,7 +773,7 @@ public class Player extends CapsuleObstacle {
                 canvas.drawCircle(Color.BLACK,trajectories[i],trajectories[i+1], 4-i*0.1f);
                 canvas.drawCircle(Color.WHITE,trajectories[i],trajectories[i+1], 2-i*0.1f);
             }
-            canvas.draw(penguinStrip,Color.WHITE,penguinStrip.getRegionWidth()/2f, penguinStrip.getRegionHeight()/2f,getX()*drawScale.x,getY()*drawScale.y,0,effect * .75f,.75f);
+//            canvas.draw(penguinStrip,Color.WHITE,penguinStrip.getRegionWidth()/2f, penguinStrip.getRegionHeight()/2f,getX()*drawScale.x,getY()*drawScale.y,0,effect * .75f,.75f);
 
 
         }
