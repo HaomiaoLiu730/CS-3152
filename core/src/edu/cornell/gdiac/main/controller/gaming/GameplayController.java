@@ -66,7 +66,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     private AssetLoader assetLoader = GDXRoot.assetLoader;
 
-    private float volume = 0.5f;
+    public float volume = 0.5f;
 
 
     /** number of notes collected*/
@@ -366,6 +366,7 @@ public class GameplayController extends WorldController implements ContactListen
             for(int i=0;i<num_notes;i++){
                 assetLoader.BackgroundMusic[i].setVolume(soundIDs[i],volume);
             }
+            levelLoader.avatar.volume = volume;
 
         }
         if(InputController.getInstance().isHigherVolume()){
@@ -375,6 +376,7 @@ public class GameplayController extends WorldController implements ContactListen
             for(int i=0;i<num_notes;i++){
                 assetLoader.BackgroundMusic[i].setVolume(soundIDs[i],volume);
             }
+            levelLoader.avatar.volume = volume;
         }
         if(isPaused){
             if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
@@ -510,12 +512,13 @@ public class GameplayController extends WorldController implements ContactListen
 //            setComplete(true);
 //        }
 //        collisionController.processCollision(seals, sealions, iciclesList, objects);
-        collisionController.processCollision(levelLoader.iciclesList, icicles_hit, staticBodies, objects,assetLoader.hitIcicle);
+        collisionController.processCollision(levelLoader.iciclesList, icicles_hit, staticBodies, objects,
+                assetLoader.hitIcicle,volume);
         collisionController.processCollision(levelLoader.waterList, levelLoader.avatar);
         collisionController.processCollision(levelLoader.waterList, levelLoader.avatar.getPenguins(),levelLoader.avatar);
 
         notesCollected = collisionController.penguin_note_interaction(levelLoader.avatar.getPenguins(), levelLoader.notesList, assetLoader.noteCollectedStrip, notesCollected,
-                objects, levelLoader.avatar.getNumPenguins(), levelLoader.avatar, assetLoader.collectingNote, assetLoader.penguins);
+                objects, levelLoader.avatar.getNumPenguins(), levelLoader.avatar, assetLoader.collectingNote, volume, assetLoader.penguins);
 
     }
 
