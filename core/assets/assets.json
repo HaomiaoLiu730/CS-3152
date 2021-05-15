@@ -48,11 +48,6 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "arrow": {
-      "file": "images/shared/arrow.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
     "penguin2": {
       "file": "images/shared/penguin2.png",
       "minFilter": "linear",
@@ -88,41 +83,6 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "penguinWalking": {
-      "file": "images/shared/penguinWalking.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "penguinRolling": {
-      "file": "images/shared/penguinRolling.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "sealion": {
-      "file": "images/shared/sealion.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "seal": {
-      "file": "images/shared/seal.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "monsterScaledVer": {
-      "file": "images/shared/monsterScaledVer.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "monsterScaled": {
-      "file": "images/shared/monsterScaled.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "monsterAttacking": {
-      "file": "images/shared/monsterAttacking.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
     "avatarPunching": {
       "file": "images/shared/avatarPunching.png",
       "minFilter": "linear",
@@ -140,16 +100,6 @@
     },
     "notcollected": {
       "file": "images/shared/NotCollected.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "energyBar": {
-      "file": "images/shared/energyBar.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "energyBarOutline": {
-      "file": "images/shared/energyBarOutline.png",
       "minFilter": "linear",
       "magFilter": "linear"
     },
