@@ -123,7 +123,6 @@ public class LevelLoader {
             this.exit = new BoxObstacle( goalpos.getFloat(0), goalpos.getFloat(1)+0.25f, goal.getFloat(("width")), goal.getFloat(("height")));
             this.exit.setTexture(assetLoader.exitStrip);
         }
-        //this.exit = new BoxObstacle( goalpos.getFloat(0), goalpos.getFloat(1)+0.25f, goal.getFloat(("width")), goal.getFloat(("height")));
         this.exit.setBodyType(BodyDef.BodyType.StaticBody);
         this.exit.setSensor(true);
         this.exit.setDensity(goal.getFloat("density"));
