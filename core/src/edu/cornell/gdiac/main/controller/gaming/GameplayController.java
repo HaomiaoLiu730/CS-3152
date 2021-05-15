@@ -594,8 +594,8 @@ public class GameplayController extends WorldController implements ContactListen
                     break;
             }
         }
-        if(complete || failed){
-            canvas.draw(assetLoader.blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
+        if(complete || failed || isPaused){
+            canvas.draw(assetLoader.blackTexture,new Color(1,1,1,0.4f),cameraX-1280/2,0,3000f,2000f);
         }
 
         for(Obstacle obj : objects) {
@@ -673,7 +673,7 @@ public class GameplayController extends WorldController implements ContactListen
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawFixed(assetLoader.deadStrip, 460, 200);
+            canvas.drawFixed(assetLoader.deadStrip, 460, 300);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         }
