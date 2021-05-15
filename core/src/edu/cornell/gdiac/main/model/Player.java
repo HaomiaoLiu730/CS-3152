@@ -156,6 +156,8 @@ public class Player extends CapsuleObstacle {
 
     private float movingIceOffset=0;
 
+    public float volume = 0.5f;
+
     /**
      * Returns left/right movement of this character.
      *
@@ -263,6 +265,8 @@ public class Player extends CapsuleObstacle {
                     }
                 }
 
+            }else{
+                pseudoPenguin.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
             }
         }else{
             for(Penguin p: penguins){
@@ -423,7 +427,7 @@ public class Player extends CapsuleObstacle {
                         p.setBodyType(BodyDef.BodyType.DynamicBody);
                         p.setSensor(false);
                         setFilmStrip(throwingStrip);
-                        throwing.play();
+                        throwing.play(volume);
                         p.setFilmStrip(penguinRollingStrip);
                         p.setGrounded(false);
                         moveState = animationState.throwing;
