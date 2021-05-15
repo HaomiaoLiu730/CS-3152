@@ -36,6 +36,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     /** is ready for game mode*/
     private boolean isReady = false;
     private static Color grey = new Color(1,1,1,0.5f);
+    private static Color lineColor = new Color(0,0,0,0.8f);
+    private static Color buttonColor = new Color(120/255,120/255,120/255,1f);
     private Continent currentContinent;
     private boolean zoomIn;
     private boolean zoomOut;
@@ -60,7 +62,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private static JsonValue value;
 
     private float[] EUROPE_LEVELS = new float[]{
-            852f, 427f,757,426, 770,347, 690,342, 580,300
+            600, 410, 820, 390, 710, 330, 580, 290, 450, 270
             //720, 340. 333, 511, 474, 490, 600, 470
     };
     private float[] AFRICA_LEVELS = new float[]{
@@ -72,13 +74,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             // 470, 400, 622, 422,
     };
     private float[] ASIA_LEVELS = new float[]{
-            511, 500, 635, 470, 950, 490, 760, 260, 620, 270, 543, 270, 433, 270
+            580, 220, 300, 350, 394, 450, 541, 530, 620, 400, 850, 523, 1100, 520
     };
     private float[] NORTH_AMERICA_LEVELS = new float[]{
-            1050f, 600f, 950f, 610f, 350f, 470f, 550f, 300f, 650f, 300f, 720f, 320f,600, 200f
+            260, 460, 420, 400, 590, 460, 740, 600, 950, 570, 720, 300, 580, 230
     };
     private float[] SOUTH_AMERICA_LEVELS = new float[]{
-            620, 550, 650, 480, 760, 430, 720, 360, 660, 320, 620, 280
+            620, 550, 650, 480, 765, 460, 720, 370, 640, 360, 605, 240
     };
 
     private AssetDirectory internal;
@@ -105,8 +107,16 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private Texture penguin5;
     private Texture penguin6;
     private Texture penguin7;
+    private Texture dot1;
+    private Texture dot2;
+    private Texture dot3;
+    private Texture dot4;
+    private Texture dot5;
+    private Texture dot6;
+    private Texture dot7;
     private TextureRegion backArrowTexture;
     private Texture[] penguins = new Texture[7];
+    private Texture[] dots = new Texture[7];
 
     private Sound menuSellect;
     private Sound menuScroll;
@@ -117,7 +127,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     private static ArrayList<Continent> unlockedContinents = new ArrayList<>();
 
-    private BitmapFont gameFont;
+    private BitmapFont gameFont32;
+    private BitmapFont gameFont64;
 
     /**
      * Creates a new game with a playing field of the given size.
@@ -143,7 +154,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         antarctica = internal.getEntry("Antarctica", Texture.class);
         africa = internal.getEntry("Africa", Texture.class);
         oceania = internal.getEntry("Oceania", Texture.class);
-        gameFont = internal.getEntry("gameFont", BitmapFont.class);
+        gameFont32 = internal.getEntry("gameFont32", BitmapFont.class);
+        gameFont32.getData().setScale(0.4f*0.25f);
+        gameFont64 = internal.getEntry("gameFont64", BitmapFont.class);
         antarcticaLine = internal.getEntry("AntarcticaLine", Texture.class);
         northAmericaLine = internal.getEntry("NorthAmericaLine", Texture.class);
         southAmericaLine = internal.getEntry("SouthAmericaLine", Texture.class);
@@ -161,6 +174,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         penguin5 = internal.getEntry("penguin5", Texture.class);
         penguin6 = internal.getEntry("penguin6", Texture.class);
         penguin7 = internal.getEntry("penguin7", Texture.class);
+        dot1 = internal.getEntry("dot1", Texture.class);
+        dot2 = internal.getEntry("dot2", Texture.class);
+        dot3 = internal.getEntry("dot3", Texture.class);
+        dot4 = internal.getEntry("dot4", Texture.class);
+        dot5 = internal.getEntry("dot5", Texture.class);
+        dot6 = internal.getEntry("dot6", Texture.class);
+        dot7 = internal.getEntry("dot7", Texture.class);
         backArrowTexture = new TextureRegion(internal.getEntry("backArrow", Texture.class));
         penguins[0] = penguin1;
         penguins[1] = penguin2;
@@ -169,6 +189,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         penguins[4] = penguin5;
         penguins[5] = penguin6;
         penguins[6] = penguin7;
+        dots[0] = dot1;
+        dots[1] = dot2;
+        dots[2] = dot3;
+        dots[3] = dot4;
+        dots[4] = dot5;
+        dots[5] = dot6;
+        dots[6] = dot7;
 
         active  = true;
         zoomIn = false;
@@ -259,11 +286,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             result[0] = x*width/1280+310;
             result[1] = y*height/720+293;
         } else if (c == Continent.SouthAmerica) {
-            result[0] = x*width/1280+297;
-            result[1] = y*height/720+47;
+            result[0] = x*width/1280+312;
+            result[1] = y*height/720+37;
         } else if (c == Continent.Asia) {
             result[0] = x*width/1280+312;
-            result[1] = y*height/720+285;
+            result[1] = y*height/720+262;
         } else if (c == Continent.Africa) {
             result[0] = x*width/1280+310;
             result[1] = y*height/720+155;
@@ -335,7 +362,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                     zoomInto(640f, 360f, 1140f, 220f);
                     break;
                 case Asia:
-                    zoomInto(640f, 360f, 455f, 470f);
+                    zoomInto(640f, 360f, 460f, 440f);
                     break;
                 case Africa:
                     zoomInto(640f, 360f, 70f, 330f);
@@ -353,6 +380,34 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     public void zoomOutEffect(){
+        switch (currentContinent){
+            case Europe:
+                zoomOut(205f, 510f);
+                break;
+            case NorthAmerica:
+                zoomOut(1050f, 480f);
+                break;
+            case SouthAmerica:
+                zoomOut(1140f, 220f);
+                break;
+            case Asia:
+                zoomOut(460f, 440f);
+                break;
+            case Africa:
+                zoomOut(70f, 330f);
+                break;
+            case Oceania:
+                zoomOut(560f, 210f);
+                break;
+            case Antarctica:
+                zoomOut(350f, 20f);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void zoomOut(float oriPosX, float oriPosY){
         if(zoomOut) {
             drawPoints = false;
             zoomIn = false;
@@ -360,25 +415,26 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             float cameraPosX = 640;
             float cameraPosY = 360;
             float deltaPosY = quadraticFunction(0.06f, 0.05f, 0, zoomInTime);
-            float scale = Math.abs(cameraPosX - 360);
-            float deltaWidth = (1280 - camera.viewportWidth) / scale * deltaPosY;
-            float deltaHeight = (720 - camera.viewportHeight) / scale * deltaPosY;
-            float deltaPosX = Math.abs(cameraPosX - camera.position.x)/scale*deltaPosY;
-            camera.viewportWidth = camera.viewportWidth + deltaWidth;
-            camera.viewportHeight = camera.viewportHeight + deltaHeight;
+            float scale = Math.abs(oriPosY - 360);
+            float deltaWidth = (1280 - 640) / scale * deltaPosY;
+            float deltaHeight = (720 - 360) / scale * deltaPosY;
+            float deltaPosX = Math.abs(cameraPosX - oriPosX)/scale*deltaPosY;
+
+            camera.viewportWidth = camera.viewportWidth < 1280 ? camera.viewportWidth + deltaWidth : camera.viewportWidth;
+            camera.viewportHeight = camera.viewportHeight < 720 ? camera.viewportHeight + deltaHeight : camera.viewportHeight;
 
             if (camera.position.x - 640 > 0) {
                 camera.position.x = camera.position.x > cameraPosX ? camera.position.x - deltaPosX : camera.position.x;
             } else {
                 camera.position.x = camera.position.x < cameraPosX ? camera.position.x + deltaPosX : camera.position.x;
             }
-            if (camera.position.y - 360 > 5) {
+            if (camera.position.y - 360 > 0) {
                 camera.position.y = camera.position.y > cameraPosY ? camera.position.y - deltaPosY : camera.position.y;
             } else {
                 camera.position.y = camera.position.y < cameraPosY ? camera.position.y + deltaPosY : camera.position.y;
             }
             camera.update();
-            if (Math.abs(camera.position.x - cameraPosX) <= 2) {
+            if (Math.abs(camera.position.x - cameraPosX) < deltaPosX || Math.abs(camera.position.y - cameraPosY) < deltaPosY) {
                 zoomInTime = 0;
                 zoomOut = false;
                 this.reset();
@@ -422,31 +478,27 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         }
     }
 
-    private void drawWorldMap(float x, float y) {
-        canvas.drawOverlay(background,x, y);
-        canvas.drawOverlay(northAmerica, unlockedContinents.contains(Continent.NorthAmerica)? Color.WHITE : grey, x, y);
-        canvas.drawOverlay(southAmerica, unlockedContinents.contains(Continent.SouthAmerica)? Color.WHITE : grey,x,y);
-        canvas.drawOverlay(oceania, unlockedContinents.contains(Continent.Oceania)? Color.WHITE : grey,x, y);
-        canvas.drawOverlay(asia, unlockedContinents.contains(Continent.Asia)? Color.WHITE : grey,x, y);
-        canvas.drawOverlay(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey,x, y);
-        canvas.drawOverlay(africa, unlockedContinents.contains(Continent.Africa)?Color.WHITE : grey,x, y);
-        canvas.drawOverlay(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey,x, y);
-    }
-
     public void draw() {
         canvas.begin();
 
-        drawWorldMap(-1275,720);
-        drawWorldMap(-1275,0);
-        drawWorldMap(-1275,-720);
-        drawWorldMap(0,720);
-        drawWorldMap(0,-720);
-        drawWorldMap(0,0);
-        drawWorldMap(1275,720);
-        drawWorldMap(1275,0);
-        drawWorldMap(1275,-720);
+        canvas.drawOverlay(background, -1280, 720);
+        canvas.drawOverlay(background, -1280, 0);
+        canvas.drawOverlay(background, -1280, -720);
+        canvas.drawOverlay(background, 0, 720);
+        canvas.drawOverlay(background, 0, -720);
+        canvas.drawOverlay(background, 1280, 720);
+        canvas.drawOverlay(background, 1280, 0);
+        canvas.drawOverlay(background, 1280, -720);
+        canvas.drawOverlay(background, 0, 0);
+        canvas.draw(northAmerica, unlockedContinents.contains(Continent.NorthAmerica)? Color.WHITE : grey, 0, 0, northAmerica.getWidth()/5, northAmerica.getHeight()/5);
+        canvas.draw(southAmerica, unlockedContinents.contains(Continent.SouthAmerica)? Color.WHITE : grey, 0, 0, southAmerica.getWidth()/5, southAmerica.getHeight()/5);
+        canvas.draw(oceania, unlockedContinents.contains(Continent.Oceania)? Color.WHITE : grey, 0, 0, oceania.getWidth()/5, oceania.getHeight()/5);
+        canvas.draw(asia, unlockedContinents.contains(Continent.Asia)? Color.WHITE : grey, 0, 0, asia.getWidth()/5, asia.getHeight()/5);
+        canvas.draw(europe, unlockedContinents.contains(Continent.Europe)? Color.WHITE : grey, 0, 0, europe.getWidth()/5, europe.getHeight()/5);
+        canvas.draw(africa, unlockedContinents.contains(Continent.Africa)? Color.WHITE : grey, 0, 0, africa.getWidth()/5, africa.getHeight()/5);
+        canvas.draw(antarctica, unlockedContinents.contains(Continent.Antarctica)? Color.WHITE : grey, 0, 0, antarctica.getWidth()/5, antarctica.getHeight()/5);
 
-
+        drawCurrentContinent();
         if(drawPoints){
             int finishedLevelNum = finished.get(currentContinent).size();
             canvas.drawFixed(backArrowTexture);
@@ -473,39 +525,27 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                     break;
             }
         }
-        drawCurrentContinent();
+
         if (!zoomIn && !drawPoints && !zoomOut) {
             canvas.draw(penguin5, Color.WHITE, 960f, 460f, penguin5.getWidth()/2, penguin5.getHeight()/2);
-            canvas.drawText(gameFont, "5", 990f, 525f);
             canvas.draw(penguin6, Color.WHITE, 1115f, 260f, penguin6.getWidth()/2, penguin6.getHeight()/2);
-            canvas.drawText(gameFont, "6", 1130f, 340f);
             canvas.draw(penguin4, Color.WHITE, 410f, 470f, penguin4.getWidth()/2, penguin4.getHeight()/2);
-            canvas.drawText(gameFont, "4", 460f, 515f);
             canvas.draw(penguin1, Color.WHITE, 200f, 490f, penguin1.getWidth()/2, penguin1.getHeight()/2);
-            canvas.drawText(gameFont, "1", 238f, 560f);
             canvas.draw(penguin2, Color.WHITE, 120f, 320f, penguin2.getWidth()/2, penguin2.getHeight()/2);
-            canvas.drawText(gameFont, "2", 163f, 400f);
             canvas.draw(penguin3, Color.WHITE, 525f, 205f, penguin3.getWidth()/2, penguin3.getHeight()/2);
-            canvas.drawText(gameFont, "3", 562f, 300f);
             canvas.draw(penguin7, Color.WHITE, 350f, 15f, penguin7.getWidth()/2, penguin7.getHeight()/2);
-            canvas.drawText(gameFont, "7", 405f, 65f);
-            gameFont.getData().setScale(2f);
-            canvas.drawText(gameFont, "World Map", 580f, 680f);
-            gameFont.getData().setScale(1f);
+            canvas.drawText(gameFont64, "World Map", 580f, 680f);
         }
         canvas.end();
     }
 
     public void drawPointsHelper(int finishedLevelNum, float[] arr, int continent){
         for(int i = 0; i < finishedLevelNum*2; i+=2){
-            canvas.drawEllipse(Color.BLACK, arr[i], arr[i+1], nextLevel == i/2 ? 75f/2: 25f, nextLevel == i/2 ? 45f/2: 15);
-            //canvas.drawText(gameFont, String.valueOf((i+2)/2), arr[i]*camera.viewportWidth/1280+Math.abs(640-camera.position.x)+camera.position.x-640f, arr[i+1]*camera.viewportHeight/720+Math.abs(360-camera.position.y)+camera.position.y-360f);
-            gameFont.getData().setScale(0.75f);
-            canvas.drawText(gameFont, continent+"-"+(i+2)/2, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
-            gameFont.getData().setScale(1f);
+            canvas.draw(dots[i/2], Color.WHITE, getCoordinate(arr[i],arr[i+1],currentContinent)[0]+camera.position.x-640, getCoordinate(arr[i],arr[i+1],currentContinent)[1],
+                    nextLevel == i/2 ? dots[i/2].getWidth()/4: dots[i/2].getWidth()/6, nextLevel == i/2 ? dots[i/2].getHeight()/4: dots[i/2].getHeight()/6);
+            canvas.drawText(gameFont32, continent+"-"+(i+2)/2, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[0]+camera.position.x-640f, getCoordinate(arr[i]+13f, arr[i+1]-5f, currentContinent)[1]);
             if (i+3 < numOfLevels.get(currentContinent)*2){
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, Color.BLACK);
-                canvas.drawTriangle(Color.BLACK, arr[i+2]+8f, arr[i+3]-10f, arr[i+2]+13f, arr[i+3], arr[i+2]+18f, arr[i+3]-10f);
             }
         }
         if(finishedLevelNum != numOfLevels.get(currentContinent)){
@@ -515,28 +555,28 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     public void drawCurrentContinent(){
-        if(!zoomIn && !drawPoints && !zoomOut){
+        if(!zoomOut){
             switch (currentContinent){
                 case Antarctica:
-                    canvas.drawOverlay(antarcticaLine,true);
+                    canvas.draw(antarcticaLine, lineColor, 0, 0, antarcticaLine.getWidth()/5, antarcticaLine.getHeight()/5);
                     break;
                 case Africa:
-                    canvas.drawOverlay(africaLine,true);
+                    canvas.draw(africaLine, lineColor, 0, 0, africaLine.getWidth()/5, africaLine.getHeight()/5);
                     break;
                 case Asia:
-                    canvas.drawOverlay(asiaLine,true);
+                    canvas.draw(asiaLine, lineColor, 0, 0, asiaLine.getWidth()/5, asiaLine.getHeight()/5);
                     break;
                 case Oceania:
-                    canvas.drawOverlay(oceaniaLine,true);
+                    canvas.draw(oceaniaLine, lineColor, 0, 0, oceaniaLine.getWidth()/5, oceaniaLine.getHeight()/5);
                     break;
                 case NorthAmerica:
-                    canvas.drawOverlay(northAmericaLine,true);
+                    canvas.draw(northAmericaLine, lineColor, 0, 0, northAmericaLine.getWidth()/5, northAmericaLine.getHeight()/5);
                     break;
                 case SouthAmerica:
-                    canvas.drawOverlay(southAmericaLine,true);
+                    canvas.draw(southAmericaLine, lineColor, 0, 0, southAmericaLine.getWidth()/5, southAmericaLine.getHeight()/5);
                     break;
                 case Europe:
-                    canvas.drawOverlay(europeLine,true);
+                    canvas.draw(europeLine, lineColor, 0, 0, europeLine.getWidth()/5, europeLine.getHeight()/5);
                     break;
             }
         }
@@ -568,7 +608,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             if(currentContinent == Continent.SouthAmerica) hundred = 6;
             if (isReady() && listener != null) {
                 listener.updateScreen(this, hundred*10+nextLevel);
-                menuSellect.play();
+                //menuSellect.play();
                 menuBackground.stop();
                 isMenuBPlaying = false;
             }
@@ -580,6 +620,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         drawPoints = false;
         canvas.getCamera().position.x = 640;
         canvas.getCamera().position.y = 360;
+        canvas.getCamera().viewportWidth = 1280;
+        canvas.getCamera().viewportHeight = 720;
         canvas.getCamera().update();
         FileHandle file = Gdx.files.local("menu/levelProgress.json");
         JsonReader jsonReader = new JsonReader();

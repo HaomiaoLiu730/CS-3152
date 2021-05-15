@@ -777,23 +777,24 @@ public class GameplayController extends WorldController implements ContactListen
         if(levelLoader.jsonFile.startsWith("europe")){
             switch (levelLoader.getLevel()){
                 case 0:
-                    canvas.drawText("Use 'WASD' or arrow keys \nto control the bear's movement.", gameFont,500, 500);
-                    canvas.drawText("Ice bars can tilt.", gameFont,1280, 320);
-                    canvas.drawText("You will lose a penguin \nfor each note you collect.",gameFont,1800, 500);
-                    canvas.drawText("Collect all the notes to pass the level!", gameFont, 1950, 300);
+                    canvas.drawText("Use 'WASD' or arrow keys \nto move or jump.", gameFont,500, 500);
+                    canvas.drawText("Ice bars will tilt.", gameFont,1280, 320);
+                    canvas.drawText("Approach a note to collect it, \nyou will lose a penguin for each note you collect. ",gameFont,1800, 500);
+                    canvas.drawText("Collect all the notes to pass the level! ", gameFont, 1950, 300);
                     break;
                 case 1:
-                    canvas.drawText("Some ice bars can also move!", gameFont,1500, 400);
+                    canvas.drawText("Some ice bars move!", gameFont,1500, 400);
                     break;
                 case 2:
                     assetLoader.teachThrowingStrip.nextFrame();
-                    canvas.drawText("Throw the penguin \nat the icicle to knock it down!", gameFont,700, 660);
+                    canvas.drawText("Throw the penguin \nat the icicle to knock it down!", gameFont,640, 660);
+                    canvas.drawText("You can cancel throwing by pressing the space bar", gameFont,640, 620);
                     canvas.draw(assetLoader.teachThrowingStrip, 900, 400);
-                    canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
-                    canvas.drawText("Throw the penguin \nat the note to collect it!", gameFont,2000, 600);
+                    canvas.drawText("Nearby penguins will be recollected", gameFont,860, 360);
+                    canvas.drawText("Throw the a penguin \nat the note to collect it!", gameFont,2000, 600);
                     break;
                 case 3:
-                    canvas.drawText("Some ice bars can float to the side.", gameFont,860, 400);
+                    canvas.drawText("Darker ice bars can float to the side. ", gameFont,860, 400);
                     canvas.drawText("Jump on the ice bar and then knock down the icicle! ", gameFont,860, 340);
                     canvas.drawText("How do you get to higher platforms?", gameFont,2100, 420);
                     canvas.drawText("Try knocking down the icicle!", gameFont,2100, 360);

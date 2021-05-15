@@ -149,12 +149,52 @@
       "file":     "images/menu/backArrow.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "dot1": {
+      "file": "images/menu/one.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot2": {
+      "file": "images/menu/two.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot3": {
+      "file": "images/menu/three.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot4": {
+      "file": "images/menu/four.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot5": {
+      "file": "images/menu/five.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot6": {
+      "file": "images/menu/six.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot7": {
+      "file": "images/menu/seven.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
-    "gameFont": {
+    "gameFont32": {
       "file": "fonts/AmaticSC-Bold.ttf",
-      "size": 35,
+      "size": 128,
+      "color": "black"
+    },
+    "gameFont64": {
+      "file": "fonts/AmaticSC-Bold.ttf",
+      "size": 64,
       "color": "black"
     }
   },
