@@ -36,23 +36,6 @@ public class GameplayController extends WorldController implements ContactListen
     private ScreenListener listener;
     private static final float MOUSE_TOL = 50f;
 
-//    private AssetDirectory internal;
-    /** Reference to the character levelLoader.avatar */
-//    private Player levelLoader.avatar;
-    /** Reference to the seal */
-//    private ArrayList<Seal> seals = new ArrayList<>();
-    /** Reference to the sealion */
-//    private ArrayList<Sealion> sealions = new ArrayList<>();
-    /** Reference to the icicles */
-//    private ArrayList<PolygonObstacle> iciclesList;
-    /** Reference to the water */
-//    private Water water;
-    /** Reference to the ice */
-//    private Ice ice;
-    /** Reference to the list of notes */
-//    private ArrayList<Note> notesList;
-    /** Reference to the list of waters */
-//    private ArrayList<Water> waterList;
     /** Position of Reset button */
     private Vector2 resetPos;
     /** Position of Quit button */
@@ -89,10 +72,9 @@ public class GameplayController extends WorldController implements ContactListen
 
     private Texture background;
     private BitmapFont gameFont ;
-//    private JsonValue constants;
     private boolean endSoundPlaying;
 
-//    /** number of penguins */
+    /** number of penguins */
     private int num_penguins;
     /** number of notes */
     private int num_notes;
@@ -154,21 +136,10 @@ public class GameplayController extends WorldController implements ContactListen
         this.level = level;
         endSoundPlaying = false;
 
-//        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
-//        internal.loadAssets();
-//        internal.finishLoading();
-//        background = internal.getEntry("background", Texture.class);
-//        gameFont = internal.getEntry("gameFont", BitmapFont.class);
-
         collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
 
-//        constants = internal.getEntry( "level"+(level+1), JsonValue.class );
-//        JsonValue defaults = constants.get("defaults");
-//        num_penguins = defaults.getInt("num_penguins",0);
-//        num_notes = defaults.getInt("num_notes",0);
         this.isEditingView = isEditingView;
-//        grounded = defaults.get("grounded").asFloatArray();
 
     }
 
@@ -281,16 +252,8 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController = new CollisionController(1280, 720);
 
         sensorFixtures = new ObjectSet<Fixture>();
-//        internal = new AssetDirectory(isEditingView ? "levelEditor.json" : this.jsonFile);
-//        internal.loadAssets();
-//        internal.finishLoading();
         background = levelLoader.background;
-//        background = internal.getEntry("background", Texture.class);
         gameFont = levelLoader.gameFont;
-
-
-//        constants = internal.getEntry( "level"+(this.currentLevelNum+1), JsonValue.class );
-//        JsonValue defaults = constants.get("defaults");
 
     }
 
@@ -351,193 +314,6 @@ public class GameplayController extends WorldController implements ContactListen
             if(i>6) break;
             assetLoader.BackgroundMusic[i].loop();
         }
-
-
-        /**
-        // Add level goal
-        float dwidth, dheight;
-        JsonValue defaults = constants.get("defaults");
-        String sname = "snow";
-        for (int ii = 0; ii < defaults.get("snow").size; ii++) {
-            PolygonObstacle obj;
-            obj = new PolygonObstacle(defaults.get("snow").get(ii).asFloatArray(), 0, 0);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(defaults.getFloat("density", 0));
-            obj.setFriction(defaults.getFloat("friction", 0));
-            obj.setRestitution(defaults.getFloat("restitution", 0));
-            obj.setDrawScale(scale);
-            obj.setTexture(snowTextureRegion);
-            obj.setName(sname+ii);
-            addObject(obj);
-        }
-
-        JsonValue icicles = constants.get("icicles");
-        JsonValue iciclepos = icicles.get("pos");
-
-        iciclesList = new ArrayList<PolygonObstacle>();
-        for (int i = 0; i < icicles.get("pos").size; i ++){
-            PolygonObstacle icicle;
-            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            
-            icicle.setBodyType(BodyDef.BodyType.StaticBody);
-            icicle.setDensity(icicles.getFloat("density"));
-            icicle.setFriction(0);
-            icicle.setRestitution(icicles.getFloat("restitution"));
-            icicle.setDrawScale(scale);
-            icicle.setTexture(icicleStrip);
-            icicle.setName("icicle" + i);
-            addObject(icicle);
-            iciclesList.add(icicle);
-        }
-
-        JsonValue goal = constants.get("goal");
-        JsonValue goalpos=goal.get("pos");
-        BoxObstacle exit;
-        exit = new BoxObstacle( goalpos.getFloat(0), goalpos.getFloat(1), goal.getFloat(("width")), goal.getFloat(("height")));
-        exit.setBodyType(BodyDef.BodyType.StaticBody);
-        exit.setSensor(true);
-        exit.setDensity(goal.getFloat("density"));
-        exit.setFriction(goal.getFloat("friction"));
-        exit.setRestitution(goal.getFloat("restitution"));
-        exit.setDrawScale(scale);
-        exit.setName("exit");
-        exit.setTexture(exitStrip);
-        addObject(exit);
-
-        // Create player
-        dwidth  = levelLoader.avatarStrip.getRegionWidth()/scale.x;
-        dheight = levelLoader.avatarStrip.getRegionHeight()/scale.y;
-        PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool")/2;
-        PUNCH_TIME=constants.get("player").getInt("punch_time");
-        punchCooldown=constants.get("player").getInt("punch_cooldown");
-        levelLoader.avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
-        levelLoader.avatar.setDrawScale(scale);
-        levelLoader.avatar.setFilmStrip(levelLoader.avatarStrip);
-        levelLoader.avatar.setJumpHangingStrip(jumpHangingStrip);
-        levelLoader.avatar.setJumpLandingStrip(jumpLandingStrip);
-        levelLoader.avatar.setJumpRisingStrip(jumpRisingStrip);
-        levelLoader.avatar.setWalkingStrip(levelLoader.avatarStrip);
-        levelLoader.avatar.setThrowingStrip(throwingStrip);
-        levelLoader.avatar.setNormalStrip(levelLoader.avatarNormalStrip);
-        levelLoader.avatar.setPenguinWalkingStrip((penguinWalkingStrip));
-        levelLoader.avatar.setPenguinRollingStrip(penguinRollingStrip);
-        levelLoader.avatar.setPenguinStrip(penguins.get(0));
-        levelLoader.avatar.setPenguinOverlapStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
-        addObject(levelLoader.avatar);
-
-        for(int i = 0; i<num_penguins; i++){
-            levelLoader.avatar.getPenguins().get(i).setDrawScale(scale);
-            levelLoader.avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
-            levelLoader.avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
-            levelLoader.avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
-
-            addObject(levelLoader.avatar.getPenguins().get(i));
-            levelLoader.avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
-            levelLoader.avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
-            levelLoader.avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
-            levelLoader.avatar.getPenguins().get(i).setActive(false);
-            levelLoader.avatar.getPenguins().get(i).setSensor(true);
-        }
-
-        JsonValue enemy = constants.get("enemy");
-        JsonValue enemyPos = enemy.get("pos");
-        JsonValue enemyRange = enemy.get("range");
-        JsonValue enemyDir = enemy.get("is_hor");
-        for (int i=0; i < enemyPos.size; i++) { //multiple monsters
-            if (enemyDir.getBoolean(i)) {
-                Sealion sealion = new Sealion(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
-                        sealionStrip.getRegionWidth() / scale.x, sealionStrip.getRegionHeight() / scale.y,
-                        "sealion", enemyRange.getInt(i));
-                sealion.setFilmStrip(sealionStrip);
-                sealion.setDrawScale(scale);
-                sealions.add(sealion);
-                addObject(sealion);
-            } else {
-                Seal seal = new Seal(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
-                        sealStrip.getRegionWidth() / scale.x, sealStrip.getRegionHeight() / scale.y,
-                        "monster", enemyRange.getInt(i));
-                seal.setFilmStrip(sealStrip);
-                seal.setDrawScale(scale);
-                seals.add(seal);
-                addObject(seal);
-            }
-        }
-
-        JsonValue notes = constants.get("notes");
-        JsonValue notespos = notes.get("pos");
-        notesList = new ArrayList<Note>();
-        for (int i =0; i< notespos.size; i++) {
-            Note note = new Note(notes, noteLeftStrip.getRegionWidth() / scale.x, noteLeftStrip.getRegionHeight() / scale.y, i );
-            note.setFilmStrip(noteLeftStrip);
-            note.setDrawScale(scale);
-            addObject(note);
-            notesList.add(note);
-        }
-
-        JsonValue waters = constants.get("water");
-        JsonValue water_layout = waters.get("layout");
-        waterList= new ArrayList<Water>();
-        for (int i =0; i< water_layout.size; i++) {
-            water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
-            water.setFilmStrip(waterStrip, wavesStrip);
-            water.setDrawScale(scale);
-            waterList.add(water);
-//            water.setBodyType(BodyDef.BodyType.StaticBody);
-//            water.setSensor(true);
-            addObject(water);
-            water.setActive(false);
-            water.setAwake(false);
-        }
-
-        JsonValue ices = constants.get("ice");
-        JsonValue icepos = ices.get("pos");
-        Ice ice;
-        for (int i =0; i< icepos.size; i++) {
-            int w = ices.get("layout").get(i).getInt(0);
-            int h = ices.get("layout").get(i).getInt(1);
-            ice = new Ice(ices, i, w/scale.x, h/scale.y);
-            TextureRegion temp = new TextureRegion(iceTextureRegion);
-            temp.setRegionWidth(w);
-            temp.setRegionHeight(h);
-            ice.setDrawScale(scale);
-            ice.setTexture(temp);
-            ice.setRestitution(ices.getFloat("restitution"));
-            addObject(ice);
-        }
-
-        JsonValue fices = constants.get("floatingIce");
-        JsonValue ficepos = fices.get("pos");
-        FloatingIce fIce;
-        for (int i =0; i< ficepos.size; i++) {
-            int w = fices.get("layout").get(i).getInt(0);
-            int h = fices.get("layout").get(i).getInt(1);
-            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
-            TextureRegion temp = new TextureRegion(ficeTextureRegion);
-            temp.setRegionWidth(w);
-            temp.setRegionHeight(h);
-            fIce.setDrawScale(scale);
-            fIce.setTexture(temp);
-            fIce.setRestitution(fices.getFloat("restitution"));
-            addObject(fIce);
-        }
-
-        JsonValue mices = constants.get("movingIce");
-        JsonValue micepos = mices.get("pos");
-        MovingIce mIce;
-        for (int i =0; i< micepos.size; i++) {
-            int w = mices.get("layout").get(i).getInt(0);
-            int h = mices.get("layout").get(i).getInt(1);
-            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
-            TextureRegion temp = new TextureRegion(miceTextureRegion);
-            temp.setRegionWidth(w);
-            temp.setRegionHeight(h);
-            mIce.setDrawScale(scale);
-            mIce.setTexture(temp);
-
-            mIce.setRestitution(mices.getFloat("restitution"));
-            addObject(mIce);
-        }
-
-         */
 
     }
 
@@ -662,7 +438,9 @@ public class GameplayController extends WorldController implements ContactListen
 
         backToEdit();
         updateCamera();
-        updatePlayer();
+        if(!disableMovement){
+            updatePlayer();
+        }
 
         if (complete) {
             resetCountDown -= 1;
