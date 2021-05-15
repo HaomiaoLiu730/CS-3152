@@ -582,11 +582,11 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Try knocking down the icicle!", gameFont,2100, 360);
                     break;
                 case 4:
-                    canvas.drawText("Control the angle and strength for the throw. ", gameFont,720, 490);
-                    canvas.drawText("Don't let penguins fall into the sea! ", gameFont,720, 440);
-                    canvas.drawText("If they do, you can still pick them\nback up as they swim towards you!", gameFont, 1163, 75);
-                    canvas.drawText("Sometimes it's hard to pick penguins back up...", gameFont,1610, 380);
-                    canvas.drawText("So aim at your target carefully.", gameFont,1610, 340);
+                    canvas.drawText("Control the angle and strength for the throw. ", gameFont,630, 580);
+                    canvas.drawText("Don't let penguins fall into the sea! ", gameFont,630, 540);
+                    canvas.drawText("If they do, you can still pick them\nback up as they swim towards you!", gameFont, 1120, 420);
+                    canvas.drawText("Sometimes it's hard to pick penguins back up...", gameFont,1650, 340);
+                    canvas.drawText("So aim at your target carefully.", gameFont,1650, 300);
                     canvas.drawText("You have finished the tutorial levels!", gameFont,2800, 470);
                     canvas.drawText("Go explore the world!", gameFont,2800, 410);
                     break;
