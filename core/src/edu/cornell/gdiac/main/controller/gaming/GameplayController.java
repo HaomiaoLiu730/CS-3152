@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.audio.SoundBuffer;
 import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.model.*;
@@ -26,6 +27,7 @@ import edu.cornell.gdiac.util.ScreenListener;
 import javax.swing.*;
 import java.nio.file.LinkPermission;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_CONTINUE;
 import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_MENU;
@@ -63,6 +65,8 @@ public class GameplayController extends WorldController implements ContactListen
     private int timeCounter;
 
     private AssetLoader assetLoader = GDXRoot.assetLoader;
+
+    private float volume = 0.5f;
 
 
     /** number of notes collected*/
@@ -112,6 +116,8 @@ public class GameplayController extends WorldController implements ContactListen
 
     ArrayList<Integer> staticBodies = new ArrayList<>();
     ArrayList<Boolean> icicles_hit = new ArrayList<>();
+
+    long[] soundIDs = new long[7];
 
 
     /**
@@ -312,7 +318,8 @@ public class GameplayController extends WorldController implements ContactListen
         }
         for(int i=0;i<levelLoader.num_penguins;i++){
             if(i>6) break;
-            assetLoader.BackgroundMusic[i].loop();
+            soundIDs[i] = assetLoader.BackgroundMusic[i].loop(volume);
+
         }
 
     }
@@ -352,6 +359,23 @@ public class GameplayController extends WorldController implements ContactListen
 
     @Override
     public void update(float dt) {
+        if(InputController.getInstance().isLowerVolume()){
+            System.out.println("lower volumen");
+            volume -= 0.01;
+            if(volume <0 ) volume =0;
+            for(int i=0;i<num_notes;i++){
+                assetLoader.BackgroundMusic[i].setVolume(soundIDs[i],volume);
+            }
+
+        }
+        if(InputController.getInstance().isHigherVolume()){
+            System.out.println("higher volumen");
+            volume += 0.01;
+            if(volume >1) volume = 1;
+            for(int i=0;i<num_notes;i++){
+                assetLoader.BackgroundMusic[i].setVolume(soundIDs[i],volume);
+            }
+        }
         if(isPaused){
             if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
                     ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
@@ -379,7 +403,11 @@ public class GameplayController extends WorldController implements ContactListen
             return;
         }
 
-        if (InputController.getInstance().touchUp() && Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL && Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL) {
+        if (InputController.getInstance().touchUp() &&
+                Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL &&
+                Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL &&
+                !complete
+        ) {
             isPaused = true;
             levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
             disableMovement = true;
@@ -458,7 +486,7 @@ public class GameplayController extends WorldController implements ContactListen
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
             levelLoader.avatar.setFilmStrip(assetLoader.punchStrip);
             levelLoader.avatar.setPunching(true);
-            assetLoader.punching.play();
+            assetLoader.punching.play(volume);
             punchCooldown = PUNCH_COOLDOWN;
         } else {
             punchCooldown -= 1;
@@ -532,7 +560,7 @@ public class GameplayController extends WorldController implements ContactListen
         if(levelLoader.avatar.isJumping()&&InputController.getInstance().didPrimary()){
             levelLoader.avatar.moveState = Player.animationState.jumpRising;
             levelLoader.avatar.setFilmStrip(assetLoader.jumpRisingStrip);
-            assetLoader.jumping.play();
+            assetLoader.jumping.play(volume);
         }
         levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), assetLoader.throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
         canThrow = true;
@@ -655,7 +683,7 @@ public class GameplayController extends WorldController implements ContactListen
             if(!endSoundPlaying) {
                 for(int i=0;i<7;i++)
                     assetLoader.BackgroundMusic[i].stop();
-                assetLoader.winning.play(0.5f, 1, 0);
+                assetLoader.winning.play(volume);
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
@@ -669,7 +697,7 @@ public class GameplayController extends WorldController implements ContactListen
             if(!endSoundPlaying) {
                 for(int i=0;i<7;i++)
                     assetLoader.BackgroundMusic[i].stop();
-                assetLoader.losing.play(0.5f, 1, 0);
+                assetLoader.losing.play(volume);
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
@@ -716,7 +744,7 @@ public class GameplayController extends WorldController implements ContactListen
                         levelLoader.avatar.moveState == Player.animationState.jumpRising){
                     levelLoader.avatar.moveState = Player.animationState.jumpLanding;
                     levelLoader.avatar.setFilmStrip(assetLoader.jumpLandingStrip);
-                    assetLoader.bearLanding.play();
+                    assetLoader.bearLanding.play(volume);
                 }
                 sensorFixtures.add(levelLoader.avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
@@ -730,7 +758,7 @@ public class GameplayController extends WorldController implements ContactListen
                     p.setGrounded(true);
                     if(p.isThrowOut() && p.getBodyType()== BodyDef.BodyType.DynamicBody){
                         if(p.getSoundPlaying())
-                            assetLoader.penguinLanding.play();
+                            assetLoader.penguinLanding.play(volume);
                         p.setSoundPlaying(false);
                     }
                     sensorFixtures.add(p == bd1 ? fix2 : fix1); // Could have more than one ground
@@ -844,9 +872,9 @@ public class GameplayController extends WorldController implements ContactListen
             //contact for moving ice bar
             if(bd1.getName() == "movingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-                if(bd2.getName().startsWith("sealion") ){
-                    Sealion m = (Sealion) bd2;
-                    ((MovingIce) master).addMonster(m);
+                if(bd2.getName().startsWith("penguin") ){
+                    Penguin m = (Penguin) bd2;
+                    ((MovingIce) master).addPenguin(m);
                 }
                 else if (bd2 instanceof Player){
                     Player p = (Player) bd2;
@@ -866,9 +894,9 @@ public class GameplayController extends WorldController implements ContactListen
 
             if(bd2.getName() == "movingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-                if(bd1.getName().startsWith("sealion") ){
-                    Sealion m = (Sealion) bd1;
-                    ((MovingIce) master).addMonster(m);
+                if(bd1.getName().startsWith("penguin") ){
+                    Penguin m = (Penguin) bd1;
+                    ((MovingIce) master).addPenguin(m);
                 }
                 else if (bd1 instanceof Player){
                     Player p = (Player) bd1;
@@ -958,8 +986,8 @@ public class GameplayController extends WorldController implements ContactListen
         if(bd1.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
             if(bd2.getName().startsWith("sealion") ){
-                Sealion m = (Sealion) bd2;
-                ((MovingIce) master).removeMonster(m);
+                Penguin m = (Penguin) bd2;
+                ((MovingIce) master).removePenguin(m);
             }
             else if (bd2 instanceof Player){
                 ((MovingIce) master).removePlyaer();
@@ -970,8 +998,8 @@ public class GameplayController extends WorldController implements ContactListen
         if(bd2.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
             if(bd1.getName().startsWith("sealion") ){
-                Sealion m = (Sealion) bd1;
-                ((MovingIce) master).removeMonster(m);
+                Penguin m = (Penguin) bd1;
+                ((MovingIce) master).removePenguin(m);
             }
             else if (bd1 instanceof Player){
                 ((MovingIce) master).removePlyaer();
