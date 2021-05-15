@@ -22,29 +22,17 @@ public class AssetLoader {
     public static FilmStrip avatarStrip;
     /** The texture for the player */
     public static FilmStrip avatarNormalStrip;
+    public static ArrayList<FilmStrip> penguins = new ArrayList<>();
     /** The texture for the penguin */
     public static FilmStrip penguinWalkingStrip;
     /** The texture for the penguin rolling */
     public static FilmStrip penguinRollingStrip;
-    public static ArrayList<FilmStrip> penguins = new ArrayList<>();
-    /** The texture for the monster */
-    public static FilmStrip sealionStrip;
-    /** The texture for the monster */
-    public static FilmStrip sealStrip;
     /** The texture for the waves */
     public static FilmStrip wavesStrip;
     /** The texture for the water */
     public static FilmStrip waterStrip;
     /** The texture for the ice */
     public static FilmStrip iceStrip;
-    /** The texture for the monster attacking */
-    public static FilmStrip attackStrip;
-    /** The texture for the arrow */
-    public static Texture arrowTexture;
-    /** The texture for the energy bar */
-    public static Texture energyBarTexture;
-    /** The texture for the energy bar */
-    public static Texture energyBarOutlineTexture;
     /** The texture for the pure white*/
     public static Texture whiteTexture;
     /** The texture for the pure black*/
@@ -68,8 +56,10 @@ public class AssetLoader {
     /** The texture for the exit */
     public static FilmStrip exitStrip;
     public static FilmStrip teachThrowingStrip;
-    /** The texture for the exit */
+    /** The texture for the dead */
     public static TextureRegion deadStrip;
+    /** The texture for the win */
+    public static TextureRegion victoryStrip;
 
 
     /** The texture for the player punching */
@@ -114,16 +104,8 @@ public class AssetLoader {
         penguins.add(new FilmStrip(directory.getEntry("penguin6", Texture.class), 1, 1));
         penguins.add(new FilmStrip(directory.getEntry("penguin7", Texture.class), 1, 1));
         avatarNormalStrip = new FilmStrip(directory.getEntry("avatarNormal", Texture.class), 1, 1);
-        penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
-        penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
-        sealionStrip = new FilmStrip(directory.getEntry("sealion", Texture.class), 1, 1);
-        sealStrip = new FilmStrip(directory.getEntry("seal", Texture.class), 1, 1);
-        attackStrip = new FilmStrip(directory.getEntry("monsterAttacking", Texture.class), 1, 2);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 1, 1);
         exitStrip = new FilmStrip(directory.getEntry("exit", Texture.class), 1, 1);
-        arrowTexture = directory.getEntry("arrow", Texture.class);
-        energyBarOutlineTexture = directory.getEntry("energyBarOutline", Texture.class);
-        energyBarTexture = directory.getEntry("energyBar", Texture.class);
         punchStrip = new FilmStrip(directory.getEntry("avatarPunching", Texture.class), 1, 1);
         noteLeftStrip = new FilmStrip(directory.getEntry("notcollected", Texture.class), 1, 1);
         noteCollectedStrip = new FilmStrip(directory.getEntry("collected", Texture.class), 1, 1);
@@ -131,6 +113,8 @@ public class AssetLoader {
         jumpHangingStrip = new FilmStrip(directory.getEntry("jumpHanging", Texture.class), 1, 1);
         jumpLandingStrip = new FilmStrip(directory.getEntry("jumpLanding", Texture.class), 1, 3);
         throwingStrip = new FilmStrip(directory.getEntry("avatarThrow", Texture.class), 1, 6);
+        penguinWalkingStrip = new FilmStrip(directory.getEntry("penguinWalking", Texture.class), 1, 29);
+        penguinRollingStrip = new FilmStrip(directory.getEntry("penguinRolling", Texture.class), 1, 1);
         icicleStrip = new FilmStrip(directory.getEntry("icicle", Texture.class), 10, 165);
         iceStrip= new FilmStrip(directory.getEntry("ice", Texture.class), 1, 1);
         snowTextureRegion = new TextureRegion(directory.getEntry("snow", Texture.class));
@@ -145,6 +129,7 @@ public class AssetLoader {
         pauseScreen = new TextureRegion(directory.getEntry("pauseScreen",Texture.class));
         teachThrowingStrip = new FilmStrip(directory.getEntry("teachThrowing", Texture.class), 12, 8);;
         deadStrip = new TextureRegion(directory.getEntry("dead",Texture.class));
+        victoryStrip =  new TextureRegion(directory.getEntry("victory",Texture.class));
 
         hitIcicle = directory.getEntry("hitIcicle", SoundBuffer.class);
         punching = directory.getEntry("punching", SoundBuffer.class);

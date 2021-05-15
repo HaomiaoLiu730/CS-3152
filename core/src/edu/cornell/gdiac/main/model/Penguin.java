@@ -341,14 +341,13 @@ public class Penguin extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        if(index != 0 && !isThrowOut()){
+        float effect = faceRight ? 1.0f : -1.0f;
+        if(index == -1 && Player.numPenguins > 0){
+            canvas.draw(overlapStrip, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0, effect, 1.0f);
             return;
         }
-        float effect = faceRight ? 1.0f : -1.0f;
         if(isThrownOut){
             canvas.draw(filmStrip, Color.WHITE, filmStrip.getRegionWidth()/2f, filmStrip.getRegionHeight()/2f, getX()*drawScale.x, getY()*drawScale.y-10f, getAngle(), 1f, 1f);
-        }else if (!isLast){
-            canvas.draw(overlapStrip, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, 0, effect, 1.0f);
         }
     }
 

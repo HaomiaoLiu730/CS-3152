@@ -90,7 +90,7 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
 
     public void update(float delta) {
         inputController.readInput();
-        if(Math.abs(Gdx.input.getX() - 660) <= 75 && Math.abs(720 - Gdx.input.getY() - 335) <= 20){
+        if(Math.abs(Gdx.input.getX() - 645) <= 95 && Math.abs(720 - Gdx.input.getY() - 340) <= 35){
             isHoverLevel=true;
             if (InputController.getInstance().touchUp())
                 listener.updateScreen(this, 0);
@@ -121,7 +121,7 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
 
     public void drawStart(float scale_play, float scale_level, int x_play, int x_level){
         letterFont.getData().setScale(scale_play);
-        canvas.drawText(letterFont, "Play", x_play, 425);
+        canvas.drawText(letterFont, "Play", x_play, 435);
         letterFont.getData().setScale(scale_level);
         canvas.drawText(letterFont, "Level Select", x_level, 350);
 
@@ -130,13 +130,13 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
         canvas.begin();
         canvas.drawOverlay(front, true);
         if(!isHoverLevel&&!isHoverPlay) {
-            drawStart(1,1,640,600);
+            drawStart(0.95f,0.95f,615,557);
         }
         else if (isHoverLevel){
-            drawStart(1,1.1f,640,594);
+            drawStart(0.95f,1f,615,555);
         }
         else if(isHoverPlay){
-            drawStart(1.1f,1,638,600);
+            drawStart(1f,0.95f,614,557);
 
         }
         canvas.end();

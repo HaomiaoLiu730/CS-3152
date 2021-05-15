@@ -75,41 +75,6 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
-    "flight0": {
-      "file":     "images/menu/flight0.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "flight1": {
-      "file":     "images/menu/flight1.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "flight2": {
-      "file":     "images/menu/flight2.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "flight3": {
-      "file":     "images/menu/flight3.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "flight4": {
-      "file":     "images/menu/flight4.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "flight5": {
-      "file":     "images/menu/flight5.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
-    "flight6": {
-      "file":     "images/menu/flight6.png",
-      "minFilter": "linear",
-      "magFilter": "linear"
-    },
     "penguin1": {
       "file":     "images/menu/1.png",
       "minFilter": "linear",
@@ -149,12 +114,82 @@
       "file":     "images/menu/backArrow.png",
       "minFilter": "linear",
       "magFilter": "linear"
+    },
+    "dot1": {
+      "file": "images/menu/one.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot2": {
+      "file": "images/menu/two.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot3": {
+      "file": "images/menu/three.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot4": {
+      "file": "images/menu/four.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot5": {
+      "file": "images/menu/five.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "dot6": {
+      "file": "images/menu/six.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "last1": {
+      "file": "images/menu/lastOne.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "last2": {
+      "file": "images/menu/lastTwo.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "last3": {
+      "file": "images/menu/lastThree.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "last4": {
+      "file": "images/menu/lastFour.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "last5": {
+      "file": "images/menu/lastFive.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "last6": {
+      "file": "images/menu/lastSix.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "last7": {
+      "file": "images/menu/lastSeven.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
     }
   },
   "fonts": {
-    "gameFont": {
+    "gameFont32": {
       "file": "fonts/AmaticSC-Bold.ttf",
-      "size": 24,
+      "size": 128,
+      "color": "black"
+    },
+    "gameFont64": {
+      "file": "fonts/AmaticSC-Bold.ttf",
+      "size": 64,
       "color": "black"
     }
   },

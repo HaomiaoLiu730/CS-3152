@@ -36,23 +36,6 @@ public class GameplayController extends WorldController implements ContactListen
     private ScreenListener listener;
     private static final float MOUSE_TOL = 50f;
 
-//    private AssetDirectory internal;
-    /** Reference to the character levelLoader.avatar */
-//    private Player levelLoader.avatar;
-    /** Reference to the seal */
-//    private ArrayList<Seal> seals = new ArrayList<>();
-    /** Reference to the sealion */
-//    private ArrayList<Sealion> sealions = new ArrayList<>();
-    /** Reference to the icicles */
-//    private ArrayList<PolygonObstacle> iciclesList;
-    /** Reference to the water */
-//    private Water water;
-    /** Reference to the ice */
-//    private Ice ice;
-    /** Reference to the list of notes */
-//    private ArrayList<Note> notesList;
-    /** Reference to the list of waters */
-//    private ArrayList<Water> waterList;
     /** Position of Reset button */
     private Vector2 resetPos;
     /** Position of Quit button */
@@ -89,10 +72,9 @@ public class GameplayController extends WorldController implements ContactListen
 
     private Texture background;
     private BitmapFont gameFont ;
-//    private JsonValue constants;
     private boolean endSoundPlaying;
 
-//    /** number of penguins */
+    /** number of penguins */
     private int num_penguins;
     /** number of notes */
     private int num_notes;
@@ -154,21 +136,10 @@ public class GameplayController extends WorldController implements ContactListen
         this.level = level;
         endSoundPlaying = false;
 
-//        internal = new AssetDirectory(isEditingView ? "levelEditor.json" :jsonFile);
-//        internal.loadAssets();
-//        internal.finishLoading();
-//        background = internal.getEntry("background", Texture.class);
-//        gameFont = internal.getEntry("gameFont", BitmapFont.class);
-
         collisionController = new CollisionController(width, height);
         sensorFixtures = new ObjectSet<Fixture>();
 
-//        constants = internal.getEntry( "level"+(level+1), JsonValue.class );
-//        JsonValue defaults = constants.get("defaults");
-//        num_penguins = defaults.getInt("num_penguins",0);
-//        num_notes = defaults.getInt("num_notes",0);
         this.isEditingView = isEditingView;
-//        grounded = defaults.get("grounded").asFloatArray();
 
     }
 
@@ -281,16 +252,8 @@ public class GameplayController extends WorldController implements ContactListen
         collisionController = new CollisionController(1280, 720);
 
         sensorFixtures = new ObjectSet<Fixture>();
-//        internal = new AssetDirectory(isEditingView ? "levelEditor.json" : this.jsonFile);
-//        internal.loadAssets();
-//        internal.finishLoading();
         background = levelLoader.background;
-//        background = internal.getEntry("background", Texture.class);
         gameFont = levelLoader.gameFont;
-
-
-//        constants = internal.getEntry( "level"+(this.currentLevelNum+1), JsonValue.class );
-//        JsonValue defaults = constants.get("defaults");
 
     }
 
@@ -317,6 +280,10 @@ public class GameplayController extends WorldController implements ContactListen
             p.setActive(false);
             p.setSensor(true);
         }
+        addObject(levelLoader.avatar.pseudoPenguin);
+        levelLoader.avatar.pseudoPenguin.getBody().setType(BodyDef.BodyType.DynamicBody);
+        levelLoader.avatar.pseudoPenguin.setActive(false);
+        levelLoader.avatar.pseudoPenguin.setSensor(true);
 
         for(Note note: levelLoader.notesList){
             addObject(note);
@@ -347,193 +314,6 @@ public class GameplayController extends WorldController implements ContactListen
             if(i>6) break;
             assetLoader.BackgroundMusic[i].loop();
         }
-
-
-        /**
-        // Add level goal
-        float dwidth, dheight;
-        JsonValue defaults = constants.get("defaults");
-        String sname = "snow";
-        for (int ii = 0; ii < defaults.get("snow").size; ii++) {
-            PolygonObstacle obj;
-            obj = new PolygonObstacle(defaults.get("snow").get(ii).asFloatArray(), 0, 0);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(defaults.getFloat("density", 0));
-            obj.setFriction(defaults.getFloat("friction", 0));
-            obj.setRestitution(defaults.getFloat("restitution", 0));
-            obj.setDrawScale(scale);
-            obj.setTexture(snowTextureRegion);
-            obj.setName(sname+ii);
-            addObject(obj);
-        }
-
-        JsonValue icicles = constants.get("icicles");
-        JsonValue iciclepos = icicles.get("pos");
-
-        iciclesList = new ArrayList<PolygonObstacle>();
-        for (int i = 0; i < icicles.get("pos").size; i ++){
-            PolygonObstacle icicle;
-            icicle = new PolygonObstacle(icicles.get("layout").get(i).asFloatArray(), iciclepos.get(i).getFloat(0), iciclepos.get(i).getFloat(1));            
-            icicle.setBodyType(BodyDef.BodyType.StaticBody);
-            icicle.setDensity(icicles.getFloat("density"));
-            icicle.setFriction(0);
-            icicle.setRestitution(icicles.getFloat("restitution"));
-            icicle.setDrawScale(scale);
-            icicle.setTexture(icicleStrip);
-            icicle.setName("icicle" + i);
-            addObject(icicle);
-            iciclesList.add(icicle);
-        }
-
-        JsonValue goal = constants.get("goal");
-        JsonValue goalpos=goal.get("pos");
-        BoxObstacle exit;
-        exit = new BoxObstacle( goalpos.getFloat(0), goalpos.getFloat(1), goal.getFloat(("width")), goal.getFloat(("height")));
-        exit.setBodyType(BodyDef.BodyType.StaticBody);
-        exit.setSensor(true);
-        exit.setDensity(goal.getFloat("density"));
-        exit.setFriction(goal.getFloat("friction"));
-        exit.setRestitution(goal.getFloat("restitution"));
-        exit.setDrawScale(scale);
-        exit.setName("exit");
-        exit.setTexture(exitStrip);
-        addObject(exit);
-
-        // Create player
-        dwidth  = levelLoader.avatarStrip.getRegionWidth()/scale.x;
-        dheight = levelLoader.avatarStrip.getRegionHeight()/scale.y;
-        PUNCH_COOLDOWN=constants.get("player").getInt("punch_cool")/2;
-        PUNCH_TIME=constants.get("player").getInt("punch_time");
-        punchCooldown=constants.get("player").getInt("punch_cooldown");
-        levelLoader.avatar = new Player(constants.get("player"),constants.get("penguins"), dwidth, dheight-0.5f, num_penguins, penguins);
-        levelLoader.avatar.setDrawScale(scale);
-        levelLoader.avatar.setFilmStrip(levelLoader.avatarStrip);
-        levelLoader.avatar.setJumpHangingStrip(jumpHangingStrip);
-        levelLoader.avatar.setJumpLandingStrip(jumpLandingStrip);
-        levelLoader.avatar.setJumpRisingStrip(jumpRisingStrip);
-        levelLoader.avatar.setWalkingStrip(levelLoader.avatarStrip);
-        levelLoader.avatar.setThrowingStrip(throwingStrip);
-        levelLoader.avatar.setNormalStrip(levelLoader.avatarNormalStrip);
-        levelLoader.avatar.setPenguinWalkingStrip((penguinWalkingStrip));
-        levelLoader.avatar.setPenguinRollingStrip(penguinRollingStrip);
-        levelLoader.avatar.setPenguinStrip(penguins.get(0));
-        levelLoader.avatar.setPenguinOverlapStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
-        addObject(levelLoader.avatar);
-
-        for(int i = 0; i<num_penguins; i++){
-            levelLoader.avatar.getPenguins().get(i).setDrawScale(scale);
-            levelLoader.avatar.getPenguins().get(i).setWalkingStrip(penguinWalkingStrip);
-            levelLoader.avatar.getPenguins().get(i).setRolllingFilmStrip(penguinRollingStrip);
-            levelLoader.avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
-
-            addObject(levelLoader.avatar.getPenguins().get(i));
-            levelLoader.avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
-            levelLoader.avatar.getPenguins().get(i).setFilmStrip(penguinWalkingStrip);
-            levelLoader.avatar.getPenguins().get(i).setOverlapFilmStrip(penguins.get(levelLoader.avatar.getNumPenguins()-1));
-            levelLoader.avatar.getPenguins().get(i).setActive(false);
-            levelLoader.avatar.getPenguins().get(i).setSensor(true);
-        }
-
-        JsonValue enemy = constants.get("enemy");
-        JsonValue enemyPos = enemy.get("pos");
-        JsonValue enemyRange = enemy.get("range");
-        JsonValue enemyDir = enemy.get("is_hor");
-        for (int i=0; i < enemyPos.size; i++) { //multiple monsters
-            if (enemyDir.getBoolean(i)) {
-                Sealion sealion = new Sealion(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
-                        sealionStrip.getRegionWidth() / scale.x, sealionStrip.getRegionHeight() / scale.y,
-                        "sealion", enemyRange.getInt(i));
-                sealion.setFilmStrip(sealionStrip);
-                sealion.setDrawScale(scale);
-                sealions.add(sealion);
-                addObject(sealion);
-            } else {
-                Seal seal = new Seal(enemy, enemyPos.get(i).getFloat(0), enemyPos.get(i).getFloat(1),
-                        sealStrip.getRegionWidth() / scale.x, sealStrip.getRegionHeight() / scale.y,
-                        "monster", enemyRange.getInt(i));
-                seal.setFilmStrip(sealStrip);
-                seal.setDrawScale(scale);
-                seals.add(seal);
-                addObject(seal);
-            }
-        }
-
-        JsonValue notes = constants.get("notes");
-        JsonValue notespos = notes.get("pos");
-        notesList = new ArrayList<Note>();
-        for (int i =0; i< notespos.size; i++) {
-            Note note = new Note(notes, noteLeftStrip.getRegionWidth() / scale.x, noteLeftStrip.getRegionHeight() / scale.y, i );
-            note.setFilmStrip(noteLeftStrip);
-            note.setDrawScale(scale);
-            addObject(note);
-            notesList.add(note);
-        }
-
-        JsonValue waters = constants.get("water");
-        JsonValue water_layout = waters.get("layout");
-        waterList= new ArrayList<Water>();
-        for (int i =0; i< water_layout.size; i++) {
-            water = new Water(waters, water_layout.get(i).getFloat(0),water_layout.get(i).getFloat(1), "water",i);
-            water.setFilmStrip(waterStrip, wavesStrip);
-            water.setDrawScale(scale);
-            waterList.add(water);
-//            water.setBodyType(BodyDef.BodyType.StaticBody);
-//            water.setSensor(true);
-            addObject(water);
-            water.setActive(false);
-            water.setAwake(false);
-        }
-
-        JsonValue ices = constants.get("ice");
-        JsonValue icepos = ices.get("pos");
-        Ice ice;
-        for (int i =0; i< icepos.size; i++) {
-            int w = ices.get("layout").get(i).getInt(0);
-            int h = ices.get("layout").get(i).getInt(1);
-            ice = new Ice(ices, i, w/scale.x, h/scale.y);
-            TextureRegion temp = new TextureRegion(iceTextureRegion);
-            temp.setRegionWidth(w);
-            temp.setRegionHeight(h);
-            ice.setDrawScale(scale);
-            ice.setTexture(temp);
-            ice.setRestitution(ices.getFloat("restitution"));
-            addObject(ice);
-        }
-
-        JsonValue fices = constants.get("floatingIce");
-        JsonValue ficepos = fices.get("pos");
-        FloatingIce fIce;
-        for (int i =0; i< ficepos.size; i++) {
-            int w = fices.get("layout").get(i).getInt(0);
-            int h = fices.get("layout").get(i).getInt(1);
-            fIce = new FloatingIce(fices, i, w/scale.x, h/scale.y);
-            TextureRegion temp = new TextureRegion(ficeTextureRegion);
-            temp.setRegionWidth(w);
-            temp.setRegionHeight(h);
-            fIce.setDrawScale(scale);
-            fIce.setTexture(temp);
-            fIce.setRestitution(fices.getFloat("restitution"));
-            addObject(fIce);
-        }
-
-        JsonValue mices = constants.get("movingIce");
-        JsonValue micepos = mices.get("pos");
-        MovingIce mIce;
-        for (int i =0; i< micepos.size; i++) {
-            int w = mices.get("layout").get(i).getInt(0);
-            int h = mices.get("layout").get(i).getInt(1);
-            mIce = new MovingIce(mices, i, w/scale.x, h/scale.y);
-            TextureRegion temp = new TextureRegion(miceTextureRegion);
-            temp.setRegionWidth(w);
-            temp.setRegionHeight(h);
-            mIce.setDrawScale(scale);
-            mIce.setTexture(temp);
-
-            mIce.setRestitution(mices.getFloat("restitution"));
-            addObject(mIce);
-        }
-
-         */
 
     }
 
@@ -658,7 +438,9 @@ public class GameplayController extends WorldController implements ContactListen
 
         backToEdit();
         updateCamera();
-        updatePlayer();
+        if(!disableMovement){
+            updatePlayer();
+        }
 
         if (complete) {
             resetCountDown -= 1;
@@ -777,35 +559,36 @@ public class GameplayController extends WorldController implements ContactListen
         if(levelLoader.jsonFile.startsWith("europe")){
             switch (levelLoader.getLevel()){
                 case 0:
-                    canvas.drawText("Use 'WASD' or arrow keys \n to control movement", gameFont,500, 500);
-                    canvas.drawText("Ice bars can tilt", gameFont,1280, 320);
-                    canvas.drawText("you would lose one penguin \n to collect a note",gameFont,1800, 500);
-                    canvas.drawText("Collect all the notes to pass the level!", gameFont, 1950, 300);
+                    canvas.drawText("Use 'WASD' or arrow keys \nto move or jump.", gameFont,500, 500);
+                    canvas.drawText("Ice bars will tilt.", gameFont,1280, 320);
+                    canvas.drawText("Approach a note to collect it, \nyou will lose a penguin for each note you collect. ",gameFont,1800, 500);
+                    canvas.drawText("Collect all the notes to pass the level! ", gameFont, 1950, 300);
                     break;
                 case 1:
-                    canvas.drawText("Some ice bars can also move!", gameFont,1500, 400);
+                    canvas.drawText("Some ice bars move!", gameFont,1500, 400);
                     break;
                 case 2:
                     assetLoader.teachThrowingStrip.nextFrame();
-                    canvas.drawText("Try knocking down the icicles by throwing penguins", gameFont,700, 660);
+                    canvas.drawText("Throw the penguin at the icicle to knock it down!", gameFont,640, 640);
+                    canvas.drawText("You can cancel throwing by pressing the space bar", gameFont,640, 600);
                     canvas.draw(assetLoader.teachThrowingStrip, 900, 400);
-                    canvas.drawText("Nearby penguins will be recollected!", gameFont,860, 360);
-                    canvas.drawText("Try to throw the penguin \nat the note to collect it!", gameFont,2000, 600);
+                    canvas.drawText("Nearby penguins will be recollected", gameFont,860, 360);
+                    canvas.drawText("Throw the a penguin \nat the note to collect it!", gameFont,2000, 600);
                     break;
                 case 3:
-                    canvas.drawText("Some ice bars can float around. ", gameFont,860, 400);
-                    canvas.drawText("Jump on the ice bar and then hit down the icicle! ", gameFont,860, 340);
-                    canvas.drawText("How to get on to the high platform?", gameFont,2100, 420);
-                    canvas.drawText("Maybe try hit down the icicle!", gameFont,2100, 360);
+                    canvas.drawText("Darker ice bars can float to the side. ", gameFont,860, 400);
+                    canvas.drawText("Jump on the ice bar and then knock down the icicle! ", gameFont,860, 340);
+                    canvas.drawText("How do you get to higher platforms?", gameFont,2100, 420);
+                    canvas.drawText("Try knocking down the icicle!", gameFont,2100, 360);
                     break;
                 case 4:
-                    canvas.drawText("Control the throwing angle and strength. ", gameFont,750, 500);
-                    canvas.drawText("Don't let penguins fall into sea! ", gameFont,750, 440);
-                    canvas.drawText("If they do, you can still pick them back \nas they swim towards you!", gameFont, 1163, 70);
-                    canvas.drawText("Sometimes it's hard to pick penguins back...", gameFont,1610, 400);
-                    canvas.drawText("So aim for your target carefully. ", gameFont,1610, 340);
-                    canvas.drawText("You are done with tutorial levels!", gameFont,2800, 470);
-                    canvas.drawText("Go explore the world :)", gameFont,2800, 410);
+                    canvas.drawText("Control the angle and strength for the throw. ", gameFont,630, 580);
+                    canvas.drawText("Don't let penguins fall into the sea! ", gameFont,630, 540);
+                    canvas.drawText("If they do, you can still pick them\nback up as they swim towards you!", gameFont, 1120, 420);
+                    canvas.drawText("Sometimes it's hard to pick penguins back up...", gameFont,1650, 340);
+                    canvas.drawText("So aim at your target carefully.", gameFont,1650, 300);
+                    canvas.drawText("You have finished the tutorial levels!", gameFont,2800, 470);
+                    canvas.drawText("Go explore the world!", gameFont,2800, 410);
                     break;
                 default:
                     break;
@@ -876,7 +659,7 @@ public class GameplayController extends WorldController implements ContactListen
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
+            canvas.drawFixed(assetLoader.victoryStrip, 460, 300);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         } else if (failed && !resetClick) {
@@ -1002,33 +785,59 @@ public class GameplayController extends WorldController implements ContactListen
                 setComplete(true);
             }
 
-            //contact for floating ice bar
-            if(bd1.getName() == "floatingIceBar"){
-                ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-                if(bd2.getName().startsWith("icicle") && bd2.getMass()!=0 ){
-                    float force = (float) Math.log(bd2.getMass())/75;
-                    if (bd2.getX()<bd1.getX()){
-                        force = -force;
-                    }
-                    ((FloatingIce)master).hitByIcicle(force);
+
+            if((bd1.getName() == bd2.getName()) && bd1.getName() == "floatingIceBar"){
+                FloatingIce master1 = (FloatingIce)((BoxObstacle)bd1).getMaster();
+                FloatingIce master2 = (FloatingIce)((BoxObstacle)bd2).getMaster();
+                if ( master1.getMomentum()>0){
+                    master2.hitByFloatingIce(master1.getMomentum()/2, master1.getDirection());
+                    master1.hitByFloatingIce(master1.getMomentum()/4,master1.getDirection());
                 }
-                else if (!(bd2 instanceof Penguin) && !(bd2 instanceof Player)){
-                    ((FloatingIce)master).offsetX();
+                else {
+                    master1.hitByFloatingIce(master2.getMomentum()/2, master2.getDirection());
+                    master2.hitByFloatingIce(master2.getMomentum()/4, master2.getDirection());
                 }
 
             }
+            else {
 
-            if(bd2.getName() == "floatingIceBar"){
-                ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-                if(bd1.getName().startsWith("icicle") && bd1.getMass()!=0){
-                    float force = (float) Math.log(bd1.getMass())/75;
-                    if (bd1.getX()<bd2.getX()){
-                        force = -force;
+
+                //contact for floating ice bar
+                if (bd1.getName() == "floatingIceBar") {
+                    ComplexObstacle master = ((BoxObstacle) bd1).getMaster();
+                    if (bd2.getName().startsWith("icicle") && bd2.getMass() != 0) {
+                        float force = (float) Math.log(bd2.getMass()) / 75;
+                        if (bd2.getX() < bd1.getX()) {
+                            force = -force;
+                        }
+                        ((FloatingIce) master).hitByIcicle(force);
+                    } else if (!(bd2 instanceof Penguin) && !(bd2 instanceof Player)) {
+                        WorldManifold worldmanifold;
+                        worldmanifold = contact.getWorldManifold();
+                        if (bd1.getX() < worldmanifold.getPoints()[0].x)
+                            ((FloatingIce) master).offsetX(1);
+                        else
+                            ((FloatingIce) master).offsetX(-1);
                     }
-                    ((FloatingIce)master).hitByIcicle(force);
+
                 }
-                else if (!(bd1 instanceof Penguin)&& !(bd1 instanceof Player)){
-                    ((FloatingIce)master).offsetX();
+
+                if (bd2.getName() == "floatingIceBar") {
+                    ComplexObstacle master = ((BoxObstacle) bd2).getMaster();
+                    if (bd1.getName().startsWith("icicle") && bd1.getMass() != 0) {
+                        float force = (float) Math.log(bd1.getMass()) / 75;
+                        if (bd1.getX() < bd2.getX()) {
+                            force = -force;
+                        }
+                        ((FloatingIce) master).hitByIcicle(force);
+                    } else if (!(bd1 instanceof Penguin) && !(bd1 instanceof Player)) {
+                        WorldManifold worldmanifold;
+                        worldmanifold = contact.getWorldManifold();
+                        if (bd2.getX() < worldmanifold.getPoints()[0].x)
+                            ((FloatingIce) master).offsetX(1);
+                        else
+                            ((FloatingIce) master).offsetX(-1);
+                    }
                 }
             }
 
@@ -1044,10 +853,13 @@ public class GameplayController extends WorldController implements ContactListen
                     ((MovingIce) master).addPlayer(p);
                 }
                 else  if (! (bd2 instanceof Penguin)){
-//                    if(bd1.getX()<bd2.getX())
-//                        ((MovingIce) master).hitSomething(-1);
-//                    else
-//                        ((MovingIce) master).hitSomething(1);
+                    WorldManifold worldmanifold;
+                    worldmanifold = contact.getWorldManifold();
+                    if(bd1.getX()<worldmanifold.getPoints()[0].x) {
+                        ((MovingIce) master).hitSomething(1);
+                    }
+                    else
+                        ((MovingIce) master).hitSomething(-1);
                 }
 
             }
@@ -1063,10 +875,14 @@ public class GameplayController extends WorldController implements ContactListen
                     ((MovingIce) master).addPlayer(p);
                 }
                 else  if (! (bd1 instanceof Penguin)){
-//                    if(bd2.getX()<bd1.getX())
-//                        ((MovingIce) master).hitSomething(-1);
-//                    else
-//                        ((MovingIce) master).hitSomething(1);
+                    WorldManifold worldmanifold;
+                    worldmanifold = contact.getWorldManifold();
+
+                    if(bd2.getX()<worldmanifold.getPoints()[0].x) {
+                        ((MovingIce) master).hitSomething(1);
+                    }
+                    else
+                        ((MovingIce) master).hitSomething(-1);
                 }
 
             }

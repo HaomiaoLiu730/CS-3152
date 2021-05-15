@@ -147,6 +147,7 @@ public class CollisionController {
                         for (Penguin pen : avatar.getPenguins()) {
                             pen.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                         }
+                        avatar.pseudoPenguin.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                     }
                     penguins.remove(penguins.get(last_index));
                     note.setFilmStrip(noteCollectedFilmStrip);
@@ -174,6 +175,7 @@ public class CollisionController {
                                 for (Penguin pen : avatar.getPenguins()) {
                                     pen.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                                 }
+                                avatar.pseudoPenguin.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                             }
                             penguins.remove(penguins.get(last_index));
                             note.setFilmStrip(noteCollectedFilmStrip);

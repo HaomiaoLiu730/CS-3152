@@ -145,14 +145,15 @@ public class LevelLoader {
             avatar.getPenguins().get(i).setDrawScale(scale);
             avatar.getPenguins().get(i).setWalkingStrip(assetLoader.penguinWalkingStrip);
             avatar.getPenguins().get(i).setRolllingFilmStrip(assetLoader.penguinRollingStrip);
-            avatar.getPenguins().get(i).setOverlapFilmStrip(assetLoader.penguins.get(avatar.getNumPenguins()-1));
-//            System.out.println(avatar.getPenguins().get(i).getBody());
-//            avatar.getPenguins().get(i).getBody().setType(BodyDef.BodyType.DynamicBody);
             avatar.getPenguins().get(i).setFilmStrip(assetLoader.penguinWalkingStrip);
             avatar.getPenguins().get(i).setOverlapFilmStrip(assetLoader.penguins.get(avatar.getNumPenguins()-1));
-//            avatar.getPenguins().get(i).setActive(false);
-//            avatar.getPenguins().get(i).setSensor(true);
+            avatar.getPenguins().get(i).setOverlapFilmStrip(assetLoader.penguins.get(avatar.getNumPenguins()-1));
         }
+        avatar.pseudoPenguin.setDrawScale(scale);
+        avatar.pseudoPenguin.setWalkingStrip(assetLoader.penguinWalkingStrip);
+        avatar.pseudoPenguin.setRolllingFilmStrip(assetLoader.penguinRollingStrip);
+        avatar.pseudoPenguin.setFilmStrip(assetLoader.penguinWalkingStrip);
+        avatar.pseudoPenguin.setOverlapFilmStrip(assetLoader.penguins.get(avatar.getNumPenguins()-1));
     }
 
     public void loadNotes(){
