@@ -473,7 +473,6 @@ public class GDXRoot extends Game implements ScreenListener {
 							break;
 					}
 				}
-				System.out.println(current);
 				if(current == totalLevels){
 					MenuController.unlockContinents(MenuController.Continent.Antarctica);
 					menuController.reset();
