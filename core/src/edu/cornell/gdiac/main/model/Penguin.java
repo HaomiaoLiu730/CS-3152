@@ -362,4 +362,8 @@ public class Penguin extends CapsuleObstacle {
         super.drawDebug(canvas);
         canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
+
+    public void setMovingIceoffset(float x){
+        setPosition(getX()-x,getY());
+    }
 }
