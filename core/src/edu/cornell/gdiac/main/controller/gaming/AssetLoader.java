@@ -56,8 +56,10 @@ public class AssetLoader {
     /** The texture for the exit */
     public static FilmStrip exitStrip;
     public static FilmStrip teachThrowingStrip;
-    /** The texture for the exit */
+    /** The texture for the dead */
     public static TextureRegion deadStrip;
+    /** The texture for the win */
+    public static TextureRegion victoryStrip;
 
 
     /** The texture for the player punching */
@@ -127,6 +129,7 @@ public class AssetLoader {
         pauseScreen = new TextureRegion(directory.getEntry("pauseScreen",Texture.class));
         teachThrowingStrip = new FilmStrip(directory.getEntry("teachThrowing", Texture.class), 12, 8);;
         deadStrip = new TextureRegion(directory.getEntry("dead",Texture.class));
+        victoryStrip =  new TextureRegion(directory.getEntry("victory",Texture.class));
 
         hitIcicle = directory.getEntry("hitIcicle", SoundBuffer.class);
         punching = directory.getEntry("punching", SoundBuffer.class);

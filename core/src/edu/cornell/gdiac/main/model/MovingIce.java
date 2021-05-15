@@ -158,5 +158,6 @@ public class MovingIce extends ComplexObstacle {
     public void hitSomething(int dir){
         direction = dir;
     }
+    public int getDirection(){return direction;}
 }
 
