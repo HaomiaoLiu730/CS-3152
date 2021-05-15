@@ -787,7 +787,7 @@ public class GameplayController extends WorldController implements ContactListen
                     break;
                 case 2:
                     assetLoader.teachThrowingStrip.nextFrame();
-                    canvas.drawText("Throw the penguin \nat the icicle to knock it down!", gameFont,640, 660);
+                    canvas.drawText("Throw the penguin at the icicle to knock it down!", gameFont,640, 660);
                     canvas.drawText("You can cancel throwing by pressing the space bar", gameFont,640, 620);
                     canvas.draw(assetLoader.teachThrowingStrip, 900, 400);
                     canvas.drawText("Nearby penguins will be recollected", gameFont,860, 360);
