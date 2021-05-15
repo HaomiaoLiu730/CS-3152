@@ -525,6 +525,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     public void updatePlayer(){
         // levelLoader.avatar motion
+        levelLoader.avatar.pickUpPenguins();
         levelLoader.avatar.setMovement(InputController.getInstance().getHorizontal() * levelLoader.avatar.getForce());
         levelLoader.avatar.setJumping(InputController.getInstance().didPrimary());
         levelLoader.avatar.applyForce();
@@ -535,7 +536,6 @@ public class GameplayController extends WorldController implements ContactListen
         }
         levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), assetLoader.throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
         canThrow = true;
-        levelLoader.avatar.pickUpPenguins();
     }
 
     /**
