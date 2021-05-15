@@ -659,7 +659,7 @@ public class GameplayController extends WorldController implements ContactListen
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawTextCentered("VICTORY!", gameFont, 0.0f);
+            canvas.drawFixed(assetLoader.victoryStrip, 460, 200);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         } else if (failed && !resetClick) {
