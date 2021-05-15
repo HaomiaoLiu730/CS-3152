@@ -525,6 +525,7 @@ public class GameplayController extends WorldController implements ContactListen
 
     public void updatePlayer(){
         // levelLoader.avatar motion
+        levelLoader.avatar.pickUpPenguins();
         levelLoader.avatar.setMovement(InputController.getInstance().getHorizontal() * levelLoader.avatar.getForce());
         levelLoader.avatar.setJumping(InputController.getInstance().didPrimary());
         levelLoader.avatar.applyForce();
@@ -535,7 +536,6 @@ public class GameplayController extends WorldController implements ContactListen
         }
         levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), assetLoader.throwingP,Gdx.input.isKeyPressed(Input.Keys.SPACE));
         canThrow = true;
-        levelLoader.avatar.pickUpPenguins();
     }
 
     /**
@@ -594,8 +594,8 @@ public class GameplayController extends WorldController implements ContactListen
                     break;
             }
         }
-        if(complete || failed){
-            canvas.draw(assetLoader.blackTexture,new Color(1,1,1,0.1f),cameraX-1280/2,0,3000f,2000f);
+        if(complete || failed || isPaused){
+            canvas.draw(assetLoader.blackTexture,new Color(1,1,1,0.4f),cameraX-1280/2,0,3000f,2000f);
         }
 
         for(Obstacle obj : objects) {
@@ -673,7 +673,7 @@ public class GameplayController extends WorldController implements ContactListen
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawFixed(assetLoader.deadStrip, 460, 200);
+            canvas.drawFixed(assetLoader.deadStrip, 460, 300);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         }
@@ -844,9 +844,9 @@ public class GameplayController extends WorldController implements ContactListen
             //contact for moving ice bar
             if(bd1.getName() == "movingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
-                if(bd2.getName().startsWith("sealion") ){
-                    Sealion m = (Sealion) bd2;
-                    ((MovingIce) master).addMonster(m);
+                if(bd2.getName().startsWith("penguin") ){
+                    Penguin m = (Penguin) bd2;
+                    ((MovingIce) master).addPenguin(m);
                 }
                 else if (bd2 instanceof Player){
                     Player p = (Player) bd2;
@@ -866,9 +866,9 @@ public class GameplayController extends WorldController implements ContactListen
 
             if(bd2.getName() == "movingIceBar"){
                 ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
-                if(bd1.getName().startsWith("sealion") ){
-                    Sealion m = (Sealion) bd1;
-                    ((MovingIce) master).addMonster(m);
+                if(bd1.getName().startsWith("penguin") ){
+                    Penguin m = (Penguin) bd1;
+                    ((MovingIce) master).addPenguin(m);
                 }
                 else if (bd1 instanceof Player){
                     Player p = (Player) bd1;
@@ -958,8 +958,8 @@ public class GameplayController extends WorldController implements ContactListen
         if(bd1.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd1).getMaster();
             if(bd2.getName().startsWith("sealion") ){
-                Sealion m = (Sealion) bd2;
-                ((MovingIce) master).removeMonster(m);
+                Penguin m = (Penguin) bd2;
+                ((MovingIce) master).removePenguin(m);
             }
             else if (bd2 instanceof Player){
                 ((MovingIce) master).removePlyaer();
@@ -970,8 +970,8 @@ public class GameplayController extends WorldController implements ContactListen
         if(bd2.getName() == "movingIceBar"){
             ComplexObstacle master = ((BoxObstacle)bd2).getMaster();
             if(bd1.getName().startsWith("sealion") ){
-                Sealion m = (Sealion) bd1;
-                ((MovingIce) master).removeMonster(m);
+                Penguin m = (Penguin) bd1;
+                ((MovingIce) master).removePenguin(m);
             }
             else if (bd1 instanceof Player){
                 ((MovingIce) master).removePlyaer();

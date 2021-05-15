@@ -110,7 +110,19 @@ public class LevelLoader {
         JsonValue goal = constants.get("goal");
         JsonValue goalpos=goal.get("pos");
         BoxObstacle exit;
-        this.exit = new BoxObstacle( goalpos.getFloat(0), goalpos.getFloat(1), goal.getFloat(("width")), goal.getFloat(("height")));
+        if ((jsonFile.startsWith("europe") && GDXRoot.numOfLevels.get(MenuController.Continent.Europe) == getLevel()+1) ||
+                (jsonFile.startsWith("africa") && GDXRoot.numOfLevels.get(MenuController.Continent.Africa) == getLevel()+1) ||
+                (jsonFile.startsWith("oceania") && GDXRoot.numOfLevels.get(MenuController.Continent.Oceania) == getLevel()+1) ||
+                (jsonFile.startsWith("asia") && GDXRoot.numOfLevels.get(MenuController.Continent.Asia) == getLevel()+1) ||
+                (jsonFile.startsWith("northAmerica") && GDXRoot.numOfLevels.get(MenuController.Continent.NorthAmerica) == getLevel()+1) ||
+                (jsonFile.startsWith("southAmerica") && GDXRoot.numOfLevels.get(MenuController.Continent.SouthAmerica) == getLevel()+1) ||
+                (jsonFile.startsWith("antarctica") && GDXRoot.numOfLevels.get(MenuController.Continent.Antarctica) == getLevel()+1)) {
+            this.exit = new BoxObstacle( goalpos.getFloat(0), goalpos.getFloat(1), goal.getFloat(("width")), goal.getFloat(("height")));
+            this.exit.setTexture(assetLoader.cageStrip);
+        } else {
+            this.exit = new BoxObstacle( goalpos.getFloat(0), goalpos.getFloat(1)+0.25f, goal.getFloat(("width")), goal.getFloat(("height")));
+            this.exit.setTexture(assetLoader.exitStrip);
+        }
         this.exit.setBodyType(BodyDef.BodyType.StaticBody);
         this.exit.setSensor(true);
         this.exit.setDensity(goal.getFloat("density"));
@@ -118,7 +130,6 @@ public class LevelLoader {
         this.exit.setRestitution(goal.getFloat("restitution"));
         this.exit.setDrawScale(scale);
         this.exit.setName("exit");
-        this.exit.setTexture(assetLoader.exitStrip);
     }
 
     public void loadPlayer(){

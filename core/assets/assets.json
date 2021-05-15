@@ -129,6 +129,11 @@
       "magFilter": "linear"
     },
     "exit": {
+      "file": "images/shared/exit.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
+    "cage": {
       "file": "images/shared/inCage.png",
       "minFilter": "linear",
       "magFilter": "linear"

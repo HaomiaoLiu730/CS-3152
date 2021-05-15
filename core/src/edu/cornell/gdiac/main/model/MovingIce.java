@@ -25,7 +25,7 @@ public class MovingIce extends ComplexObstacle {
     private float initialX;
     private int direction =1;
 
-    private LinkedList<Sealion> sealions;
+    private LinkedList<Penguin> penguins;
     private Player bear;
 
     /**
@@ -68,7 +68,7 @@ public class MovingIce extends ComplexObstacle {
         bodies.add(pin);
         this.data=data;
 
-        sealions = new LinkedList<>();
+        penguins = new LinkedList<>();
         bear = null;
 
     }
@@ -128,9 +128,15 @@ public class MovingIce extends ComplexObstacle {
             direction = 1;
 
         pin.setPosition(pin.getX() - direction*speed, pin.getY());
-        if(sealions.size()>0){
-            for(int i = 0; i< sealions.size(); i++) {
-                sealions.get(i).setMovingIceoffset(direction*speed);
+        if(penguins.size()>0){
+            for(int i = 0; i< penguins.size(); i++) {
+                if(penguins.get(i).isThrowOut()) {
+                    penguins.get(i).setMovingIceoffset(direction * speed);
+                }
+                else{
+                    removePenguin(penguins.get(i));
+                    i--;
+                }
             }
 
         }
@@ -139,13 +145,13 @@ public class MovingIce extends ComplexObstacle {
 
     }
 
-    public void addMonster(Sealion m){
-        if (!sealions.contains(m))
-            sealions.add(m);
+    public void addPenguin(Penguin m){
+        if (!penguins.contains(m))
+            penguins.add(m);
     }
 
-    public void removeMonster(Sealion m ){
-        sealions.remove(m);
+    public void removePenguin(Penguin m ){
+        penguins.remove(m);
     }
 
     public void addPlayer(Player p){

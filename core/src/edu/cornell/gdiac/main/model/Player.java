@@ -263,6 +263,8 @@ public class Player extends CapsuleObstacle {
                     }
                 }
 
+            }else{
+                pseudoPenguin.setX(getX() + PENGUIN_WIDTH * (faceRight? -1 : 1));
             }
         }else{
             for(Penguin p: penguins){
