@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.audio.SoundBuffer;
+import edu.cornell.gdiac.main.GDXRoot;
 import edu.cornell.gdiac.main.controller.InputController;
 import edu.cornell.gdiac.main.controller.opening.Loading;
 import edu.cornell.gdiac.main.view.GameCanvas;
@@ -71,7 +72,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             530, 384, 613, 428, 731, 393
     };
     private float[] ASIA_LEVELS = new float[]{
-            580, 220, 300, 350, 394, 450, 541, 530, 620, 400, 850, 523, 1100, 520
+            570, 230, 300, 350, 394, 450, 541, 530, 630, 400, 840, 523, 1060, 520
     };
     private float[] NORTH_AMERICA_LEVELS = new float[]{
             260, 460, 420, 400, 590, 460, 740, 600, 950, 570, 720, 300, 580, 230
@@ -248,6 +249,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         numOfLevels.put(Continent.Africa, value.get("numOfLevels").getInt("Africa"));
         numOfLevels.put(Continent.Oceania, value.get("numOfLevels").getInt("Oceania"));
         unlockedContinents.add(Continent.Europe);
+        int finishedLevels = 0;
+        int totalLevels = 0;
         for(Continent continent: finished.keySet()){
             if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
                 unlockedContinents.add(continent);
@@ -255,6 +258,11 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             if(finished.get(continent).size()!=0){
                 unlockedContinents.add(continent);
             }
+            finishedLevels += finished.get(continent).size();
+            totalLevels += numOfLevels.get(continent);
+        }
+        if (finishedLevels == totalLevels) {
+            unlockedContinents.add(Continent.Antarctica);
         }
     }
 
@@ -325,6 +333,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         zoomOutEffect();
         selectContinent();
         InputController.getInstance().readInput();
+        if (prevTouched && !Gdx.input.isTouched() && currentContinent == Continent.Antarctica) {
+            this.listener.updateScreen(this, GDXRoot.ENDING_GAME);
+        }
         if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
             isReady = true;
         }

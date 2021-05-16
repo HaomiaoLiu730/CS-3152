@@ -133,8 +133,10 @@ public class CollisionController {
         }
     }
 
-    public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip, int numNotes,
-                                        PooledList<Obstacle> objects, int numPenguins, Player avatar, Sound sound, ArrayList<FilmStrip> films){
+    public int penguin_note_interaction(List<Penguin> penguins, List<Note> notes, FilmStrip noteCollectedFilmStrip,
+                                        int numNotes,
+                                        PooledList<Obstacle> objects, int numPenguins,
+                                        Player avatar, Sound sound, float volume, ArrayList<FilmStrip> films){
         for (Note note: notes){
             if (!note.isCollected()){
                 if(avatar.getPosition().dst(note.getPosition()) <= 1 && numPenguins > 0){
@@ -158,11 +160,12 @@ public class CollisionController {
                         }
                         avatar.pseudoPenguin.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                     }
+                    avatar.setNumPenguins(avatar.getNumPenguins()-1);
 //                    penguins.remove(penguins.get(last_index));
                     note.setFilmStrip(noteCollectedFilmStrip);
                     note.setCollected(true);
                     numNotes++;
-                    sound.play();
+                    sound.play(volume);
                 }else {
                     for (Penguin p : penguins) {
                         if (p.getPosition().dst(note.getPosition()) <= 1 && p.isThrowOut()) {
@@ -181,7 +184,8 @@ public class CollisionController {
                             note.setFilmStrip(noteCollectedFilmStrip);
                             note.setCollected(true);
                             numNotes++;
-                            sound.play();
+                            sound.play(volume);
+                            avatar.setNumPenguins(avatar.getNumPenguins()-1);
                             break;
                         }
                     }
@@ -196,11 +200,12 @@ public class CollisionController {
     }
 
 
-    public void processCollision(List<PolygonObstacle> icicles, ArrayList<Boolean> hit, ArrayList<Integer> flag, PooledList<Obstacle> objects, Sound hitIcicel){
+    public void processCollision(List<PolygonObstacle> icicles, ArrayList<Boolean> hit, ArrayList<Integer> flag,
+                                 PooledList<Obstacle> objects, Sound hitIcicel, float volume){
         for (int i = 0; i < icicles.size(); i++){
             if (hit.get(i)){
                 if(!icicles.get(i).isFixedRotation())
-                    hitIcicel.play();
+                    hitIcicel.play(volume);
                 if (flag.get(i) == 0) {
                     icicles.get(i).setBodyType(BodyDef.BodyType.DynamicBody);
                     icicles.get(i).setFixedRotation(true);
