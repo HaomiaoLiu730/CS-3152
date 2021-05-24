@@ -407,7 +407,6 @@ public class GameplayController extends WorldController implements ContactListen
         if (resetCountDown < 0 && !failed) {
             if (!isEditingView) {
                 if (levelLoader.jsonFile.startsWith("antarctica")) {
-                    System.out.println("aaa");
                     this.listener.updateScreen(this, ENDING_GAME);
                     return;
                 }

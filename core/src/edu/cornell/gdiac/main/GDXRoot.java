@@ -320,7 +320,6 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		} else if(screen instanceof GameplayController){
 			if (exitCode == ENDING_GAME) {
-				System.out.println("bbb");
 				endingController.setScreenListener(this);
 				setScreen(endingController);
 				return;
