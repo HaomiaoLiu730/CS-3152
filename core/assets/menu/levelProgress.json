@@ -6,7 +6,7 @@
 	"Europe": [ 1, 2, 3, 4, 5 ],
 	"Antarctica": [],
 	"Africa": [ 1, 2, 3, 4 ],
-	"Oceania": [ 1, 2, 3, 4 ]
+	"Oceania": [ 1, 2, 3]
 },
 "numOfLevels": {
 	"NorthAmerica": 7,
@@ -15,7 +15,7 @@
 	"Europe": 5,
 	"Antarctica": 0,
 	"Africa": 4,
-	"Oceania": 4
+	"Oceania": 3
 },
 "next": 0
 }
