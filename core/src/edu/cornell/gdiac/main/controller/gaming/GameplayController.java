@@ -29,8 +29,7 @@ import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_CONTINUE;
-import static edu.cornell.gdiac.main.GDXRoot.GAMEPLAY_MENU;
+import static edu.cornell.gdiac.main.GDXRoot.*;
 
 public class GameplayController extends WorldController implements ContactListener, ControllerListener {
 
@@ -407,6 +406,10 @@ public class GameplayController extends WorldController implements ContactListen
 
         if (resetCountDown < 0 && !failed) {
             if (!isEditingView) {
+                if (levelLoader.jsonFile.startsWith("antarctica")) {
+                    this.listener.updateScreen(this, ENDING_GAME);
+                    return;
+                }
                 this.listener.updateScreen(this, currentLevelNum);
                 return;
             } else {
@@ -585,8 +588,8 @@ public class GameplayController extends WorldController implements ContactListen
         }
         if(isPaused){
             canvas.drawFixed(assetLoader.pauseScreen,
-                    canvas.getWidth()/2f- 200,
-                    canvas.getHeight()/2f-200);
+                    0,
+                    0);
             if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
                 isPaused = false;
                 disableMovement = false;

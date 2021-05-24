@@ -89,7 +89,10 @@ public class EndingController implements Screen, InputProcessor, ControllerListe
     }
 
     public void draw() {
+        canvas.clear();
         canvas.begin();
+        canvas.getCamera().position.x = 640;
+        canvas.getCamera().update();
         canvas.drawOverlay(front, true);
         canvas.drawText(gameFont, "Congratulations!", 500, 400);
         canvas.end();

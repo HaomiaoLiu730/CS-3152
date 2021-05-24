@@ -132,7 +132,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     private Texture[] dots = new Texture[6];
     private Texture[] lasts = new Texture[7];
 
-    private Sound menuSellect;
     private Sound menuScroll;
     private Sound menuBackground;
 
@@ -178,7 +177,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         oceaniaLine = internal.getEntry("OceaniaLine", Texture.class);
         europeLine = internal.getEntry("EuropeLine", Texture.class);
         africaLine = internal.getEntry("AfricaLine", Texture.class);
-        menuSellect = internal.getEntry("menuSellect", SoundBuffer.class);
         menuBackground = internal.getEntry("menuBackground",SoundBuffer.class);
         menuScroll = internal.getEntry("menuScroll",SoundBuffer.class);
         penguin1 = internal.getEntry("penguin1", Texture.class);
@@ -340,9 +338,9 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         zoomOutEffect();
         selectContinent();
         InputController.getInstance().readInput();
-        if (prevTouched && !Gdx.input.isTouched() && currentContinent == Continent.Antarctica) {
-            this.listener.updateScreen(this, GDXRoot.ENDING_GAME);
-        }
+//        if (prevTouched && !Gdx.input.isTouched() && currentContinent == Continent.Antarctica) {
+//            this.listener.updateScreen(this, GDXRoot.ENDING_GAME);
+//        }
         if(prevTouched && !Gdx.input.isTouched() && nextLevel != -1){
             isReady = true;
         }
@@ -404,9 +402,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                 case Oceania:
                     zoomInto(640f, 360f,560f, 210f);
                     break;
-                case Antarctica:
-                    zoomInto(640f, 360f, 350f, 20f);
-                    break;
                 default:
                     break;
             }
@@ -432,9 +427,6 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                 break;
             case Oceania:
                 zoomOut(560f, 210f);
-                break;
-            case Antarctica:
-                zoomOut(350f, 20f);
                 break;
             default:
                 break;
@@ -654,9 +646,12 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             if(currentContinent == Continent.Asia) hundred = 4;
             if(currentContinent == Continent.NorthAmerica) hundred = 5;
             if(currentContinent == Continent.SouthAmerica) hundred = 6;
+            if(currentContinent == Continent.Antarctica) {
+                hundred = 7;
+                nextLevel = 0;
+            }
             if (isReady() && listener != null) {
                 listener.updateScreen(this, hundred*10+nextLevel);
-                //menuSellect.play();
                 menuBackground.stop();
                 isMenuBPlaying = false;
             }
@@ -677,6 +672,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         refreshMenu();
         isReady = false;
         nextLevel = -1;
+        currentContinent = Continent.Europe;
         for(Continent continent: finished.keySet()){
             if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
                 unlockedContinents.add(continent);

@@ -219,7 +219,7 @@ public class CollisionController {
             float downY = water.getY()-((Water) water).getHeight()/2;
             float upY = water.getY()+((Water) water).getHeight()/2;
             if (avatar.getX() >= leftX && avatar.getX() <= rightX &&
-                    avatar.getY()+avatar.getHeight()/2-1 >= downY && avatar.getY()+avatar.getHeight()/2-1 <= upY) {
+                    avatar.getY()+avatar.getHeight()/2 >= downY && avatar.getY()+avatar.getHeight()/2 <= upY) {
                 GameplayController.hitWater(true);
             }
         }
