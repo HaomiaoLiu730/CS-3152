@@ -152,24 +152,22 @@ public class CollisionController {
                         objects.remove(ret);
                         ret.setActive(false);
                         ret.setAwake(false);
-                        avatar.setNumPenguins(numPenguins - 1);
-                    }
-                    if (avatar.getNumPenguins() > 0) {
-                        for (Penguin pen : avatar.getPenguins()) {
-                            pen.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
+                        avatar.setNumPenguins(avatar.getNumPenguins()-1);
+                        if (avatar.getNumPenguins() > 0) {
+                            for (Penguin pen : avatar.getPenguins()) {
+                                pen.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
+                            }
+                            avatar.pseudoPenguin.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
                         }
-                        avatar.pseudoPenguin.setOverlapFilmStrip(films.get(avatar.getNumPenguins() - 1));
+                        note.setFilmStrip(noteCollectedFilmStrip);
+                        note.setCollected(true);
+                        numNotes++;
+                        sound.play(volume);
                     }
-                    avatar.setNumPenguins(avatar.getNumPenguins()-1);
-//                    penguins.remove(penguins.get(last_index));
-                    note.setFilmStrip(noteCollectedFilmStrip);
-                    note.setCollected(true);
-                    numNotes++;
-                    sound.play(volume);
+
                 }else {
                     for (Penguin p : penguins) {
                         if (p.getPosition().dst(note.getPosition()) <= 1 && p.isThrowOut()) {
-                            int last_index;
                             p.setActive(false);
                             p.setAwake(false);
                             p.setThrownOut(false);
@@ -185,7 +183,6 @@ public class CollisionController {
                             note.setCollected(true);
                             numNotes++;
                             sound.play(volume);
-                            avatar.setNumPenguins(avatar.getNumPenguins()-1);
                             break;
                         }
                     }
