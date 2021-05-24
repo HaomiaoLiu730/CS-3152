@@ -16,6 +16,7 @@
   "jsons": {
     "level1": "oceania/level1.json",
     "level2": "oceania/level2.json",
-    "level3": "oceania/level3.json"
+    "level3": "oceania/level3.json",
+    "level4": "oceania/level4.json"
   }
 }
