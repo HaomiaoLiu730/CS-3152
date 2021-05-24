@@ -360,7 +360,6 @@ public class GameplayController extends WorldController implements ContactListen
     @Override
     public void update(float dt) {
         if(InputController.getInstance().isLowerVolume()){
-            System.out.println("lower volumen");
             volume -= 0.01;
             if(volume <0 ) volume =0;
             for(int i=0;i<num_notes;i++){
@@ -370,7 +369,6 @@ public class GameplayController extends WorldController implements ContactListen
 
         }
         if(InputController.getInstance().isHigherVolume()){
-            System.out.println("higher volumen");
             volume += 0.01;
             if(volume >1) volume = 1;
             for(int i=0;i<num_notes;i++){
