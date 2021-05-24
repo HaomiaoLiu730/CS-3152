@@ -452,6 +452,7 @@ public class GDXRoot extends Game implements ScreenListener {
 						case Europe:
 							currentContinent = MenuController.Continent.Africa;
 							MenuController.unlockContinents(MenuController.Continent.Africa);
+							break;
 						case Africa:
 							currentContinent = MenuController.Continent.Oceania;
 							MenuController.unlockContinents(MenuController.Continent.Oceania);
@@ -463,12 +464,15 @@ public class GDXRoot extends Game implements ScreenListener {
 						case Asia:
 							currentContinent = MenuController.Continent.NorthAmerica;
 							MenuController.unlockContinents(MenuController.Continent.NorthAmerica);
+							break;
 						case NorthAmerica:
 							currentContinent = MenuController.Continent.SouthAmerica;
 							MenuController.unlockContinents(MenuController.Continent.SouthAmerica);
+							break;
 						case SouthAmerica:
 							currentContinent = MenuController.Continent.Antarctica;
 							MenuController.unlockContinents(MenuController.Continent.Antarctica);
+							break;
 						default:
 							break;
 					}
