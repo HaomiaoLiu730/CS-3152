@@ -382,64 +382,7 @@ public class GDXRoot extends Game implements ScreenListener {
 							- numOfLevels.get(MenuController.Continent.Asia)
 							- numOfLevels.get(MenuController.Continent.NorthAmerica);
 				}
-				if(exitCode == GAMEPLAY_CONTINUE){
-					if(current == totalLevels-1){
-						MenuController.unlockContinents(MenuController.Continent.Antarctica);
-						menuController.reset();
-						menuController.setScreenListener(this);
-						setScreen(menuController);
-						return;
-					}
-					if(finished.length > addedVal){
-						nextLevel();
-						return;
-					}
-					if(addedVal == numOfLevels.get(currentContinent)){
-						switch (currentContinent){
-							case Europe:
-								currentContinent = MenuController.Continent.Africa;
-								MenuController.unlockContinents(MenuController.Continent.Africa);
-							case Africa:
-								if(value.get("finished").get(MenuController.Continent.Oceania.name()).asIntArray().length != 0) {
-									currentContinent = MenuController.Continent.Oceania;
-									nextLevel();
-								}
-								break;
-							case Oceania:
-								if(value.get("finished").get(MenuController.Continent.Asia.name()).asIntArray().length != 0) {
-									currentContinent = MenuController.Continent.Asia;
-									nextLevel();
-								}
-								break;
-							case Asia:
-								if(value.get("finished").get(MenuController.Continent.NorthAmerica.name()).asIntArray().length != 0) {
-									currentContinent = MenuController.Continent.NorthAmerica;
-									nextLevel();
-								}
-								break;
-							case NorthAmerica:
-								if(value.get("finished").get(MenuController.Continent.SouthAmerica.name()).asIntArray().length != 0) {
-									currentContinent = MenuController.Continent.SouthAmerica;
-									nextLevel();
-								}
-								break;
-							case SouthAmerica:
-								current --;
-								nextLevel();
-								if(value.get("finished").get(MenuController.Continent.Antarctica.name()).asIntArray().length != 0) {
-									currentContinent = MenuController.Continent.Antarctica;
-									nextLevel();
-								}
-								break;
-							default:
-								break;
-						}
-						return;
-					}
-					current --;
-					nextLevel();
-					return;
-				}
+				
 				if((finished.length == 0 || finished[finished.length-1] < addedVal) && addedVal <= numOfLevels.get(currentContinent)){
 					value.get("finished").get(currentContinent.name()).addChild(new JsonValue(addedVal));
 					FileHandle file = Gdx.files.local("menu/levelProgress.json");
@@ -452,6 +395,7 @@ public class GDXRoot extends Game implements ScreenListener {
 						case Europe:
 							currentContinent = MenuController.Continent.Africa;
 							MenuController.unlockContinents(MenuController.Continent.Africa);
+							break;
 						case Africa:
 							currentContinent = MenuController.Continent.Oceania;
 							MenuController.unlockContinents(MenuController.Continent.Oceania);
@@ -463,12 +407,15 @@ public class GDXRoot extends Game implements ScreenListener {
 						case Asia:
 							currentContinent = MenuController.Continent.NorthAmerica;
 							MenuController.unlockContinents(MenuController.Continent.NorthAmerica);
+							break;
 						case NorthAmerica:
 							currentContinent = MenuController.Continent.SouthAmerica;
 							MenuController.unlockContinents(MenuController.Continent.SouthAmerica);
+							break;
 						case SouthAmerica:
 							currentContinent = MenuController.Continent.Antarctica;
 							MenuController.unlockContinents(MenuController.Continent.Antarctica);
+							break;
 						default:
 							break;
 					}

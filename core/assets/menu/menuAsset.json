@@ -184,7 +184,7 @@
   "fonts": {
     "gameFont32": {
       "file": "fonts/AmaticSC-Bold.ttf",
-      "size": 128,
+      "size": 160,
       "color": "black"
     },
     "gameFont64": {

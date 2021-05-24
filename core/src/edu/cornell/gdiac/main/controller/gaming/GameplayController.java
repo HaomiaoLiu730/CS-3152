@@ -360,7 +360,6 @@ public class GameplayController extends WorldController implements ContactListen
     @Override
     public void update(float dt) {
         if(InputController.getInstance().isLowerVolume()){
-            System.out.println("lower volumen");
             volume -= 0.01;
             if(volume <0 ) volume =0;
             for(int i=0;i<num_notes;i++){
@@ -370,7 +369,6 @@ public class GameplayController extends WorldController implements ContactListen
 
         }
         if(InputController.getInstance().isHigherVolume()){
-            System.out.println("higher volumen");
             volume += 0.01;
             if(volume >1) volume = 1;
             for(int i=0;i<num_notes;i++){
@@ -379,28 +377,12 @@ public class GameplayController extends WorldController implements ContactListen
             levelLoader.avatar.volume = volume;
         }
         if(isPaused){
-            if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
-                    ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
+            if(InputController.getInstance().touchUp() && (Gdx.input.getX()< 450 || Gdx.input.getX()> 840
+                    || Gdx.input.getY()< 140 || Gdx.input.getY() > 510 ||
+                    (Gdx.input.getX()>500 && Gdx.input.getY()>240 && Gdx.input.getX()<760 && Gdx.input.getY()<280))){
 
                 isPaused = false;
                 disableMovement = false;
-//                for (int i=0; i<objects.size(); i++){
-//                    if (pauseList.get(i)) {
-//                        objects.get(i).setActive(true);
-//                    }
-//                    if (tiltList.get(i)) {
-//                        if (objects.get(i).getName() == "floatingIce") {
-//                            FloatingIce fice = (FloatingIce) objects.get(i);
-//                            fice.getIceBar().setAngularDamping(0.5f);
-//                            fice.getIceBar().setFixedRotation(false);
-//                        } else {
-//                            Ice ice = (Ice) objects.get(i);
-//                            ice.getIceBar().setAngularDamping(0.5f);
-//                            ice.getIceBar().setFixedRotation(false);
-//                        }
-//                    }
-//                    objects.get(i).setPaused(false);
-//                }
             }
             return;
         }
@@ -413,40 +395,6 @@ public class GameplayController extends WorldController implements ContactListen
             isPaused = true;
             levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
             disableMovement = true;
-//            pauseList = new ArrayList<>();
-//            tiltList = new ArrayList<>();
-//            for (int i=0; i<objects.size(); i++){
-//                if (objects.get(i).isActive()) {
-//                    pauseList.add(true);
-//                    objects.get(i).setActive(false);
-//                } else {
-//                    pauseList.add(false);
-//                }
-//                if (objects.get(i).getName() == "floatingIce") {
-//                    FloatingIce fice = (FloatingIce) objects.get(i);
-//                    if (!fice.getIceBar().isFixedRotation()) {
-//                        tiltList.add(true);
-//                        fice.getIceBar().setAngularDamping(0);
-//                        fice.getIceBar().setAngularVelocity(0);
-//                        fice.getIceBar().setFixedRotation(true);
-//                    } else {
-//                        tiltList.add(false);
-//                    }
-//                } else if (objects.get(i).getName() == "Ice") {
-//                    Ice ice = (Ice) objects.get(i);
-//                    if (!ice.getIceBar().isFixedRotation()) {
-//                        tiltList.add(true);
-//                        ice.getIceBar().setAngularDamping(0);
-//                        ice.getIceBar().setAngularVelocity(0);
-//                        ice.getIceBar().setFixedRotation(true);
-//                    } else {
-//                        tiltList.add(false);
-//                    }
-//                } else {
-//                    tiltList.add(false);
-//                }
-//                objects.get(i).setPaused(true);
-//            }
             return;
         }
 
@@ -494,7 +442,6 @@ public class GameplayController extends WorldController implements ContactListen
             punchCooldown -= 1;
         }
         if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
-            // TODO:
             levelLoader.avatar.setFilmStrip(assetLoader.avatarStrip);
             levelLoader.avatar.setPunching(false);
         }
@@ -505,13 +452,6 @@ public class GameplayController extends WorldController implements ContactListen
             setComplete(true);
         }
 
-        // Monster moving and attacking
-//        collisionController.processCollision(seals, sealions, levelLoader.avatar, objects);
-//        if (collisionController.processCollision(seals, sealions, attackStrip, levelLoader.avatar.getPenguins())) {
-//            setFailure(true);
-//            setComplete(true);
-//        }
-//        collisionController.processCollision(seals, sealions, iciclesList, objects);
         collisionController.processCollision(levelLoader.iciclesList, icicles_hit, staticBodies, objects,
                 assetLoader.hitIcicle,volume);
         collisionController.processCollision(levelLoader.waterList, levelLoader.avatar);
@@ -593,7 +533,7 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Use 'WASD' or arrow keys \nto move or jump.", gameFont,500, 500);
                     canvas.drawText("Ice bars will tilt.", gameFont,1280, 320);
                     canvas.drawText("Approach a note to collect it, \nyou will lose a penguin for each note you collect. ",gameFont,1800, 500);
-                    canvas.drawText("Collect all the notes to pass the level! ", gameFont, 1950, 300);
+                    canvas.drawText("Collect all the notes to pass the level! ", gameFont, 1950, 320);
                     break;
                 case 1:
                     canvas.drawText("Some ice bars move!", gameFont,1500, 400);
@@ -609,8 +549,10 @@ public class GameplayController extends WorldController implements ContactListen
                 case 3:
                     canvas.drawText("Darker ice bars can float to the side. ", gameFont,860, 400);
                     canvas.drawText("Jump on the ice bar and then knock down the icicle! ", gameFont,860, 340);
-                    canvas.drawText("How do you get to higher platforms?", gameFont,2100, 420);
-                    canvas.drawText("Try knocking down the icicle!", gameFont,2100, 360);
+                    canvas.drawText("Stand on the right end of the ice bar,", gameFont, 1630, 420);
+                    canvas.drawText("then hit down the icicle to be bounced up!", gameFont, 1630, 360);
+                    canvas.drawText("How do you get to higher platforms?", gameFont,2400, 440);
+                    canvas.drawText("Try knocking down the icicle!", gameFont,2400, 380);
                     break;
                 case 4:
                     canvas.drawText("Control the angle and strength for the throw. ", gameFont,630, 580);
@@ -618,8 +560,10 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("If they do, you can still pick them\nback up as they swim towards you!", gameFont, 1120, 420);
                     canvas.drawText("Sometimes it's hard to pick penguins back up...", gameFont,1650, 340);
                     canvas.drawText("So aim at your target carefully.", gameFont,1650, 300);
-                    canvas.drawText("You have finished the tutorial levels!", gameFont,2800, 470);
-                    canvas.drawText("Go explore the world!", gameFont,2800, 410);
+                    canvas.drawText("At the last level of each continent,", gameFont,2800, 470);
+                    canvas.drawText("you can rescue one penguin (except here).", gameFont,2800, 430);
+                    canvas.drawText("You have finished the tutorial levels!", gameFont,2800, 370);
+                    canvas.drawText("Go explore the world!", gameFont,2800, 330);
                     break;
                 default:
                     break;
@@ -643,13 +587,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawFixed(assetLoader.pauseScreen,
                     canvas.getWidth()/2f- 200,
                     canvas.getHeight()/2f-200);
-            if(InputController.getInstance().touchUp() && Gdx.input.getX()>500 && Gdx.input.getY()>150&&Gdx.input.getX()<760 && Gdx.input.getY()<280){
-                isPaused = false;
-                disableMovement = false;
-                canvas.end();
-                listener.updateScreen(this, GAMEPLAY_CONTINUE);
-                return;
-            }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
+            if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
                 isPaused = false;
                 disableMovement = false;
                 reset();

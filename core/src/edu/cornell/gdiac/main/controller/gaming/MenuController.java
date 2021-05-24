@@ -59,6 +59,15 @@ public class  MenuController extends ClickListener implements Screen, InputProce
 
     private static HashMap<Continent, ArrayList> finished = new HashMap<>();
     private static HashMap<Continent, Integer> numOfLevels = new HashMap<>();
+    private static Continent[] ordered_continents = new Continent[]{
+            Continent.Europe,
+            Continent.Africa,
+            Continent.Oceania,
+            Continent.Asia,
+            Continent.NorthAmerica,
+            Continent.SouthAmerica,
+            Continent.Antarctica
+    };
 
     private static JsonValue value;
 
@@ -66,7 +75,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             600, 410, 820, 390, 710, 330, 580, 290, 450, 270
     };
     private float[] AFRICA_LEVELS = new float[]{
-            450, 417, 564, 475, 682, 453, 620, 340
+            450, 417, 564, 475, 682, 453, 610, 340
     };
     private float[] OCEANIA_LEVELS = new float[]{
             530, 384, 613, 428, 731, 393
@@ -234,13 +243,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     public static void refreshMenu(){
-        finished.put(Continent.NorthAmerica,arrToArrList(value.get("finished").get("NorthAmerica").asIntArray()));
-        finished.put(Continent.SouthAmerica,arrToArrList(value.get("finished").get("SouthAmerica").asIntArray()));
-        finished.put(Continent.Asia,arrToArrList(value.get("finished").get("Asia").asIntArray()));
         finished.put(Continent.Europe,arrToArrList(value.get("finished").get("Europe").asIntArray()));
-        finished.put(Continent.Antarctica,arrToArrList(value.get("finished").get("Antarctica").asIntArray()));
         finished.put(Continent.Africa,arrToArrList(value.get("finished").get("Africa").asIntArray()));
         finished.put(Continent.Oceania,arrToArrList(value.get("finished").get("Oceania").asIntArray()));
+        finished.put(Continent.Asia,arrToArrList(value.get("finished").get("Asia").asIntArray()));
+        finished.put(Continent.NorthAmerica,arrToArrList(value.get("finished").get("NorthAmerica").asIntArray()));
+        finished.put(Continent.SouthAmerica,arrToArrList(value.get("finished").get("SouthAmerica").asIntArray()));
+        finished.put(Continent.Antarctica,arrToArrList(value.get("finished").get("Antarctica").asIntArray()));
         numOfLevels.put(Continent.NorthAmerica, value.get("numOfLevels").getInt("NorthAmerica"));
         numOfLevels.put(Continent.SouthAmerica, value.get("numOfLevels").getInt("SouthAmerica"));
         numOfLevels.put(Continent.Asia, value.get("numOfLevels").getInt("Asia"));
@@ -251,15 +260,13 @@ public class  MenuController extends ClickListener implements Screen, InputProce
         unlockedContinents.add(Continent.Europe);
         int finishedLevels = 0;
         int totalLevels = 0;
-        for(Continent continent: finished.keySet()){
-            if(finished.get(continent).size()!= 0 && finished.get(continent).get(finished.get(continent).size()-1) == numOfLevels.get(continent)){
-                unlockedContinents.add(continent);
+        for(int i = 0; i < ordered_continents.length; i++){
+            finishedLevels += finished.get(ordered_continents[i]).size();
+            if (finishedLevels == totalLevels) unlockedContinents.add(ordered_continents[i]);
+            if(finished.get(ordered_continents[i]).size()!=0){
+                unlockedContinents.add(ordered_continents[i]);
             }
-            if(finished.get(continent).size()!=0){
-                unlockedContinents.add(continent);
-            }
-            finishedLevels += finished.get(continent).size();
-            totalLevels += numOfLevels.get(continent);
+            totalLevels += numOfLevels.get(ordered_continents[i]);
         }
         if (finishedLevels == totalLevels) {
             unlockedContinents.add(Continent.Antarctica);
@@ -567,6 +574,8 @@ public class  MenuController extends ClickListener implements Screen, InputProce
     }
 
     public void drawPointsHelper(int finishedLevelNum, float[] arr, int continent){
+        finishedLevelNum += 1;
+        if (finishedLevelNum == numOfLevels.get(currentContinent) + 1) finishedLevelNum -= 1;
         for(int i = 0; i < finishedLevelNum*2-2; i+=2){
             canvas.draw(dots[i/2], Color.WHITE,
                     nextLevel == i/2 ?getCoordinate(arr[i],arr[i+1],currentContinent)[0]+camera.position.x-640-dots[i/2].getWidth()/24 :getCoordinate(arr[i],arr[i+1],currentContinent)[0]+camera.position.x-640,
@@ -577,7 +586,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
                 canvas.drawDottedLine(6, arr[i]+13f, arr[i+1]-5f, arr[i+2]+13f, arr[i+3]-5f, buttonColor);
             }
         }
-        if(finishedLevelNum < numOfLevels.get(currentContinent)){
+        if(finishedLevelNum < numOfLevels.get(currentContinent) - 1){
             canvas.draw(dots[finishedLevelNum], Color.WHITE,
                     nextLevel == finishedLevelNum-1 ?getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[0]+camera.position.x-640-dots[finishedLevelNum].getWidth()/24 :getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[0]+camera.position.x-640,
                     getCoordinate(arr[finishedLevelNum*2-2],arr[finishedLevelNum*2-1],currentContinent)[1],
