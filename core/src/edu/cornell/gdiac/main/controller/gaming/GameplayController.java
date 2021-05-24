@@ -377,28 +377,12 @@ public class GameplayController extends WorldController implements ContactListen
             levelLoader.avatar.volume = volume;
         }
         if(isPaused){
-            if(InputController.getInstance().touchUp() &&( Gdx.input.getX()< 450 ||Gdx.input.getX()> 840
-                    ||Gdx.input.getY()<140 || Gdx.input.getY() > 510)){
+            if(InputController.getInstance().touchUp() && (Gdx.input.getX()< 450 || Gdx.input.getX()> 840
+                    || Gdx.input.getY()< 140 || Gdx.input.getY() > 510 ||
+                    (Gdx.input.getX()>500 && Gdx.input.getY()>240 && Gdx.input.getX()<760 && Gdx.input.getY()<280))){
 
                 isPaused = false;
                 disableMovement = false;
-//                for (int i=0; i<objects.size(); i++){
-//                    if (pauseList.get(i)) {
-//                        objects.get(i).setActive(true);
-//                    }
-//                    if (tiltList.get(i)) {
-//                        if (objects.get(i).getName() == "floatingIce") {
-//                            FloatingIce fice = (FloatingIce) objects.get(i);
-//                            fice.getIceBar().setAngularDamping(0.5f);
-//                            fice.getIceBar().setFixedRotation(false);
-//                        } else {
-//                            Ice ice = (Ice) objects.get(i);
-//                            ice.getIceBar().setAngularDamping(0.5f);
-//                            ice.getIceBar().setFixedRotation(false);
-//                        }
-//                    }
-//                    objects.get(i).setPaused(false);
-//                }
             }
             return;
         }
@@ -411,40 +395,6 @@ public class GameplayController extends WorldController implements ContactListen
             isPaused = true;
             levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
             disableMovement = true;
-//            pauseList = new ArrayList<>();
-//            tiltList = new ArrayList<>();
-//            for (int i=0; i<objects.size(); i++){
-//                if (objects.get(i).isActive()) {
-//                    pauseList.add(true);
-//                    objects.get(i).setActive(false);
-//                } else {
-//                    pauseList.add(false);
-//                }
-//                if (objects.get(i).getName() == "floatingIce") {
-//                    FloatingIce fice = (FloatingIce) objects.get(i);
-//                    if (!fice.getIceBar().isFixedRotation()) {
-//                        tiltList.add(true);
-//                        fice.getIceBar().setAngularDamping(0);
-//                        fice.getIceBar().setAngularVelocity(0);
-//                        fice.getIceBar().setFixedRotation(true);
-//                    } else {
-//                        tiltList.add(false);
-//                    }
-//                } else if (objects.get(i).getName() == "Ice") {
-//                    Ice ice = (Ice) objects.get(i);
-//                    if (!ice.getIceBar().isFixedRotation()) {
-//                        tiltList.add(true);
-//                        ice.getIceBar().setAngularDamping(0);
-//                        ice.getIceBar().setAngularVelocity(0);
-//                        ice.getIceBar().setFixedRotation(true);
-//                    } else {
-//                        tiltList.add(false);
-//                    }
-//                } else {
-//                    tiltList.add(false);
-//                }
-//                objects.get(i).setPaused(true);
-//            }
             return;
         }
 
@@ -492,7 +442,6 @@ public class GameplayController extends WorldController implements ContactListen
             punchCooldown -= 1;
         }
         if (punchCooldown == PUNCH_COOLDOWN - PUNCH_TIME) {
-            // TODO:
             levelLoader.avatar.setFilmStrip(assetLoader.avatarStrip);
             levelLoader.avatar.setPunching(false);
         }
@@ -503,13 +452,6 @@ public class GameplayController extends WorldController implements ContactListen
             setComplete(true);
         }
 
-        // Monster moving and attacking
-//        collisionController.processCollision(seals, sealions, levelLoader.avatar, objects);
-//        if (collisionController.processCollision(seals, sealions, attackStrip, levelLoader.avatar.getPenguins())) {
-//            setFailure(true);
-//            setComplete(true);
-//        }
-//        collisionController.processCollision(seals, sealions, iciclesList, objects);
         collisionController.processCollision(levelLoader.iciclesList, icicles_hit, staticBodies, objects,
                 assetLoader.hitIcicle,volume);
         collisionController.processCollision(levelLoader.waterList, levelLoader.avatar);
@@ -645,13 +587,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawFixed(assetLoader.pauseScreen,
                     canvas.getWidth()/2f- 200,
                     canvas.getHeight()/2f-200);
-            if(InputController.getInstance().touchUp() && Gdx.input.getX()>500 && Gdx.input.getY()>150&&Gdx.input.getX()<760 && Gdx.input.getY()<280){
-                isPaused = false;
-                disableMovement = false;
-                canvas.end();
-                listener.updateScreen(this, GAMEPLAY_CONTINUE);
-                return;
-            }else if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
+            if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
                 isPaused = false;
                 disableMovement = false;
                 reset();
