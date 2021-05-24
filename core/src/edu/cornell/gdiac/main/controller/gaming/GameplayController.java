@@ -591,7 +591,7 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("Use 'WASD' or arrow keys \nto move or jump.", gameFont,500, 500);
                     canvas.drawText("Ice bars will tilt.", gameFont,1280, 320);
                     canvas.drawText("Approach a note to collect it, \nyou will lose a penguin for each note you collect. ",gameFont,1800, 500);
-                    canvas.drawText("Collect all the notes to pass the level! ", gameFont, 1950, 300);
+                    canvas.drawText("Collect all the notes to pass the level! ", gameFont, 1950, 320);
                     break;
                 case 1:
                     canvas.drawText("Some ice bars move!", gameFont,1500, 400);
