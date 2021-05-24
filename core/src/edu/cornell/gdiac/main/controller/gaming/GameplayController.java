@@ -604,7 +604,7 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("You can cancel throwing by pressing the space bar", gameFont,640, 600);
                     canvas.draw(assetLoader.teachThrowingStrip, 900, 400);
                     canvas.drawText("Nearby penguins will be recollected", gameFont,860, 360);
-                    canvas.drawText("Throw the a penguin \nat the note to collect it!", gameFont,2000, 600);
+                    canvas.drawText("Throw the penguin \nat the note to collect it!", gameFont,2000, 600);
                     break;
                 case 3:
                     canvas.drawText("Darker ice bars can float to the side. ", gameFont,860, 400);
