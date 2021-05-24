@@ -83,44 +83,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new OnboardingController(canvas, "gameSpecs.json");
 		endingController = new EndingController(canvas);
 
-//		directory = new AssetDirectory("assets.json");
-//		directory.loadAssets();
-//		directory.finishLoading();
-//		assetLoader = new AssetLoader(directory);
 		gameplayController.setScreenListener(this);
-
-//		totalLevels = 0;
-//		for(MenuController.Continent continent: MenuController.Continent.values()){
-//			totalLevels += numOfLevels.get(continent);
-//		}
-//		int prevLevels = 0;
-//		levelLoaders = new LevelLoader[totalLevels];
-//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Europe); i++){
-//			levelLoaders[i+prevLevels] = new LevelLoader("europe/europeMain.json", i);
-//		}
-//		prevLevels += numOfLevels.get(MenuController.Continent.Europe);
-//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Africa); i++){
-//			levelLoaders[i+prevLevels] = new LevelLoader("africa/africaMain.json", i);
-//		}
-//		prevLevels += numOfLevels.get(MenuController.Continent.Africa);
-//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Oceania); i++){
-//			levelLoaders[i+prevLevels] = new LevelLoader("oceania/oceaniaMain.json", i);
-//		}
-//		prevLevels += numOfLevels.get(MenuController.Continent.Oceania);
-//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Asia); i++){
-//			levelLoaders[i+prevLevels] = new LevelLoader("asia/asiaMain.json", i);
-//		}
-//		prevLevels += numOfLevels.get(MenuController.Continent.Asia);
-//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
-//			levelLoaders[i+prevLevels] = new LevelLoader("NorthAmerica/northAmericaMain.json", i);
-//		}
-//		prevLevels += numOfLevels.get(MenuController.Continent.NorthAmerica);
-//		for(int i = 0; i < numOfLevels.get(MenuController.Continent.SouthAmerica); i++){
-//			levelLoaders[i+prevLevels] = new LevelLoader("southAmerica/southAmericaMain.json", i);
-//		}
-
 		current = 0;
-		//menuController = new MenuController(canvas);
 		loading.setScreenListener(this);
 		setScreen(loading);
 	}
@@ -162,6 +126,10 @@ public class GDXRoot extends Game implements ScreenListener {
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.SouthAmerica); i++){
 			levelLoaders[i+prevLevels] = new LevelLoader("southAmerica/southAmericaMain.json", i);
 		}
+		prevLevels += numOfLevels.get(MenuController.Continent.SouthAmerica);
+		for(int i = 0; i < numOfLevels.get(MenuController.Continent.Antarctica); i++){
+			levelLoaders[i+prevLevels] = new LevelLoader("antarctica/antarcticaMain.json", i);
+		}
 	}
 
 	public static void load3() {
@@ -171,11 +139,6 @@ public class GDXRoot extends Game implements ScreenListener {
 	@Override
 	public void dispose () {
 		setScreen(null);
-//		if (directory != null) {
-//			directory.unloadAssets();
-//			directory.dispose();
-//			directory = null;
-//		}
 	}
 
 	public void nextLevel(){
@@ -254,6 +217,14 @@ public class GDXRoot extends Game implements ScreenListener {
 						numOfLevels.get(MenuController.Continent.NorthAmerica)+
 						numOfLevels.get(MenuController.Continent.SouthAmerica)){
 					currentContinent = MenuController.Continent.SouthAmerica;
+				}else if(current < numOfLevels.get(MenuController.Continent.Europe)+
+						numOfLevels.get(MenuController.Continent.Africa)+
+						numOfLevels.get(MenuController.Continent.Oceania)+
+						numOfLevels.get(MenuController.Continent.Asia)+
+						numOfLevels.get(MenuController.Continent.NorthAmerica)+
+						numOfLevels.get(MenuController.Continent.SouthAmerica)+
+						numOfLevels.get(MenuController.Continent.Antarctica)){
+					currentContinent = MenuController.Continent.Antarctica;
 				}
 
 				if(current == numOfLevels.get(currentContinent)){
@@ -289,11 +260,6 @@ public class GDXRoot extends Game implements ScreenListener {
 				}
 			}
 		} else if(screen instanceof MenuController){
-			if (exitCode == ENDING_GAME) {
-				endingController.setScreenListener(this);
-				setScreen(endingController);
-				return;
-			}
 			int hundred = exitCode/10;
 			if(hundred == 1){
 				currentContinent = MenuController.Continent.Europe;
@@ -327,6 +293,15 @@ public class GDXRoot extends Game implements ScreenListener {
 						+ numOfLevels.get(MenuController.Continent.NorthAmerica)
 						+(exitCode%10);
 				currentContinent = MenuController.Continent.SouthAmerica;
+			}else if(hundred == 7){
+				current = numOfLevels.get(MenuController.Continent.Europe)
+						+ numOfLevels.get(MenuController.Continent.Africa)
+						+ numOfLevels.get(MenuController.Continent.Oceania)
+						+ numOfLevels.get(MenuController.Continent.Asia)
+						+ numOfLevels.get(MenuController.Continent.NorthAmerica)
+						+ numOfLevels.get(MenuController.Continent.SouthAmerica)
+						+(exitCode%10);
+				currentContinent = MenuController.Continent.Antarctica;
 			}
 			if( value.getInt("next")<current) {
 				value.get("next").remove();
@@ -344,6 +319,12 @@ public class GDXRoot extends Game implements ScreenListener {
 				setScreen(levelEditorGameplayController);
 			}
 		} else if(screen instanceof GameplayController){
+			if (exitCode == ENDING_GAME) {
+				System.out.println("bbb");
+				endingController.setScreenListener(this);
+				setScreen(endingController);
+				return;
+			}
 			if (exitCode == GAMEPLAY_MENU) {
 				// dispose the level loader
 //				controllers[current].dispose();
