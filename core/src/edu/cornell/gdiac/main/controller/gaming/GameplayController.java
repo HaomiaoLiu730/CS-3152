@@ -609,8 +609,10 @@ public class GameplayController extends WorldController implements ContactListen
                 case 3:
                     canvas.drawText("Darker ice bars can float to the side. ", gameFont,860, 400);
                     canvas.drawText("Jump on the ice bar and then knock down the icicle! ", gameFont,860, 340);
-                    canvas.drawText("How do you get to higher platforms?", gameFont,2100, 420);
-                    canvas.drawText("Try knocking down the icicle!", gameFont,2100, 360);
+                    canvas.drawText("Stand on the right end of the ice bar,", gameFont, 1630, 420);
+                    canvas.drawText("then hit down the icicle to be bounced up!", gameFont, 1630, 360);
+                    canvas.drawText("How do you get to higher platforms?", gameFont,2400, 440);
+                    canvas.drawText("Try knocking down the icicle!", gameFont,2400, 380);
                     break;
                 case 4:
                     canvas.drawText("Control the angle and strength for the throw. ", gameFont,630, 580);
@@ -618,8 +620,10 @@ public class GameplayController extends WorldController implements ContactListen
                     canvas.drawText("If they do, you can still pick them\nback up as they swim towards you!", gameFont, 1120, 420);
                     canvas.drawText("Sometimes it's hard to pick penguins back up...", gameFont,1650, 340);
                     canvas.drawText("So aim at your target carefully.", gameFont,1650, 300);
-                    canvas.drawText("You have finished the tutorial levels!", gameFont,2800, 470);
-                    canvas.drawText("Go explore the world!", gameFont,2800, 410);
+                    canvas.drawText("At the last level of each continent,", gameFont,2800, 470);
+                    canvas.drawText("you can rescue one penguin (except here).", gameFont,2800, 430);
+                    canvas.drawText("You have finished the tutorial levels!", gameFont,2800, 370);
+                    canvas.drawText("Go explore the world!", gameFont,2800, 330);
                     break;
                 default:
                     break;
