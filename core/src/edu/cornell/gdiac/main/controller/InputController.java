@@ -420,7 +420,6 @@ public class InputController {
             higherVolume = false;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.M)){
-            System.out.println("true");
             higherVolume = true;
         }
 
