@@ -511,6 +511,24 @@ public class GameplayController extends WorldController implements ContactListen
         canThrow = true;
     }
 
+    public String getLevel() {
+        int levelnum=levelLoader.getLevel()+1;
+        if (levelLoader.jsonFile.startsWith("europe"))
+            return 1+"-"+levelnum;
+        else if (levelLoader.jsonFile.startsWith("africa"))
+            return 2+"-"+levelnum;
+        else if (levelLoader.jsonFile.startsWith("oceania"))
+            return 3+"-"+levelnum;
+        else if (levelLoader.jsonFile.startsWith("asia"))
+            return 4+"-"+levelnum;
+        else if (levelLoader.jsonFile.startsWith("northAmerica"))
+            return 5+"-"+levelnum;
+        else if (levelLoader.jsonFile.startsWith("southAmerica"))
+            return 6+"-"+levelnum;
+        else
+            return 7+"-"+levelnum;
+    }
+
     /**
      * Draw the physics objects together with foreground and background
      *
@@ -582,8 +600,8 @@ public class GameplayController extends WorldController implements ContactListen
         String noteMsg = "Notes collected: "+ notesCollected + "/"+num_notes;
         String penguinMsg = "Penguins: "+ levelLoader.avatar.getNumPenguins() + "/"+num_penguins;
         if(!complete || failed) {
-            canvas.drawText(gameFont, noteMsg, 5.0f+canvas.getCamera().position.x-640, canvas.getHeight() - 5.0f);
-            canvas.drawText(gameFont, penguinMsg, 5.0f+canvas.getCamera().position.x-640, canvas.getHeight() - 40.0f);
+            canvas.drawText(gameFont, noteMsg, 5.0f+canvas.getCamera().position.x-610, canvas.getHeight() - 30.0f);
+            canvas.drawText(gameFont, penguinMsg, 5.0f+canvas.getCamera().position.x-610, canvas.getHeight() - 75.0f);
         }
         if(isPaused){
             canvas.drawFixed(assetLoader.pauseScreen, 0, 0);
@@ -607,6 +625,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawText(gameFont, "Edit", 1200,600);
         }else{
             canvas.drawFixed(assetLoader.pauseButton,quitPos.x, quitPos.y);
+            canvas.drawText(gameFont, getLevel(), canvas.getCamera().position.x+575, canvas.getHeight()-80);
         }
         canvas.end();
 
