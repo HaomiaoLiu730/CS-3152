@@ -646,7 +646,7 @@ public class  MenuController extends ClickListener implements Screen, InputProce
             if(currentContinent == Continent.Asia) hundred = 4;
             if(currentContinent == Continent.NorthAmerica) hundred = 5;
             if(currentContinent == Continent.SouthAmerica) hundred = 6;
-            if(currentContinent == Continent.Antarctica) {
+            if(currentContinent == Continent.Antarctica && unlockedContinents.contains(Continent.Antarctica)) {
                 hundred = 7;
                 nextLevel = 0;
             }

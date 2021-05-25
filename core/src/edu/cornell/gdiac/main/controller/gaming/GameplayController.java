@@ -430,9 +430,9 @@ public class GameplayController extends WorldController implements ContactListen
         }
 
         // debug mode
-        if (InputController.getInstance().didDebug()) {
-            setDebug(!isDebug());
-        }
+//        if (InputController.getInstance().didDebug()) {
+//            setDebug(!isDebug());
+//        }
 
         // Punching
         if (InputController.getInstance().didPunch() && punchCooldown <= 0) {
@@ -557,6 +557,8 @@ public class GameplayController extends WorldController implements ContactListen
                     break;
                 case 1:
                     canvas.drawText("Some ice bars move!", gameFont,1500, 400);
+                    canvas.drawText("Try not to fall in to the sea. ", gameFont, 640, 360);
+                    canvas.drawText("You will be drowned if the bear's head is below the sea!", gameFont, 640, 320);
                     break;
                 case 2:
                     assetLoader.teachThrowingStrip.nextFrame();
