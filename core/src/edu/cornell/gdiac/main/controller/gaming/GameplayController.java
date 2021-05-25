@@ -628,7 +628,7 @@ public class GameplayController extends WorldController implements ContactListen
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawFixed(assetLoader.victoryStrip, 440, 300);
+            canvas.drawFixed(assetLoader.victoryStrip, 0, 0);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         } else if (failed && !resetClick) {
@@ -642,7 +642,7 @@ public class GameplayController extends WorldController implements ContactListen
                 endSoundPlaying = true;
             }
             gameFont.setColor(Color.WHITE);
-            canvas.drawFixed(assetLoader.deadStrip, 490, 300);
+            canvas.drawFixed(assetLoader.deadStrip, 0, 0);
             gameFont.setColor(Color.BLACK);
             canvas.end();
         }
