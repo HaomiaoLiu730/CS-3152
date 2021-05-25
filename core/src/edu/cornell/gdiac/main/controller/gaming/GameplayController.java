@@ -389,8 +389,7 @@ public class GameplayController extends WorldController implements ContactListen
         if (InputController.getInstance().touchUp() &&
                 Math.abs(Gdx.input.getX() - quitPos.x) <= MOUSE_TOL &&
                 Math.abs(720 - Gdx.input.getY() - quitPos.y) <= MOUSE_TOL &&
-                !complete
-        ) {
+                !complete) {
             isPaused = true;
             levelLoader.avatar.setThrowing(InputController.getInstance().touchUp(), throwingP,true);
             disableMovement = true;
@@ -587,9 +586,7 @@ public class GameplayController extends WorldController implements ContactListen
             canvas.drawText(gameFont, penguinMsg, 5.0f+canvas.getCamera().position.x-640, canvas.getHeight() - 40.0f);
         }
         if(isPaused){
-            canvas.drawFixed(assetLoader.pauseScreen,
-                    0,
-                    0);
+            canvas.drawFixed(assetLoader.pauseScreen, 0, 0);
             if(InputController.getInstance().touchUp() &&Gdx.input.getX()>500 && Gdx.input.getY()>300&&Gdx.input.getX()<760 && Gdx.input.getY()<350){
                 isPaused = false;
                 disableMovement = false;
@@ -893,7 +890,7 @@ public class GameplayController extends WorldController implements ContactListen
         bd1IsGround = !(bd11 instanceof Note) && (!(bd11 instanceof Water));
         bd2IsGround = !(bd22 instanceof Note) && (!(bd22 instanceof Water));
         for(Penguin p: levelLoader.avatar.getPenguins()){
-            if ((p.getSensorName().equals(fd2) && p != bd11 && bd11 != levelLoader.avatar && bd2IsGround) ||
+            if ((p.getSensorName().equals(fd2) && p != bd11 && bd11 != levelLoader.avatar && bd1IsGround) ||
                     (p.getSensorName().equals(fd1) && p != bd22 && bd22 != levelLoader.avatar && bd2IsGround)) {
                 sensorFixtures.remove(p == bd11 ? fix2 : fix1);
                 p.setGrounded(false);
