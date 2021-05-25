@@ -5,6 +5,11 @@
       "minFilter": "linear",
       "magFilter": "linear"
     },
+    "end": {
+      "file":     "images/onboarding/end.png",
+      "minFilter": "linear",
+      "magFilter": "linear"
+    },
     "roundPenguin": {
       "file":     "images/shared/penguinRolling.png",
       "minFilter": "linear",

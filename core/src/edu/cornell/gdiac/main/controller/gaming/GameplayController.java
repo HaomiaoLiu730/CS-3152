@@ -557,7 +557,7 @@ public class GameplayController extends WorldController implements ContactListen
                     break;
                 case 1:
                     canvas.drawText("Some ice bars move!", gameFont,1500, 400);
-                    canvas.drawText("Try not to fall in to the sea. ", gameFont, 640, 360);
+                    canvas.drawText("Try not to fall into the sea. ", gameFont, 640, 360);
                     canvas.drawText("You will be drowned if the bear's head is below the sea!", gameFont, 640, 320);
                     break;
                 case 2:

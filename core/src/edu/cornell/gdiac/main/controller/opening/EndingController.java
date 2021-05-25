@@ -25,7 +25,7 @@ public class EndingController implements Screen, InputProcessor, ControllerListe
     private AssetDirectory assets;
 
     /** Front image */
-    private Texture front;
+    private Texture end;
     /** penguin image*/
     private Texture roundPenguin;
 
@@ -67,7 +67,7 @@ public class EndingController implements Screen, InputProcessor, ControllerListe
         internal.loadAssets();
         internal.finishLoading();
 
-        front = internal.getEntry("front", Texture.class);
+        end = internal.getEntry("end", Texture.class);
         gameFont = internal.getEntry("gameFont", BitmapFont.class);
         Gdx.input.setInputProcessor( this );
 
@@ -93,8 +93,7 @@ public class EndingController implements Screen, InputProcessor, ControllerListe
         canvas.begin();
         canvas.getCamera().position.x = 640;
         canvas.getCamera().update();
-        canvas.drawOverlay(front, true);
-        canvas.drawText(gameFont, "Congratulations!", 500, 400);
+        canvas.drawOverlay(end, true);
         canvas.end();
     }
 
