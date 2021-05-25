@@ -70,13 +70,13 @@ public class GDXRoot extends Game implements ScreenListener {
 		JsonReader jsonReader = new JsonReader();
 		value = jsonReader.parse(file);
 
-		numOfLevels.put(MenuController.Continent.NorthAmerica, value.get("numOfLevels").getInt("NorthAmerica"));
-		numOfLevels.put(MenuController.Continent.SouthAmerica, value.get("numOfLevels").getInt("SouthAmerica"));
-		numOfLevels.put(MenuController.Continent.Asia, value.get("numOfLevels").getInt("Asia"));
-		numOfLevels.put(MenuController.Continent.Europe, value.get("numOfLevels").getInt("Europe"));
-		numOfLevels.put(MenuController.Continent.Antarctica, value.get("numOfLevels").getInt("Antarctica"));
-		numOfLevels.put(MenuController.Continent.Africa, value.get("numOfLevels").getInt("Africa"));
-		numOfLevels.put(MenuController.Continent.Oceania, value.get("numOfLevels").getInt("Oceania"));
+		numOfLevels.put(MenuController.Continent.NorthAmerica, 7);
+		numOfLevels.put(MenuController.Continent.SouthAmerica, 6);
+		numOfLevels.put(MenuController.Continent.Asia, 7);
+		numOfLevels.put(MenuController.Continent.Europe, 5);
+		numOfLevels.put(MenuController.Continent.Antarctica,1);
+		numOfLevels.put(MenuController.Continent.Africa, 4);
+		numOfLevels.put(MenuController.Continent.Oceania, 3);
 
 		// Create the drawing context
 		canvas  = new GameCanvas();
@@ -365,8 +365,8 @@ public class GDXRoot extends Game implements ScreenListener {
 				
 				if((finished.length == 0 || finished[finished.length-1] < addedVal) && addedVal <= numOfLevels.get(currentContinent)){
 					value.get("finished").get(currentContinent.name()).addChild(new JsonValue(addedVal));
-					FileHandle file = Gdx.files.local("menu/levelProgress.json");
-					file.writeString(value.prettyPrint(JsonWriter.OutputType.json,0), false);
+//					FileHandle file = Gdx.files.local("menu/levelProgress.json");
+//					file.writeString(value.prettyPrint(JsonWriter.OutputType.json,0), false);
 				}
 
 				if(current == numOfLevels.get(currentContinent)){
@@ -410,8 +410,8 @@ public class GDXRoot extends Game implements ScreenListener {
 						value.get("next").remove();
 						value.addChild("next",new JsonValue(Math.min(current, totalLevels-1)));
 					}
-					FileHandle file = Gdx.files.local("menu/levelProgress.json");
-					file.writeString(value.prettyPrint(JsonWriter.OutputType.json,0), false);
+//					FileHandle file = Gdx.files.local("menu/levelProgress.json");
+//					file.writeString(value.prettyPrint(JsonWriter.OutputType.json,0), false);
 					nextLevel();
 				}
 			}
