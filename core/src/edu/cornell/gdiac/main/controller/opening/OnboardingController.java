@@ -118,9 +118,9 @@ public class OnboardingController implements Screen, InputProcessor, ControllerL
             isHoverLevel=false;
             isHoverPlay=false;
         }
-        if(inputController.didPressE()){
-            listener.updateScreen(this, 1);
-        }
+//        if(inputController.didPressE()){
+//            listener.updateScreen(this, 1);
+//        }
     }
 
     /**
