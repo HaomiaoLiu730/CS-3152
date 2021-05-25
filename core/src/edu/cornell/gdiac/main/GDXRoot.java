@@ -120,7 +120,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.Asia);
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.NorthAmerica); i++){
-			levelLoaders[i+prevLevels] = new LevelLoader("NorthAmerica/northAmericaMain.json", i);
+			levelLoaders[i+prevLevels] = new LevelLoader("northAmerica/northAmericaMain.json", i);
 		}
 		prevLevels += numOfLevels.get(MenuController.Continent.NorthAmerica);
 		for(int i = 0; i < numOfLevels.get(MenuController.Continent.SouthAmerica); i++){
